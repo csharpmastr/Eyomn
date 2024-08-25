@@ -12,7 +12,15 @@ const addUserToWaitlist = async (req, res)=>{
         res.status(500).json({ message: 'Failed to write data', error });
     }
 }
+const hello = async (req, res)=>{ 
+    try{
+        res.status(200).json({ message: 'Hello'});
+    }catch (error) {
+        res.status(500).json({ message: 'Error', error });
+    }
+}
 
 module.exports = {
     addUserToWaitlist,
+    hello
 };
