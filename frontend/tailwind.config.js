@@ -23,7 +23,20 @@ export default {
         'faq-bg' : '#446E86',
         'contact-bg' : '#2C3E50',
         'span-col' : '#A9A9A9'
-      }
+      },
+      animation: {
+        soundwave: 'soundwave 1.3s infinite',
+      },
+      keyframes: {
+        soundwave: {
+          '0%': { 
+            boxShadow: '0 0 0 0 rgba(232, 76, 61, 0.3)' 
+          },
+          '100%': { 
+            boxShadow: '0 0 0 20px rgba(0, 76, 61, 0)' ,
+          },
+        },
+      },
     },
   },
   plugins: [],
