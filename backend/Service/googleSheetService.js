@@ -1,15 +1,18 @@
 const { google } = require("googleapis");
 require("dotenv").config();
 
-const privateKey = process.env.GOOGLE_PRIVATE_KEY;
-if (!privateKey) {
-  throw new Error("GOOGLE_PRIVATE_KEY is not set in the environment variables");
-}
+// Decode the Base64 encoded service account JSON
+const base64EncodedServiceAccount = process.env.BASE64_SERVICE_ACCOUNT;
+const decodedServiceAccount = Buffer.from(
+  base64EncodedServiceAccount,
+  "base64"
+).toString("utf-8");
+const credentials = JSON.parse(decodedServiceAccount);
 
 const auth = new google.auth.GoogleAuth({
   credentials: {
-    client_email: process.env.GOOGLE_CLIENT_EMAIL,
-    private_key: privateKey.replace(/\\n/g, "\n"),
+    client_email: credentials.client_email,
+    private_key: credentials.private_key.replace(/\\n/g, "\n"),
   },
   scopes: ["https://www.googleapis.com/auth/spreadsheets"],
 });
