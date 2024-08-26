@@ -34,7 +34,7 @@ const Contact = () => {
       <div className='h-[70vh] md:h-[50vh] xl:h-[60vh] bg-contact-bg flex justify-center items-center xl:rounded-xl p-4'>
         <div className='xl:px-10 p-2 flex items-center flex-col justify-center'>
           <h1 className='text-[24px] md:text-[35px] lg:text-[50px] xl:text-[50px] font-helvetica-rounded text-white text-center leading-7'>
-            Ready to <span className='text-appoint'>Accelerate</span> your clinic?
+            Ready to <span className=' text-[#1ABC9C]'>Accelerate</span> your clinic?
           </h1>
           <p className='text-center font-helvetica-rounded text-[14px] text-white lg:mt-12 mt-5'>
             We are launching beta test to a selected group of clinics

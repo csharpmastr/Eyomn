@@ -21,24 +21,19 @@ const Feature = () => {
                 </div>
             </div>
             <div className='lg:flex lg:flex-col lg:gap-4 xl:flex xl:flex-row xl:gap-4'>
-                <div className='border-2 border-solid  md:border-2 lg:border-none bg-white h-[50vh]  flex flex-col justify-end pl-5 pr-2 lg:rounded-lg lg:h-[25vh] xl:h-[40vh]'>
+                <div className='border-2 border-solid  md:border-2 lg:border-none bg-white h-[50vh]  flex flex-col justify-end pl-5 pr-2 lg:rounded-lg lg:h-[25vh] xl:h-[40vh] xl:w-1/2'>
                     <h1 className='font-Poppins text-[16px] md:text-[18px] text-prob-h font-bold'>Summarize Your Patient Notes</h1>
                     <p className='font-Poppins text-[12px] md:text-[14px] mb-4'>
                         Retrieve patient notes in a structured summarized form.
                     </p>
                 </div>
-                <div className='border-b-2  md:border-2 border-solid lg:border-none bg-white h-[50vh]  flex flex-col justify-end pl-5 pr-2 lg:rounded-lg lg:h-[25vh] xl:h-[40vh]'>
+                <div className='border-b-2  md:border-2 border-solid lg:border-none bg-white h-[50vh]  flex flex-col justify-end pl-5 pr-2 lg:rounded-lg lg:h-[25vh] xl:h-[40vh] xl:w-1/2'>
                     <h1 className='font-Poppins text-[16px] md:text-[18px] text-prob-h font-bold'>Handle Patient Records Safely</h1>
                     <p className='font-Poppins text-[12px] md:text-[14px] mb-4'>
                         Organize patient records safely and Intelligently
                     </p>
                 </div>
-                <div className='border-b-2 border-solid md:border-2 lg:border-none bg-white h-[50vh]  flex flex-col justify-end pl-5 pr-2 lg:rounded-lg lg:h-[25vh] xl:h-[40vh]'>
-                    <h1 className='font-Poppins text-[16px] md:text-[18px] text-prob-h font-bold'>Save time</h1>
-                    <p className='font-Poppins text-[12px] md:text-[14px] mb-4'>
-                        Lorem ipsum dolor sit amet consectetur. Ornare volutpat cursus sed torto dignissim suscipit
-                    </p>
-                </div>
+
             </div>
         </div>
     </div>

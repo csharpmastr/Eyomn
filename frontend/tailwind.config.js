@@ -30,10 +30,10 @@ export default {
       keyframes: {
         soundwave: {
           '0%': { 
-            boxShadow: '0 0 0 0 rgba(232, 76, 61, 0.3)' 
+            boxShadow: '0 0 0 0 rgba(26, 188, 156, 0.5)',
           },
           '100%': { 
-            boxShadow: '0 0 0 20px rgba(0, 76, 61, 0)' ,
+            boxShadow: '0 0 0 20px rgba(26, 188, 156, 0)',
           },
         },
       },
