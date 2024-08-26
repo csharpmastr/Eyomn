@@ -3,6 +3,9 @@ import { MdArrowOutward } from "react-icons/md";
 import Image1 from "../../assets/Image/1.png";
 import Image2 from "../../assets/Image/2.png";
 import Image3 from "../../assets/Image/3.png";
+import Video1 from "../../assets/Video/Fundus.mp4";
+import Video2 from "../../assets/Video/writing.mp4";
+import Video3 from "../../assets/Video/Records.mp4";
 const Feature = () => {
   return (
     <div className="bg-bg-prob2 h-auto">
@@ -15,7 +18,7 @@ const Feature = () => {
           on what matters most—your patients.
         </p>
       </div>
-      <div className="lg:flex lg:p-5">
+      <div className="lg:flex lg:p-5 pb-16">
         <div className="p-4">
           <div className="p-5 flex items-center justify-center">
             <img src={Image1} alt="" className="w-full md:w-1/2 lg:w-5/6" />
@@ -67,38 +70,61 @@ const Feature = () => {
         </div>
       </div>
       <div className="lg:p-14 xl:flex xl:flex-col">
-        <div className=" md:border-none bg-white h-[50vh] flex flex-col justify-end pl-5 pr-2 lg:mb-4 lg:rounded-lg lg:h-[50vh] xl:h-[70vh] xl: w-full">
-          <h1 className="font-Poppins text-[16px] md:text-[18px] text-prob-h font-bold pr-4">
-            Enhance Patient Care with Smart Technology
-          </h1>
-          <p className="font-Poppins text-[12px] md:text-[14px] mb-3">
-            By integrating advanced retinal analysis and efficient medical
-            scribing, our platform boosts operational efficiency and supports
-            better clinical decisions.
-          </p>
-          <div className="">
-            <p className="font-Poppins text-[12px] md:text-[14px] mb-3  text-paragraph flex flex-row gap-1 underline cursor-pointer">
-              Learn how this works
-              <MdArrowOutward className="underline w-6 h-4 pt-1" />
+        <div className="relative md:border-none bg-white h-[50vh] md:h-[40vh] flex flex-col justify-end pl-5 pr-2 lg:mb-4 lg:rounded-lg lg:h-[50vh] xl:h-[70vh] xl:w-full">
+          <video
+            src={Video1}
+            autoPlay
+            loop
+            muted
+            className="absolute top-0 left-0 w-full h-full object-cover z-0 lg:rounded-lg"
+            alt=""
+          />
+          <div className="relative z-10 ">
+            <h1 className="font-Poppins text-[16px] md:text-[18px] text-white font-bold pr-4">
+              Analyze Fundus Images Easily with Eyomn
+            </h1>
+            <p className="font-Poppins text-[12px] md:text-[14px] mb-5 text-white pr-4">
+              With the help of Artificial Intelligence, you can spot hard to
+              find features efficiently.
             </p>
           </div>
         </div>
         <div className="lg:flex lg:flex-col lg:gap-4 xl:flex xl:flex-row xl:gap-4">
-          <div className="border-2 border-solid  md:border-2 lg:border-none bg-white h-[50vh]  flex flex-col justify-end pl-5 pr-2 lg:rounded-lg lg:h-[25vh] xl:h-[40vh] xl:w-1/2">
-            <h1 className="font-Poppins text-[16px] md:text-[18px] text-prob-h font-bold">
-              Summarize Your Patient Notes
-            </h1>
-            <p className="font-Poppins text-[12px] md:text-[14px] mb-4">
-              Retrieve patient notes in a structured summarized form.
-            </p>
+          <div className="relative   md:border-2 lg:border-none bg-white h-[50vh]  flex flex-col justify-end pl-5 pr-2 lg:rounded-lg lg:h-[25vh] xl:h-[40vh] xl:w-1/2">
+            <video
+              src={Video2}
+              autoPlay
+              loop
+              muted
+              className="absolute top-0 left-0 w-full h-full object-cover z-0 lg:rounded-lg"
+              alt=""
+            />
+            <div className="relative z-10">
+              <h1 className="font-Poppins text-[16px] md:text-[18px] font-bold text-white">
+                Summarize Your Patient Notes
+              </h1>
+              <p className="font-Poppins text-[12px] md:text-[14px] mb-5 text-white">
+                Retrieve patient notes in a structured summarized form.
+              </p>
+            </div>
           </div>
-          <div className="border-b-2  md:border-2 border-solid lg:border-none bg-white h-[50vh]  flex flex-col justify-end pl-5 pr-2 lg:rounded-lg lg:h-[25vh] xl:h-[40vh] xl:w-1/2">
-            <h1 className="font-Poppins text-[16px] md:text-[18px] text-prob-h font-bold">
-              Handle Patient Records Safely
-            </h1>
-            <p className="font-Poppins text-[12px] md:text-[14px] mb-4">
-              Organize patient records safely and Intelligently
-            </p>
+          <div className="relative  md:border-2 lg:border-none bg-white h-[50vh]  flex flex-col justify-end pl-5 pr-2 lg:rounded-lg lg:h-[25vh] xl:h-[40vh] xl:w-1/2">
+            <video
+              src={Video3}
+              autoPlay
+              loop
+              muted
+              className="absolute top-0 left-0 w-full h-full object-cover z-0 lg:rounded-lg"
+              alt=""
+            />
+            <div className="relative z-10">
+              <h1 className="font-Poppins text-[16px] md:text-[18px] text-white font-bold">
+                Handle Patient Records Safely
+              </h1>
+              <p className="font-Poppins text-[12px] md:text-[14px] mb-5 text-white pr-4">
+                Organize patient records safely and Intelligently
+              </p>
+            </div>
           </div>
         </div>
       </div>
