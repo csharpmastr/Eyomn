@@ -39,10 +39,10 @@ const Introduction = () => {
           Set Your Clinic Apart with an AI-Powered Platform
         </h1>
         <p className="mt-2 lg:mt-5 text-[14px] lg:text-[18px] xl:text-[20px] text-center px-2 font-Poppins text-paragraph md:px-32">
-          Get
+          Get{" "}
           <span className="font-bold underline underline-offset-4 font-[#1ABC9C]">
             6 Months Free Access
-          </span>
+          </span>{" "}
           if you Join our Waitlist Today!
         </p>
         <div
