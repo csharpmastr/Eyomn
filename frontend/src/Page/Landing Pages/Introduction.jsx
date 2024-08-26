@@ -3,23 +3,33 @@ import Modal from "../../Component/ui/Modal";
 import Form from "../../Component/ui/Form";
 import AddUserToWaitlist from "../../Service/SpreadSheetService";
 import { FcGoogle } from "react-icons/fc";
+import SuccessModal from "../../Component/ui/SuccessModal";
 
 const Introduction = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  const openSuccessModal = () => setIsSuccessModalOpen(true);
+  const closeSuccessModal = () => setIsSuccessModalOpen(false);
+
   const formFields = [
     { name: "name", type: "text", placeholder: "Enter your name" },
     { name: "email", type: "email", placeholder: "Enter your email" },
   ];
   const handleSubmit = async (formData) => {
     try {
+      console.log(formData);
       const response = await AddUserToWaitlist(formData);
-      closeModal();
-      openSuccessModal();
+      if (response) {
+        openSuccessModal();
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
+    } finally {
+      closeModal();
     }
   };
   return (
@@ -29,10 +39,10 @@ const Introduction = () => {
           Set Your Clinic Apart with an AI-Powered Platform
         </h1>
         <p className="mt-2 lg:mt-5 text-[14px] lg:text-[18px] xl:text-[20px] text-center px-2 font-Poppins text-paragraph md:px-32">
-          Get{" "}
+          Get
           <span className="font-bold underline underline-offset-4 font-[#1ABC9C]">
             6 Months Free Access
-          </span>{" "}
+          </span>
           if you Join our Waitlist Today!
         </p>
         <div
@@ -64,6 +74,10 @@ const Introduction = () => {
         >
           <Form formFields={formFields} handleSubmit={handleSubmit} />
         </Modal>
+        <SuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={closeSuccessModal}
+        ></SuccessModal>
       </div>
     </div>
   );

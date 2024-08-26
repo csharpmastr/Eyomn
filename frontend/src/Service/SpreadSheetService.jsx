@@ -3,7 +3,7 @@ import axios from "axios";
 const AddUserToWaitlist = async (data) => {
   try {
     const res = await axios.post(
-      "https://eyomn.vercel.app/api/sheet/submit",
+      "https://eyomn.vercel.app/api/sheet/submit", // Ensure correct URL format
       data,
       {
         headers: {
@@ -14,7 +14,7 @@ const AddUserToWaitlist = async (data) => {
     console.log(res);
     return res.data;
   } catch (err) {
-    console.log(err);
+    console.error("Error submitting form:", err);
   }
 };
 
