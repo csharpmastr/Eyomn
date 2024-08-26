@@ -60,6 +60,10 @@ const Contact = () => {
         >
           <Form formFields={formFields} handleSubmit={handleSubmit} />
         </Modal>
+        <SuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={closeSuccessModal}
+        ></SuccessModal>
       </div>
     </div>
   );
