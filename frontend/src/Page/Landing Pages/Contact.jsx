@@ -42,7 +42,7 @@ const Contact = () => {
           <div 
             className={`flex justify-center gap-2 items-center mt-6 border-2 border-solid border-gray-400 h-12 w-3/4 lg:w-1/3 xl:w-[20vw] shadow-lg hover:cursor-pointer 
               transition-transform ease-in-out duration-300 
-            hover:text-black hover:bg-gray-200
+            hover:bg-gray-400 hover:bg-opacity-25
               hover:shadow-xl hover:scale-105 tracking-wide  text-white  font-Poppins font-bold  `}
             onClick={openModal}
           >
