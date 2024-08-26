@@ -1,7 +1,6 @@
 const { google } = require("googleapis");
 require("dotenv").config();
 
-// Decode the Base64 encoded service account JSON
 const base64EncodedServiceAccount = process.env.BASE64_SERVICE_ACCOUNT;
 const decodedServiceAccount = Buffer.from(
   base64EncodedServiceAccount,
