@@ -33,19 +33,20 @@ const Contact = () => {
     <div className='xl:p-24 xl:bg-gradient-to-b xl:from-faq-bg xl:to-bg-prob2'>
       <div className='h-[70vh] md:h-[50vh] xl:h-[60vh] bg-contact-bg flex justify-center items-center xl:rounded-xl p-4'>
         <div className='xl:px-10 p-2 flex items-center flex-col justify-center'>
-          <h1 className='text-[28px] lg:text-[50px] xl:text-[50px] font-helvetica-rounded text-white text-center leading-7'>
+          <h1 className='text-[24px] md:text-[35px] lg:text-[50px] xl:text-[50px] font-helvetica-rounded text-white text-center leading-7'>
             Ready to <span className='text-appoint'>Accelerate</span> your clinic?
           </h1>
           <p className='text-center font-helvetica-rounded text-[14px] text-white lg:mt-12 mt-5'>
             We are launching beta test to a selected group of clinics
           </p>
           <div 
-            className={`flex justify-center gap-2 items-center mt-6 border-2 border-solid border-gray-400 h-12 w-3/4 lg:w-1/3 shadow-lg hover:cursor-pointer hover:text-black hover:bg-white transition-all ease-in-out duration-300 hover:bg-opacity-50`}
+            className={`flex justify-center gap-2 items-center mt-6 border-2 border-solid border-gray-400 h-12 w-3/4 lg:w-1/3 xl:w-[20vw] shadow-lg hover:cursor-pointer 
+              transition-transform ease-in-out duration-300 
+            hover:text-black hover:bg-gray-200
+              hover:shadow-xl hover:scale-105 tracking-wide  text-white  font-Poppins font-bold  `}
             onClick={openModal}
           >
-            <p className='flex items-center justify-center tracking-wide font-Poppins font-bold text-white'>
-              Join Waitlist
-            </p>
+              Join Waitlist 
           </div>
         </div>
         <Modal
