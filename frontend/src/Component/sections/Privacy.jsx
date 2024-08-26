@@ -1,6 +1,6 @@
 import React from "react";
 
-const Terms = () => {
+const Privacy = () => {
   return (
     <div>
       <div>
@@ -7117,4 +7117,4 @@ const Terms = () => {
   );
 };
 
-export default Terms;
+export default Privacy;

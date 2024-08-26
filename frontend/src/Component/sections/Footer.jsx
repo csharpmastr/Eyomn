@@ -4,7 +4,8 @@ import Logo from "../../assets/Image/eyomn_logoS1-2-06.jpg";
 import { FaFacebookSquare } from "react-icons/fa";
 import { AiFillInstagram } from "react-icons/ai";
 import Modal from "../ui/Modal";
-import Terms from "./Terms";
+import Privacy from "./Privacy";
+
 const Footer = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -59,10 +60,10 @@ const Footer = () => {
         <Modal
           isOpen={isModalOpen}
           onClose={closeModal}
-          title="Terms & Conditions"
-          className="w-[600px] h-[500px] overflow-y-scroll p-4"
+          title="Privacy Policy"
+          className="w-[600px] h-[500px] overflow-y-scroll p-4 lg:pl-10"
           overlayClassName=""
-          description={<Terms />}
+          description={<Privacy />}
         ></Modal>
       </div>
     </footer>

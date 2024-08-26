@@ -26,7 +26,7 @@ const FAQ = () => {
           <Accordion
             question={"Is Eyomn forever free?"}
             answer={
-              "Eyomn will charge a fee to cover legal and operational costs. For early users, they will get an additional 20% off discount for life once their free-trial ends. New users will pay the full amount after launch."
+              "Eyomn will charge a fee to cover legal and operational costs. For early adopters, they will get an additional 20% off discount for life once their free-trial ends. New users will pay the full amount after launch."
             }
           />
           <Accordion
