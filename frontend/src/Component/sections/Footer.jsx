@@ -20,7 +20,7 @@ const Footer = () => {
                     </div>
                     <div className='flex flex-col w-1/2 md:w-2/3 lg:w-auto gap-2 items-center'>
                         <p className='font-Poppins text-[14px] text-paragraph  mb-2'>Socials</p>
-                        <a className='font-Poppins hover:text-paragraph cursor-pointer'><FaFacebookSquare className='h-10 w-10 lg:h-12 lg:w-full'/></a>
+                        <a className='font-Poppins hover:text-paragraph cursor-pointer' href='https://www.facebook.com/profile.php?id=61564911541805' rel='noopener noreferrer' target='_blank'><FaFacebookSquare className='h-10 w-10 lg:h-12 lg:w-full'/></a>
                         <a className='font-Poppins hover:text-paragraph cursor-pointer'><AiFillInstagram className='h-10 w-10 lg:h-12 lg:w-full' /> </a>
                     </div>
                 </div>
