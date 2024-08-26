@@ -3,13 +3,8 @@ import axios from "axios";
 const AddUserToWaitlist = async (data) => {
   try {
     const res = await axios.post(
-      "https://eyomn.vercel.app/api/sheet/submit", // Ensure correct URL format
-      data,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      "https://eyomn.vercel.app/api/sheet/submit",
+      data
     );
     console.log(res);
     return res.data;
