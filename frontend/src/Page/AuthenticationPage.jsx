@@ -1,18 +1,9 @@
-import React from 'react'
-import Signup from '../Component/sections/Signup'
-import Login from '../Component/sections/Login'
+import React from "react";
+import Signup from "../Component/sections/Signup";
+import Login from "../Component/sections/Login";
 
-const AuthenticationPage = ({type}) => {
+const AuthenticationPage = ({ type }) => {
+  return <div className="">{type === "signup" ? <Signup /> : <Login />}</div>;
+};
 
-  return (
-    <div className=''>
-        {type === 'signup'? 
-            <Signup/>
-            :
-            <Login/> 
-        }
-    </div>
-  )
-}
-
-export default AuthenticationPage
+export default AuthenticationPage;
