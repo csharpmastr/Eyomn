@@ -1,12 +1,12 @@
 import React from "react";
 import Navbar from "../Component/sections/Navbar";
 import Introduction from "./Landing Pages/Introduction";
-
 import Feature from "./Landing Pages/Feature";
 import FAQ from "./Landing Pages/FAQ";
 import Contact from "./Landing Pages/Contact";
 import Footer from "../Component/sections/Footer";
-import Terms from "./Landing Pages/Terms";
+import BackToTop from "../Component/ui/BackToTop";
+
 const Landing = () => {
   return (
     <>
@@ -17,6 +17,7 @@ const Landing = () => {
         <FAQ />
         <Contact />
         <Footer />
+        <BackToTop />
       </div>
     </>
   );

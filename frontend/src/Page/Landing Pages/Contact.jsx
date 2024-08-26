@@ -53,17 +53,13 @@ const Contact = () => {
         <Modal
           isOpen={isModalOpen}
           onClose={closeModal}
-          title="Join on our Waitlist!"
-          className="w-[600px] h-[500px]"
+          title="Terms & Conditions"
+          className="w-[600px] h-[500px] overflow-y-scroll p-4"
           overlayClassName=""
+          description={""}
         >
           <Form formFields={formFields} handleSubmit={handleSubmit} />
         </Modal>
-        <SuccessModal
-          isOpen={isSuccessModalOpen}
-          onClose={closeSuccessModal}
-          message="Submitted Successfully!"
-        />
       </div>
     </div>
   );
