@@ -22,7 +22,7 @@ const getSheetData = async () => {
   try {
     const response = await sheet.spreadsheets.values.get({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: "Sheet1!A!:C",
+      range: "Sheet1!A:C",
     });
     return response.data.values || [];
   } catch (error) {

@@ -3,34 +3,56 @@ import Modal from "../../Component/ui/Modal";
 import Form from "../../Component/ui/Form";
 import AddUserToWaitlist from "../../Service/SpreadSheetService";
 import SuccessModal from "../../Component/ui/SuccessModal";
-
+import Loader from "../../Component/ui/Loader";
 const Contact = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const openSuccessModal = () => setIsSuccessModalOpen(true);
   const closeSuccessModal = () => setIsSuccessModalOpen(false);
 
+  const openErrorModal = () => setIsErrorModalOpen(true);
+  const closeErrorModal = () => setIsErrorModalOpen(false);
+
   const formFields = [
-    { name: "name", type: "text", placeholder: "Enter your name" },
-    { name: "email", type: "email", placeholder: "Enter your email" },
+    {
+      name: "first_name",
+      type: "text",
+      placeholder: "Enter your First name",
+    },
+    {
+      name: "last_name",
+      type: "text",
+      placeholder: "Enter your Last name",
+    },
+    {
+      name: "email",
+      type: "email",
+      placeholder: "Enter your Email",
+    },
   ];
 
   const handleSubmit = async (formData) => {
+    closeModal();
+    setIsLoading(true);
     try {
       const response = await AddUserToWaitlist(formData);
-      closeModal();
       openSuccessModal();
     } catch (error) {
+      openErrorModal();
       console.error("Error submitting form:", error);
+    } finally {
+      setIsLoading(false);
+      closeModal();
     }
   };
 
   return (
     <div className="xl:p-24 xl:bg-gradient-to-b xl:from-faq-bg xl:to-bg-prob2">
+      {isLoading && <Loader />}
       <div className="h-[70vh] md:h-[50vh] xl:h-[60vh] bg-contact-bg flex justify-center items-center xl:rounded-xl p-4">
         <div className="xl:px-10 p-2 flex items-center flex-col justify-center">
           <h1 className="text-[24px] md:text-[35px] lg:text-[50px] xl:text-[50px] font-helvetica-rounded text-white text-center leading-7">
@@ -54,7 +76,7 @@ const Contact = () => {
           isOpen={isModalOpen}
           onClose={closeModal}
           title="Join Waitlist!"
-          className="w-[600px] h-[500px] overflow-y-scroll p-4"
+          className="w-[600px] h-auto overflow-y-scroll p-4 pb-10"
           overlayClassName=""
           description={""}
         >
@@ -64,6 +86,16 @@ const Contact = () => {
           isOpen={isSuccessModalOpen}
           onClose={closeSuccessModal}
         ></SuccessModal>
+        <Modal
+          isOpen={isErrorModalOpen}
+          onClose={closeErrorModal}
+          title="Joining Unavailable"
+          className="w-[600px] h-auto p-4"
+          overlayDescriptionClassName={
+            "text-center font-Poppins pt-5 text-black text-[18px]"
+          }
+          description={"Email is already on the waitlist"}
+        ></Modal>
       </div>
     </div>
   );

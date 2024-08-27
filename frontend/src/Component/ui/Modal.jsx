@@ -21,12 +21,14 @@ const Modal = ({
       <div
         className={`bg-white p-6 rounded-lg shadow-lg relative w-full max-w-md mx-4 ${className}`}
       >
-        <button
-          className="sticky left-96 top-0 text-gray-600 hover:text-gray-900 text-3xl p-2 rounded-full"
-          onClick={onClose}
-        >
-          &times;
-        </button>
+        <div className="w-full flex justify-end">
+          <button
+            className="sticky left-96 top-0 text-gray-600 hover:text-gray-900 text-3xl p-2 rounded-full"
+            onClick={onClose}
+          >
+            &times;
+          </button>
+        </div>
         {title && (
           <div className=" -mt-10 border-b pb-2 mb-4">
             <h2 className="text-lg font-bold font-Poppins">{title}</h2>

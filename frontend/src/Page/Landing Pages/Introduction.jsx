@@ -65,6 +65,7 @@ const Introduction = () => {
         console.error("Token is missing from the response.");
       }
     } catch (err) {
+      openErrorModal();
       console.error("Error decoding token:", err);
     } finally {
       setIsLoading(false);
@@ -113,7 +114,7 @@ const Introduction = () => {
           isOpen={isModalOpen}
           onClose={closeModal}
           title="Join our Waitlist!"
-          className="w-[600px] h-[500px] overflow-y-scroll p-4"
+          className="w-[600px] h-auto overflow-y-scroll p-4 pb-10"
           overlayClassName=""
           description={""}
         >
@@ -127,7 +128,7 @@ const Introduction = () => {
           isOpen={isErrorModalOpen}
           onClose={closeErrorModal}
           title="Joining Unavailable"
-          className="w-[600px] h-auto overflow-y-scroll p-4"
+          className="w-[600px] h-auto p-4"
           overlayDescriptionClassName={
             "text-center font-Poppins pt-5 text-black text-[18px]"
           }
