@@ -53,7 +53,7 @@ const Contact = () => {
         <Modal
           isOpen={isModalOpen}
           onClose={closeModal}
-          title="Terms & Conditions"
+          title="Join Waitlist!"
           className="w-[600px] h-[500px] overflow-y-scroll p-4"
           overlayClassName=""
           description={""}

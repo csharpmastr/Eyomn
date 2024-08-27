@@ -106,7 +106,7 @@ const Feature = () => {
           </div>
         </div>
         <div className="lg:flex lg:flex-col lg:gap-4 xl:flex xl:flex-row xl:gap-4">
-          <div className="relative   md:border-2 lg:border-none bg-white h-[50vh]  flex flex-col justify-end pl-5 pr-2 lg:rounded-lg lg:h-[25vh] xl:h-[40vh] xl:w-1/2">
+          <div className="relative  lg:border-none bg-white h-[50vh]  flex flex-col justify-end pl-5 pr-2 lg:rounded-lg lg:h-[25vh] xl:h-[40vh] xl:w-1/2">
             {!videoError.video2 ? (
               <video
                 src={Video2}
@@ -133,7 +133,7 @@ const Feature = () => {
               </p>
             </div>
           </div>
-          <div className="relative  md:border-2 lg:border-none bg-white h-[50vh]  flex flex-col justify-end pl-5 pr-2 lg:rounded-lg lg:h-[25vh] xl:h-[40vh] xl:w-1/2">
+          <div className="relative  lg:border-none bg-white h-[50vh]  flex flex-col justify-end pl-5 pr-2 lg:rounded-lg lg:h-[25vh] xl:h-[40vh] xl:w-1/2">
             {!videoError.video3 ? (
               <video
                 src={Video3}
