@@ -21,10 +21,15 @@ const Form = ({ formFields = [], handleSubmit, disabled }) => {
     let isValid = true;
 
     formFields.forEach((field) => {
-      const { name, pattern, errorMessage } = field;
+      const { name, pattern, errorMessage, type } = field;
       const value = formData[name];
 
-      if (pattern && !new RegExp(pattern).test(value)) {
+      if (type === "email") {
+        if (!value || value.split("@")[0].length < 3) {
+          newErrors[name] = "Email must have at least 3 characters";
+          isValid = false;
+        }
+      } else if (pattern && !new RegExp(pattern).test(value)) {
         newErrors[name] = errorMessage || "Invalid input.";
         isValid = false;
       } else {
