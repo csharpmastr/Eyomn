@@ -18,6 +18,30 @@ const auth = new google.auth.GoogleAuth({
 
 const sheet = google.sheets({ version: "v4", auth });
 
+const getSheetData = async () => {
+  try {
+    const response = await sheet.spreadsheets.values.get({
+      spreadsheetId: process.env.GOOGLE_SHEET_ID,
+      range: "Sheet1!A!:C",
+    });
+    return response.data.values || [];
+  } catch (error) {
+    console.error("Error fetching sheet data:", error);
+    throw error;
+  }
+};
+const emailExists = async (email) => {
+  try {
+    const data = await getSheetData();
+    const emailColumnIndex = 2;
+    const emailFound = data.some((row) => row[emailColumnIndex] === email);
+    return emailFound;
+  } catch (error) {
+    console.error("Error checking email existence:", error);
+    throw error;
+  }
+};
+
 async function appendToSheet(data) {
   const values = [Object.values(data)];
   const range = "Sheet1";
@@ -39,4 +63,4 @@ async function appendToSheet(data) {
   }
 }
 
-module.exports = { appendToSheet };
+module.exports = { appendToSheet, emailExists, getSheetData };
