@@ -9,7 +9,7 @@ const AddUserToWaitlist = async (data) => {
     console.log(res);
     return res.data;
   } catch (err) {
-    console.error("Error submitting form:", err);
+    throw err;
   }
 };
 

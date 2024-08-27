@@ -11,6 +11,7 @@ import Loader from "../../Component/ui/Loader";
 const Introduction = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -18,6 +19,8 @@ const Introduction = () => {
   const openSuccessModal = () => setIsSuccessModalOpen(true);
   const closeSuccessModal = () => setIsSuccessModalOpen(false);
 
+  const openErrorModal = () => setIsErrorModalOpen(true);
+  const closeErrorModal = () => setIsErrorModalOpen(false);
   const formFields = [
     { name: "given_name", type: "text", placeholder: "Enter your First name" },
     { name: "family_name", type: "text", placeholder: "Enter your Last name" },
@@ -32,7 +35,7 @@ const Introduction = () => {
         openSuccessModal();
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
+      openErrorModal();
     } finally {
       setIsLoading(false);
     }
@@ -120,6 +123,16 @@ const Introduction = () => {
           isOpen={isSuccessModalOpen}
           onClose={closeSuccessModal}
         ></SuccessModal>
+        <Modal
+          isOpen={isErrorModalOpen}
+          onClose={closeErrorModal}
+          title="Joining Unavailable"
+          className="w-[600px] h-auto overflow-y-scroll p-4"
+          overlayDescriptionClassName={
+            "text-center font-Poppins pt-5 text-black text-[18px]"
+          }
+          description={"Email is already on the waitlist"}
+        ></Modal>
       </div>
     </div>
   );
