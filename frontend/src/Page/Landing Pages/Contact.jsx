@@ -37,7 +37,7 @@ const Contact = () => {
             Ready to <span className=" text-[#1ABC9C]">Accelerate</span> your
             clinic?
           </h1>
-          <p className="text-center font-helvetica-rounded text-[14px] text-white lg:mt-12 mt-5">
+          <p className="text-center font-helvetica-rounded text-[14px] text-white lg:mt-12 mt-5 px-4">
             We are launching beta test to a selected group of clinics
           </p>
           <div
