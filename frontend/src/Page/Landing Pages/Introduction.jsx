@@ -43,7 +43,6 @@ const Introduction = () => {
     try {
       const token = credentialResponse.credential;
       if (token) {
-        console.log(token);
         const decodedToken = jwtDecode(token);
         const given_name = decodedToken.given_name;
         const family_name = decodedToken.family_name;
