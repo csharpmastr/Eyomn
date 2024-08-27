@@ -23,11 +23,6 @@ const Introduction = () => {
     { name: "family_name", type: "text", placeholder: "Enter your Last name" },
     { name: "email", type: "email", placeholder: "Enter your Email" },
   ];
-  const [data, setData] = useState({
-    given_name: "",
-    family_name: "",
-    email: "",
-  });
   const handleSubmit = async (formData) => {
     closeModal();
     setIsLoading(true);
@@ -48,17 +43,21 @@ const Introduction = () => {
     try {
       const token = credentialResponse.credential;
       if (token) {
+        console.log(token);
         const decodedToken = jwtDecode(token);
         const given_name = decodedToken.given_name;
         const family_name = decodedToken.family_name;
         const email = decodedToken.email;
+        console.log(given_name);
+        console.log(family_name);
+        console.log(email);
 
-        setData({
-          ...data,
+        const data = {
           given_name: given_name,
           family_name: family_name,
           email: email,
-        });
+        };
+
         const res = await AddUserToWaitlist(data);
         if (res) {
           openSuccessModal();
@@ -100,7 +99,6 @@ const Introduction = () => {
             }}
             size="large"
             width={260}
-            text="Join with Google"
           />
         </div>
         <div className="text-center mt-4">
