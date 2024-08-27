@@ -48,9 +48,6 @@ const Introduction = () => {
         const given_name = decodedToken.given_name;
         const family_name = decodedToken.family_name;
         const email = decodedToken.email;
-        console.log(given_name);
-        console.log(family_name);
-        console.log(email);
 
         const data = {
           given_name: given_name,
