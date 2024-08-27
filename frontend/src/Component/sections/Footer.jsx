@@ -43,17 +43,17 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <FaFacebookSquare className="h-10 w-10 lg:h-12 lg:w-full" />
+                <FaFacebookSquare className="h-10 w-10 lg:h-9" />
               </a>
               <a className="font-Poppins hover:text-paragraph cursor-pointer">
-                <AiFillInstagram className="h-10 w-10 lg:h-12 lg:w-full" />{" "}
+                <AiFillInstagram className="h-10 w-10 lg:h-10 " />{" "}
               </a>
             </div>
           </div>
         </div>
         <div className="bg-span-bg w-3/4 h-[1px] mx-auto mt-5 mb-5"></div>
         <div className="md:pl-10 mb-10 pt-5">
-          <p className="text-center md:text-left font-Poppins text-[14px] md:text-[16px] lg:text-[18px]">
+          <p className="text-center md:text-left font-Poppins text-[14px]">
             &copy; Eyomn AI, All rights reserve.
           </p>
         </div>
