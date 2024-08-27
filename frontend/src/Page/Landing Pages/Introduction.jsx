@@ -32,7 +32,6 @@ const Introduction = () => {
     closeModal();
     setIsLoading(true);
     try {
-      console.log(formData);
       const response = await AddUserToWaitlist(formData);
       if (response) {
         openSuccessModal();
@@ -50,7 +49,6 @@ const Introduction = () => {
       const token = credentialResponse.credential;
       if (token) {
         const decodedToken = jwtDecode(token);
-        console.log("Decoded Token:", decodedToken);
         const given_name = decodedToken.given_name;
         const family_name = decodedToken.family_name;
         const email = decodedToken.email;
