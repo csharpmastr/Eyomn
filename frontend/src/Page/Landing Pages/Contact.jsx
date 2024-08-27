@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import Modal from "../../Component/ui/Modal";
 import Form from "../../Component/ui/Form";
 import AddUserToWaitlist from "../../Service/SpreadSheetService";
@@ -60,7 +62,7 @@ const Contact = () => {
         <div className="xl:px-10 p-2 flex items-center flex-col justify-center">
           <h1 className="text-[24px] md:text-[35px] lg:text-[50px] xl:text-[50px] font-helvetica-rounded text-white text-center leading-7">
             Ready to <span className=" text-[#1ABC9C]">Accelerate</span> your
-            clinic?
+            Clinic?
           </h1>
           <p className="text-center font-helvetica-rounded text-[14px] text-white lg:mt-12 mt-5 px-4">
             We are launching beta test to a selected group of clinics
@@ -90,7 +92,7 @@ const Contact = () => {
           onClose={closeSuccessModal}
           title={"You're on the Waitlist!"}
           description={
-            "We appreciate your interest in our software and will notify you as soon as it’s available."
+            "We appreciate your interest in our software and will notify you as soon as it’s launched."
           }
         ></SuccessModal>
         <Modal

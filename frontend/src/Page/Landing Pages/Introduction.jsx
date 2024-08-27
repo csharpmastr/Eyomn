@@ -90,7 +90,7 @@ const Introduction = () => {
         </h1>
         <p className="mt-2 lg:mt-5 text-[14px] lg:text-[18px] xl:text-[20px] text-center px-2 font-Poppins text-paragraph md:px-32">
           Get{" "}
-          <span className="font-bold underline underline-offset-4 font-[#1ABC9C]">
+          <span className=" underline underline-offset-4 text-[#1ABC9C] font-bold">
             6 Months Free Access
           </span>{" "}
           if you Join our Waitlist Today!
@@ -112,9 +112,9 @@ const Introduction = () => {
           />
         </div>
         <div className="text-center mt-4">
-          <p className="font-Poppins text-paragraph">Or</p>
+          <p className="font-Poppins text-paragraph mb-2">Or</p>
           <p
-            className="font-Poppins underline underline-offset-4 cursor-pointer text-paragraph"
+            className="font-Poppins underline underline-offset-4 cursor-pointer text-paragraph mt-2"
             onClick={openModal}
           >
             Join with Email
@@ -124,7 +124,7 @@ const Introduction = () => {
           isOpen={isModalOpen}
           onClose={closeModal}
           title="Join our Waitlist!"
-          className="w-[600px] h-auto overflow-y-scroll p-4 pb-10"
+          className="w-[600px] h-auto  p-4 pb-10"
           overlayClassName=""
           description={""}
         >
@@ -135,7 +135,7 @@ const Introduction = () => {
           onClose={closeSuccessModal}
           title={"You're on the Waitlist!"}
           description={
-            "We appreciate your interest in our software and will notify you as soon as it’s available."
+            "We appreciate your interest in our software and will notify you as soon as it’s launched."
           }
         ></SuccessModal>
         <Modal

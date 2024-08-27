@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Accordion from "../../Component/ui/Accordion";
-
+import AOS from "aos";
+import "aos/dist/aos.css";
 const FAQ = () => {
+  useEffect(() => {
+    AOS.init({ duration: 1000 });
+  }, []);
   return (
     <div className="h-[auto] bg-faq-bg xl:pb-32 pb-24">
       <div className="flex flex-col lg:flex-row lg:justify-center items-center lg:pt-16">
-        <div className="pt-20 lg:ml-10 lg:w-full flex self-start pl-5 lg:pl-10">
+        <div
+          className="pt-20 lg:ml-10 lg:w-full flex self-start pl-5 lg:pl-10"
+          data-aos="fade-right"
+        >
           <h1 className="text-[24px] lg:text-[30px] font-Poppins font-bold text-white">
             Any question?<br></br> We got you.
           </h1>

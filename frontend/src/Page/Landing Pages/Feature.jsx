@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import { MdArrowOutward } from "react-icons/md";
 import Image1 from "../../assets/Image/1.png";
 import Image2 from "../../assets/Image/2.png";
@@ -13,9 +15,12 @@ const Feature = () => {
     video2: false,
     video3: false,
   });
+  useEffect(() => {
+    AOS.init({ duration: 1000 });
+  }, []);
   return (
     <div className="bg-bg-prob2 h-auto">
-      <div className="pt-16 p-4 mb-5 lg:text-center ">
+      <div className="pt-16 p-4 mb-5 lg:text-center" data-aos="fade-up">
         <h1 className="font-Poppins text-[20px] font-bold text-prob-h mb-5 lg:text-[24px] text-center px-5">
           Adapt Smart Solutions for Better Healthcare
         </h1>
@@ -24,8 +29,8 @@ const Feature = () => {
           on what matters most—your patients.
         </p>
       </div>
-      <div className="lg:flex lg:p-5 pb-16">
-        <div className="p-4">
+      <div className="lg:flex lg:p-5 pb-16 overflow-hidden">
+        <div className="p-4" data-aos="fade-right">
           <div className="p-5 flex items-center justify-center">
             <img src={Image1} alt="" className="w-full md:w-1/2 lg:w-5/6" />
           </div>
@@ -40,7 +45,7 @@ const Feature = () => {
             </p>
           </div>
         </div>
-        <div className="p-4">
+        <div className="p-4" data-aos="fade-up">
           <div className="p-5 flex items-center justify-center">
             <img src={Image2} alt="" className="w-full md:w-1/2 lg:w-5/6" />
           </div>
@@ -55,7 +60,7 @@ const Feature = () => {
             </p>
           </div>
         </div>
-        <div className="p-4">
+        <div className="p-4" data-aos="fade-left">
           <div className="p-5  flex items-center justify-center">
             <img
               src={Image3}
