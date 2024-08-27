@@ -9,16 +9,40 @@ const Form = ({ formFields = [], handleSubmit, disabled }) => {
         }, {})
       : {}
   );
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    let isValid = true;
+
+    formFields.forEach((field) => {
+      const { name, pattern, errorMessage } = field;
+      const value = formData[name];
+
+      if (pattern && !new RegExp(pattern).test(value)) {
+        newErrors[name] = errorMessage || "Invalid input.";
+        isValid = false;
+      } else {
+        newErrors[name] = "";
+      }
+    });
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
-    handleSubmit(formData, e);
+    if (validateForm()) {
+      handleSubmit(formData, e);
+    }
   };
+
   return (
     <form className="" onSubmit={onSubmit}>
       {Array.isArray(formFields) &&
@@ -36,7 +60,13 @@ const Form = ({ formFields = [], handleSubmit, disabled }) => {
               onChange={handleChange}
               className="w-full p-2 border-2 rounded-md mt-5 font-Poppins"
               disabled={disabled}
+              pattern={field.pattern}
             />
+            {errors[field.name] && (
+              <p className="text-red-500 text-sm font-Poppins pl-2 pt-2">
+                {errors[field.name]}
+              </p>
+            )}
           </div>
         ))}
       <button

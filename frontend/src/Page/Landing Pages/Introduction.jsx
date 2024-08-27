@@ -22,8 +22,18 @@ const Introduction = () => {
   const openErrorModal = () => setIsErrorModalOpen(true);
   const closeErrorModal = () => setIsErrorModalOpen(false);
   const formFields = [
-    { name: "given_name", type: "text", placeholder: "Enter your First name" },
-    { name: "family_name", type: "text", placeholder: "Enter your Last name" },
+    {
+      name: "given_name",
+      type: "text",
+      placeholder: "Enter your First name",
+      pattern: "^[a-zA-ZÀ-ÿ\\s'-]{2,}$",
+    },
+    {
+      name: "family_name",
+      type: "text",
+      placeholder: "Enter your Last name",
+      pattern: "^[a-zA-ZÀ-ÿ\\s'-]{2,}$",
+    },
     { name: "email", type: "email", placeholder: "Enter your Email" },
   ];
   const handleSubmit = async (formData) => {

@@ -22,16 +22,19 @@ const Contact = () => {
       name: "first_name",
       type: "text",
       placeholder: "Enter your First name",
+      pattern: "^[a-zA-ZÀ-ÿ\\s'-]{2,}$",
     },
     {
       name: "last_name",
       type: "text",
       placeholder: "Enter your Last name",
+      pattern: "^[a-zA-ZÀ-ÿ\\s'-]{2,}$",
     },
     {
       name: "email",
       type: "email",
       placeholder: "Enter your Email",
+      pattern: "^[a-zA-ZÀ-ÿ\\s'-]{2,}$",
     },
   ];
 
@@ -76,7 +79,7 @@ const Contact = () => {
           isOpen={isModalOpen}
           onClose={closeModal}
           title="Join Waitlist!"
-          className="w-[600px] h-auto overflow-y-scroll p-4 pb-10"
+          className="w-[600px] h-auto p-4 pb-10"
           overlayClassName=""
           description={""}
         >
