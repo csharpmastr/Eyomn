@@ -88,6 +88,10 @@ const Contact = () => {
         <SuccessModal
           isOpen={isSuccessModalOpen}
           onClose={closeSuccessModal}
+          title={"You're on the Waitlist!"}
+          description={
+            "We appreciate your interest in our software and will notify you as soon as it’s available."
+          }
         ></SuccessModal>
         <Modal
           isOpen={isErrorModalOpen}

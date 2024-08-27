@@ -1,6 +1,6 @@
 import React from "react";
 
-const SuccessModal = ({ description, onClose, isOpen }) => {
+const SuccessModal = ({ description, onClose, isOpen, title }) => {
   if (!isOpen) return null; // Render only if isOpen is true
 
   return (
@@ -37,10 +37,8 @@ const SuccessModal = ({ description, onClose, isOpen }) => {
               data-original="#000000"
             />
           </svg>
-          <h4 className="text-xl text-gray-800 font-semibold mt-4">
-            Successfully accepted!
-          </h4>
-          <p className="text-sm text-gray-500 leading-relaxed mt-4">
+          <h4 className="text-xl text-gray-800 font-semibold mt-4">{title}</h4>
+          <p className="text-[16px] p-2 text-gray-500 leading-relaxed font-Poppins">
             {description}
           </p>
         </div>
