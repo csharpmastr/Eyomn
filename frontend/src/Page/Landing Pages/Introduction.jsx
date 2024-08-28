@@ -76,7 +76,6 @@ const Introduction = () => {
       }
     } catch (err) {
       openErrorModal();
-      console.error("Error decoding token:", err);
     } finally {
       setIsLoading(false);
     }
