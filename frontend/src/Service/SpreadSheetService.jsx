@@ -9,6 +9,10 @@ const AddUserToWaitlist = async (data) => {
     console.log(res);
     return res.data;
   } catch (err) {
+    console.error(
+      "Error message:",
+      err.response ? err.response.data : err.message
+    );
     throw err;
   }
 };
