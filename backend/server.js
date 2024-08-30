@@ -1,16 +1,23 @@
-require('dotenv').config();
-const express = require('express');
-const sheetRoutes = require('./Route/spreadSheetRoute'); 
-const cors = require('cors')
+require("dotenv").config();
+const express = require("express");
+const cookieParser = require("cookie-parser");
+
+const cors = require("cors");
 const app = express();
 const port = process.env.PORT;
+
+//Routes
+const sheetRoutes = require("./Route/spreadSheetRoute");
+const userRoutes = require("./Route/userRoute");
 
 //Middleware
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
 
-app.use('/api', sheetRoutes);
+app.use("/api", sheetRoutes);
+app.use("/api/user", userRoutes);
 
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });

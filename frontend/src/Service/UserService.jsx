@@ -1,17 +1,34 @@
-import axios from 'axios';
-import Cookies from 'universal-cookie';
-const API_URL = 'http://localhost:3000/api/user';
+import axios from "axios";
 
-export const userLogin = async (username, password) => {
-    try {
-        const { data } = await axios.post(`${API_URL}/login`, { username, password }, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+const API_URL = "http://localhost:3000/api/user";
 
-        return data;
-    } catch (err) {
-        throw err.response?.data?.error || 'An error occurred';
-    }
+export const userLogin = async (email, password) => {
+  try {
+    const { data } = await axios.post(
+      `${API_URL}/login`,
+      { email, password },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return data;
+  } catch (err) {
+    throw err.response?.data?.error || "An error occurred";
+  }
+};
+
+export const userSignUp = async (userData) => {
+  try {
+    const response = await axios.post(`${API_URL}/add`, userData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response;
+  } catch (err) {
+    throw err.response?.data?.error || "An error occurred";
+  }
 };

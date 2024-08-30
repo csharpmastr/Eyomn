@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { TbLayoutDashboard } from "react-icons/tb";
 import { TbScan } from "react-icons/tb";
@@ -7,18 +7,24 @@ import { FiUser } from "react-icons/fi";
 import SidebarLogo from "../../assets/Image/sidebar_logo.png";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
-const SideBar = () => {
-  const [selected, setSelected] = useState("dashboard");
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+import Cookies from "js-cookie";
+import useLogout from "../../Hooks/useLogout";
 
+const SideBar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { logout, isLoading, error } = useLogout();
+  const [selected, setSelected] = useState(() => {
+    return Cookies.get("selectedTab");
+  });
   const handleMenuClick = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-
+  useEffect(() => {
+    Cookies.set("selectedTab", selected, { expires: 7 });
+  }, [selected]);
   return (
     <>
-      {isMenuOpen ? "" : ""}
-      <div className="h-auto w-full xl:h-full xl:w-1/6 bg-[#1ABC9C] xl:bg-[#2C3E50] ">
+      <div className=" h-auto w-full xl:h-screen xl:w-60 bg-[#1ABC9C] xl:bg-[#2C3E50] ">
         <div className="flex items-center justify-between xl:mb-10 px-4 md:px-6 lg:px-8">
           {isMenuOpen ? (
             <IoMdClose
@@ -38,14 +44,16 @@ const SideBar = () => {
           />
         </div>
         <div
-          className={`xl:flex xl:flex-col xl:space-y-3 xl:px-6 xl:pt-5 xl:pb-10  ${
-            isMenuOpen ? "flex flex-col items-left h-auto p-4" : "hidden"
+          className={`xl:flex xl:flex-col px-4 xl:space-y-3 xl:px-6 xl:pt-5 xl:pb-5 transition-all duration-300 ease-in-out overflow-hidden  ${
+            isMenuOpen
+              ? "block max-h-screen bg-[#2C3E50] fixed xl:static w-full xl:w-auto"
+              : "hidden xl:block"
           } `}
         >
           <NavLink
             className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md ${
               selected === "dashboard"
-                ? "xl:bg-[#A0A3A6] xl:text-white font-semibold"
+                ? "xl:bg-[#A0A3A6] text-white font-semibold"
                 : " text-[#B5B5B5]"
             }`}
             onClick={() => setSelected("dashboard")}
@@ -57,7 +65,7 @@ const SideBar = () => {
           <NavLink
             className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md ${
               selected === "scan"
-                ? "xl:bg-[#A0A3A6] xl:text-white font-semibold"
+                ? "xl:bg-[#A0A3A6] text-white font-semibold"
                 : " text-[#B5B5B5]"
             }`}
             onClick={() => setSelected("scan")}
@@ -67,10 +75,10 @@ const SideBar = () => {
             Scan Fundus
           </NavLink>
           <NavLink
-            className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md ${
+            className={`font-Poppins flex items-center text-[18px]  py-2 px-4 rounded-md   ${
               selected === "scribe"
-                ? "xl:bg-[#A0A3A6] xl:text-white font-semibold"
-                : " text-[#B5B5B5]"
+                ? "xl:bg-[#A0A3A6] text-white  xl:text-white font-semibold"
+                : " text-[#B5B5B5]  "
             }`}
             onClick={() => setSelected("scribe")}
             to={"scribe"}
@@ -79,16 +87,22 @@ const SideBar = () => {
             Scribe
           </NavLink>
           <NavLink
-            className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md  ${
+            className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md   ${
               selected === "patient"
-                ? "xl:bg-[#A0A3A6] xl:text-white font-semibold"
-                : " text-[#B5B5B5] "
+                ? "xl:bg-[#A0A3A6] text-white  xl:text-white font-semibold"
+                : " text-[#B5B5B5]  "
             }`}
             onClick={() => setSelected("patient")}
             to={"patient"}
           >
             <FiUser className="h-[25px] w-[25px] xl:mr-3 xl:ml-0 mr-2" />
             Patients
+          </NavLink>
+          <NavLink
+            className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md`}
+            onClick={logout}
+          >
+            Logout
           </NavLink>
         </div>
       </div>
