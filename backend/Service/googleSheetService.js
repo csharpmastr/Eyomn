@@ -43,13 +43,16 @@ const emailExists = async (email) => {
 };
 
 async function appendToSheet(data) {
-  const filteredValues = Object.values(data).filter(
-    (value) => value !== undefined
-  );
-
-  const values = [filteredValues]; // Use filtered values that exclude missing fields
+  const filteredData = {
+    email: data.email,
+    given_name: data.given_name || "",
+    family_name: data.family_name || "",
+  };
+  const values = [
+    [filteredData.given_name, filteredData.family_name, filteredData.email],
+  ];
   const range = "Sheet1";
-  const valueInputOption = "USER_ENTERED";
+  const valueInputOption = "USER_ENTERED"; // Automatically format the input as needed
   const resource = { values };
 
   try {
