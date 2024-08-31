@@ -12,6 +12,7 @@ const Introduction = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -21,6 +22,10 @@ const Introduction = () => {
 
   const openErrorModal = () => setIsErrorModalOpen(true);
   const closeErrorModal = () => setIsErrorModalOpen(false);
+
+  const openErrorFetchModal = () => setIsError(true);
+  const closeErrorFetchModal = () => setIsError(false);
+
   const formFields = [
     {
       name: "given_name",

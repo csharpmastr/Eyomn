@@ -43,7 +43,11 @@ const emailExists = async (email) => {
 };
 
 async function appendToSheet(data) {
-  const values = [Object.values(data)];
+  const filteredValues = Object.values(data).filter(
+    (value) => value !== undefined
+  );
+
+  const values = [filteredValues]; // Use filtered values that exclude missing fields
   const range = "Sheet1";
   const valueInputOption = "USER_ENTERED";
   const resource = { values };

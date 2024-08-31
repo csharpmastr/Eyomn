@@ -1,4 +1,3 @@
-// Modal Component
 import React from "react";
 import ReactDOM from "react-dom";
 
@@ -11,6 +10,7 @@ const Modal = ({
   className,
   overlayClassName,
   overlayDescriptionClassName,
+  overlayDivDesc,
 }) => {
   if (!isOpen) return null;
 
@@ -21,26 +21,26 @@ const Modal = ({
       <div
         className={`bg-white p-6 rounded-lg shadow-lg relative w-full max-w-md mx-4 ${className}`}
       >
-        <div className="w-full flex justify-end">
-          <button
-            className="sticky left-96 top-0 text-gray-600 hover:text-gray-900 text-3xl p-2 rounded-full"
-            onClick={onClose}
-          >
-            &times;
-          </button>
-        </div>
         {title && (
-          <div className=" -mt-10 border-b pb-2 mb-4">
+          <div className="border-b pb-2 mb-4">
             <h2 className="text-lg font-bold font-Poppins">{title}</h2>
           </div>
         )}
-        {description && (
-          <p
-            className={`text-gray-600 mb-4 p-2 ${overlayDescriptionClassName}`}
-          >
-            {description}
-          </p>
-        )}
+        <button
+          className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 text-3xl p-2 rounded-full"
+          onClick={onClose}
+        >
+          &times;
+        </button>
+        <div className={overlayDivDesc}>
+          {description && (
+            <p
+              className={`text-gray-600 mb-4 p-2 ${overlayDescriptionClassName}`}
+            >
+              {description}
+            </p>
+          )}
+        </div>
         {children}
       </div>
     </div>,

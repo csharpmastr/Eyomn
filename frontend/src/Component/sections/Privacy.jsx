@@ -204,7 +204,7 @@ const Privacy = () => {
                     <bdt className="block-component" />
                     If you still have any questions or concerns, please contact
                     us at
-                    <bdt className="question">info@eyomn.com</bdt>.
+                    <bdt className="question"> info@eyomn.com</bdt>.
                   </span>
                 </span>
               </span>
@@ -6178,7 +6178,7 @@ const Privacy = () => {
                                                           or comments about your
                                                           privacy rights, you
                                                           may email us at{" "}
-                                                          <bdt className="question">
+                                                          <bdt className="question underline">
                                                             info@eyomn.com
                                                           </bdt>
                                                           .
