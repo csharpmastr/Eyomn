@@ -33,49 +33,51 @@ const ScanFundus = () => {
           Mac Mac
         </h1>
       </div>
-      <div
-        className={`flex flex-col justify-center items-center h-[60vh] xl:h-[70vh]  rounded-md mb-2 ${
-          image ? `border-none` : `border-dashed border-2 border-[#C8C8C8]`
-        }`}
-      >
-        {!image ? (
-          <FileUploader
-            handleChange={handleChange}
-            name="file"
-            types={["JPG", "PNG", "GIF"]}
-            maxSize={50 * 1024 * 1024}
-            className="flex-grow flex flex-col justify-center items-center h-full w-full"
-          >
-            <div className="flex flex-col justify-center items-center">
-              <div className="flex justify-center items-center py-2 px-6 bg-[#1ABC9C] rounded-md font-Poppins text-white gap-4 hover:cursor-pointer mb-2">
-                <TiUpload className="w-auto h-8" />
-                <p>Upload Fundus Image</p>
+      <div className="flex justify-center items-center flex-col">
+        <div
+          className={`flex flex-col justify-center items-center h-[60vh] xl:w-[70vw] rounded-md mb-2${
+            image ? `border-none` : `border-dashed border-2 border-[#C8C8C8]`
+          }`}
+        >
+          {!image ? (
+            <FileUploader
+              handleChange={handleChange}
+              name="file"
+              types={["JPG", "PNG", "GIF"]}
+              maxSize={50 * 1024 * 1024}
+              className="flex-grow flex flex-col justify-center items-center h-full w-full"
+            >
+              <div className="flex flex-col justify-center items-center">
+                <div className="flex justify-center items-center py-2 px-6 bg-[#1ABC9C] rounded-md font-Poppins text-white gap-4 hover:cursor-pointer mb-2">
+                  <TiUpload className="w-auto h-8" />
+                  <p>Upload Fundus Image</p>
+                </div>
+                <div className="text-center">
+                  <p className="font-Poppins text-[14px] text-[#A7A7A7]">
+                    Or drag image <span className="font-semibold">here...</span>
+                  </p>
+                  <p className="font-Poppins text-[18px] text-[#A7A7A7]">
+                    Maximum size: 50MB
+                  </p>
+                </div>
               </div>
-              <div className="text-center">
-                <p className="font-Poppins text-[14px] text-[#A7A7A7]">
-                  Or drag image <span className="font-semibold">here...</span>
-                </p>
-                <p className="font-Poppins text-[18px] text-[#A7A7A7]">
-                  Maximum size: 50MB
-                </p>
-              </div>
-            </div>
-          </FileUploader>
-        ) : (
-          <img
-            src={image}
-            alt="Uploaded preview"
-            className="rounded-lg w-full h-full "
-          />
+            </FileUploader>
+          ) : (
+            <img
+              src={image}
+              alt="Uploaded preview"
+              className="rounded-lg w-full h-full xl:h-[60vh] xl:w-[70vw]"
+            />
+          )}
+        </div>
+        {image && (
+          <div className="flex justify-end mt-5 mx-auto" onClick={handleScan}>
+            <button className="py-2 px-6 bg-[#1ABC9C] text-white font-Poppins font-semibold rounded-md hover:bg-[#16a085]">
+              {isLoading ? "Scanning..." : "Scan Fundus"}
+            </button>
+          </div>
         )}
       </div>
-      {image && (
-        <div className="flex justify-end" onClick={handleScan}>
-          <button className="py-2 px-6 bg-[#1ABC9C] text-white font-Poppins font-semibold rounded-md hover:bg-[#16a085]">
-            {isLoading ? "Scanning..." : "Scan Fundus"}
-          </button>
-        </div>
-      )}
     </div>
   );
 };

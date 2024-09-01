@@ -43,7 +43,14 @@ const emailExists = async (email) => {
 };
 
 async function appendToSheet(data) {
-  const values = [Object.values(data)];
+  const filteredData = {
+    email: data.email,
+    given_name: data.given_name || "",
+    family_name: data.family_name || "",
+  };
+  const values = [
+    [filteredData.given_name, filteredData.family_name, filteredData.email],
+  ];
   const range = "Sheet1";
   const valueInputOption = "USER_ENTERED";
   const resource = { values };

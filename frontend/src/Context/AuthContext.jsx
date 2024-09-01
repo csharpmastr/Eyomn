@@ -1,6 +1,6 @@
 import React, { createContext, useReducer, useEffect } from "react";
 import PropTypes from "prop-types";
-import { jwtDecode } from "jwt-decode"; // Correct import if needed
+import { jwtDecode } from "jwt-decode";
 import Cookies from "universal-cookie";
 
 export const AuthContext = createContext();
@@ -26,7 +26,6 @@ const isTokenExpired = (token) => {
 export const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, { user: null });
   const cookies = new Cookies();
-
   useEffect(() => {
     const checkTokens = () => {
       const accessToken = cookies.get("accessToken");
@@ -48,6 +47,7 @@ export const AuthContextProvider = ({ children }) => {
         cookies.remove("refreshToken", { path: "/" });
       } else {
         const user = jwtDecode(accessToken);
+
         dispatch({ type: "LOGIN", payload: user });
       }
     };

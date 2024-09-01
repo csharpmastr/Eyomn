@@ -14,13 +14,13 @@ const SideBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { logout, isLoading, error } = useLogout();
   const [selected, setSelected] = useState(() => {
-    return Cookies.get("selectedTab");
+    return sessionStorage.getItem("selectedTab") || "dashboard";
   });
   const handleMenuClick = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   useEffect(() => {
-    Cookies.set("selectedTab", selected, { expires: 7 });
+    sessionStorage.setItem("selectedTab", selected);
   }, [selected]);
   return (
     <>

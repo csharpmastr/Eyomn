@@ -17,6 +17,7 @@ export const useLogout = () => {
       cookies.remove("accessToken", { path: "/" });
       cookies.remove("refreshToken", { path: "/" });
       dispatch({ type: "LOGOUT" });
+      sessionStorage.removeItem("selectedTab");
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred during logout.");
