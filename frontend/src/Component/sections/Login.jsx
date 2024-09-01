@@ -21,7 +21,6 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    console.log(userData);
     e.preventDefault();
     try {
       const response = await login(userData.email, userData.password);

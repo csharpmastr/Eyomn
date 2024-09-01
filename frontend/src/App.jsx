@@ -45,7 +45,7 @@ const AppRoutes = () => {
       />
 
       {/* Protected routes */}
-      <Route element={<MVP />}>
+      <Route element={user ? <MVP /> : <Navigate to="/login" />}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="scan" element={<Scan />}>
           <Route path=":id" element={<ScanFundus />} />
