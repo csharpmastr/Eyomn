@@ -1,20 +1,11 @@
 const { v4: uuidv4 } = require("uuid");
-const {
-  setDoc,
-  doc,
-  collection,
-  getDocs,
-  query,
-  where,
-} = require("firebase/firestore");
-const { db } = require("../Config/FirebaseConfig");
+const { setDoc, doc, getDocs, query, where } = require("firebase/firestore");
+const { clinicCollection } = require("../Config/FirebaseConfig");
 const {
   hashPassword,
   encryptData,
   comparePassword,
 } = require("../Security/DataHashing");
-
-const UserCollection = collection(db, "users");
 
 class EmailAlreadyExistsError extends Error {
   constructor(message) {
@@ -23,31 +14,32 @@ class EmailAlreadyExistsError extends Error {
   }
 }
 
-const addUser = async (userData) => {
+const addUser = async (clinicData) => {
   try {
-    const q = query(UserCollection, where("email", "==", userData.email));
+    const q = query(clinicCollection, where("email", "==", clinicData.email));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
       throw new EmailAlreadyExistsError("Email already exists.");
     }
 
-    const hashedPassword = await hashPassword(userData.password);
+    const hashedPassword = await hashPassword(clinicData.password);
 
-    const encryptedFName = encryptData(userData.firstname);
-    const encryptedLName = encryptData(userData.lastname);
-    const encryptedContact = encryptData(userData.contact);
+    const encryptedFName = encryptData(clinicData.firstname);
+    const encryptedLName = encryptData(clinicData.lastname);
+    const encryptedContact = encryptData(clinicData.contact);
 
     const userId = uuidv4();
-    const userRef = doc(UserCollection, userId);
+    const userRef = doc(clinicCollection, userId);
 
     await setDoc(userRef, {
-      email: userData.email,
+      email: clinicData.email,
       password: hashedPassword,
       firstname: encryptedFName,
       lastname: encryptedLName,
       contact: encryptedContact,
       id: userId,
+      role: "0",
     });
 
     return userId;
@@ -58,10 +50,11 @@ const addUser = async (userData) => {
     throw new Error("Failed to add user: " + error.message);
   }
 };
+
 const loginUser = async (userData) => {
   const { email, password } = userData;
   try {
-    const userQuery = query(UserCollection, where("email", "==", email));
+    const userQuery = query(clinicCollection, where("email", "==", email));
     const querySnapshot = await getDocs(userQuery);
 
     if (querySnapshot.empty) {
@@ -69,13 +62,18 @@ const loginUser = async (userData) => {
     }
 
     const user = querySnapshot.docs[0].data();
+
     const isPasswordValid = await comparePassword(password, user.password);
 
     if (!isPasswordValid) {
       throw new Error("Invalid email or password");
     }
 
-    return { userId: user.id };
+    if (!user.role) {
+      throw new Error("User role not found");
+    }
+
+    return { userId: user.id, role: user.role };
   } catch (error) {
     throw new Error("Login failed: " + error.message);
   }

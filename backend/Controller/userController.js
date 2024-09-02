@@ -4,10 +4,11 @@ const jwt = require("jsonwebtoken");
 const generateToken = (id, secret, duration) => {
   return jwt.sign({ id }, secret, { expiresIn: duration });
 };
+
 const addUserHandler = async (req, res) => {
   try {
     const userData = req.body;
-    const userId = await addUser(userData);
+    const { userId, role } = await addUser(userData);
     const accessToken = generateToken(
       userId,
       process.env.JWT_ACCESS_SECRET,
@@ -22,6 +23,7 @@ const addUserHandler = async (req, res) => {
     res.status(201).send({
       message: "User registered successfully",
       userId: userId,
+      role: role,
       token: {
         accessToken: accessToken,
         refreshToken,
@@ -41,7 +43,7 @@ const loginUserHandler = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const { userId } = await loginUser({ email, password });
+    const { userId, role } = await loginUser({ email, password });
 
     const accessToken = generateToken(
       userId,
@@ -56,6 +58,7 @@ const loginUserHandler = async (req, res) => {
 
     res.status(200).json({
       userId: userId,
+      role: role,
       success: true,
       message: "Login successful",
       tokens: {

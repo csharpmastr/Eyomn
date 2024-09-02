@@ -1,6 +1,6 @@
 // FirebaseConfig.js
 require("dotenv").config();
-const { initializeApp, getApps, getApp } = require("firebase/app");
+const { initializeApp } = require("firebase/app");
 const { getFirestore, collection } = require("firebase/firestore");
 
 const firebaseConfig = {
@@ -14,6 +14,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const UserCollection = collection(db, "users");
+const clinicCollection = collection(db, "clinic");
+const clinicPatientsCollection = collection(db, "clinicPatients");
 
-module.exports = { db, UserCollection };
+module.exports = { db, clinicCollection, clinicPatientsCollection };
