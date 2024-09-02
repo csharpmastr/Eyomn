@@ -15,12 +15,12 @@ export const useLogin = () => {
     try {
       const response = await userLogin(email, password);
 
-      const userId = response.userId;
-      const accessToken = response.tokens.accessToken;
-      const refreshToken = response.tokens.refreshToken;
+      const { userId, role, tokens } = response;
+      const { accessToken, refreshToken } = tokens;
 
       cookies.set("accessToken", accessToken, { path: "/" });
       cookies.set("refreshToken", refreshToken, { path: "/" });
+      cookies.set("role", role, { path: "/" });
       dispatch({ type: "LOGIN", payload: userId });
       return response;
     } catch (err) {

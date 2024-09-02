@@ -69,7 +69,7 @@ const Login = () => {
           ) : (
             ""
           )}
-          <SubmitButton value={"Login"} />
+          <SubmitButton value={"Login"} disabled={isLoading} />
         </div>
         <p className="font-Poppins text-[14px] text-center mt-5">
           Don't have an account? <Link to={"/signup"}>Sign up</Link>

@@ -13,21 +13,26 @@ import Patient from "./Page/Main Page/Patient";
 import ScanFundus from "./Page/Main Page/Scan/ScanFundus";
 import { useContext } from "react";
 import { AuthContext, AuthContextProvider } from "./Context/AuthContext";
+import ScribePatient from "./Page/Main Page/Scribe/ScribePatient";
+import { Provider } from "react-redux";
+import { store } from "./Store/Store";
+import Staff from "./Page/Main Page/Staff";
 
 const AppRoutes = () => {
   const { user } = useContext(AuthContext);
+  const selectedTab = sessionStorage.getItem("selectedTab") || "dashboard";
 
   return (
     <Routes>
       <Route
         path="/"
-        element={<Navigate to={user ? "/dashboard" : "/login"} />}
+        element={<Navigate to={user ? `/${selectedTab}` : "/login"} />}
       />
       <Route
         path="/login"
         element={
           user ? (
-            <Navigate to="/dashboard" />
+            <Navigate to={`/${selectedTab}`} />
           ) : (
             <AuthenticationPage type="login" />
           )
@@ -37,7 +42,7 @@ const AppRoutes = () => {
         path="/signup"
         element={
           user ? (
-            <Navigate to="/dashboard" />
+            <Navigate to={`/${selectedTab}`} />
           ) : (
             <AuthenticationPage type="signup" />
           )
@@ -50,8 +55,11 @@ const AppRoutes = () => {
         <Route path="scan" element={<Scan />}>
           <Route path=":id" element={<ScanFundus />} />
         </Route>
-        <Route path="scribe" element={<Scribe />} />
+        <Route path="scribe" element={<Scribe />}>
+          <Route path=":id" element={<ScribePatient />} />
+        </Route>
         <Route path="patient" element={<Patient />} />
+        <Route path="staff" element={<Staff />} />
       </Route>
 
       {/* Catch-all route */}
@@ -63,9 +71,11 @@ const AppRoutes = () => {
 const App = () => {
   return (
     <AuthContextProvider>
-      <Router>
-        <AppRoutes />
-      </Router>
+      <Provider store={store}>
+        <Router>
+          <AppRoutes />
+        </Router>
+      </Provider>
     </AuthContextProvider>
   );
 };

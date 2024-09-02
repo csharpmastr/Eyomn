@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TiUpload } from "react-icons/ti";
 import { FileUploader } from "react-drag-drop-files";
+import SubmitButton from "../../../Component/ui/SubmitButton";
 
 const ScanFundus = () => {
   const [image, setImage] = useState(null);
@@ -25,18 +26,20 @@ const ScanFundus = () => {
   };
 
   return (
-    <div className="h-full w-full px-4 pt-4">
-      <h1 className="font-Poppins text-[18px]">Upload fundus image</h1>
-      <div className="font-Poppins px-4 flex flex-row gap-4 pb-2 mb-2 pt-2">
+    <div className="h-full w-full px-8 pt-4 lg:flex lg:flex-col lg:items-center lg:justify-center xl:block">
+      <div className="lg:w-full">
+        <h1 className="font-Poppins text-[18px] ">Upload fundus image</h1>
+      </div>
+      <div className="font-Poppins px-4 flex flex-row gap-4 pb-2 mb-2 pt-2 lg:w-full">
         <div className="w-8 h-8 rounded-full flex items-center justify-center font-semibold text-black bg-red-100"></div>
         <h1 className="flex justify-center items-center font-Poppins">
           Mac Mac
         </h1>
       </div>
-      <div className="flex justify-center items-center flex-col">
+      <div className="flex justify-center items-center flex-col w-full">
         <div
-          className={`flex flex-col justify-center items-center h-[60vh] xl:w-[70vw] rounded-md mb-2${
-            image ? `border-none` : `border-dashed border-2 border-[#C8C8C8]`
+          className={`flex flex-col justify-center items-center h-[60vh] xl:w-[70vw] rounded-md w-full ${
+            image ? `border-none` : `border-dashed border-2 border-[#C8C8C8] `
           }`}
         >
           {!image ? (
@@ -70,11 +73,11 @@ const ScanFundus = () => {
             />
           )}
         </div>
+      </div>
+      <div className="w-full mt-2 xl:mt-5">
         {image && (
-          <div className="flex justify-end mt-5 mx-auto" onClick={handleScan}>
-            <button className="py-2 px-6 bg-[#1ABC9C] text-white font-Poppins font-semibold rounded-md hover:bg-[#16a085]">
-              {isLoading ? "Scanning..." : "Scan Fundus"}
-            </button>
+          <div className="flex justify-end mt-2 mx-auto" onClick={handleScan}>
+            <SubmitButton value={"Scan Fundus"} style={"w-auto px-4 "} />
           </div>
         )}
       </div>

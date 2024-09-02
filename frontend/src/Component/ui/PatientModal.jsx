@@ -4,7 +4,7 @@ import { IoMdSearch } from "react-icons/io";
 import PatientCard from "./PatientCard";
 import { useNavigate } from "react-router-dom";
 
-const PatientModal = ({ onClose }) => {
+const PatientModal = ({ onClose, tab }) => {
   const patientData = [
     { id: "1", name: "Sarah D. Uterte" },
     { id: "2", name: "John Doe" },
@@ -20,7 +20,7 @@ const PatientModal = ({ onClose }) => {
   const navigate = useNavigate();
 
   const handleClickPatient = (id) => {
-    navigate(`/scan/${id}`);
+    navigate(`/${tab}/${id}`);
     onClose();
   };
 

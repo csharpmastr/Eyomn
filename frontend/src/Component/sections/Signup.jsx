@@ -6,7 +6,7 @@ import useSignup from "../../Hooks/useSignup";
 const Signup = () => {
   const navigate = useNavigate();
   const { signup, isLoading, error } = useSignup();
-  const [userData, setUserData] = useState({
+  const [clinicData, setClinic] = useState({
     firstname: "",
     lastname: "",
     username: "",
@@ -16,13 +16,13 @@ const Signup = () => {
   });
 
   const handleChange = (e) => {
-    setUserData({ ...userData, [e.target.name]: e.target.value });
+    setClinic({ ...clinicData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await signup(userData);
+      const res = await signup(clinicData);
       if (res.status === 200) {
         navigate("/dashboard");
       }
@@ -45,7 +45,7 @@ const Signup = () => {
           <input
             type="text"
             name="firstname"
-            value={userData.firstname}
+            value={clinicData.firstname}
             onChange={handleChange}
             className="w-full p-2 rounded-md border-2 border-[#C8C8C8] font-Poppins"
             placeholder="Enter your first name"
@@ -54,7 +54,7 @@ const Signup = () => {
           <input
             type="text"
             name="lastname"
-            value={userData.lastname}
+            value={clinicData.lastname}
             onChange={handleChange}
             className="w-full p-2 rounded-md border-2 border-[#C8C8C8] font-Poppins"
             placeholder="Enter your last name"
@@ -63,7 +63,7 @@ const Signup = () => {
           <input
             type="text"
             name="username"
-            value={userData.username}
+            value={clinicData.username}
             onChange={handleChange}
             className="w-full p-2 rounded-md border-2 border-[#C8C8C8] font-Poppins"
             placeholder="Enter your organization name"
@@ -72,7 +72,7 @@ const Signup = () => {
           <input
             type="email"
             name="email"
-            value={userData.email}
+            value={clinicData.email}
             onChange={handleChange}
             className="w-full p-2 rounded-md border-2 border-[#C8C8C8] font-Poppins"
             placeholder="Enter your email"
@@ -81,7 +81,7 @@ const Signup = () => {
           <input
             type="number"
             name="contact"
-            value={userData.contact}
+            value={clinicData.contact}
             onChange={handleChange}
             className="w-full p-2 rounded-md border-2 border-[#C8C8C8] font-Poppins"
             placeholder="Enter your contact number"
@@ -90,7 +90,7 @@ const Signup = () => {
           <input
             type="password"
             name="password"
-            value={userData.password}
+            value={clinicData.password}
             onChange={handleChange}
             className="w-full p-2 rounded-md border-2 border-[#C8C8C8] font-Poppins"
             placeholder="Enter your password"

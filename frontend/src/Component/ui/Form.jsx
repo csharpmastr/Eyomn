@@ -63,7 +63,7 @@ const Form = ({ formFields = [], handleSubmit, disabled }) => {
               placeholder={field.placeholder}
               value={formData[field.name]}
               onChange={handleChange}
-              className="w-full p-2 border-2 rounded-md mt-5 font-Poppins"
+              className="w-full p-2 border-2 rounded-md mb-5 font-Poppins"
               disabled={disabled}
               pattern={field.pattern}
             />
@@ -77,7 +77,7 @@ const Form = ({ formFields = [], handleSubmit, disabled }) => {
       <button
         type="submit"
         disabled={disabled}
-        className="flex justify-center gap-2 items-center mt-6 border-2 border-solid border-gray-400 w-full h-10 shadow-lg hover:cursor-pointer 
+        className="flex justify-center gap-2 items-center rounded-md border-2 border-solid border-gray-400 w-full h-10 shadow-lg hover:cursor-pointer 
               transition-transform ease-in-out duration-300 
             hover:bg-gray-400 hover:bg-opacity-25 text-lg
               hover:shadow-xl hover:scale-105 tracking-wide  text-paragraph  font-Poppins font-bold  "

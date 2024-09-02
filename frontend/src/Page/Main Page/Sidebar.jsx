@@ -7,10 +7,14 @@ import { FiUser } from "react-icons/fi";
 import SidebarLogo from "../../assets/Image/sidebar_logo.png";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
-import Cookies from "js-cookie";
+import Cookies from "universal-cookie";
 import useLogout from "../../Hooks/useLogout";
+import { useAuthContext } from "../../Hooks/useAuthContext";
 
 const SideBar = () => {
+  const cookies = new Cookies();
+  const { user } = useAuthContext();
+  const role = cookies.get("role");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { logout, isLoading, error } = useLogout();
   const [selected, setSelected] = useState(() => {
@@ -20,6 +24,9 @@ const SideBar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   useEffect(() => {
+    console.log(user);
+    console.log(role === 0);
+
     sessionStorage.setItem("selectedTab", selected);
   }, [selected]);
   return (
@@ -50,42 +57,53 @@ const SideBar = () => {
               : "hidden xl:block"
           } `}
         >
-          <NavLink
-            className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md ${
-              selected === "dashboard"
-                ? "xl:bg-[#A0A3A6] text-white font-semibold"
-                : " text-[#B5B5B5]"
-            }`}
-            onClick={() => setSelected("dashboard")}
-            to={"dashboard"}
-          >
-            <TbLayoutDashboard className="h-[25px] w-[25px] xl:mr-3 xl:ml-0 mr-2" />
-            Dashboard
-          </NavLink>
-          <NavLink
-            className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md ${
-              selected === "scan"
-                ? "xl:bg-[#A0A3A6] text-white font-semibold"
-                : " text-[#B5B5B5]"
-            }`}
-            onClick={() => setSelected("scan")}
-            to={"scan"}
-          >
-            <TbScan className="h-[25px] w-[25px] xl:mr-3 xl:ml-0 mr-2" />
-            Scan Fundus
-          </NavLink>
-          <NavLink
-            className={`font-Poppins flex items-center text-[18px]  py-2 px-4 rounded-md   ${
-              selected === "scribe"
-                ? "xl:bg-[#A0A3A6] text-white  xl:text-white font-semibold"
-                : " text-[#B5B5B5]  "
-            }`}
-            onClick={() => setSelected("scribe")}
-            to={"scribe"}
-          >
-            <FaRegStickyNote className="xl:h-[25px] xl:w-[25px] xl:mr-3 xl:ml-0 ml-1 mr-2 m-1" />
-            Scribe
-          </NavLink>
+          {role === 0 ? (
+            <NavLink
+              className={`font-Poppins flex text-[18px] py-3 px-4 rounded-md ${
+                selected === "dashboard"
+                  ? "xl:bg-[#A0A3A6] text-white font-semibold"
+                  : "text-[#B5B5B5]"
+              }`}
+              onClick={() => setSelected("dashboard")}
+              to={"dashboard"}
+            >
+              <TbLayoutDashboard className="h-[25px] w-[25px] xl:mr-3 xl:ml-0 mr-2" />
+              Dashboard
+            </NavLink>
+          ) : (
+            ""
+          )}
+          {role === 0 ? (
+            ""
+          ) : (
+            <>
+              {" "}
+              <NavLink
+                className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md ${
+                  selected === "scan"
+                    ? "xl:bg-[#A0A3A6] text-white font-semibold"
+                    : " text-[#B5B5B5]"
+                }`}
+                onClick={() => setSelected("scan")}
+                to={"scan"}
+              >
+                <TbScan className="h-[25px] w-[25px] xl:mr-3 xl:ml-0 mr-2" />
+                Scan Fundus
+              </NavLink>
+              <NavLink
+                className={`font-Poppins flex items-center text-[18px]  py-2 px-4 rounded-md   ${
+                  selected === "scribe"
+                    ? "xl:bg-[#A0A3A6] text-white  xl:text-white font-semibold"
+                    : " text-[#B5B5B5]  "
+                }`}
+                onClick={() => setSelected("scribe")}
+                to={"scribe"}
+              >
+                <FaRegStickyNote className="xl:h-[25px] xl:w-[25px] xl:mr-3 xl:ml-0 ml-1 mr-2 m-1" />
+                Scribe
+              </NavLink>
+            </>
+          )}
           <NavLink
             className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md   ${
               selected === "patient"
@@ -98,6 +116,22 @@ const SideBar = () => {
             <FiUser className="h-[25px] w-[25px] xl:mr-3 xl:ml-0 mr-2" />
             Patients
           </NavLink>
+          {role === 0 ? (
+            <NavLink
+              className={`font-Poppins flex items-center text-[18px]  py-2 px-4 rounded-md   ${
+                selected === "staff"
+                  ? "xl:bg-[#A0A3A6] text-white  xl:text-white font-semibold"
+                  : " text-[#B5B5B5]  "
+              }`}
+              onClick={() => setSelected("staff")}
+              to={"staff"}
+            >
+              <FaRegStickyNote className="xl:h-[25px] xl:w-[25px] xl:mr-3 xl:ml-0 ml-1 mr-2 m-1" />
+              Staff
+            </NavLink>
+          ) : (
+            ""
+          )}
           <NavLink
             className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md`}
             onClick={logout}

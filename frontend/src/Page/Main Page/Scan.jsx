@@ -9,7 +9,7 @@ const Scan = () => {
 
   return (
     <div className="h-full flex justify-center items-center">
-      {isModalOpen && <PatientModal onClose={closeModal} />}
+      {isModalOpen && <PatientModal onClose={closeModal} tab={"scan"} />}
       <Outlet />
     </div>
   );
