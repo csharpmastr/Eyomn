@@ -2,6 +2,8 @@ const { addPatient } = require("../Service/patientService");
 
 const addPatientHandler = async (req, res) => {
   try {
+    console.log(req.body);
+
     const { clinicId, ...patientData } = req.body;
     if (!clinicId || Object.keys(patientData).length === 0) {
       return res
@@ -9,6 +11,7 @@ const addPatientHandler = async (req, res) => {
         .json({ message: "Clinic ID and patient data are required." });
     }
     await addPatient(clinicId, patientData);
+    return res.status(200).json({ message: "Patient added successfully" });
   } catch (error) {
     console.error("Error adding patient: ", error);
     res
