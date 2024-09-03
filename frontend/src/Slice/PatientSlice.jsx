@@ -34,7 +34,7 @@ const patientSlice = createSlice({
   },
 });
 
-// Export actions to be used in components
+
 export const {
   addPatient,
   removePatient,
@@ -43,5 +43,4 @@ export const {
   clearPatients,
 } = patientSlice.actions;
 
-// Export the reducer to configure the store
 export default patientSlice.reducer;

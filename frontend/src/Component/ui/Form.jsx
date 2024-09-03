@@ -53,25 +53,24 @@ const Form = ({ formFields = [], handleSubmit, disabled }) => {
       {Array.isArray(formFields) &&
         formFields.map((field) => (
           <div key={field.name} className="">
-            <label htmlFor={field.name} className="">
-              {field.label}
-            </label>
-            <input
-              id={field.name}
-              type={field.type}
-              name={field.name}
-              placeholder={field.placeholder}
-              value={formData[field.name]}
-              onChange={handleChange}
-              className="w-full p-2 border-2 rounded-md mb-5 font-Poppins"
-              disabled={disabled}
-              pattern={field.pattern}
-            />
-            {errors[field.name] && (
-              <p className="text-red-500 text-sm font-Poppins pl-2 pt-2">
-                {errors[field.name]}
-              </p>
-            )}
+            <div className="mb-5">
+              <input
+                id={field.name}
+                type={field.type}
+                name={field.name}
+                placeholder={field.placeholder}
+                value={formData[field.name]}
+                onChange={handleChange}
+                className="w-full p-2 border-2 rounded-md font-Poppins"
+                disabled={disabled}
+                pattern={field.pattern}
+              />
+              {errors[field.name] && (
+                <p className="text-red-500 text-sm font-Poppins pl-2">
+                  {errors[field.name]}
+                </p>
+              )}
+            </div>
           </div>
         ))}
       <button

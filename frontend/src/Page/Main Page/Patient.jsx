@@ -7,45 +7,21 @@ import Form from "../../Component/ui/Form";
 import { useAuthContext } from "../../Hooks/useAuthContext";
 import { addPatient } from "../../Service/PatientService";
 import Cookies from "universal-cookie";
+import Loader from "../../Component/ui/Loader";
+import SuccessModal from "../../Component/ui/SuccessModal";
+import AddPatientModal from "../../Component/ui/AddPatientModal";
 const Patient = () => {
-  const { user } = useAuthContext();
-  const cookies = new Cookies();
-  const clinicId = user.id;
-  const accessToken = cookies.get("accessToken", { path: "/" });
-  const refreshToken = cookies.get("accessToken", { path: "/" });
   const [patientsCount, setPatientsCount] = useState(82);
   const [isAddPatientModalOpen, setisAddPatientModalOpen] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const openAddPatient = () => setisAddPatientModalOpen(true);
   const closeAddPatient = () => setisAddPatientModalOpen(false);
 
-  const formFields = [
-    {
-      name: "first_name",
-      type: "text",
-      placeholder: "Patient first name",
-      pattern: "^[a-zA-ZÀ-ÿ\\s'-]{2,}$",
-    },
-    {
-      name: "last_name",
-      type: "text",
-      placeholder: "Patient last name",
-      pattern: "^[a-zA-ZÀ-ÿ\\s'-]{2,}$",
-    },
-    {
-      name: "address",
-      type: "text",
-      placeholder: "Patient address",
-      pattern: "^[a-zA-ZÀ-ÿ\\s'-]{2,}$",
-    },
-  ];
-
-  const handlePatientSubmit = (formData) => {
-    const patientData = { ...formData, clinicId: clinicId };
-    console.log(patientData);
-  };
   return (
     <div className="h-full w-full">
+      {isLoading && <Loader />}
       <div>
         <div className="w-full flex justify-between mx-auto items-center px-8 pt-4">
           <div className="flex gap-2">
@@ -82,17 +58,15 @@ const Patient = () => {
           </div>
         </div>
       </div>
-      <Modal
-        isOpen={isAddPatientModalOpen}
-        onClose={closeAddPatient}
-        title="Add Patient"
-        className="w-[600px] h-auto p-4"
-        overlayDescriptionClassName={
-          "text-center font-Poppins pt-5 text-black text-[18px]"
-        }
-      >
-        <Form formFields={formFields} handleSubmit={handlePatientSubmit} />
-      </Modal>
+      {/* OVERLAYS */}
+      <div>
+        <AddPatientModal
+          isOpen={isAddPatientModalOpen}
+          onClose={closeAddPatient}
+        >
+          <Form />
+        </AddPatientModal>
+      </div>
     </div>
   );
 };

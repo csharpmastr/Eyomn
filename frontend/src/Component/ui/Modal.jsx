@@ -36,7 +36,7 @@ const Modal = ({
         )}
         {description && (
           <p
-            className={`text-gray-600 mb-4 p-2 ${overlayDescriptionClassName}`}
+            className={`text-gray-600 mb-4 p-2 font-Poppins ${overlayDescriptionClassName}`}
           >
             {description}
           </p>

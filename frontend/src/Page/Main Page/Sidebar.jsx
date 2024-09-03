@@ -57,7 +57,7 @@ const SideBar = () => {
               : "hidden xl:block"
           } `}
         >
-          {role === 0 ? (
+          {role !== 0 ? (
             <NavLink
               className={`font-Poppins flex text-[18px] py-3 px-4 rounded-md ${
                 selected === "dashboard"
@@ -73,11 +73,10 @@ const SideBar = () => {
           ) : (
             ""
           )}
-          {role === 0 ? (
+          {role !== 0 ? (
             ""
           ) : (
             <>
-              {" "}
               <NavLink
                 className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md ${
                   selected === "scan"
@@ -116,7 +115,7 @@ const SideBar = () => {
             <FiUser className="h-[25px] w-[25px] xl:mr-3 xl:ml-0 mr-2" />
             Patients
           </NavLink>
-          {role === 0 ? (
+          {role !== 0 ? (
             <NavLink
               className={`font-Poppins flex items-center text-[18px]  py-2 px-4 rounded-md   ${
                 selected === "staff"
