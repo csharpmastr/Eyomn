@@ -1,8 +1,13 @@
 const express = require("express");
-const { addPatientHandler } = require("../Controller/patientController");
+const {
+  addPatientHandler,
+  getPatientsHanlder,
+} = require("../Controller/patientController");
+const { validateToken } = require("../Wrapper/Wrapper");
 
 const router = express.Router();
 
-router.post("/add", addPatientHandler);
+router.post("/add", validateToken, addPatientHandler);
+router.post("/get-patients", getPatientsHanlder);
 
 module.exports = router;

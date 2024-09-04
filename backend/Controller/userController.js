@@ -8,7 +8,7 @@ const generateToken = (id, secret, duration) => {
 const addUserHandler = async (req, res) => {
   try {
     const userData = req.body;
-    const { userId, role } = await addUser(userData);
+    const { userId, role, organization } = await addUser(userData);
     const accessToken = generateToken(
       userId,
       process.env.JWT_ACCESS_SECRET,
@@ -23,7 +23,7 @@ const addUserHandler = async (req, res) => {
     res.status(201).send({
       message: "User registered successfully",
       userId: userId,
-      role: role,
+      organization: organization,
       token: {
         accessToken: accessToken,
         refreshToken,
@@ -43,7 +43,10 @@ const loginUserHandler = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const { userId, role } = await loginUser({ email, password });
+    const { userId, role, organization, staffData } = await loginUser({
+      email,
+      password,
+    });
 
     const accessToken = generateToken(
       userId,
@@ -56,16 +59,30 @@ const loginUserHandler = async (req, res) => {
       "1d"
     );
 
-    res.status(200).json({
-      userId: userId,
-      role: role,
-      success: true,
-      message: "Login successful",
-      tokens: {
-        accessToken,
-        refreshToken,
-      },
-    });
+    if (role === "0") {
+      res.status(200).json({
+        userId: userId,
+        role: role,
+        message: "Login successful",
+        organization: organization,
+        tokens: {
+          accessToken,
+          refreshToken,
+        },
+      });
+    } else {
+      res.status(200).json({
+        userId: userId,
+        role: role,
+        message: "Login successful",
+        staffData: staffData,
+        organization: organization,
+        tokens: {
+          accessToken,
+          refreshToken,
+        },
+      });
+    }
   } catch (error) {
     res.status(401).json({
       success: false,

@@ -16,5 +16,13 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const clinicCollection = collection(db, "clinic");
 const clinicPatientsCollection = collection(db, "clinicPatients");
+const clinicStaffCollection = collection(db, "clinicStaff");
+const userCollection = collection(db, "users");
 
-module.exports = { db, clinicCollection, clinicPatientsCollection };
+module.exports = {
+  db,
+  clinicCollection,
+  clinicPatientsCollection,
+  userCollection,
+  clinicStaffCollection,
+};
