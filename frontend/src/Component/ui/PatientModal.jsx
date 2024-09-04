@@ -4,12 +4,7 @@ import { IoMdSearch } from "react-icons/io";
 import PatientCard from "./PatientCard";
 import { useNavigate } from "react-router-dom";
 import AddPatientModal from "./AddPatientModal";
-import Cookies from "universal-cookie";
-import { useAuthContext } from "../../Hooks/useAuthContext";
-import { addPatient } from "../../Service/PatientService";
 import Loader from "./Loader";
-import SuccessModal from "./SuccessModal";
-import Modal from "./Modal";
 
 const PatientModal = ({ onClose, tab }) => {
   const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);

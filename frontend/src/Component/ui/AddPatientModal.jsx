@@ -3,15 +3,19 @@ import Modal from "./Modal";
 import Form from "./Form";
 import SuccessModal from "./SuccessModal";
 
-import { addPatient } from "../../Service/PatientService";
+import { addPatientService } from "../../Service/PatientService";
 import Cookies from "universal-cookie";
 import { useAuthContext } from "../../Hooks/useAuthContext";
 import Loader from "./Loader";
+import { useSelector } from "react-redux";
+import { useAddPatient } from "../../Hooks/useAddPatient";
 
 const AddPatientModal = ({ isOpen, onClose }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const doctor = useSelector((state) => state.reducer.doctor.doctor);
+
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
+  const { addPatientHook, isLoading, error } = useAddPatient();
   const cookies = new Cookies();
   const { user } = useAuthContext();
   const accessToken = cookies.get("accessToken", { path: "/" });
@@ -39,10 +43,15 @@ const AddPatientModal = ({ isOpen, onClose }) => {
   ];
 
   const handlePatientSubmit = async (formData) => {
-    setIsLoading(true);
-    const patientData = { ...formData, clinicId: user.id };
+    const patientData = {
+      ...formData,
+      doctorId: user.id,
+      clinicId: doctor.clinicId,
+    };
+    console.log(patientData);
     try {
-      const res = await addPatient(patientData, accessToken, refreshToken);
+      const res = await addPatientHook(patientData);
+
       if (res) {
         setIsSuccess(true);
         onClose();
@@ -50,8 +59,6 @@ const AddPatientModal = ({ isOpen, onClose }) => {
     } catch (err) {
       setIsError(true);
       onClose();
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -72,7 +79,6 @@ const AddPatientModal = ({ isOpen, onClose }) => {
           <Form formFields={formFields} handleSubmit={handlePatientSubmit} />
         </Modal>
       )}
-
       <SuccessModal
         isOpen={isSuccess}
         onClose={() => {

@@ -7,26 +7,27 @@ import { FiUser } from "react-icons/fi";
 import SidebarLogo from "../../assets/Image/sidebar_logo.png";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
+import { IoLogOutOutline } from "react-icons/io5";
+import { SlOrganization } from "react-icons/sl";
 import Cookies from "universal-cookie";
 import useLogout from "../../Hooks/useLogout";
 import { useAuthContext } from "../../Hooks/useAuthContext";
+import { useSelector } from "react-redux";
 
 const SideBar = () => {
+  const doctor = useSelector((state) => state.reducer.doctor);
   const cookies = new Cookies();
   const { user } = useAuthContext();
   const role = cookies.get("role");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { logout, isLoading, error } = useLogout();
   const [selected, setSelected] = useState(() => {
-    return sessionStorage.getItem("selectedTab") || "dashboard";
+    return sessionStorage.getItem("selectedTab");
   });
   const handleMenuClick = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   useEffect(() => {
-    console.log(user);
-    console.log(role === 0);
-
     sessionStorage.setItem("selectedTab", selected);
   }, [selected]);
   return (
@@ -51,92 +52,97 @@ const SideBar = () => {
           />
         </div>
         <div
-          className={`xl:flex xl:flex-col px-4 xl:space-y-3 xl:px-6 xl:pt-5 xl:pb-5 transition-all duration-300 ease-in-out overflow-hidden  ${
+          className={`xl:flex xl:flex-col px-4 xl:space-y-3 xl:px-6 xl:pt-5 xl:pb-5 transition-all duration-300 ease-in-out overflow-hidden xl:h-full ${
             isMenuOpen
               ? "block max-h-screen bg-[#2C3E50] fixed xl:static w-full xl:w-auto"
               : "hidden xl:block"
           } `}
         >
-          {role !== 0 ? (
-            <NavLink
-              className={`font-Poppins flex text-[18px] py-3 px-4 rounded-md ${
-                selected === "dashboard"
-                  ? "xl:bg-[#A0A3A6] text-white font-semibold"
-                  : "text-[#B5B5B5]"
-              }`}
-              onClick={() => setSelected("dashboard")}
-              to={"dashboard"}
-            >
-              <TbLayoutDashboard className="h-[25px] w-[25px] xl:mr-3 xl:ml-0 mr-2" />
-              Dashboard
-            </NavLink>
-          ) : (
-            ""
-          )}
-          {role !== 0 ? (
-            ""
-          ) : (
-            <>
+          <div className="flex flex-col xl:gap-4 mt-2">
+            {role === 0 ? (
               <NavLink
-                className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md ${
-                  selected === "scan"
+                className={`font-Poppins flex text-[18px] py-3 px-4 rounded-md xl:hover:bg-[#1ABC9C] hover:text-white   ${
+                  selected === "dashboard"
                     ? "xl:bg-[#A0A3A6] text-white font-semibold"
-                    : " text-[#B5B5B5]"
+                    : "text-[#B5B5B5]"
                 }`}
-                onClick={() => setSelected("scan")}
-                to={"scan"}
+                onClick={() => setSelected("dashboard")}
+                to={"dashboard"}
               >
-                <TbScan className="h-[25px] w-[25px] xl:mr-3 xl:ml-0 mr-2" />
-                Scan Fundus
+                <TbLayoutDashboard className="h-[25px] w-[25px] xl:mr-3 xl:ml-0 mr-2" />
+                Dashboard
               </NavLink>
-              <NavLink
-                className={`font-Poppins flex items-center text-[18px]  py-2 px-4 rounded-md   ${
-                  selected === "scribe"
-                    ? "xl:bg-[#A0A3A6] text-white  xl:text-white font-semibold"
-                    : " text-[#B5B5B5]  "
-                }`}
-                onClick={() => setSelected("scribe")}
-                to={"scribe"}
-              >
-                <FaRegStickyNote className="xl:h-[25px] xl:w-[25px] xl:mr-3 xl:ml-0 ml-1 mr-2 m-1" />
-                Scribe
-              </NavLink>
-            </>
-          )}
-          <NavLink
-            className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md   ${
-              selected === "patient"
-                ? "xl:bg-[#A0A3A6] text-white  xl:text-white font-semibold"
-                : " text-[#B5B5B5]  "
-            }`}
-            onClick={() => setSelected("patient")}
-            to={"patient"}
-          >
-            <FiUser className="h-[25px] w-[25px] xl:mr-3 xl:ml-0 mr-2" />
-            Patients
-          </NavLink>
-          {role !== 0 ? (
+            ) : (
+              ""
+            )}
+            {role === 0 ? (
+              ""
+            ) : (
+              <>
+                <NavLink
+                  className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md xl:hover:bg-[#1ABC9C] hover:text-white   ${
+                    selected === "scan"
+                      ? "xl:bg-[#A0A3A6] text-white font-semibold"
+                      : " text-[#B5B5B5]"
+                  }`}
+                  onClick={() => setSelected("scan")}
+                  to={"scan"}
+                >
+                  <TbScan className="h-[25px] w-[25px] xl:mr-3 xl:ml-0 mr-2" />
+                  Scan Fundus
+                </NavLink>
+                <NavLink
+                  className={`font-Poppins flex items-center text-[18px]  py-2 px-4 rounded-md xl:hover:bg-[#1ABC9C] hover:text-white    ${
+                    selected === "scribe"
+                      ? "xl:bg-[#A0A3A6] text-white  xl:text-white font-semibold"
+                      : " text-[#B5B5B5]  "
+                  }`}
+                  onClick={() => setSelected("scribe")}
+                  to={"scribe"}
+                >
+                  <FaRegStickyNote className="xl:h-[25px] xl:w-[25px] xl:mr-3 xl:ml-0 ml-1 mr-2 m-1" />
+                  Scribe
+                </NavLink>
+              </>
+            )}
             <NavLink
-              className={`font-Poppins flex items-center text-[18px]  py-2 px-4 rounded-md   ${
-                selected === "staff"
+              className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md xl:hover:bg-[#1ABC9C] hover:text-white    ${
+                selected === "patient"
                   ? "xl:bg-[#A0A3A6] text-white  xl:text-white font-semibold"
                   : " text-[#B5B5B5]  "
               }`}
-              onClick={() => setSelected("staff")}
-              to={"staff"}
+              onClick={() => setSelected("patient")}
+              to={"patient"}
             >
-              <FaRegStickyNote className="xl:h-[25px] xl:w-[25px] xl:mr-3 xl:ml-0 ml-1 mr-2 m-1" />
-              Staff
+              <FiUser className="h-[25px] w-[25px] xl:mr-3 xl:ml-0 mr-2" />
+              Patients
             </NavLink>
-          ) : (
-            ""
-          )}
-          <NavLink
-            className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md`}
-            onClick={logout}
-          >
-            Logout
-          </NavLink>
+            {role === 0 ? (
+              <NavLink
+                className={`font-Poppins flex items-center text-[18px] py-3 xl:py-2 px-4 rounded-md xl:hover:bg-[#1ABC9C] hover:text-white   ${
+                  selected === "organization"
+                    ? "xl:bg-[#A0A3A6] text-white  xl:text-white font-semibold"
+                    : " text-[#B5B5B5]  "
+                }`}
+                onClick={() => setSelected("organization")}
+                to={"organization"}
+              >
+                <SlOrganization className="xl:h-[25px] xl:w-[25px] xl:mr-3 xl:ml-0 ml-1 mr-2 m-1" />
+                Organization
+              </NavLink>
+            ) : (
+              ""
+            )}
+          </div>
+          <div className={`mb-2 ${role === 0 ? `xl:pt-72` : `xl:pt-72`}`}>
+            <NavLink
+              className={`font-Poppins flex text-[18px]  py-3 px-4 rounded-md text-[#B5B5B5] xl:hover:bg-[#1ABC9C] hover:text-white  `}
+              onClick={logout}
+            >
+              <IoLogOutOutline className="h-[25px] w-[25px] xl:h-[30px] xl:w-[30px] xl:mr-3 xl:ml-0 mr-2 font-bold" />
+              Logout
+            </NavLink>
+          </div>
         </div>
       </div>
     </>

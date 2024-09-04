@@ -2,19 +2,20 @@ import React, { useContext, useState } from "react";
 import { FiUser } from "react-icons/fi";
 import { IoMdSearch } from "react-icons/io";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import Modal from "../../Component/ui/Modal";
 import Form from "../../Component/ui/Form";
-import { useAuthContext } from "../../Hooks/useAuthContext";
-import { addPatient } from "../../Service/PatientService";
 import Cookies from "universal-cookie";
 import Loader from "../../Component/ui/Loader";
-import SuccessModal from "../../Component/ui/SuccessModal";
 import AddPatientModal from "../../Component/ui/AddPatientModal";
+import { useSelector } from "react-redux";
+import Table from "../../Component/ui/Table";
 const Patient = () => {
-  const [patientsCount, setPatientsCount] = useState(82);
   const [isAddPatientModalOpen, setisAddPatientModalOpen] = useState(false);
-
+  const cookies = new Cookies();
+  const role = cookies.get("role");
   const [isLoading, setIsLoading] = useState(false);
+  const patients = useSelector((state) => state.reducer.patient.patients);
+  const totalPatient = patients.length;
+  console.log(patients);
 
   const openAddPatient = () => setisAddPatientModalOpen(true);
   const closeAddPatient = () => setisAddPatientModalOpen(false);
@@ -30,7 +31,7 @@ const Patient = () => {
             </div>
             <div className="flex gap-1">
               <p className="text-center flex justify-center items-center font-Poppins font-semibold text-[20px]">
-                {patientsCount}
+                {totalPatient}
               </p>
               <p className="text-center flex justify-center items-center font-Poppins text-[#A7A7A7]">
                 total patient
@@ -38,7 +39,11 @@ const Patient = () => {
             </div>
           </div>
           <div className="flex h-auto w-auto gap-2 justify-end">
-            <div className="w-1/2 flex flex-row border-2 border-[#C8C8C8] p-1  rounded-xl bg-[#A7A7A7">
+            <div
+              className={` flex flex-row border-2 border-[#C8C8C8] p-1  rounded-xl bg-[#A7A7A7 ${
+                role === 0 ? `` : `w-1/2`
+              }`}
+            >
               <IoMdSearch className="h-10 w-10 text-[#A7A7A7]" />
               <input
                 type="text"
@@ -46,17 +51,24 @@ const Patient = () => {
                 placeholder="Search patient... "
               />
             </div>
-            <span className="h-[55px] w-[2px] bg-[#C8C8C8]"></span>
-            <div
-              className="h-auto flex justify-center items-center rounded-md py-2 px-3 font-Poppins bg-[#1ABC9C] text-white font-semibold hover:cursor-pointer hover:bg-[#16A085]
-            "
-              onClick={openAddPatient}
-            >
-              <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
-              <h1 className="hidden md:block">Add Patient</h1>
-            </div>
+            {role === 0 ? (
+              ""
+            ) : (
+              <>
+                <span className="h-[55px] w-[2px] bg-[#C8C8C8]"></span>
+                <div
+                  className="h-auto flex justify-center items-center rounded-md py-2 px-3 font-Poppins bg-[#1ABC9C] text-white font-semibold hover:cursor-pointer hover:bg-[#16A085]
+                        "
+                  onClick={openAddPatient}
+                >
+                  <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
+                  <h1 className="hidden md:block">Add Patient</h1>
+                </div>
+              </>
+            )}
           </div>
         </div>
+        <Table data={patients} />
       </div>
       {/* OVERLAYS */}
       <div>

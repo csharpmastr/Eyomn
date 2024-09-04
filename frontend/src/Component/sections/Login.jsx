@@ -25,7 +25,13 @@ const Login = () => {
     try {
       const response = await login(userData.email, userData.password);
       if (response) {
-        navigate("/dashboard");
+        if (response.role === "0") {
+          sessionStorage.setItem("selectedTab", "dashboard");
+          navigate("/dashboard");
+        } else {
+          sessionStorage.setItem("selectedTab", "scan");
+          navigate("/scan");
+        }
       } else {
         setIsvisible(true);
         console.log("Login failed");

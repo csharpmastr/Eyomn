@@ -3,6 +3,9 @@ import { useAuthContext } from "./useAuthContext";
 import Cookies from "universal-cookie";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { clearPatients } from "../Slice/PatientSlice";
+import { clearDoctor } from "../Slice/doctorSlice";
+import { useDispatch } from "react-redux";
 
 export const useLogout = () => {
   const { dispatch } = useAuthContext();
@@ -10,7 +13,7 @@ export const useLogout = () => {
   const [error, setError] = useState(null);
   const cookies = new Cookies();
   const navigate = useNavigate();
-
+  const reduxDispatch = useDispatch();
   const logout = async () => {
     setIsLoading(true);
     setError(null);
@@ -18,7 +21,12 @@ export const useLogout = () => {
       navigate("/");
       cookies.remove("accessToken", { path: "/" });
       cookies.remove("refreshToken", { path: "/" });
+      cookies.remove("organization", { path: "/" });
+      cookies.remove("role", { path: "/" });
       dispatch({ type: "LOGOUT" });
+      reduxDispatch(clearDoctor());
+      reduxDispatch(clearPatients());
+
       sessionStorage.removeItem("selectedTab");
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred during logout.");

@@ -16,8 +16,10 @@ import { AuthContext, AuthContextProvider } from "./Context/AuthContext";
 import ScribePatient from "./Page/Main Page/Scribe/ScribePatient";
 import { Provider } from "react-redux";
 import { store } from "./Store/Store";
-import Staff from "./Page/Main Page/Staff";
-
+import { PersistGate } from "redux-persist/integration/react";
+import { persistStore } from "redux-persist";
+import Organization from "./Page/Main Page/Organization";
+let persistor = persistStore(store);
 const AppRoutes = () => {
   const { user } = useContext(AuthContext);
   const selectedTab = sessionStorage.getItem("selectedTab") || "dashboard";
@@ -59,7 +61,7 @@ const AppRoutes = () => {
           <Route path=":id" element={<ScribePatient />} />
         </Route>
         <Route path="patient" element={<Patient />} />
-        <Route path="staff" element={<Staff />} />
+        <Route path="organization" element={<Organization />} />
       </Route>
 
       {/* Catch-all route */}
@@ -72,9 +74,11 @@ const App = () => {
   return (
     <AuthContextProvider>
       <Provider store={store}>
-        <Router>
-          <AppRoutes />
-        </Router>
+        <PersistGate persistor={persistor}>
+          <Router>
+            <AppRoutes />
+          </Router>
+        </PersistGate>
       </Provider>
     </AuthContextProvider>
   );

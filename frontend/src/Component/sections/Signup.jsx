@@ -7,9 +7,7 @@ const Signup = () => {
   const navigate = useNavigate();
   const { signup, isLoading, error } = useSignup();
   const [clinicData, setClinic] = useState({
-    firstname: "",
-    lastname: "",
-    username: "",
+    organization: "",
     email: "",
     contact: "",
     password: "",
@@ -44,26 +42,8 @@ const Signup = () => {
         <div className="flex flex-col gap-4">
           <input
             type="text"
-            name="firstname"
-            value={clinicData.firstname}
-            onChange={handleChange}
-            className="w-full p-2 rounded-md border-2 border-[#C8C8C8] font-Poppins"
-            placeholder="Enter your first name"
-            required
-          />
-          <input
-            type="text"
-            name="lastname"
-            value={clinicData.lastname}
-            onChange={handleChange}
-            className="w-full p-2 rounded-md border-2 border-[#C8C8C8] font-Poppins"
-            placeholder="Enter your last name"
-            required
-          />
-          <input
-            type="text"
-            name="username"
-            value={clinicData.username}
+            name="organization"
+            value={clinicData.organization}
             onChange={handleChange}
             className="w-full p-2 rounded-md border-2 border-[#C8C8C8] font-Poppins"
             placeholder="Enter your organization name"

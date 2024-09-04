@@ -20,11 +20,12 @@ const useSignup = () => {
       const userId = userData.userId;
       const accessToken = userData.token.accessToken;
       const refreshToken = userData.token.refreshToken;
+      const orgranization = userData.orgranization;
       cookies.set("accessToken", accessToken, { path: "/" });
       cookies.set("refreshToken", refreshToken, { path: "/" });
       cookies.set("selectedTab", "dashboard");
-
-      dispatch({ type: "LOGIN", payload: userId });
+      cookies.set("organization", orgranization, { path: "/" });
+      dispatch({ type: "LOGIN", payload: { userId, orgranization } });
 
       return true;
     } catch (err) {
