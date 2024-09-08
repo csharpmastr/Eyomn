@@ -35,6 +35,18 @@ const AddPatientModal = ({ isOpen, onClose }) => {
       pattern: "^[a-zA-ZÀ-ÿ\\s'-]{2,}$",
     },
     {
+      name: "email",
+      type: "email",
+      placeholder: "Patient email",
+      pattern: "^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$",
+    },
+    {
+      name: "contact",
+      type: "text",
+      placeholder: "Patient contact number",
+      pattern: "^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$",
+    },
+    {
       name: "address",
       type: "text",
       placeholder: "Patient address",
@@ -61,7 +73,6 @@ const AddPatientModal = ({ isOpen, onClose }) => {
       onClose();
     }
   };
-
   return (
     <>
       {isLoading ? (

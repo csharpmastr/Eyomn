@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { clearPatients } from "../Slice/PatientSlice";
 import { clearDoctor } from "../Slice/doctorSlice";
 import { useDispatch } from "react-redux";
+import { clearStaffs } from "../Slice/StaffSlice";
 
 export const useLogout = () => {
   const { dispatch } = useAuthContext();
@@ -26,6 +27,7 @@ export const useLogout = () => {
       dispatch({ type: "LOGOUT" });
       reduxDispatch(clearDoctor());
       reduxDispatch(clearPatients());
+      reduxDispatch(clearStaffs());
 
       sessionStorage.removeItem("selectedTab");
     } catch (err) {

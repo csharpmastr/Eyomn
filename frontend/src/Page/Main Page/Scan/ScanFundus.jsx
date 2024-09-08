@@ -7,7 +7,7 @@ const ScanFundus = () => {
   const [image, setImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-
+  const patientName = sessionStorage.getItem("currentPatientName");
   const handleChange = (file) => {
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -33,7 +33,7 @@ const ScanFundus = () => {
       <div className="font-Poppins px-4 flex flex-row gap-4 pb-2 mb-2 pt-2 lg:w-full">
         <div className="w-8 h-8 rounded-full flex items-center justify-center font-semibold text-black bg-red-100"></div>
         <h1 className="flex justify-center items-center font-Poppins">
-          Mac Mac
+          {patientName}
         </h1>
       </div>
       <div className="flex justify-center items-center flex-col w-full">

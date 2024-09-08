@@ -17,7 +17,8 @@ export const useAddPatient = () => {
     setIsLoading(true);
     try {
       const response = await addPatientService(data, accessToken, refreshToken);
-      reduxDispatch(addPatient(data));
+
+      reduxDispatch(addPatient({ ...data, id: response.data.id }));
       return response;
     } catch (err) {
       setError(err);

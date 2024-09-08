@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import patientReducer from "../Slice/PatientSlice";
 import doctorReducer from "../Slice/doctorSlice";
+import staffReducer from "../Slice/StaffSlice";
 import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
 import { combineReducers } from "@reduxjs/toolkit";
@@ -14,6 +15,7 @@ const persistConfig = {
 const reducer = combineReducers({
   doctor: doctorReducer,
   patient: patientReducer,
+  staff: staffReducer,
 });
 const persistedReducer = persistReducer(persistConfig, reducer);
 export const store = configureStore({

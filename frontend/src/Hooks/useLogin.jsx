@@ -6,6 +6,8 @@ import { useDispatch } from "react-redux";
 import { setDoctor } from "../Slice/doctorSlice";
 import { getPatients } from "../Service/PatientService";
 import { setPatients } from "../Slice/PatientSlice";
+import { getStaffs } from "../Service/StaffService";
+import { setStaffs } from "../Slice/StaffSlice";
 
 export const useLogin = () => {
   const cookies = new Cookies();
@@ -22,11 +24,18 @@ export const useLogin = () => {
       const { userId, role, tokens, organization, staffData } = response;
       const { accessToken, refreshToken } = tokens;
       let patientsData = {};
+      let staffsData = {};
       if (role === "0" || role === "1") {
         const clinicId = role === "0" ? userId : staffData.clinicId;
-        patientsData = await getPatients({ clinicId });
+        patientsData = await getPatients(
+          { clinicId },
+          accessToken,
+          refreshToken
+        );
       }
-
+      if (role === "0") {
+        staffsData = await getStaffs(userId);
+      }
       cookies.set("accessToken", accessToken, { path: "/" });
       cookies.set("refreshToken", refreshToken, { path: "/" });
       cookies.set("role", role, { path: "/" });
@@ -34,6 +43,7 @@ export const useLogin = () => {
       dispatch({ type: "LOGIN", payload: userId });
       reduxDispatch(setDoctor(staffData));
       reduxDispatch(setPatients(patientsData));
+      reduxDispatch(setStaffs(staffsData));
 
       return response;
     } catch (err) {

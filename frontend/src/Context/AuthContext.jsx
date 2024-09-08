@@ -54,7 +54,7 @@ export const AuthContextProvider = ({ children }) => {
 
     checkTokens();
 
-    const intervalId = setInterval(checkTokens, 10000);
+    const intervalId = setInterval(checkTokens, 30000);
 
     return () => clearInterval(intervalId);
   }, []);

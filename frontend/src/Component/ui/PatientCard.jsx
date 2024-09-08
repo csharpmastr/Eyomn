@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const PatientCard = ({ name, onClick }) => {
+  const [backgroundColor, setBackgroundColor] = useState("");
+
   const getInitials = (fullName) => {
     const names = fullName.split(" ");
     if (names.length === 1) {
@@ -36,7 +38,10 @@ const PatientCard = ({ name, onClick }) => {
     )}, ${Math.max(0, Math.min(255, adjustedB))})`;
   };
 
-  const backgroundColor = generateComplementaryColor();
+  // Run only once when the component is mounted
+  useEffect(() => {
+    setBackgroundColor(generateComplementaryColor());
+  }, []);
 
   return (
     <div

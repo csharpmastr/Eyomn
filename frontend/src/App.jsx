@@ -23,6 +23,7 @@ let persistor = persistStore(store);
 const AppRoutes = () => {
   const { user } = useContext(AuthContext);
   const selectedTab = sessionStorage.getItem("selectedTab") || "dashboard";
+  const currentPatientId = sessionStorage.getItem("currentPatientId");
 
   return (
     <Routes>

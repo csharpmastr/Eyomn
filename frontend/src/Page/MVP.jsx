@@ -18,6 +18,8 @@ const MVP = () => {
       return "Patients";
     } else if (currentPath.startsWith("/staff")) {
       return "Staffs";
+    } else if (currentPath.startsWith("/organization")) {
+      return "Organization";
     } else {
       return "";
     }

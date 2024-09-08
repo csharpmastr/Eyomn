@@ -1,34 +1,43 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { IoMdSearch } from "react-icons/io";
 import PatientCard from "./PatientCard";
 import { useNavigate } from "react-router-dom";
 import AddPatientModal from "./AddPatientModal";
 import Loader from "./Loader";
+import { useSelector } from "react-redux";
 
 const PatientModal = ({ onClose, tab }) => {
   const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
-
+  const [searchTerm, setSearchTerm] = useState(""); // New state for search input
+  const patients = useSelector((state) => state.reducer.patient.patients);
   const [isLoading, setIsLoading] = useState(false);
-
-  const patientData = [
-    { id: "1", name: "Sarah D. Uterte" },
-    { id: "2", name: "John Doe" },
-    { id: "3", name: "Jane Smith" },
-    { id: "4", name: "Alice Johnson" },
-    { id: "5", name: "Bob Brown" },
-    { id: "6", name: "Carol Davis" },
-    { id: "7", name: "Daniel Evans" },
-    { id: "8", name: "Emily Foster" },
-    { id: "9", name: "Frank Green" },
-  ];
-
   const navigate = useNavigate();
 
   const handleClickPatient = (id) => {
-    navigate(`/${tab}/${id}`);
-    onClose();
+    const clickedPatient = patients.find((patient) => patient.id === id);
+
+    if (clickedPatient) {
+      sessionStorage.setItem("currentPatientId", id);
+      sessionStorage.setItem(
+        "currentPatientName",
+        `${clickedPatient.first_name} ${clickedPatient.last_name}`
+      );
+      navigate(`/${tab}/${id}`);
+      onClose();
+    } else {
+      console.error("Patient not found");
+    }
   };
+  const filteredPatients = useMemo(
+    () =>
+      patients.filter((patient) =>
+        `${patient.first_name} ${patient.last_name}`
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+      ),
+    [searchTerm, patients]
+  );
 
   const openAddPatientModal = () => setIsAddPatientModalOpen(true);
   const closeAddPatientModal = () => setIsAddPatientModalOpen(false);
@@ -36,7 +45,7 @@ const PatientModal = ({ onClose, tab }) => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className="w-[85vw] h-[60vh] md:h-[55vh] md:w-[60vw] lg:w-[50vw] lg:h-[50vh] xl:h-[70vh] xl:w-[40vw] p-4 border-2 border-[#C8C8C8] rounded-lg">
+      <div className="w-[85vw] h-[60vh] md:h-[55vh] md:w-[60vw] lg:w-[50vw] lg:h-[50vh] xl:h-[70vh] xl:w-[40vw] p-4 border-2 border-[#C8C8C8] rounded-lg shadow-lg">
         <div className="flex flex-row justify-between mx-auto h-auto">
           <h1 className="flex justify-center items-center font-Poppins text-black pl-2">
             Patient List
@@ -55,16 +64,22 @@ const PatientModal = ({ onClose, tab }) => {
             type="text"
             className="w-full text-black px-2 font-Poppins"
             placeholder="Search patient... "
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <div className="mt-2 h-[calc(100%_-_110px)] overflow-y-auto">
-          {patientData.map((patient) => (
-            <PatientCard
-              key={patient.id}
-              name={patient.name}
-              onClick={() => handleClickPatient(patient.id)}
-            />
-          ))}
+          {filteredPatients.length > 0 ? (
+            filteredPatients.map((patient, index) => (
+              <PatientCard
+                key={index}
+                name={patient.first_name + " " + patient.last_name}
+                onClick={() => handleClickPatient(patient.id)}
+              />
+            ))
+          ) : (
+            <p>No patients found</p>
+          )}
         </div>
       </div>
       <AddPatientModal
