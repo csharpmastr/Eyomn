@@ -8,8 +8,10 @@ const addPatientHandler = async (req, res) => {
         .status(400)
         .json({ message: "Clinic ID and patient data are required." });
     }
-    await addPatient(clinicId, patientData);
-    return res.status(200).json({ message: "Patient added successfully" });
+    const id = await addPatient(clinicId, patientData);
+    return res
+      .status(200)
+      .json({ message: "Patient added successfully", id: id });
   } catch (error) {
     console.error("Error adding patient: ", error);
     res

@@ -1,8 +1,12 @@
 const express = require("express");
-const { addStaffHandler } = require("../Controller/staffController");
+const {
+  addStaffHandler,
+  getStaffsHandler,
+} = require("../Controller/staffController");
+const { validateToken } = require("../Wrapper/Wrapper");
 
 const router = express.Router();
 
 router.post("/add", addStaffHandler);
-
+router.post("/get-staffs", getStaffsHandler);
 module.exports = router;

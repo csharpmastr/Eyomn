@@ -21,6 +21,7 @@ const addPatient = async (clinicId, patientData) => {
 
     const patientsCollectionRef = collection(clinicRef, "Patients");
     await setDoc(doc(patientsCollectionRef, patientId), encryptedPatientData);
+    return patientId;
   } catch (error) {
     console.error("Error adding patient: ", error);
     throw error;
