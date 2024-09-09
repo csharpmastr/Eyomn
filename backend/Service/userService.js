@@ -29,8 +29,10 @@ class EmailAlreadyExistsError extends Error {
 
 const addUser = async (clinicData) => {
   try {
-    // Check if the email already exists in the clinicCollection
-    const q = query(clinicCollection, where("email", "==", clinicData.email));
+    const q = query(
+      clinicCollection,
+      where("email", "==", encryptData(clinicData.email))
+    );
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
@@ -72,7 +74,7 @@ const addUser = async (clinicData) => {
 const loginUser = async (userData) => {
   const { email, password } = userData;
   try {
-    // Fetch user by email
+    // Query user by email
     const userQuery = query(userCollection, where("email", "==", email));
     const querySnapshot = await getDocs(userQuery);
 
@@ -81,6 +83,8 @@ const loginUser = async (userData) => {
     }
 
     const user = querySnapshot.docs[0].data();
+
+    // Verify password
     const isPasswordValid = await comparePassword(password, user.password);
 
     if (!isPasswordValid) {
@@ -91,9 +95,11 @@ const loginUser = async (userData) => {
       throw new Error("User role not found");
     }
 
-    let data;
+    let data = null;
 
+    // Handle role-specific data
     if (user.role === "0") {
+      // Fetch clinic data
       const clinicQuery = query(clinicCollection, where("id", "==", user.id));
       const clinicSnapshot = await getDocs(clinicQuery);
 
@@ -108,7 +114,7 @@ const loginUser = async (userData) => {
         role: user.role,
         organization: org,
       };
-    } else if (user.role === "1") {
+    } else {
       const clinicId = user.clinicId;
       const staffId = user.staffId;
 
@@ -127,21 +133,29 @@ const loginUser = async (userData) => {
       const staffData = {};
 
       for (const [key, value] of Object.entries(staffDataSnap)) {
-        if (key === "role") {
+        if (key === "role" || key === "email" || key === "staffId") {
           staffData[key] = value;
         } else {
           staffData[key] = decryptData(value);
         }
       }
-      staffData.clinicId = clinicId;
+
+      const clinicRef = doc(clinicCollection, clinicId);
+      const clinicSnapShot = await getDoc(clinicRef);
+      if (!clinicSnapShot.exists()) {
+        throw new Error("Clinic data not found");
+      }
+
+      const clinicData = clinicSnapShot.data();
+      const organizationName = decryptData(clinicData.organization);
+
       data = {
         userId: staffId,
         role: user.role,
+        clinicId: clinicId,
         staffData,
+        organization: organizationName,
       };
-      console.log(data);
-    } else {
-      throw new Error("Invalid user role");
     }
 
     return data;
@@ -150,4 +164,5 @@ const loginUser = async (userData) => {
     throw new Error("Login failed: " + error.message);
   }
 };
+
 module.exports = { addUser, loginUser };

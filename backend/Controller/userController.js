@@ -24,6 +24,7 @@ const addUserHandler = async (req, res) => {
       message: "User registered successfully",
       userId: userId,
       organization: organization,
+      role,
       token: {
         accessToken: accessToken,
         refreshToken,
@@ -43,10 +44,12 @@ const loginUserHandler = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const { userId, role, organization, staffData } = await loginUser({
-      email,
-      password,
-    });
+    const { userId, role, organization, staffData, clinicId } = await loginUser(
+      {
+        email,
+        password,
+      }
+    );
 
     const accessToken = generateToken(
       userId,
@@ -76,6 +79,7 @@ const loginUserHandler = async (req, res) => {
         role: role,
         message: "Login successful",
         staffData: staffData,
+        clinicId: clinicId,
         organization: organization,
         tokens: {
           accessToken,

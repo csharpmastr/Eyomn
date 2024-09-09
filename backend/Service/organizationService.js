@@ -10,28 +10,36 @@ const { collection, doc, setDoc, getDocs } = require("firebase/firestore");
 const addStaff = async (clinicId, staffData) => {
   try {
     const staffId = uuidv4();
+
     const encryptedStaffData = {};
     const staffCredentials = {
       staffId: staffId,
       clinicId: clinicId,
       email: staffData.email,
-      role: "1",
     };
 
     for (const [key, value] of Object.entries(staffData)) {
       if (key === "password") {
-        const hashedPassword = await hashPassword(value);
-        staffCredentials.password = hashedPassword;
-      } else if (key !== "email" || key !== "clinicId") {
-        encryptedStaffData[key] = encryptData(value);
-      } else {
+        staffCredentials["password"] = await hashPassword(value);
+      } else if (key === "email" || key === "clinicId") {
         encryptedStaffData[key] = value;
+      } else {
+        encryptedStaffData[key] = encryptData(value);
       }
     }
 
-    encryptedStaffData.role = "1";
-    encryptedStaffData.staffId = staffId;
+    if (
+      staffData.position === "Ophthalmologist" ||
+      staffData.position === "Optometrist"
+    ) {
+      encryptedStaffData.role = "1";
+      staffCredentials.role = "1";
+    } else if (staffData.position === "Staff") {
+      encryptedStaffData.role = "2";
+      staffCredentials.role = "2";
+    }
 
+    encryptedStaffData.staffId = staffId;
     const userRef = doc(userCollection, staffId);
     const clinicDocRef = doc(db, "clinicStaff", clinicId);
     const staffDocRef = doc(collection(clinicDocRef, "Staff"), staffId);
@@ -39,8 +47,6 @@ const addStaff = async (clinicId, staffData) => {
     await setDoc(userRef, staffCredentials);
 
     await setDoc(staffDocRef, encryptedStaffData);
-
-    console.log("Staff added successfully with ID: ", staffId);
   } catch (err) {
     console.error("Error adding staff: ", err);
     throw err;
@@ -53,12 +59,16 @@ const getAllStaff = async (clinicId) => {
     const staffCollectionRef = collection(clinicStaffRef, "Staff");
     const querySnapshot = await getDocs(staffCollectionRef);
 
+    if (querySnapshot.empty) {
+      return [];
+    }
+
     const staffsData = querySnapshot.docs.map((doc) => {
       const data = doc.data();
       const decryptedData = {};
 
       for (const [key, value] of Object.entries(data)) {
-        if (key === "role" || key === "staffId") {
+        if (key === "role" || key === "staffId" || key === "email") {
           decryptedData[key] = value;
         } else {
           decryptedData[key] = decryptData(value);
@@ -78,7 +88,39 @@ const getAllStaff = async (clinicId) => {
   }
 };
 
+const getDoctorsList = async (clinicId) => {
+  try {
+    const clinicStaffRef = doc(db, "clinicStaff", clinicId);
+    const staffCollectionRef = collection(clinicStaffRef, "Staff");
+
+    const querySnapshot = await getDocs(staffCollectionRef);
+    const doctorNames = [];
+    querySnapshot.forEach((doc) => {
+      const staffData = doc.data();
+
+      const decryptedPosition = decryptData(staffData.position);
+      const decryptedName = decryptData(staffData.name);
+      if (
+        decryptedPosition === "Optometrist" ||
+        decryptedPosition === "Ophthalmologist"
+      ) {
+        doctorNames.push({
+          id: doc.id,
+          name: decryptedName,
+          position: decryptedPosition,
+        });
+      }
+    });
+
+    return doctorNames;
+  } catch (error) {
+    console.error("Error fetching doctor list:", error);
+    throw error;
+  }
+};
+
 module.exports = {
   addStaff,
   getAllStaff,
+  getDoctorsList,
 };
