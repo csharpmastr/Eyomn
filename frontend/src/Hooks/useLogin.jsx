@@ -4,8 +4,7 @@ import { userLogin } from "../Service/UserService";
 import Cookies from "universal-cookie";
 import { useDispatch } from "react-redux";
 import { setDoctor } from "../Slice/doctorSlice";
-import { getPatients } from "../Service/PatientService";
-import { setPatients } from "../Slice/PatientSlice";
+
 import { getDoctorList, getStaffs } from "../Service/StaffService";
 import { setStaffs } from "../Slice/StaffSlice";
 import { setUser } from "../Slice/UserSlice";
@@ -34,6 +33,7 @@ export const useLogin = () => {
       } else if (role === "2") {
         const doctorResponse = await getDoctorList(
           clinicId,
+          userId,
           accessToken,
           refreshToken
         );

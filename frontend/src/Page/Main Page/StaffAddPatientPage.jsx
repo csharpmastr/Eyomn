@@ -27,7 +27,7 @@ const StaffAddPatientPage = () => {
     municipality: "",
     contact_number: "",
     email: "",
-    attending_doctor: "",
+    doctorId: "",
     clinicId: user.clinicId,
   });
 
@@ -67,12 +67,31 @@ const StaffAddPatientPage = () => {
       const res = await addPatientHook(formData);
       if (res) {
         setIsSuccess(true);
+        handleClear();
       }
     } catch (err) {
       console.log(err);
     }
   };
-
+  const handleClear = () => {
+    setFormData({
+      first_name: "",
+      last_name: "",
+      middle_name: "",
+      age: "",
+      sex: "",
+      birthdate: "",
+      civil_status: "",
+      province: "",
+      municipality: "",
+      contact_number: "",
+      email: "",
+      doctorId: "",
+      clinicId: user.clinicId,
+    });
+    setSelectedProvince(null);
+    setSelectedMunicipality(null);
+  };
   const provinceOptions = Object.keys(PhList).reduce((acc, regionKey) => {
     const provinceList = PhList[regionKey].province_list;
     return [
@@ -271,12 +290,12 @@ const StaffAddPatientPage = () => {
                     </div>
                   </div>
                   <div className="mt-4">
-                    <label htmlFor="attending_doctor" className="text-[14px]">
+                    <label htmlFor="doctorId" className="text-[14px]">
                       Attending Doctor
                     </label>
                     <select
-                      name="attending_doctor"
-                      value={formData.attending_doctor}
+                      name="doctorId"
+                      value={formData.doctorId}
                       onChange={handleChange}
                       className="w-full h-12 px-2 border-2 border-[#999999] rounded-md text-black"
                     >
@@ -293,7 +312,11 @@ const StaffAddPatientPage = () => {
                 </div>
               </div>
               <div className="flex gap-4 justify-end">
-                <div className="h-12 lg:w-24 xl:w-32 flex justify-center items-center gap-2 border-red-500 border-2 rounded-md p-2 text-red-500 cursor-pointer hover:bg-red-100 ">
+                <div
+                  className="h-12 lg:w-24 xl:w-32 flex justify-center items-center gap-2 border-red-500 border-2 rounded-md p-2 text-red-500 cursor-pointer hover:bg-red-100 
+                "
+                  onClick={handleClear}
+                >
                   <p className="">Clear</p>
                 </div>
                 <SubmitButton

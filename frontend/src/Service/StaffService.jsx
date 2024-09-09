@@ -36,11 +36,17 @@ export const addStaffService = async (staffData, accessToken, refreshToken) => {
   }
 };
 
-export const getDoctorList = async (clinicId, accessToken, refreshToken) => {
+export const getDoctorList = async (
+  clinicId,
+  doctorId,
+  accessToken,
+  refreshToken
+) => {
   try {
     const response = await axios.get(`${STAFF_API_BASE_URL}/get-doctors`, {
       params: {
         clinicId,
+        doctorId,
       },
       headers: {
         Authorization: `Bearer ${accessToken}`,
