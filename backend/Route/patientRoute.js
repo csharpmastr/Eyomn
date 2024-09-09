@@ -1,13 +1,13 @@
 const express = require("express");
 const {
   addPatientHandler,
-  getPatientsHanlder,
+  getPatientsHandler,
 } = require("../Controller/patientController");
 const { validateToken } = require("../Wrapper/Wrapper");
 
 const router = express.Router();
 
 router.post("/add", validateToken, addPatientHandler);
-router.post("/get-patients", getPatientsHanlder);
+router.get("/get-patients", validateToken, getPatientsHandler);
 
 module.exports = router;

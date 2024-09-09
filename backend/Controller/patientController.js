@@ -19,13 +19,13 @@ const addPatientHandler = async (req, res) => {
       .json({ message: "Error adding patient.", error: error.message });
   }
 };
-const getPatientsHanlder = async (req, res) => {
+const getPatientsHandler = async (req, res) => {
   try {
-    const { clinicId } = req.body;
+    const { clinicId, doctorId } = req.query;
     if (!clinicId) {
       return res.status(400).json({ message: "Clinic ID is required." });
     }
-    const patients = await getPatients(clinicId);
+    const patients = await getPatients(clinicId, doctorId);
     return res.status(200).json(patients);
   } catch (error) {
     console.error("Error fetching patients: ", error);
@@ -37,5 +37,5 @@ const getPatientsHanlder = async (req, res) => {
 
 module.exports = {
   addPatientHandler,
-  getPatientsHanlder,
+  getPatientsHandler,
 };

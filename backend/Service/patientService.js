@@ -1,7 +1,14 @@
 const { db } = require("../Config/FirebaseConfig");
 const { v4: uuidv4 } = require("uuid");
 const { encryptData, decryptData } = require("../Security/DataHashing");
-const { collection, doc, setDoc, getDocs } = require("firebase/firestore");
+const {
+  collection,
+  doc,
+  setDoc,
+  getDocs,
+  query,
+  where,
+} = require("firebase/firestore");
 
 const addPatient = async (clinicId, patientData) => {
   try {
@@ -27,17 +34,24 @@ const addPatient = async (clinicId, patientData) => {
     throw error;
   }
 };
-const getPatients = async (clinicId) => {
+
+const getPatients = async (clinicId, doctorId) => {
   try {
     const clinicRef = doc(db, "clinicPatients", clinicId);
     const patientsCollectionRef = collection(clinicRef, "Patients");
 
-    const querySnapshot = await getDocs(patientsCollectionRef);
+    const q = query(patientsCollectionRef, where("doctorId", "==", doctorId));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      console.log("No patients found for the given clinic and doctor.");
+      return [];
+    }
 
     const patientsData = querySnapshot.docs.map((doc) => {
       const data = doc.data();
-
       const decryptedData = {};
+
       for (const [key, value] of Object.entries(data)) {
         if (key === "createdAt" || key === "patientId" || key === "doctorId") {
           decryptedData[key] = value;
@@ -45,11 +59,13 @@ const getPatients = async (clinicId) => {
           decryptedData[key] = decryptData(value);
         }
       }
+
       return {
         id: doc.id,
         ...decryptedData,
       };
     });
+
     return patientsData;
   } catch (error) {
     console.error("Error fetching patients: ", error);
