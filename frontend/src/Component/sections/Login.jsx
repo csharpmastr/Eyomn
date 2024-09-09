@@ -28,9 +28,12 @@ const Login = () => {
         if (response.role === "0") {
           sessionStorage.setItem("selectedTab", "dashboard");
           navigate("/dashboard");
-        } else {
+        } else if (response.role === "1") {
           sessionStorage.setItem("selectedTab", "scan");
           navigate("/scan");
+        } else {
+          sessionStorage.setItem("selectedTab", "add-patient");
+          navigate("/add-patient");
         }
       } else {
         setIsvisible(true);

@@ -15,10 +15,9 @@ import { useAuthContext } from "../../Hooks/useAuthContext";
 
 const SideBar = () => {
   const cookies = new Cookies();
-  const { user } = useAuthContext();
   const role = cookies.get("role");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false); // State for collapsing
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const { logout } = useLogout();
   const [selected, setSelected] = useState(() => {
     return sessionStorage.getItem("selectedTab");
@@ -230,8 +229,8 @@ const SideBar = () => {
           )}
           {role === 2 && (
             <NavLink
-              className={`font-Poppins flex items-center text-[18px] ] py-3 px-4 rounded-md xl:hover:bg-[#1ABC9C] hover:text-white ${
-                selected === "patient"
+              className={`font-Poppins flex items-center text-[18px] py-3 px-4 rounded-md xl:hover:bg-[#1ABC9C] hover:text-white ${
+                selected === "add-patient"
                   ? " xl:bg-[#A0A3A6] text-white font-semibold "
                   : " text-[#B5B5B5] "
               }${
@@ -239,19 +238,17 @@ const SideBar = () => {
                   ? " xl:px-2 py-2 justify-center"
                   : "xl:py-3 xl:px-4 "
               } `}
-              onClick={() => setSelected("patient")}
-              to="patient"
+              onClick={() => setSelected("add-patient")}
+              to="add-patient"
             >
               <FiUser
                 className={`${
                   isCollapsed
-                    ? " h-[25px] w-[25px]  justify-center"
+                    ? " h-[25px] w-[25px]  justify-center "
                     : " h-[25px] w-[25px] xl:mr-3 "
                 }`}
               />
-              {!isCollapsed && (
-                <span className="ml-2 text-[#B5B5B5]">Patients</span>
-              )}
+              {!isCollapsed && <span className=" ml-2  ">Add Patient</span>}
             </NavLink>
           )}
         </div>
@@ -260,14 +257,14 @@ const SideBar = () => {
             className={`font-Poppins flex items-center text-[18px] py-3 px-4 rounded-md text-[#B5B5B5] xl:hover:bg-[#1ABC9C] hover:text-white ${
               isCollapsed
                 ? " xl:justify-center xl:px-2 py-3 "
-                : "xl:py-3 xl:px-4 "
+                : " xl:py-3 xl:px-4 "
             }`}
             onClick={logout}
           >
             <IoLogOutOutline
               className={`${
                 isCollapsed
-                  ? " xl:h-[25px] xl:w-[25px] h-[30px] w-[30px]"
+                  ? " xl:h-[25px] xl:w-[25px] h-[30px] w-[30px] "
                   : " h-[25px] w-[25px]  xl:h-[30px] xl:w-[30px] xl:mr-3 "
               }`}
             />

@@ -18,8 +18,6 @@ const AddPatientModal = ({ isOpen, onClose }) => {
   const { addPatientHook, isLoading, error } = useAddPatient();
   const cookies = new Cookies();
   const { user } = useAuthContext();
-  const accessToken = cookies.get("accessToken", { path: "/" });
-  const refreshToken = cookies.get("accessToken", { path: "/" });
 
   const formFields = [
     {

@@ -24,7 +24,6 @@ export const addPatientService = async (
     throw err;
   }
 };
-
 export const getPatients = async ({ clinicId }) => {
   try {
     const response = await axios.post(`${PATIENT_API_BASE_URL}/get-patients`, {

@@ -7,6 +7,7 @@ import { clearPatients } from "../Slice/PatientSlice";
 import { clearDoctor } from "../Slice/doctorSlice";
 import { useDispatch } from "react-redux";
 import { clearStaffs } from "../Slice/StaffSlice";
+import { removeUser } from "../Slice/UserSlice";
 
 export const useLogout = () => {
   const { dispatch } = useAuthContext();
@@ -28,6 +29,7 @@ export const useLogout = () => {
       reduxDispatch(clearDoctor());
       reduxDispatch(clearPatients());
       reduxDispatch(clearStaffs());
+      reduxDispatch(removeUser());
 
       sessionStorage.removeItem("selectedTab");
     } catch (err) {

@@ -6,8 +6,9 @@ import { useDispatch } from "react-redux";
 import { setDoctor } from "../Slice/doctorSlice";
 import { getPatients } from "../Service/PatientService";
 import { setPatients } from "../Slice/PatientSlice";
-import { getStaffs } from "../Service/StaffService";
+import { getDoctorList, getStaffs } from "../Service/StaffService";
 import { setStaffs } from "../Slice/StaffSlice";
+import { setUser } from "../Slice/UserSlice";
 
 export const useLogin = () => {
   const cookies = new Cookies();
@@ -21,30 +22,42 @@ export const useLogin = () => {
     setError(null);
     try {
       const response = await userLogin(email, password);
-      const { userId, role, tokens, organization, staffData } = response;
+      const { userId, role, tokens, organization, staffData, clinicId } =
+        response;
+
       const { accessToken, refreshToken } = tokens;
-      let patientsData = {};
-      let staffsData = {};
-      if (role === "0" || role === "1") {
-        const clinicId = role === "0" ? userId : staffData.clinicId;
-        patientsData = await getPatients(
-          { clinicId },
+
+      let staffResponse = [];
+      let doctorList = [];
+      if (role === "0") {
+        staffResponse = await getStaffs(userId, accessToken, refreshToken);
+      } else if (role === "2") {
+        const doctorResponse = await getDoctorList(
+          clinicId,
           accessToken,
           refreshToken
         );
+        doctorList = doctorResponse.doctors || [];
       }
-      if (role === "0") {
-        staffsData = await getStaffs(userId);
-      }
+
       cookies.set("accessToken", accessToken, { path: "/" });
       cookies.set("refreshToken", refreshToken, { path: "/" });
       cookies.set("role", role, { path: "/" });
       cookies.set("organization", organization, { path: "/" });
-      dispatch({ type: "LOGIN", payload: userId });
-      reduxDispatch(setDoctor(staffData));
-      reduxDispatch(setPatients(patientsData));
-      reduxDispatch(setStaffs(staffsData));
 
+      dispatch({ type: "LOGIN", payload: userId });
+      reduxDispatch(setStaffs(staffResponse || []));
+      reduxDispatch(setUser({ userId }));
+      if (role === "0") {
+        reduxDispatch(setUser({ userId }));
+      } else {
+        reduxDispatch(setUser({ userId, clinicId }));
+        if (role === "1") {
+          reduxDispatch(setDoctor(staffData));
+        } else {
+          reduxDispatch(setDoctor(doctorList));
+        }
+      }
       return response;
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred during login.");
@@ -52,5 +65,6 @@ export const useLogin = () => {
       setIsLoading(false);
     }
   };
+
   return { login, isLoading, error };
 };

@@ -20,7 +20,7 @@ const Organization = () => {
     <div className="w-full h-full flex flex-col items-center">
       <div
         className="h-12 w-40 flex justify-center items-center border-2 border-[#222222] rounded-md py-2 px-2 md:px-4 font-Poppins cursor-pointer"
-        onClick={handleOpenStaffModal} // Open the modal on click
+        onClick={handleOpenStaffModal}
       >
         <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
         <h1 className="hidden md:block">Add Staff</h1>
@@ -35,7 +35,7 @@ const Organization = () => {
               staff.name
             }
             email={staff.email}
-            position={staff.specialty}
+            position={staff.position}
           />
         ))}
       </div>

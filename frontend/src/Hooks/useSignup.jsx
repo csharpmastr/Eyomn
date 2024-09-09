@@ -16,7 +16,7 @@ const useSignup = () => {
       const response = await userSignUp(data);
       const userData = response.data;
       console.log(userData);
-
+      const userRole = userData.role;
       const userId = userData.userId;
       const accessToken = userData.token.accessToken;
       const refreshToken = userData.token.refreshToken;
@@ -24,6 +24,7 @@ const useSignup = () => {
       cookies.set("accessToken", accessToken, { path: "/" });
       cookies.set("refreshToken", refreshToken, { path: "/" });
       cookies.set("selectedTab", "dashboard");
+      cookies.set("role", userRole, { path: "/" });
       cookies.set("organization", orgranization, { path: "/" });
       dispatch({ type: "LOGIN", payload: { userId, orgranization } });
 

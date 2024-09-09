@@ -19,6 +19,7 @@ import { store } from "./Store/Store";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 import Organization from "./Page/Main Page/Organization";
+import StaffAddPatientPage from "./Page/Main Page/StaffAddPatientPage";
 let persistor = persistStore(store);
 const AppRoutes = () => {
   const { user } = useContext(AuthContext);
@@ -63,6 +64,7 @@ const AppRoutes = () => {
         </Route>
         <Route path="patient" element={<Patient />} />
         <Route path="organization" element={<Organization />} />
+        <Route path="add-patient" element={<StaffAddPatientPage />} />
       </Route>
 
       {/* Catch-all route */}
