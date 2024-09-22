@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   addPatientHandler,
+  getPatientsByDoctorHandler,
   getPatientsHandler,
 } = require("../Controller/patientController");
 const { validateToken } = require("../Wrapper/Wrapper");
@@ -8,6 +9,7 @@ const { validateToken } = require("../Wrapper/Wrapper");
 const router = express.Router();
 
 router.post("/add", validateToken, addPatientHandler);
-router.get("/get-patients", validateToken, getPatientsHandler);
+router.get("/patients-doctor", validateToken, getPatientsByDoctorHandler);
+router.get("/get-all", validateToken, getPatientsHandler);
 
 module.exports = router;

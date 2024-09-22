@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cookieParser = require("cookie-parser");
-
+const { startWebSocketServer } = require("./WebSocket/WebSocketServer");
 const cors = require("cors");
 const app = express();
 const port = process.env.PORT;
@@ -25,3 +25,4 @@ app.use("/api/v1/staff", staffRoutes);
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+startWebSocketServer();

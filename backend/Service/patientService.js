@@ -35,7 +35,39 @@ const addPatient = async (clinicId, patientData) => {
   }
 };
 
-const getPatients = async (clinicId, doctorId) => {
+const getPatients = async (clinicId) => {
+  try {
+    const clinicRef = doc(db, "clinicPatients", clinicId);
+
+    const patientsCollectionRef = collection(clinicRef, "Patients");
+
+    const querySnapshot = await getDocs(patientsCollectionRef);
+
+    if (querySnapshot.empty) {
+      return [];
+    }
+    const patientsData = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      const decryptedData = {};
+
+      for (const [key, value] of Object.entries(data)) {
+        if (key === "createdAt" || key === "patientId" || key === "doctorId") {
+          decryptedData[key] = value;
+        } else {
+          decryptedData[key] = decryptData(value);
+        }
+      }
+      return decryptedData;
+    });
+
+    return patientsData;
+  } catch (err) {
+    console.error("Error getting patients:", err);
+    throw new Error("Failed to retrieve patients");
+  }
+};
+
+const getPatientsByDoctor = async (clinicId, doctorId) => {
   try {
     const clinicRef = doc(db, "clinicPatients", clinicId);
     const patientsCollectionRef = collection(clinicRef, "Patients");
@@ -75,5 +107,6 @@ const getPatients = async (clinicId, doctorId) => {
 
 module.exports = {
   addPatient,
+  getPatientsByDoctor,
   getPatients,
 };
