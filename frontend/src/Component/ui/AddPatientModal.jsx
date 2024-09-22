@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import Modal from "./Modal";
 import Form from "./Form";
 import SuccessModal from "./SuccessModal";
-
-import { addPatientService } from "../../Service/PatientService";
-import Cookies from "universal-cookie";
 import { useAuthContext } from "../../Hooks/useAuthContext";
 import Loader from "./Loader";
 import { useSelector } from "react-redux";
@@ -16,7 +13,6 @@ const AddPatientModal = ({ isOpen, onClose }) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
   const { addPatientHook, isLoading, error } = useAddPatient();
-  const cookies = new Cookies();
   const { user } = useAuthContext();
 
   const formFields = [

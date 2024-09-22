@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PatientScribeCard from "../../Component/ui/PatientScribeCard";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addPatient } from "../../Slice/PatientSlice";
 
 // Function to group patients by initial letter
 const groupPatientsByInitial = (patients) => {
@@ -17,15 +18,45 @@ const groupPatientsByInitial = (patients) => {
 
 const Scribe = () => {
   const [hasSelected, setHasSelected] = useState(false);
+  const clinicId = useSelector((state) => state.reducer.user.user.clinicId);
+  const doctorId = useSelector((state) => state.reducer.user.user.userId);
   const patients = useSelector((state) => state.reducer.patient.patients);
   const navigate = useNavigate();
   const location = useLocation();
-
+  const ws = useRef(null);
+  const reduxDispatch = useDispatch();
   useEffect(() => {
     if (location.state && location.state.resetSelected) {
       setHasSelected(false);
     }
   }, [location.state]);
+
+  // useEffect(() => {
+  //   ws.current = new WebSocket("ws://localhost:8080");
+  //   ws.current.onopen = () => {
+  //     console.log("WebSocket connected");
+  //     ws.current.send(JSON.stringify({ clinicId, doctorId }));
+  //   };
+
+  //   ws.current.onmessage = (event) => {
+  //     const updatedPatients = JSON.parse(event.data);
+
+  //     reduxDispatch(addPatient(updatedPatients));
+  //   };
+
+  //   ws.current.onclose = () => {
+  //     console.log("WebSocket connection closed");
+  //   };
+  //   ws.current.onerror = (error) => {
+  //     console.error("WebSocket error:", error);
+  //   };
+
+  //   return () => {
+  //     if (ws.current) {
+  //       ws.current.close();
+  //     }
+  //   };
+  // }, [clinicId, doctorId, reduxDispatch]);
 
   const handleClickPatient = (id) => {
     const clickedPatient = patients.find((patient) => patient.id === id);
@@ -43,7 +74,7 @@ const Scribe = () => {
   };
 
   const groupedPatients = groupPatientsByInitial(patients);
-  const sortedInitials = Object.keys(groupedPatients).sort(); // Sort the initials alphabetically
+  const sortedInitials = Object.keys(groupedPatients).sort();
 
   return (
     <>

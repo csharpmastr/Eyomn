@@ -32,19 +32,42 @@ export const getPatientsByDoctor = async (
   refreshToken
 ) => {
   try {
-    const response = await axios.post(
-      `${PATIENT_API_BASE_URL}/get-patients`,
+    const response = await axios.get(
+      `${PATIENT_API_BASE_URL}/patients-doctor`,
       {
-        clinicId,
-        doctorId,
-      },
-      {
+        params: {
+          clinicId,
+          doctorId,
+        },
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "x-refresh-token": refreshToken,
         },
       }
     );
+    return response.data;
+  } catch (err) {
+    console.error("Error fetching patients: ", err);
+    throw err;
+  }
+};
+
+export const getPatients = async (
+  clinicId,
+
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.get(`${PATIENT_API_BASE_URL}/get-all`, {
+      params: {
+        clinicId,
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+      },
+    });
     return response.data;
   } catch (err) {
     console.error("Error fetching patients: ", err);

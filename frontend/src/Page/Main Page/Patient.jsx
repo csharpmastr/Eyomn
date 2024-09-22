@@ -3,7 +3,7 @@ import { FiUser } from "react-icons/fi";
 import { IoMdSearch } from "react-icons/io";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import Form from "../../Component/ui/Form";
-import Cookies from "universal-cookie";
+
 import Loader from "../../Component/ui/Loader";
 import AddPatientModal from "../../Component/ui/AddPatientModal";
 import Table from "../../Component/ui/Table";
@@ -12,8 +12,8 @@ import { useSelector } from "react-redux";
 const Patient = () => {
   const [isAddPatientModalOpen, setisAddPatientModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const cookies = new Cookies();
-  const role = cookies.get("role");
+
+  const role = useSelector((state) => state.reducer.user.user.role);
   const [isLoading, setIsLoading] = useState(false);
   const patients = useSelector((state) => state.reducer.patient.patients);
   const totalPatient = patients.length;
@@ -56,7 +56,7 @@ const Patient = () => {
           <div className="flex h-auto w-auto gap-2 justify-end">
             <div
               className={` flex flex-row border-2 border-[#C8C8C8] p-1  rounded-xl justify-center items-center ${
-                role === 0 ? `` : `w-1/2`
+                role === "0" ? `` : `w-1/2`
               }`}
             >
               <IoMdSearch className="h-8 w-8 text-[#A7A7A7]" />
@@ -68,7 +68,7 @@ const Patient = () => {
                 onChange={handleSearchChange}
               />
             </div>
-            {role === 0 ? (
+            {role === "0" ? (
               ""
             ) : (
               <>
@@ -84,7 +84,9 @@ const Patient = () => {
             )}
           </div>
         </div>
-        <Table data={filteredPatients} />
+        <div className="px-8 mt-5">
+          <Table data={filteredPatients} />
+        </div>
       </div>
       <AddPatientModal isOpen={isAddPatientModalOpen} onClose={closeAddPatient}>
         <Form />

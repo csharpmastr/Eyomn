@@ -71,7 +71,7 @@ const ScribePatient = () => {
             </p>
             <span className="h-[40px] w-[1.5px] bg-[#C8C8C8] mx-2 "></span>
             <p className="flex items-center justify-center">
-              Ophthalmologist: {doctorName}
+              {doctor.position}: {doctor.name}
             </p>
           </div>
           <div className="hidden lg:flex lg:flex-row">

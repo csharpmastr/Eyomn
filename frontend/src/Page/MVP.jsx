@@ -2,6 +2,7 @@ import React from "react";
 import SideBar from "./Main Page/SideBar";
 import { Outlet } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { WebSocketProvider } from "../Context/WebSocketContext";
 
 const MVP = () => {
   const location = useLocation();
@@ -30,17 +31,19 @@ const MVP = () => {
   const currentTab = getCurrentTab();
 
   return (
-    <div className="flex xl:flex-row flex-col h-screen overflow-hidden">
-      <SideBar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="hidden xl:h-[8vh] w-full bg-[#1ABC9C] font-Poppins text-white xl:flex items-center xl:pl-5 text-[22px]">
-          {currentTab}
-        </div>
-        <div className="flex-1 overflow-auto">
-          <Outlet />
+    <WebSocketProvider>
+      <div className="flex xl:flex-row flex-col h-screen overflow-hidden">
+        <SideBar />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="hidden xl:h-[8vh] w-full bg-[#1ABC9C] font-Poppins text-white xl:flex items-center xl:pl-5 text-[22px]">
+            {currentTab}
+          </div>
+          <div className="flex-1 overflow-auto">
+            <Outlet />
+          </div>
         </div>
       </div>
-    </div>
+    </WebSocketProvider>
   );
 };
 

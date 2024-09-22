@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 
 const PatientModal = ({ onClose, tab }) => {
   const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(""); // New state for search input
+  const [searchTerm, setSearchTerm] = useState("");
   const patients = useSelector((state) => state.reducer.patient.patients);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();

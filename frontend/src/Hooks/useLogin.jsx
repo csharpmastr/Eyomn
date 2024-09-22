@@ -4,10 +4,11 @@ import { userLogin } from "../Service/UserService";
 import Cookies from "universal-cookie";
 import { useDispatch } from "react-redux";
 import { setDoctor } from "../Slice/doctorSlice";
-
 import { getDoctorList, getStaffs } from "../Service/StaffService";
 import { setStaffs } from "../Slice/StaffSlice";
 import { setUser } from "../Slice/UserSlice";
+import { getPatients, getPatientsByDoctor } from "../Service/PatientService";
+import { setPatients } from "../Slice/PatientSlice";
 
 export const useLogin = () => {
   const cookies = new Cookies();
@@ -28,8 +29,19 @@ export const useLogin = () => {
 
       let staffResponse = [];
       let doctorList = [];
+      let patientByDoctorList = [];
+      let patients = [];
       if (role === "0") {
         staffResponse = await getStaffs(userId, accessToken, refreshToken);
+        patients = await getPatients(userId, accessToken, refreshToken);
+      } else if (role === "1") {
+        const patientByDoctorResponse = await getPatientsByDoctor(
+          clinicId,
+          userId,
+          accessToken,
+          refreshToken
+        );
+        patientByDoctorList = patientByDoctorResponse;
       } else if (role === "2") {
         const doctorResponse = await getDoctorList(
           clinicId,
@@ -42,16 +54,16 @@ export const useLogin = () => {
 
       cookies.set("accessToken", accessToken, { path: "/" });
       cookies.set("refreshToken", refreshToken, { path: "/" });
-      cookies.set("role", role, { path: "/" });
-      cookies.set("organization", organization, { path: "/" });
 
       dispatch({ type: "LOGIN", payload: userId });
-      reduxDispatch(setStaffs(staffResponse || []));
+
       reduxDispatch(setUser({ userId }));
       if (role === "0") {
-        reduxDispatch(setUser({ userId }));
+        reduxDispatch(setUser({ userId, organization, role }));
+        reduxDispatch(setStaffs(staffResponse || []));
+        reduxDispatch(setPatients(patients || []));
       } else {
-        reduxDispatch(setUser({ userId, clinicId }));
+        reduxDispatch(setUser({ userId, clinicId, organization, role }));
         if (role === "1") {
           reduxDispatch(setDoctor(staffData));
         } else {

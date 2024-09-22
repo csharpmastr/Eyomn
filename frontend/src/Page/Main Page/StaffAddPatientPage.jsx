@@ -304,7 +304,7 @@ const StaffAddPatientPage = () => {
                       </option>
                       {doctorsList.map((doctor, key) => (
                         <option key={key} value={doctor.id}>
-                          {doctor.name + " " + doctor.position}
+                          {`${doctor.name} (${doctor.position})`}
                         </option>
                       ))}
                     </select>

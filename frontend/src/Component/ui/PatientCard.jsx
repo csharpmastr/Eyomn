@@ -38,7 +38,6 @@ const PatientCard = ({ name, onClick }) => {
     )}, ${Math.max(0, Math.min(255, adjustedB))})`;
   };
 
-  // Run only once when the component is mounted
   useEffect(() => {
     setBackgroundColor(generateComplementaryColor());
   }, []);

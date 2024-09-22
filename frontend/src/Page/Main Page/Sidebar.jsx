@@ -12,10 +12,10 @@ import SidebarLogo from "../../assets/Image/sidebar_logo.png";
 import Cookies from "universal-cookie";
 import useLogout from "../../Hooks/useLogout";
 import { useAuthContext } from "../../Hooks/useAuthContext";
+import { useSelector } from "react-redux";
 
 const SideBar = () => {
-  const cookies = new Cookies();
-  const role = cookies.get("role");
+  const role = useSelector((state) => state.reducer.user.user.role);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { logout } = useLogout();
@@ -37,7 +37,7 @@ const SideBar = () => {
 
   return (
     <div
-      className={`h-auto w-full xl:h-screen ${
+      className={`h-auto w-full xl:h-screen z-50 ${
         isCollapsed ? "xl:w-24" : "xl:w-64"
       } bg-[#1ABC9C] xl:bg-[#2C3E50] transition-all duration-300 ease-in-out`}
     >
@@ -85,7 +85,7 @@ const SideBar = () => {
         }`}
       >
         <div className="flex flex-col xl:gap-4 mt-2">
-          {role === 0 && (
+          {role === "0" && (
             <>
               <NavLink
                 className={`font-Poppins flex items-center text-[18px] py-3 px-4 text-[#B5B5B5] rounded-md xl:hover:bg-[#1ABC9C] hover:text-white ${
@@ -157,7 +157,7 @@ const SideBar = () => {
               </NavLink>
             </>
           )}
-          {role === 1 && (
+          {role === "1" && (
             <>
               <NavLink
                 className={`font-Poppins flex items-center text-[18px] py-3 px-4 rounded-md xl:hover:bg-[#1ABC9C] hover:text-white ${
@@ -227,7 +227,7 @@ const SideBar = () => {
               </NavLink>
             </>
           )}
-          {role === 2 && (
+          {role === "2" && (
             <NavLink
               className={`font-Poppins flex items-center text-[18px] py-3 px-4 rounded-md xl:hover:bg-[#1ABC9C] hover:text-white ${
                 selected === "add-patient"
@@ -248,11 +248,11 @@ const SideBar = () => {
                     : " h-[25px] w-[25px] xl:mr-3 "
                 }`}
               />
-              {!isCollapsed && <span className=" ml-2  ">Add Patient</span>}
+              {!isCollapsed && <span className=" ml-2 ">Add Patient</span>}
             </NavLink>
           )}
         </div>
-        <div className={`mb-2 ${role === 0 ? `xl:pt-72` : `xl:pt-72`}`}>
+        <div className={`mb-2 ${role === "0" ? `xl:pt-72` : `xl:pt-72`}`}>
           <NavLink
             className={`font-Poppins flex items-center text-[18px] py-3 px-4 rounded-md text-[#B5B5B5] xl:hover:bg-[#1ABC9C] hover:text-white ${
               isCollapsed
