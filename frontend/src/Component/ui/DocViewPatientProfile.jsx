@@ -111,7 +111,7 @@ const DocViewPatientProfile = ({
                 <p className="text-c-gray3 font-medium text-p-sm">
                   Date of last Eye Exam:
                 </p>
-                <p className="text-f-dark text-p-rg">June 2024</p>
+                <p className="text-f-dark text-p-rg text-end">June 2024</p>
               </div>
             </section>
             <section className="p-3 rounded-lg border border-f-gray flex justify-between">
@@ -127,7 +127,7 @@ const DocViewPatientProfile = ({
                 <p className="text-c-gray3 font-medium text-p-sm">
                   Date of last Medical Exam:
                 </p>
-                <p className="text-f-dark text-p-rg">June 2024</p>
+                <p className="text-f-dark text-p-rg text-end">June 2024</p>
               </div>
             </section>
           </div>
