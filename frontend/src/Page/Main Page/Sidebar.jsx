@@ -39,17 +39,17 @@ const SideBar = () => {
     <div
       className={`h-auto w-full xl:h-screen z-50 ${
         isCollapsed ? "xl:w-24" : "xl:w-64"
-      } bg-[#1ABC9C] xl:bg-[#2C3E50] transition-all duration-300 ease-in-out`}
+      } bg-c-primary xl:bg-[#EEF1F1] border-r-2  border-f-gray transition-all duration-300 ease-in-out`}
     >
       <div className="flex items-center justify-between xl:mb-10 px-4 md:px-6 lg:px-8">
         {isMenuOpen ? (
           <IoMdClose
-            className="text-white text-2xl xl:hidden"
+            className="text-f-light text-2xl xl:hidden"
             onClick={handleMenuClick}
           />
         ) : (
           <GiHamburgerMenu
-            className="text-white text-2xl xl:hidden"
+            className="text-f-light text-2xl xl:hidden"
             onClick={handleMenuClick}
           />
         )}
@@ -61,17 +61,17 @@ const SideBar = () => {
           }`}
         />
         <button
-          className={`text-white text-xl ${isCollapsed ? "ml-1" : "ml-4"}`}
+          className={`text-f-dark text-xl ${isCollapsed ? "ml-1" : "ml-4"}`}
           onClick={handleCollapseToggle}
         >
           {isCollapsed ? (
             <GiHamburgerMenu
-              className="text-white mt-5 hidden xl:block "
+              className="text-f-dark mt-5 hidden xl:block "
               onClick={handleMenuClick}
             />
           ) : (
             <IoMdClose
-              className="text-white hidden xl:block"
+              className="text-f-dark hidden xl:block"
               onClick={handleMenuClick}
             />
           )}
@@ -80,7 +80,7 @@ const SideBar = () => {
       <div
         className={`xl:flex xl:flex-col px-4 xl:space-y-3 xl:px-6 xl:pt-5 xl:pb-5 transition-all duration-300 ease-in-out overflow-hidden xl:h-full ${
           isMenuOpen
-            ? "block max-h-screen bg-[#2C3E50] fixed xl:static w-full xl:w-auto"
+            ? "block max-h-screen bg-[#EEF1F1] fixed xl:static w-full xl:w-auto"
             : "hidden xl:block"
         }`}
       >
@@ -88,10 +88,10 @@ const SideBar = () => {
           {role === "0" && (
             <>
               <NavLink
-                className={`font-Poppins flex items-center text-[18px] py-3 px-4 text-[#B5B5B5] rounded-md xl:hover:bg-[#1ABC9C] hover:text-white ${
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
                   selected === "dashboard"
-                    ? "xl:bg-[#A0A3A6] text-white font-semibold "
-                    : ""
+                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
                 }${
                   isCollapsed
                     ? " xl:justify-center xl:px-2 py-2 "
@@ -112,10 +112,10 @@ const SideBar = () => {
                 )}
               </NavLink>
               <NavLink
-                className={`font-Poppins flex items-center text-[18px] py-3 px-4 rounded-md xl:hover:bg-[#1ABC9C] hover:text-white ${
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
                   selected === "patient"
-                    ? "xl:bg-[#A0A3A6] text-white font-semibold "
-                    : "text-[#B5B5B5] "
+                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
                 }${
                   isCollapsed
                     ? " xl:px-2 py-2 xl:justify-center"
@@ -134,10 +134,10 @@ const SideBar = () => {
                 {!isCollapsed && <span className="ml-2">Patients</span>}
               </NavLink>
               <NavLink
-                className={`font-Poppins flex items-center text-[18px] py-3 px-4 rounded-md xl:hover:bg-[#1ABC9C] hover:text-white ${
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
                   selected === "organization"
-                    ? "xl:bg-[#A0A3A6] text-white font-semibold "
-                    : "text-[#B5B5B5] "
+                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
                 }${
                   isCollapsed
                     ? " xl:px-2 py-2 xl:justify-center "
@@ -160,10 +160,10 @@ const SideBar = () => {
           {role === "1" && (
             <>
               <NavLink
-                className={`font-Poppins flex items-center text-[18px] py-3 px-4 rounded-md xl:hover:bg-[#1ABC9C] hover:text-white ${
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
                   selected === "scan"
-                    ? " xl:bg-[#A0A3A6] text-white font-semibold "
-                    : " text-[#B5B5B5] "
+                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
                 }${
                   isCollapsed
                     ? " xl:px-2 py-2  justify-center"
@@ -182,10 +182,10 @@ const SideBar = () => {
                 {!isCollapsed && <span className="ml-2">Scan Fundus</span>}
               </NavLink>
               <NavLink
-                className={`font-Poppins flex items-center text-[18px] py-2 px-4 rounded-md xl:hover:bg-[#1ABC9C] hover:text-white ${
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
                   selected === "scribe"
-                    ? " xl:bg-[#A0A3A6] text-white xl:text-white font-semibold "
-                    : " text-[#B5B5B5] "
+                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
                 }${
                   isCollapsed
                     ? " xl:px-2 py-2 justify-center"
@@ -204,10 +204,10 @@ const SideBar = () => {
                 {!isCollapsed && <span className="ml-2">Scribe</span>}
               </NavLink>
               <NavLink
-                className={`font-Poppins flex items-center text-[18px] py-3 px-4 rounded-md xl:hover:bg-[#1ABC9C] hover:text-white ${
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
                   selected === "patient"
-                    ? " xl:bg-[#A0A3A6] text-white font-semibold "
-                    : " text-[#B5B5B5] "
+                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
                 }${
                   isCollapsed
                     ? " xl:px-2 py-2 justify-center"
@@ -229,10 +229,10 @@ const SideBar = () => {
           )}
           {role === "2" && (
             <NavLink
-              className={`font-Poppins flex items-center text-[18px] py-3 px-4 rounded-md xl:hover:bg-[#1ABC9C] hover:text-white ${
+              className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
                 selected === "add-patient"
-                  ? " xl:bg-[#A0A3A6] text-white font-semibold "
-                  : " text-[#B5B5B5] "
+                  ? "xl:bg-c-primary text-f-light font-semibold "
+                  : "text-f-dark font-medium"
               }${
                 isCollapsed
                   ? " xl:px-2 py-2 justify-center"
@@ -254,10 +254,10 @@ const SideBar = () => {
         </div>
         <div className={`mb-2 ${role === "0" ? `xl:pt-72` : `xl:pt-72`}`}>
           <NavLink
-            className={`font-Poppins flex items-center text-[18px] py-3 px-4 rounded-md text-[#B5B5B5] xl:hover:bg-[#1ABC9C] hover:text-white ${
+            className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
               isCollapsed
-                ? " xl:justify-center xl:px-2 py-3 "
-                : " xl:py-3 xl:px-4 "
+                ? "xl:bg-c-primary text-f-light font-semibold "
+                : "text-f-dark font-medium"
             }`}
             onClick={logout}
           >

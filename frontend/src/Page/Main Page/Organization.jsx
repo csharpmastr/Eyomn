@@ -17,27 +17,35 @@ const Organization = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center">
-      <div
-        className="h-12 w-40 flex justify-center items-center border-2 border-[#222222] rounded-md py-2 px-2 md:px-4 font-Poppins cursor-pointer"
-        onClick={handleOpenStaffModal}
-      >
-        <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
-        <h1 className="hidden md:block">Add Staff</h1>
+    <div className="w-full h-full flex flex-col items-center p-4 md:p-8">
+      <div className="w-full flex flex-row-reverse">
+        <div
+          className="h-12 w-40 flex justify-center items-center border-2 border-[#222222] rounded-md py-2 px-2 md:px-4 font-Poppins cursor-pointer"
+          onClick={handleOpenStaffModal}
+        >
+          <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
+          <h1 className="hidden md:block">Add Staff</h1>
+        </div>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-4 mt-4">
-        {staffs.map((staff, index) => (
-          <StaffCard
-            key={index}
-            name={
-              `${staff.first_name || ""} ${staff.last_name || ""}`.trim() ||
-              staff.name
-            }
-            email={staff.email}
-            position={staff.position}
-          />
-        ))}
+      <div className="flex flex-wrap justify-center gap-4 mt-4 items-center w-full h-full">
+        {staffs.length > 0 ? (
+          staffs.map((staff, index) => (
+            <StaffCard
+              key={index}
+              name={
+                `${staff.first_name || ""} ${staff.last_name || ""}`.trim() ||
+                staff.name
+              }
+              email={staff.email}
+              position={staff.position}
+            />
+          ))
+        ) : (
+          <p className="font-semibold text-3xl text-c-secondary">
+            No Active branch found!
+          </p>
+        )}
       </div>
       {isModalOpen && <AddStaffModal onClose={handleCloseStaffModal} />}
     </div>

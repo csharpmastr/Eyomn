@@ -15,37 +15,29 @@ const formatDate = (dateString) => {
 
 const Table = ({ data }) => {
   return (
-    <table className="w-full font-Poppins rounded-lg table-fixed">
-      <thead className="w-full">
-        <tr className="text-left bg-[#EDECEC] font-semibold text-[#A7A7A7]">
-          <th className="p-6 rounded-tl-md rounded-bl-md w-1/5">
-            Patient Name
-          </th>
-          <th className="w-1/6">Contact</th>
-          <th className="w-1/5">Email</th>
-          <th className="w-1/5">Address</th>
-          <th className="p-6 rounded-tr-md rounded-br-md w-1/5">Registered</th>
+    <table className="w-full font-Poppins rounded-t-lg table-fixed">
+      <thead className="w-full h-20">
+        <tr className="text-left bg-white font-semibold text-c-secondary">
+          <th className="pl-8 w-1/4">Patient Name</th>
+          <th className="w-1/4">Contact</th>
+          <th className="w-1/4">Email</th>
+          <th className="w-1/4">Last Visit</th>
         </tr>
       </thead>
       <tbody>
         {data.map((patientData, index) => (
           <tr
             key={index}
-            className={index % 2 === 0 ? "bg-white" : "bg-[#F9F9FF]"}
+            className={`border-b-[1px] border-[#E1E1E1] h-20 text-c-secondary text-p-rg ${
+              index % 2 === 0 ? "bg-none" : `bg-white`
+            }`}
           >
-            <td className="px-4 py-4 h-16">
+            <td className="pl-8">
               {patientData.first_name + " " + patientData.last_name}
             </td>
-            <td className="py-4 h-12">{patientData.contact_number}</td>
-            <td className="max-w-[15vw] truncate pr-4 py-4 h-16">
-              {patientData.email}
-            </td>
-            <td className="py-4 h-12">
-              {capitalizeFirstLetter(patientData.municipality) +
-                ", " +
-                capitalizeFirstLetter(patientData.province)}
-            </td>
-            <td className="py-4 h-12">{formatDate(patientData.createdAt)}</td>
+            <td>{patientData.contact_number}</td>
+            <td className="max-w-[15vw] truncate">{patientData.email}</td>
+            <td>{formatDate(patientData.createdAt)}</td>
           </tr>
         ))}
       </tbody>

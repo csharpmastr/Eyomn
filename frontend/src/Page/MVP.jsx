@@ -35,10 +35,10 @@ const MVP = () => {
       <div className="flex xl:flex-row flex-col h-screen overflow-hidden">
         <SideBar />
         <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="hidden xl:h-[8vh] w-full bg-[#1ABC9C] font-Poppins text-white xl:flex items-center xl:pl-5 text-[22px]">
+          <div className="hidden xl:h-20 w-full bg-white font-Poppins text-f-dark border-b-[1px] border-f-gray xl:flex items-center xl:px-8 text-h6 font-medium">
             {currentTab}
           </div>
-          <div className="flex-1 overflow-auto">
+          <div className="flex-1 overflow-auto bg-bg-mc">
             <Outlet />
           </div>
         </div>
