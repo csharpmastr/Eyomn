@@ -63,7 +63,8 @@ const getPatients = async (staffId, branchId, role) => {
           key !== "branchId" &&
           key !== "doctorId" &&
           key !== "organizationId" &&
-          key !== "createdAt"
+          key !== "createdAt" &&
+          key !== "isDeleted"
         ) {
           decryptedPatientData[key] = decryptData(value);
         } else {

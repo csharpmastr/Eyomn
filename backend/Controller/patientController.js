@@ -5,6 +5,8 @@ const {
   updatePatientDetails,
   deletePatient,
   retrievePatient,
+  addNote,
+  getNote,
 } = require("../Service/patientService");
 
 const addPatientHandler = async (req, res) => {
@@ -121,6 +123,44 @@ const retrievePatientHandler = async (req, res) => {
       .json({ message: "Error retrieving patients.", error: error.message });
   }
 };
+const addNoteHandler = async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+    const visitId = req.params.visitId;
+    const noteDetails = req.body;
+
+    if (!patientId || !visitId || !noteDetails) {
+      return res.status(400).json({
+        message: "Invalid request. Missing Patient ID or Visit ID.",
+      });
+    }
+    await addNote(patientId, visitId, noteDetails);
+    return res.status(200).json({ message: "Notes Added." });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error adding patient's note.", error: error.message });
+  }
+};
+
+const getPatientNoteHandler = async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+    const visitId = req.params.visitId;
+
+    if (!patientId || !visitId) {
+      return res.status(400).json({
+        message: "Invalid request. Missing Patient ID or Visit ID.",
+      });
+    }
+    const note = await getNote(patientId, visitId);
+    return res.status(200).json(note);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error getting patient's note.", error: error.message });
+  }
+};
 module.exports = {
   addPatientHandler,
   getPatientsByDoctorHandler,
@@ -128,4 +168,6 @@ module.exports = {
   updatePatientHandler,
   deletePatientHandler,
   retrievePatientHandler,
+  addNoteHandler,
+  getPatientNoteHandler,
 };

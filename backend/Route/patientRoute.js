@@ -6,6 +6,8 @@ const {
   updatePatientHandler,
   deletePatientHandler,
   retrievePatientHandler,
+  addNoteHandler,
+  getPatientNoteHandler,
 } = require("../Controller/patientController");
 const { validateToken } = require("../Wrapper/Wrapper");
 
@@ -20,4 +22,6 @@ router.get("/get-all", validateToken, getPatientsHandler);
 router.put("/update/:patientId", updatePatientHandler);
 router.put("/delete/:patientId", deletePatientHandler);
 router.put("/retrieve/:patientId", retrievePatientHandler);
+router.post("/add-note/:patientId/:visitId", addNoteHandler);
+router.get("/get-note/:patientId/:visitId", getPatientNoteHandler);
 module.exports = router;

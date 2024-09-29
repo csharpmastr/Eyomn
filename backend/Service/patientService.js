@@ -68,6 +68,100 @@ const addVisit = async (patientId, doctorId) => {
   await visitSubColRef.set(visitData);
   console.log(`Visit added for patient ${patientId} with visit ID: ${visitId}`);
 };
+const addNote = async (patientId, visitId, noteDetails) => {
+  try {
+    const noteId = uuidv4();
+    const noteRef = patientCollection
+      .doc(patientId)
+      .collection("notes")
+      .doc(visitId);
+
+    const encryptedNoteDetails = {};
+
+    const encryptValue = (value) => {
+      if (typeof value === "string" && isNaN(Date.parse(value))) {
+        return encryptData(value);
+      }
+      return value;
+    };
+
+    for (const [key, value] of Object.entries(noteDetails)) {
+      if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
+        encryptedNoteDetails[key] = Object.fromEntries(
+          Object.entries(value).map(([nestedKey, nestedValue]) => [
+            nestedKey,
+            encryptValue(nestedValue),
+          ])
+        );
+      } else {
+        encryptedNoteDetails[key] = encryptValue(value);
+      }
+    }
+
+    await noteRef.set({
+      noteId,
+      ...encryptedNoteDetails,
+      createdAt: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Error adding note:", error);
+    throw error;
+  }
+};
+
+const getNote = async (patientId, visitId) => {
+  try {
+    const noteRef = patientCollection
+      .doc(patientId)
+      .collection("notes")
+      .doc(visitId);
+
+    const noteData = await noteRef.get();
+
+    if (!noteData.exists) {
+      throw new Error("Note not found");
+    }
+
+    const decryptedNoteDetails = {};
+    const noteDetails = noteData.data();
+
+    const decryptValue = (key, value) => {
+      if (key === "noteId" || key === "createdAt") {
+        return value;
+      }
+      if (typeof value === "string" && isNaN(Date.parse(value))) {
+        return decryptData(value);
+      }
+      return value;
+    };
+
+    for (const [key, value] of Object.entries(noteDetails)) {
+      if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
+        decryptedNoteDetails[key] = Object.fromEntries(
+          Object.entries(value).map(([nestedKey, nestedValue]) => [
+            nestedKey,
+            decryptValue(nestedKey, nestedValue),
+          ])
+        );
+      } else {
+        decryptedNoteDetails[key] = decryptValue(key, value);
+      }
+    }
+
+    return decryptedNoteDetails;
+  } catch (error) {
+    console.error("Error getting note:", error);
+    throw error;
+  }
+};
 
 const updatePatientDetails = async (patientId, patientData) => {
   try {
@@ -177,6 +271,8 @@ module.exports = {
   updatePatientDetails,
   deletePatient,
   retrievePatient,
+  addNote,
+  getNote,
   // getPatientsByDoctor,
   // getPatients,
 };
