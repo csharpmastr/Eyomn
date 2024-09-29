@@ -1,113 +1,42 @@
 const WebSocket = require("ws");
-const { db } = require("../Config/FirebaseConfig");
-const {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  getDocs,
-} = require("firebase/firestore");
 const { decryptData } = require("../Security/DataHashing");
+const { getVisit } = require("../Helper/Helper");
+const { getPatients } = require("../Helper/Helper");
 
 const startWebSocketServer = () => {
   const wss = new WebSocket.Server({ port: 8080 });
 
-  wss.on("connection", (ws) => {
+  wss.on("connection", async (ws, req) => {
     console.log("New WebSocket connection");
-    const existingPatients = new Set();
+    console.log(req.url);
 
-    ws.on("message", async (message) => {
-      try {
-        const { clinicId, doctorId } = JSON.parse(message);
+    const urlParts = req.url.split("/");
 
-        const patientsRef = collection(
-          db,
-          "clinicPatients",
-          clinicId,
-          "Patients"
-        );
-        const patientsQuery = query(
-          patientsRef,
-          where("doctorId", "==", doctorId)
-        );
+    const organizationId = urlParts[1];
+    const branchId = urlParts[2];
+    const staffId = urlParts[3];
 
-        const querySnapshot = await getDocs(patientsQuery);
-        querySnapshot.forEach((doc) => {
-          let data = {
-            id: doc.id,
-            ...doc.data(),
-          };
+    try {
+      const patients = await getPatients(staffId, branchId, "2");
 
-          Object.keys(data).forEach((key) => {
-            if (
-              key !== "createdAt" &&
-              key !== "doctorId" &&
-              key !== "patientId" &&
-              key !== "id"
-            ) {
-              if (data[key]) {
-                try {
-                  data[key] = decryptData(data[key]);
-                } catch (error) {
-                  console.error(`Error decrypting field ${key}:`, error);
-                  data[key] = "Decryption error";
-                }
-              }
-            }
-          });
+      for (const patient of patients) {
+        const visits = await getVisit(patient.patientId, staffId);
 
-          existingPatients.add(data.id);
+        patient.visits = visits;
 
-          ws.send(JSON.stringify(data));
-        });
-
-        const unsubscribe = onSnapshot(patientsQuery, (snapshot) => {
-          snapshot.docChanges().forEach((change) => {
-            let data;
-            if (change.type === "added") {
-              // new patient
-              data = {
-                id: change.doc.id,
-                ...change.doc.data(),
-              };
-
-              Object.keys(data).forEach((key) => {
-                if (
-                  key !== "createdAt" &&
-                  key !== "doctorId" &&
-                  key !== "patientId" &&
-                  key !== "id"
-                ) {
-                  if (data[key]) {
-                    try {
-                      data[key] = decryptData(data[key]);
-                    } catch (error) {
-                      console.error(`Error decrypting field ${key}:`, error);
-                      data[key] = "Decryption error";
-                    }
-                  }
-                }
-              });
-              if (!existingPatients.has(data.id)) {
-                existingPatients.add(data.id);
-                ws.send(JSON.stringify(data));
-              }
-            }
-          });
-        });
-
-        ws.on("close", () => {
-          unsubscribe();
-          console.log("WebSocket connection closed");
-        });
-      } catch (error) {
-        console.error("Error processing WebSocket message:", error);
+        ws.send(JSON.stringify(patient));
       }
+    } catch (error) {
+      console.error("Error fetching patients:", error.message);
+      ws.send(JSON.stringify({ error: "Failed to fetch patients" }));
+    }
+    ws.on("close", () => {
+      console.log("WebSocket connection closed");
     });
+  });
 
-    ws.on("error", (error) => {
-      console.error("WebSocket error:", error);
-    });
+  wss.on("error", (error) => {
+    console.error("WebSocket error:", error);
   });
 };
 

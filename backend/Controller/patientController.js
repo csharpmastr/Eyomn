@@ -2,17 +2,34 @@ const {
   addPatient,
   getPatientsByDoctor,
   getPatients,
+  updatePatientDetails,
+  deletePatient,
+  retrievePatient,
 } = require("../Service/patientService");
 
 const addPatientHandler = async (req, res) => {
   try {
-    const { clinicId, ...patientData } = req.body;
-    if (!clinicId || Object.keys(patientData).length === 0) {
-      return res
-        .status(400)
-        .json({ message: "Clinic ID and patient data are required." });
+    const organizationId = req.params.organizationId;
+    const branchId = req.params.branchId;
+    const doctorId = req.params.doctorId;
+    const patientData = req.body;
+    if (
+      !branchId ||
+      !organizationId ||
+      !doctorId ||
+      Object.keys(patientData).length === 0
+    ) {
+      return res.status(400).json({
+        message:
+          "Organization ID, branch ID, doctor ID, and patient data are required.",
+      });
     }
-    const id = await addPatient(clinicId, patientData);
+    const id = await addPatient(
+      organizationId,
+      branchId,
+      doctorId,
+      patientData
+    );
     return res
       .status(200)
       .json({ message: "Patient added successfully", id: id });
@@ -55,8 +72,60 @@ const getPatientsHandler = async (req, res) => {
   }
 };
 
+const updatePatientHandler = async (req, res) => {
+  try {
+    const patientData = req.body;
+    const patientId = req.params.patientId;
+    if (!patientId || !patientData) {
+      return res.status(400).json({
+        message: "Invalid request. Missing patientId or patientData.",
+      });
+    }
+    await updatePatientDetails(patientId, patientData);
+    return res.status(200).json({ message: "Patient details updated" });
+  } catch (error) {
+    console.error("Error updating patient details: ", error);
+    return res.status(500).json({
+      message: "Error updating patient details",
+      error: error.message,
+    });
+  }
+};
+
+const deletePatientHandler = async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+
+    if (!patientId) {
+      return res.status(400).json({ message: "No patient ID" });
+    }
+    await deletePatient(patientId);
+    return res.status(200).json({ message: "Patient deleted." });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error deleting patients.", error: error.message });
+  }
+};
+const retrievePatientHandler = async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+    if (!patientId) {
+      return res.status(400).json({ message: "No patient ID" });
+    }
+    await retrievePatient(patientId);
+    return res.status(200).json({ message: "Patient retrieved." });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error retrieving patients.", error: error.message });
+  }
+};
 module.exports = {
   addPatientHandler,
   getPatientsByDoctorHandler,
   getPatientsHandler,
+  updatePatientHandler,
+  deletePatientHandler,
+  retrievePatientHandler,
 };

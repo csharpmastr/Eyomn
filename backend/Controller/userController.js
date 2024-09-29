@@ -44,12 +44,21 @@ const loginUserHandler = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const { userId, role, organization, staffData, clinicId } = await loginUser(
-      {
-        email,
-        password,
-      }
-    );
+    const {
+      userId,
+      role,
+      organization,
+      branches,
+      branchData,
+      organizationId,
+      staffData,
+      patients,
+      staffs,
+      doctors,
+    } = await loginUser({
+      email,
+      password,
+    });
 
     const accessToken = generateToken(
       userId,
@@ -72,19 +81,37 @@ const loginUserHandler = async (req, res) => {
           accessToken,
           refreshToken,
         },
+        branch: branches,
+      });
+    } else if (role === "1") {
+      res.status(200).json({
+        userId: userId,
+        role: role,
+        message: "Login successful",
+        organizationId,
+        organization,
+        tokens: {
+          accessToken,
+          refreshToken,
+        },
+        branchData,
+        patients,
+        staffs,
       });
     } else {
       res.status(200).json({
         userId: userId,
         role: role,
         message: "Login successful",
-        staffData: staffData,
-        clinicId: clinicId,
-        organization: organization,
+        organizationId,
+        organization,
         tokens: {
           accessToken,
           refreshToken,
         },
+        staffData,
+        patients,
+        doctors,
       });
     }
   } catch (error) {

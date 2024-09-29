@@ -1,28 +1,29 @@
-// FirebaseConfig.js
 require("dotenv").config();
-const { initializeApp } = require("firebase/app");
-const { getFirestore, collection } = require("firebase/firestore");
+const admin = require("firebase-admin");
+const serviceAccount = require("./eyomn-2d9c7-firebase-adminsdk-zjlyg-4c6fd6c764.json");
 
-const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const clinicCollection = collection(db, "clinic");
-const clinicPatientsCollection = collection(db, "clinicPatients");
-const clinicStaffCollection = collection(db, "clinicStaff");
-const userCollection = collection(db, "users");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`,
+});
+
+const db = admin.firestore();
+
+const organizationCollection = db.collection("organization");
+const branchCollection = db.collection("branch");
+const staffCollection = db.collection("staff");
+const patientCollection = db.collection("patient");
+const userCollection = db.collection("user");
+const inventoryCollection = db.collection("inventory");
+const appointmentCollection = db.collection("apppointment");
 
 module.exports = {
   db,
-  clinicCollection,
-  clinicPatientsCollection,
+  organizationCollection,
+  branchCollection,
+  staffCollection,
+  patientCollection,
   userCollection,
-  clinicStaffCollection,
+  inventoryCollection,
+  appointmentCollection,
 };

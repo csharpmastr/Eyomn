@@ -1,17 +1,20 @@
+const admin = require("firebase-admin");
 require("dotenv").config();
+const {
+  getOrganizationName,
+  decryptDocument,
+  getStaffs,
+  getBranchDoctors,
+  getVisit,
+} = require("../Helper/Helper");
 const { v4: uuidv4 } = require("uuid");
+
 const {
-  setDoc,
-  doc,
-  getDocs,
-  getDoc,
-  query,
-  where,
-} = require("firebase/firestore");
-const {
-  clinicCollection,
+  organizationCollection,
   userCollection,
-  clinicStaffCollection,
+  branchCollection,
+  staffCollection,
+  patientCollection,
 } = require("../Config/FirebaseConfig");
 const {
   hashPassword,
@@ -19,6 +22,8 @@ const {
   comparePassword,
   decryptData,
 } = require("../Security/DataHashing");
+const e = require("express");
+const { getPatients } = require("../Helper/Helper");
 
 class EmailAlreadyExistsError extends Error {
   constructor(message) {
@@ -26,44 +31,44 @@ class EmailAlreadyExistsError extends Error {
     this.name = "EmailAlreadyExistsError";
   }
 }
-
-const addUser = async (clinicData) => {
+const addUser = async (orgData) => {
   try {
-    const q = query(
-      clinicCollection,
-      where("email", "==", encryptData(clinicData.email))
-    );
-    const querySnapshot = await getDocs(q);
+    const orgRef = organizationCollection;
+    const userRef = userCollection;
+
+    const q = orgRef.where("email", "==", orgData.email);
+    const querySnapshot = await q.get();
 
     if (!querySnapshot.empty) {
       throw new EmailAlreadyExistsError("Email already exists.");
     }
 
-    const hashedPassword = await hashPassword(clinicData.password);
-    const encryptedOrganization = encryptData(clinicData.organization);
-    const encryptedContact = encryptData(clinicData.contact);
+    const hashedPassword = await hashPassword(orgData.password);
+    const encryptedOrganization = encryptData(orgData.organization);
+    const encryptedContact = encryptData(orgData.contact);
 
     const userId = uuidv4();
 
-    const clinicRef = doc(clinicCollection, userId);
-    const userRef = doc(userCollection, userId);
+    const orgDocRef = orgRef.doc(userId);
+    const userDocRef = userRef.doc(userId);
 
-    await setDoc(clinicRef, {
-      email: clinicData.email,
+    await orgDocRef.set({
+      email: orgData.email,
+      branch: [],
       organization: encryptedOrganization,
       contact: encryptedContact,
       id: userId,
       role: "0",
     });
 
-    await setDoc(userRef, {
-      email: clinicData.email,
+    await userDocRef.set({
+      email: orgData.email,
       password: hashedPassword,
       id: userId,
       role: "0",
     });
 
-    return { userId, organization: clinicData.organization, role: "0" };
+    return { userId, organization: orgData.organization, role: "0" };
   } catch (error) {
     if (error instanceof EmailAlreadyExistsError) {
       throw error;
@@ -71,20 +76,18 @@ const addUser = async (clinicData) => {
     throw new Error("Failed to add user: " + error.message);
   }
 };
+
 const loginUser = async (userData) => {
   const { email, password } = userData;
   try {
-    // Query user by email
-    const userQuery = query(userCollection, where("email", "==", email));
-    const querySnapshot = await getDocs(userQuery);
+    const userRef = userCollection.where("email", "==", email);
+    const querySnapshot = await userRef.get();
 
     if (querySnapshot.empty) {
       throw new Error("Invalid email or password");
     }
 
     const user = querySnapshot.docs[0].data();
-
-    // Verify password
     const isPasswordValid = await comparePassword(password, user.password);
 
     if (!isPasswordValid) {
@@ -96,65 +99,176 @@ const loginUser = async (userData) => {
     }
 
     let data = null;
-
-    // Handle role-specific data
     if (user.role === "0") {
-      // Fetch clinic data
-      const clinicQuery = query(clinicCollection, where("id", "==", user.id));
-      const clinicSnapshot = await getDocs(clinicQuery);
+      const orgQuery = organizationCollection.where("id", "==", user.id);
+      const orgSnapShot = await orgQuery.get();
 
-      if (clinicSnapshot.empty) {
-        throw new Error("Clinic data not found");
+      if (orgSnapShot.empty) {
+        throw new Error("Organization data not found");
       }
 
-      const clinic = clinicSnapshot.docs[0].data();
-      const org = decryptData(clinic.organization);
+      const organization = orgSnapShot.docs[0].data();
+      const org = decryptData(organization.organization);
+      const orgBranches = organization.branch;
+
+      const branches = [];
+
+      for (const branchId of orgBranches) {
+        const branchRef = branchCollection.doc(branchId);
+        const branchSnap = await branchRef.get();
+
+        if (branchSnap.exists) {
+          const branchData = branchSnap.data();
+          const decryptedBranchData = decryptDocument(branchData, [
+            "email",
+            "patients",
+            "staffs",
+            "branchId",
+          ]);
+
+          const staffs = await getStaffs(user.id, branchId);
+          decryptedBranchData.staffs = staffs;
+
+          const patientDocs = await Promise.all(
+            branchData.patients.map(async (patientId) => {
+              const patientRef = patientCollection.doc(patientId);
+              const patientSnap = await patientRef.get();
+              if (patientSnap.exists) {
+                return decryptDocument(patientSnap.data(), [
+                  "patientId",
+                  "organizationId",
+                  "branchId",
+                  "createdAt",
+                  "doctorId",
+                ]);
+              }
+              return null;
+            })
+          );
+          decryptedBranchData.patients = patientDocs.filter(Boolean);
+
+          branches.push(decryptedBranchData);
+        }
+      }
+
       data = {
         userId: user.id,
         role: user.role,
         organization: org,
+        branches,
       };
-    } else {
-      const clinicId = user.clinicId;
-      const staffId = user.staffId;
+    } else if (user.role === "1") {
+      const branchQuery = branchCollection.where(
+        "branchId",
+        "==",
+        user.branchId
+      );
+      const branchSnapShot = await branchQuery.get();
 
-      if (!clinicId || !staffId) {
-        throw new Error("Clinic ID or Staff ID not found");
+      if (branchSnapShot.empty) {
+        throw new Error("Branch data not found");
       }
 
-      const staffRef = doc(clinicStaffCollection, clinicId, "Staff", staffId);
-      const staffSnapshot = await getDoc(staffRef);
+      const organization = await getOrganizationName(user.organizationId);
+      const branchDataSnap = branchSnapShot.docs[0].data();
+      const branchData = decryptDocument(branchDataSnap, [
+        "email",
+        "branchId",
+        "staffs",
+        "patients",
+      ]);
+      const staffs = await getStaffs(
+        user.organizationId,
+        user.branchId,
+        user.role
+      );
+      const patients = await getPatients(null, user.branchId, user.role);
 
-      if (!staffSnapshot.exists()) {
+      data = {
+        role: user.role,
+        userId: user.branchId,
+        organizationId: user.organizationId,
+        branchData,
+        organization,
+        patients,
+        staffs,
+      };
+    } else if (user.role === "2") {
+      const staffQuery = staffCollection.where("staffId", "==", user.staffId);
+      const staffSnapShot = await staffQuery.get();
+
+      if (staffSnapShot.empty) {
         throw new Error("Staff data not found");
       }
 
-      const staffDataSnap = staffSnapshot.data();
-      const staffData = {};
+      const staffEncryptedData = staffSnapShot.docs[0].data();
+      const staffData = decryptDocument(staffEncryptedData, [
+        "email",
+        "branchId",
+        "organizationId",
+        "staffId",
+        "role",
+      ]);
 
-      for (const [key, value] of Object.entries(staffDataSnap)) {
-        if (key === "role" || key === "email" || key === "staffId") {
-          staffData[key] = value;
-        } else {
-          staffData[key] = decryptData(value);
-        }
-      }
-
-      const clinicRef = doc(clinicCollection, clinicId);
-      const clinicSnapShot = await getDoc(clinicRef);
-      if (!clinicSnapShot.exists()) {
-        throw new Error("Clinic data not found");
-      }
-
-      const clinicData = clinicSnapShot.data();
-      const organizationName = decryptData(clinicData.organization);
+      const organization = await getOrganizationName(user.organizationId);
 
       data = {
-        userId: staffId,
         role: user.role,
-        clinicId: clinicId,
+        userId: user.staffId,
+        branchId: user.branchId,
+        organizationId: user.organizationId,
+        organization,
         staffData,
-        organization: organizationName,
+      };
+    } else {
+      const staffQuery = staffCollection.where("staffId", "==", user.staffId);
+      const staffSnapShot = await staffQuery.get();
+
+      if (staffSnapShot.empty) {
+        throw new Error("Staff data not found");
+      }
+
+      const staffEncryptedData = staffSnapShot.docs[0].data();
+      const staffData = decryptDocument(staffEncryptedData, [
+        "email",
+        "branchId",
+        "organizationId",
+        "staffId",
+        "role",
+      ]);
+
+      const organization = await getOrganizationName(user.organizationId);
+      const patients = await getPatients(
+        user.staffId,
+        user.branchId,
+        user.role
+      );
+
+      const patientsWithVisits = await Promise.all(
+        patients.map(async (patient) => {
+          const visits = await getVisit(patient.patientId, patient.doctorId);
+          return {
+            ...patient,
+            visits,
+          };
+        })
+      );
+
+      const doctors = await getBranchDoctors(
+        user.organizationId,
+        user.branchId
+      );
+      console.log(doctors);
+
+      data = {
+        role: user.role,
+        userId: user.staffId,
+        branchId: user.branchId,
+        organizationId: user.organizationId,
+        organization,
+        staffData,
+        patients: patientsWithVisits,
+        doctors,
       };
     }
 
@@ -165,4 +279,4 @@ const loginUser = async (userData) => {
   }
 };
 
-module.exports = { addUser, loginUser };
+module.exports = { addUser, loginUser, EmailAlreadyExistsError };

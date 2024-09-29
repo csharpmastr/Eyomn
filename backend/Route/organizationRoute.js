@@ -3,12 +3,15 @@ const {
   addStaffHandler,
   getStaffsHandler,
   getDoctorsListHandler,
-} = require("../Controller/staffController");
+  addBranchHandler,
+} = require("../Controller/organizationController");
 const { validateToken } = require("../Wrapper/Wrapper");
 
 const router = express.Router();
 
-router.post("/add", validateToken, addStaffHandler);
+router.post("/add-staff/:organizationId/:branchId", addStaffHandler);
 router.post("/get-staffs", validateToken, getStaffsHandler);
 router.get("/get-doctors", validateToken, getDoctorsListHandler);
+router.post("/add-branch/:organizationId", addBranchHandler);
+
 module.exports = router;
