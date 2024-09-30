@@ -29,7 +29,7 @@ const addPatient = async (organizationId, branchId, doctorId, patientData) => {
         key === "patientId" ||
         key === "organizationId" ||
         key === "branchId" ||
-        key !== "isDeleted"
+        key === "isDeleted"
       ) {
         encryptedPatientData[key] = value;
       } else {

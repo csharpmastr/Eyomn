@@ -56,6 +56,7 @@ const getPatients = async (staffId, branchId, role) => {
     const patients = patientSnapshot.docs.map((patientDoc) => {
       const patientData = patientDoc.data();
       const decryptedPatientData = {};
+      console.log(patientData);
 
       for (const [key, value] of Object.entries(patientData)) {
         if (
