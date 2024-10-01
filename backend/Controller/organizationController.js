@@ -78,7 +78,7 @@ const getDoctorsListHandler = async (req, res) => {
 
 const addBranchHandler = async (req, res) => {
   try {
-    const organizationId = req.params;
+    const organizationId = req.params.organizationId;
     const branchData = req.body;
 
     if (!organizationId) {

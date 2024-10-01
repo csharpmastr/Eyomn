@@ -6,6 +6,7 @@ const {
   getStaffs,
   getBranchDoctors,
   getVisit,
+  getPatients,
 } = require("../Helper/Helper");
 const { v4: uuidv4 } = require("uuid");
 
@@ -22,8 +23,7 @@ const {
   comparePassword,
   decryptData,
 } = require("../Security/DataHashing");
-const e = require("express");
-const { getPatients } = require("../Helper/Helper");
+const { getAppointment } = require("./appointmentService");
 
 class EmailAlreadyExistsError extends Error {
   constructor(message) {
@@ -111,6 +111,8 @@ const loginUser = async (userData) => {
       const org = decryptData(organization.organization);
       const orgBranches = organization.branch;
 
+      console.log("Branch IDs in organization:", orgBranches);
+
       const branches = [];
 
       for (const branchId of orgBranches) {
@@ -129,23 +131,15 @@ const loginUser = async (userData) => {
           const staffs = await getStaffs(user.id, branchId);
           decryptedBranchData.staffs = staffs;
 
-          const patientDocs = await Promise.all(
-            branchData.patients.map(async (patientId) => {
-              const patientRef = patientCollection.doc(patientId);
-              const patientSnap = await patientRef.get();
-              if (patientSnap.exists) {
-                return decryptDocument(patientSnap.data(), [
-                  "patientId",
-                  "organizationId",
-                  "branchId",
-                  "createdAt",
-                  "doctorId",
-                ]);
-              }
-              return null;
-            })
+          const patients = await getPatients(
+            user.id,
+            null,
+            branchId,
+            user.role
           );
-          decryptedBranchData.patients = patientDocs.filter(Boolean);
+          const appointments = await getAppointment(branchId);
+          decryptedBranchData.appointments = appointments;
+          decryptedBranchData.patients = patients;
 
           branches.push(decryptedBranchData);
         }
@@ -182,8 +176,8 @@ const loginUser = async (userData) => {
         user.branchId,
         user.role
       );
-      const patients = await getPatients(null, user.branchId, user.role);
-
+      const patients = await getPatients(null, null, user.branchId, user.role);
+      const appointments = await getAppointment(user.branchId);
       data = {
         role: user.role,
         userId: user.branchId,
@@ -192,6 +186,7 @@ const loginUser = async (userData) => {
         organization,
         patients,
         staffs,
+        appointments,
       };
     } else if (user.role === "2") {
       const staffQuery = staffCollection.where("staffId", "==", user.staffId);
@@ -239,6 +234,7 @@ const loginUser = async (userData) => {
 
       const organization = await getOrganizationName(user.organizationId);
       const patients = await getPatients(
+        null,
         user.staffId,
         user.branchId,
         user.role

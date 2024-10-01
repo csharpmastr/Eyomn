@@ -5,7 +5,7 @@ const {
   patientCollection,
   staffCollection,
 } = require("../Config/FirebaseConfig");
-const { decryptData } = require("../Security/DataHashing");
+const { decryptData, encryptData } = require("../Security/DataHashing");
 
 const getOrganizationName = async (organizationId) => {
   try {
@@ -25,15 +25,20 @@ const getOrganizationName = async (organizationId) => {
   }
 };
 
-const getPatients = async (staffId, branchId, role) => {
+const getPatients = async (organizationId, staffId, branchId, role) => {
   try {
     if (!branchId || !role) {
       throw new Error("Branch ID and Role must be provided.");
     }
 
     let patientQuery;
-
-    if (role === "1" || role === "3") {
+    if (role === "0") {
+      patientQuery = patientCollection.where(
+        "organizationId",
+        "==",
+        organizationId
+      );
+    } else if (role === "1" || role === "3") {
       patientQuery = patientCollection.where("branchId", "==", branchId);
     } else if (role === "2") {
       if (!staffId) {
@@ -55,23 +60,14 @@ const getPatients = async (staffId, branchId, role) => {
 
     const patients = patientSnapshot.docs.map((patientDoc) => {
       const patientData = patientDoc.data();
-      const decryptedPatientData = {};
-      console.log(patientData);
-
-      for (const [key, value] of Object.entries(patientData)) {
-        if (
-          key !== "patientId" &&
-          key !== "branchId" &&
-          key !== "doctorId" &&
-          key !== "organizationId" &&
-          key !== "createdAt" &&
-          key !== "isDeleted"
-        ) {
-          decryptedPatientData[key] = decryptData(value);
-        } else {
-          decryptedPatientData[key] = value;
-        }
-      }
+      const decryptedPatientData = decryptDocument(patientData, [
+        "patientId",
+        "branchId",
+        "doctorId",
+        "organizationId",
+        "createdAt",
+        "isDeleted",
+      ]);
 
       return decryptedPatientData;
     });
@@ -168,6 +164,17 @@ function decryptDocument(data, excludedKeys) {
   }
   return decryptedData;
 }
+function encryptDocument(data, excludedKeys) {
+  const encryptedData = {};
+  for (const key in data) {
+    if (!excludedKeys.includes(key)) {
+      encryptedData[key] = encryptData(data[key]);
+    } else {
+      encryptedData[key] = data[key];
+    }
+  }
+  return encryptedData;
+}
 const addVisit = async (patientId, doctorId) => {
   try {
     const currentDate = new Date();
@@ -219,6 +226,7 @@ module.exports = {
   getOrganizationName,
   getPatients,
   decryptDocument,
+  encryptDocument,
   getStaffs,
   getBranchDoctors,
   addVisit,

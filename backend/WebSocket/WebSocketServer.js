@@ -20,7 +20,7 @@ const startWebSocketServer = () => {
     const sentPatientIds = new Set();
 
     try {
-      const patients = await getPatients(staffId, branchId, "2");
+      const patients = await getPatients(null, staffId, branchId, "2");
 
       for (const patient of patients) {
         const visits = await getVisit(patient.patientId, staffId);

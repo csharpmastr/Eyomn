@@ -55,6 +55,7 @@ const loginUserHandler = async (req, res) => {
       patients,
       staffs,
       doctors,
+      appointments,
     } = await loginUser({
       email,
       password,
@@ -97,6 +98,7 @@ const loginUserHandler = async (req, res) => {
         branchData,
         patients,
         staffs,
+        appointments,
       });
     } else {
       res.status(200).json({

@@ -1,8 +1,16 @@
 const { v4: uuid } = require("uuid");
-const { appointmentCollection } = require("../Config/FirebaseConfig");
+const {
+  appointmentCollection,
+  organizationCollection,
+} = require("../Config/FirebaseConfig");
+const { decryptData, encryptData } = require("../Security/DataHashing");
+const { decryptDocument, encryptDocument } = require("../Helper/Helper");
 
 const addSchedule = async (branchId, scheduleDetails) => {
   try {
+    console.log(branchId);
+    console.log(scheduleDetails);
+
     const scheduleId = uuid();
     const schedRef = appointmentCollection
       .doc(branchId)
@@ -15,7 +23,9 @@ const addSchedule = async (branchId, scheduleDetails) => {
     if (!existingSchedules.empty) {
       throw { status: 400, message: "A schedule already exists at this time." };
     }
-
+    const encryptedDetails = encryptDocument(scheduleDetails, [
+      "scheduledTime",
+    ]);
     const oneHourGap = 60 * 60 * 1000;
     const newScheduleTime = new Date(scheduleDetails.scheduledTime).getTime();
 
@@ -34,7 +44,7 @@ const addSchedule = async (branchId, scheduleDetails) => {
     const scheduleData = {
       id: scheduleId,
       branchId: branchId,
-      ...scheduleDetails,
+      ...encryptedDetails,
       createdAt: new Date().toISOString(),
     };
 
@@ -62,7 +72,40 @@ const deleteSchedule = async (branchId, appointmentId) => {
   }
 };
 
+const getAppointment = async (branchId) => {
+  try {
+    let appointments = [];
+
+    const branchDocRef = appointmentCollection.doc(branchId);
+
+    const schedulesSnapshot = await branchDocRef.collection("schedules").get();
+
+    if (schedulesSnapshot.empty) {
+      console.log("No schedules found for this branch.");
+      return [];
+    }
+
+    schedulesSnapshot.forEach((scheduleDoc) => {
+      const scheduleDetails = scheduleDoc.data();
+
+      const decrytedSChedule = decryptDocument(scheduleDetails, [
+        "branchId",
+        "createdAt",
+        "id",
+        "scheduledTime",
+      ]);
+      appointments.push(decrytedSChedule);
+    });
+
+    return appointments;
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    throw error;
+  }
+};
+
 module.exports = {
   addSchedule,
   deleteSchedule,
+  getAppointment,
 };

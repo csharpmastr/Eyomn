@@ -6,6 +6,7 @@ const {
   patientCollection,
   branchCollection,
 } = require("../Config/FirebaseConfig");
+const { encryptDocument } = require("../Helper/Helper");
 
 const addPatient = async (organizationId, branchId, doctorId, patientData) => {
   const currentDate = new Date();
@@ -14,7 +15,7 @@ const addPatient = async (organizationId, branchId, doctorId, patientData) => {
   }
   try {
     const patientId = uuidv4();
-    const encryptedPatientData = {
+    const basePatientData = {
       doctorId,
       patientId,
       organizationId,
@@ -23,19 +24,10 @@ const addPatient = async (organizationId, branchId, doctorId, patientData) => {
       isDeleted: false,
     };
 
-    for (const [key, value] of Object.entries(patientData)) {
-      if (
-        key === "doctorId" ||
-        key === "patientId" ||
-        key === "organizationId" ||
-        key === "branchId" ||
-        key === "isDeleted"
-      ) {
-        encryptedPatientData[key] = value;
-      } else {
-        encryptedPatientData[key] = encryptData(value);
-      }
-    }
+    const encryptedPatientData = encryptDocument(
+      { ...basePatientData, ...patientData },
+      ["doctorId", "patientId", "organizationId", "branchId", "isDeleted"]
+    );
 
     const branchRef = branchCollection.doc(branchId);
     await branchRef.update({
