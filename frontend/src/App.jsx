@@ -28,9 +28,9 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      {/* <Route
+      <Route
         path="/"
-        element={<Navigate to={user ? /${selectedTab} : "/login"} />}
+        element={<Navigate to={user ? `/${selectedTab}` : "/login"} />}
       />
       <Route
         path="/login"
@@ -51,7 +51,7 @@ const AppRoutes = () => {
             <AuthenticationPage type="signup" />
           )
         }
-      /> */}
+      />
 
       {/* Protected routes */}
       <Route path="/" element={<MVP />}>

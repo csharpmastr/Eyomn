@@ -33,17 +33,12 @@ const getPatients = async (organizationId, staffId, branchId, role) => {
 
     let patientQuery;
     if (role === "0") {
-      patientQuery = patientCollection.where(
-        "organizationId",
-        "==",
-        organizationId
-      );
+      patientQuery = patientCollection
+        .where("organizationId", "==", organizationId)
+        .where("branchId", "==", branchId);
     } else if (role === "1" || role === "3") {
       patientQuery = patientCollection.where("branchId", "==", branchId);
     } else if (role === "2") {
-      if (!staffId) {
-        throw new Error("Staff ID must be provided for role 2 (doctor).");
-      }
       patientQuery = patientCollection
         .where("doctorId", "==", staffId)
         .where("branchId", "==", branchId);

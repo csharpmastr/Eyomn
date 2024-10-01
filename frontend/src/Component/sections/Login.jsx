@@ -24,11 +24,13 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await login(userData.email, userData.password);
+      console.log(response);
+
       if (response) {
-        if (response.role === "0") {
+        if (response.role === "0" || response.role === "1") {
           sessionStorage.setItem("selectedTab", "dashboard");
           navigate("/dashboard");
-        } else if (response.role === "1") {
+        } else if (response.role === "2") {
           sessionStorage.setItem("selectedTab", "scan");
           navigate("/scan");
         } else {

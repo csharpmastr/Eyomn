@@ -22,53 +22,63 @@ export const useLogin = () => {
     setError(null);
     try {
       const response = await userLogin(email, password);
-      const { userId, role, tokens, organization, staffData, clinicId } =
-        response;
+      console.log(response);
 
+      const {
+        userId,
+        role,
+        tokens,
+        organizationId,
+        organization,
+        branch,
+        branchData,
+        patients,
+        staffData,
+        doctors,
+      } = response;
       const { accessToken, refreshToken } = tokens;
 
-      let staffResponse = [];
-      let doctorList = [];
-      let patientByDoctorList = [];
-      let patients = [];
-      if (role === "0") {
-        staffResponse = await getStaffs(userId, accessToken, refreshToken);
-        patients = await getPatients(userId, accessToken, refreshToken);
-      } else if (role === "1") {
-        const patientByDoctorResponse = await getPatientsByDoctor(
-          clinicId,
-          userId,
-          accessToken,
-          refreshToken
-        );
-        patientByDoctorList = patientByDoctorResponse;
-      } else if (role === "2") {
-        const doctorResponse = await getDoctorList(
-          clinicId,
-          userId,
-          accessToken,
-          refreshToken
-        );
-        doctorList = doctorResponse.doctors || [];
-      }
-
+      dispatch({ type: "LOGIN", payload: userId });
       cookies.set("accessToken", accessToken, { path: "/" });
       cookies.set("refreshToken", refreshToken, { path: "/" });
 
-      dispatch({ type: "LOGIN", payload: userId });
-
-      reduxDispatch(setUser({ userId }));
       if (role === "0") {
+        const resPatients = branch.flatMap((branch) => branch.patients);
         reduxDispatch(setUser({ userId, organization, role }));
-        reduxDispatch(setStaffs(staffResponse || []));
-        reduxDispatch(setPatients(patients || []));
+        reduxDispatch(setPatients(resPatients));
+      } else if (role === "1") {
+        const name = branchData.name;
+        const email = branchData.email;
+        const location = branchData.location;
+
+        reduxDispatch(
+          setUser({ userId, organization, role, name, email, location })
+        );
+        reduxDispatch(setPatients(patients));
       } else {
-        reduxDispatch(setUser({ userId, clinicId, organization, role }));
-        if (role === "1") {
-          reduxDispatch(setDoctor(staffData));
-        } else {
-          reduxDispatch(setDoctor(doctorList));
+        if (role === "3") {
+          reduxDispatch(setPatients(patients));
         }
+        const first_name = staffData.first_name;
+        const last_name = staffData.last_name;
+        const email = staffData.email;
+        const location = staffData.location;
+        const branchId = staffData.branchId;
+
+        reduxDispatch(
+          setUser({
+            userId,
+            organization,
+            role,
+            first_name,
+            last_name,
+            email,
+            location,
+            organizationId,
+            branchId,
+          })
+        );
+        reduxDispatch(setDoctor(doctors));
       }
       return response;
     } catch (err) {

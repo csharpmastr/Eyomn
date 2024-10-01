@@ -206,7 +206,12 @@ const loginUser = async (userData) => {
       ]);
 
       const organization = await getOrganizationName(user.organizationId);
-
+      const patients = await getPatients(
+        user.organizationId,
+        user.staffId,
+        user.branchId,
+        user.role
+      );
       data = {
         role: user.role,
         userId: user.staffId,
@@ -214,6 +219,7 @@ const loginUser = async (userData) => {
         organizationId: user.organizationId,
         organization,
         staffData,
+        patients,
       };
     } else {
       const staffQuery = staffCollection.where("staffId", "==", user.staffId);

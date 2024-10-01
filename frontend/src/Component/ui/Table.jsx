@@ -35,7 +35,7 @@ const Table = ({ data }) => {
             <td className="pl-8">
               {patientData.first_name + " " + patientData.last_name}
             </td>
-            <td>{patientData.contact_number}</td>
+            <td>{patientData.contact}</td>
             <td className="max-w-[15vw] truncate">{patientData.email}</td>
             <td>{formatDate(patientData.createdAt)}</td>
           </tr>

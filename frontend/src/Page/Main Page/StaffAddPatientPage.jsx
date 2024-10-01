@@ -30,7 +30,6 @@ const StaffAddPatientPage = () => {
     email: "",
     doctorId: "",
     reason_visit: "",
-    clinicId: user.clinicId,
   });
 
   const handleChange = (e) => {
@@ -91,7 +90,6 @@ const StaffAddPatientPage = () => {
       email: "",
       doctorId: "",
       reason_visit: "",
-      clinicId: user.clinicId,
     });
     setSelectedProvince(null);
     setSelectedMunicipality(null);
@@ -326,7 +324,9 @@ const StaffAddPatientPage = () => {
                   </option>
                   {doctorsList.map((doctor, key) => (
                     <option key={key} value={doctor.id}>
-                      {`${doctor.name} (${doctor.position})`}
+                      {`${doctor.first_name + " " + doctor.last_name} (${
+                        doctor.position
+                      })`}
                     </option>
                   ))}
                 </select>

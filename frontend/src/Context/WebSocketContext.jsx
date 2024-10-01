@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useRef, useEffect } from "react";
-import { addPatient } from "../Slice/PatientSlice";
+import { addPatient } from "../Slice/PatientSlice"; // Ensure addPatient is defined in your PatientSlice
 import { useDispatch, useSelector } from "react-redux";
 
 const WebSocketContext = createContext();
@@ -8,25 +8,46 @@ export const WebSocketProvider = ({ children }) => {
   const ws = useRef(null);
   const reduxDispatch = useDispatch();
   const role = useSelector((state) => state.reducer.user.user.role);
-  const clinicId = useSelector((state) => state.reducer.user.user.clinicId);
+  const organizationId = useSelector(
+    (state) => state.reducer.user.user.organizationId
+  );
+  const branchId = useSelector((state) => state.reducer.user.user.branchId);
   const doctorId = useSelector((state) => state.reducer.user.user.userId);
   const patients = useSelector((state) => state.reducer.patient.patients);
 
+  const existingPatientIds = useRef(
+    new Set(patients.map((patient) => patient.patientId))
+  );
+
   useEffect(() => {
-    if (role !== "1") {
+    existingPatientIds.current = new Set(
+      patients.map((patient) => patient.patientId)
+    );
+  }, [patients]);
+
+  useEffect(() => {
+    if (role !== "2") {
       return;
     }
 
-    ws.current = new WebSocket(`ws://localhost:8080/${clinicId}/${doctorId}`);
+    ws.current = new WebSocket(
+      `ws://localhost:8080/${organizationId}/${branchId}/${doctorId}`
+    );
 
     ws.current.onopen = () => {
       console.log("WebSocket connected");
-      ws.current.send(JSON.stringify({ clinicId, doctorId }));
     };
-    ws.current.onmessage = (event) => {
-      const updatedPatients = JSON.parse(event.data);
 
-      reduxDispatch(addPatient(updatedPatients));
+    ws.current.onmessage = (event) => {
+      const updatedPatient = JSON.parse(event.data);
+
+      if (!existingPatientIds.current.has(updatedPatient.patientId)) {
+        reduxDispatch(addPatient(updatedPatient));
+      } else {
+        console.log(
+          `Patient with ID ${updatedPatient.patientId} already exists.`
+        );
+      }
     };
 
     ws.current.onclose = () => {
@@ -42,7 +63,7 @@ export const WebSocketProvider = ({ children }) => {
         ws.current.close();
       }
     };
-  }, [clinicId, doctorId, reduxDispatch]);
+  }, [organizationId, branchId, doctorId, reduxDispatch, role]);
 
   return (
     <WebSocketContext.Provider value={ws.current}>

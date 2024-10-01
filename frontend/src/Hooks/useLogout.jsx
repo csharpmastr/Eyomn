@@ -23,8 +23,6 @@ export const useLogout = () => {
       navigate("/");
       cookies.remove("accessToken", { path: "/" });
       cookies.remove("refreshToken", { path: "/" });
-      cookies.remove("organization", { path: "/" });
-      cookies.remove("role", { path: "/" });
       dispatch({ type: "LOGOUT" });
       reduxDispatch(clearDoctor());
       reduxDispatch(clearPatients());

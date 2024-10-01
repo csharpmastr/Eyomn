@@ -69,7 +69,7 @@ const Patient = () => {
                 <option value="filter3">Filter 3</option>
               </select>
             </div>
-            {role === "0" ? (
+            {role === "0" || role === "1" ? (
               ""
             ) : (
               <>

@@ -85,7 +85,7 @@ const SideBar = () => {
         }`}
       >
         <div className="flex flex-col xl:gap-4 mt-2">
-          {role === "0" && (
+          {(role === "0" || role === "1") && (
             <>
               <NavLink
                 className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
@@ -157,7 +157,7 @@ const SideBar = () => {
               </NavLink>
             </>
           )}
-          {role === "1" && (
+          {role === "2" && (
             <>
               <NavLink
                 className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
@@ -227,7 +227,7 @@ const SideBar = () => {
               </NavLink>
             </>
           )}
-          {role === "2" && (
+          {role === "3" && (
             <NavLink
               className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
                 selected === "add-patient"
