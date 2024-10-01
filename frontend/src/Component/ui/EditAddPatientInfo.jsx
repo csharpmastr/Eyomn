@@ -99,7 +99,7 @@ const AddPatientUICard = () => {
           </h1>
           <button>x</button>
         </header>
-        <body className="bg-white h-[600px] overflow-y-scroll">
+        <div className="bg-white h-[600px] overflow-y-scroll">
           {currentCardIndex == 0 ? (
             <div className="p-3 md:p-8">
               <header>
@@ -331,7 +331,7 @@ const AddPatientUICard = () => {
               </div>
             </div>
           )}
-        </body>
+        </div>
         <footer className="flex justify-end px-3 py-6 bg-white border border-t-f-gray rounded-b-lg">
           {currentCardIndex == 0 ? (
             ""
