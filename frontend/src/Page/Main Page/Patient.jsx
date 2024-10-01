@@ -38,53 +38,53 @@ const Patient = () => {
   return (
     <div className="h-full w-full">
       {isLoading && <Loader />}
-      <div>
-        <div className="w-full flex justify-between mx-auto items-center px-8 pt-4">
-          <div className="flex gap-2">
-            <div className="bg-[#CFCFCF] w-14 h-auto flex items-center justify-center p-2 rounded-md">
-              <FiUser className="h-8 w-8" />
-            </div>
-            <div className="flex gap-1">
-              <p className="text-center flex justify-center items-center font-Poppins font-semibold text-[20px]">
-                {totalPatient}
-              </p>
-              <p className="text-center flex justify-center items-center font-Poppins text-[#A7A7A7]">
-                total patient
-              </p>
-            </div>
-          </div>
-          <div className="flex h-auto w-auto gap-2 justify-end">
+      <div className="p-4 md:p-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between">
+          <p className="font-Poppins text-p-lg font-semibold text-f-dark">
+            {totalPatient} <span className="text-f-gray2">Total patient</span>
+          </p>
+          <div className="mt-8 md:mt-0 flex flex-row">
             <div
-              className={` flex flex-row border-2 border-[#C8C8C8] p-1  rounded-xl justify-center items-center ${
-                role === "0" ? `` : `w-1/2`
+              className={` flex flex-row border border-c-gray3 px-4 rounded-md justify-center items-center w-full ${
+                role === "0" ? `` : `md:w-80`
               }`}
             >
-              <IoMdSearch className="h-8 w-8 text-[#A7A7A7]" />
+              <IoMdSearch className="h-8 w-8 text-c-secondary" />
               <input
                 type="text"
-                className="w-full text-black px-2 font-Poppins focus:outline-none placeholder-[#A7A7A7] placeholder:font-bold"
+                className="w-full text-f-dark font-Poppins focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
                 placeholder="Search patient... "
                 value={searchTerm}
                 onChange={handleSearchChange}
               />
             </div>
+            <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 font-Poppins border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
+              <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
+              <select className="md:block hover:cursor-pointer focus:outline-none bg-bg-mc">
+                <option value="" disabled selected>
+                  Filter
+                </option>
+                <option value="filter1">Filter 1</option>
+                <option value="filter2">Filter 2</option>
+                <option value="filter3">Filter 3</option>
+              </select>
+            </div>
             {role === "0" ? (
               ""
             ) : (
               <>
-                <span className="h-[55px] w-[2px] bg-[#C8C8C8]"></span>
                 <div
-                  className="h-auto flex justify-center items-center rounded-md py-2 px-3 font-Poppins bg-[#1ABC9C] text-white font-semibold hover:cursor-pointer hover:bg-[#16A085]"
+                  className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 font-Poppins bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
                   onClick={openAddPatient}
                 >
                   <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
-                  <h1 className="hidden md:block">Add Patient</h1>
+                  <h1 className="hidden md:block">Add patient</h1>
                 </div>
               </>
             )}
           </div>
         </div>
-        <div className="px-8 mt-5">
+        <div className="mt-8">
           <Table data={filteredPatients} />
         </div>
       </div>

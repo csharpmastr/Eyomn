@@ -23,11 +23,13 @@ const StaffAddPatientPage = () => {
     sex: "",
     birthdate: "",
     civil_status: "",
+    occupation: "",
     province: "",
     municipality: "",
     contact_number: "",
     email: "",
     doctorId: "",
+    reason_visit: "",
     clinicId: user.clinicId,
   });
 
@@ -82,11 +84,13 @@ const StaffAddPatientPage = () => {
       sex: "",
       birthdate: "",
       civil_status: "",
+      occupation: "",
       province: "",
       municipality: "",
       contact_number: "",
       email: "",
       doctorId: "",
+      reason_visit: "",
       clinicId: user.clinicId,
     });
     setSelectedProvince(null);
@@ -119,16 +123,18 @@ const StaffAddPatientPage = () => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className="h-full w-full flex justify-center items-center px-8 py-8 bg-[#E6E6E6]">
+      <div className="h-full w-full flex justify-center bg-bg-mc overflow-auto p-4 md:p-12">
         <div>
           <form
-            className="flex px-8 py-4 font-Poppins h-auto bg-white rounded-lg shadow-md"
+            className="flex flex-col font-Poppins h-auto w-auto"
             onSubmit={handleSubmit}
           >
-            <div className="w-1/2 p-4">
-              <label className="mb-4 text-[20px]">| Personal Information</label>
-              <div className="text-[#999999] mt-4">
-                <label htmlFor="first_name" className="text-[14px]">
+            <div className="p-8 w-full lg:w-[660px] rounded-lg bg-white mb-6">
+              <label className="text-p-lg font-semibold text-c-primary">
+                | Personal Information
+              </label>
+              <div className="mt-3 text-c-gray3">
+                <label htmlFor="first_name" className="text-p-sm">
                   First Name
                 </label>
                 <input
@@ -136,10 +142,10 @@ const StaffAddPatientPage = () => {
                   name="first_name"
                   value={formData.first_name}
                   onChange={handleChange}
-                  className="w-full h-10 px-2 py-3 border-2 border-[#999999] rounded-md text-black mb-4"
+                  className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                   placeholder="Enter first name"
                 />
-                <label htmlFor="last_name" className="text-[14px]">
+                <label htmlFor="last_name" className="text-p-sm">
                   Last Name
                 </label>
                 <input
@@ -147,10 +153,10 @@ const StaffAddPatientPage = () => {
                   name="last_name"
                   value={formData.last_name}
                   onChange={handleChange}
-                  className="w-full h-12 px-2 py-4 border-2 border-[#999999] rounded-md text-black mb-4"
+                  className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                   placeholder="Enter last name"
                 />
-                <label htmlFor="middle_name" className="text-[14px]">
+                <label htmlFor="middle_name" className="text-p-sm">
                   Middle Name (Optional)
                 </label>
                 <input
@@ -158,12 +164,12 @@ const StaffAddPatientPage = () => {
                   name="middle_name"
                   value={formData.middle_name}
                   onChange={handleChange}
-                  className="w-full h-12 px-2 py-4 border-2 border-[#999999] rounded-md text-black mb-4"
+                  className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                   placeholder="Enter middle name"
                 />
                 <div className="flex gap-4">
                   <div className="w-1/2">
-                    <label htmlFor="age" className="text-[14px]">
+                    <label htmlFor="age" className="text-p-sm">
                       Age
                     </label>
                     <input
@@ -172,21 +178,21 @@ const StaffAddPatientPage = () => {
                       min={0}
                       value={formData.age}
                       onChange={handleChange}
-                      className="w-full h-12 px-2 py-4 border-2 border-[#999999] rounded-md text-black mb-4"
+                      className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                       placeholder="Enter age"
                     />
                   </div>
                   <div className="w-1/2">
-                    <label htmlFor="sex" className="text-[14px]">
+                    <label htmlFor="sex" className="text-p-sm">
                       Sex
                     </label>
                     <select
                       name="sex"
                       value={formData.sex}
                       onChange={handleChange}
-                      className="w-full h-12 px-2 border-2 border-[#999999] rounded-md text-black mb-4"
+                      className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                     >
-                      <option value="" disabled className="text-[#3b3030]">
+                      <option value="" disabled className="text-c-gray3">
                         Select Sex
                       </option>
                       <option value="Male">Male</option>
@@ -194,7 +200,7 @@ const StaffAddPatientPage = () => {
                     </select>
                   </div>
                 </div>
-                <label htmlFor="birthdate" className="text-[14px]">
+                <label htmlFor="birthdate" className="text-p-sm">
                   Date of Birth
                 </label>
                 <input
@@ -202,128 +208,151 @@ const StaffAddPatientPage = () => {
                   name="birthdate"
                   value={formData.birthdate}
                   onChange={handleChange}
-                  className="w-full h-12 px-2 py-4 border-2 border-[#999999] rounded-md text-black mb-4"
+                  className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                 />
-                <label htmlFor="civil_status" className="text-[14px]">
+              </div>
+            </div>
+            <div className="p-8  w-full lg:w-[660px] rounded-lg bg-white mb-6">
+              <label className="text-p-lg font-semibold text-c-primary">
+                | Status Infomation
+              </label>
+              <div className="mt-3 text-c-gray3">
+                <label htmlFor="civil_status" className="text-p-sm">
                   Civil Status
                 </label>
                 <select
                   name="civil_status"
                   value={formData.civil_status}
                   onChange={handleChange}
-                  className="w-full h-12 px-2 border-2 border-[#999999] rounded-md text-black"
+                  className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                 >
-                  <option value="" disabled className="text-[#3b3030]">
+                  <option value="" disabled className="text-c-gray3">
                     Select Status
                   </option>
                   <option value="Single">Single</option>
                   <option value="Married">Married</option>
                   <option value="Widowed">Widowed</option>
                 </select>
-              </div>
-            </div>
-            <div className="w-1/2 p-4 flex flex-col justify-between mx-auto">
-              <div>
-                <label className="text-[20px]">| Contact Information</label>
-                <div className="flex flex-col mt-4 text-[#999999]">
-                  <div className="flex gap-4 mb-5">
-                    <div>
-                      <p className="text-[14px]">Country</p>
-                      <p className="mt-2 text-black">Philippines</p>
-                    </div>
-                    <div className="w-1/2">
-                      <label htmlFor="province" className="block text-[14px]">
-                        Province
-                      </label>
-                      <Select
-                        id="province"
-                        value={selectedProvince}
-                        onChange={handleProvinceChange}
-                        options={provinceOptions}
-                        placeholder="Select Province"
-                      />
-                    </div>
-                    <div className="w-1/2">
-                      <label
-                        htmlFor="municipality"
-                        className="block text-[14px]"
-                      >
-                        Municipality
-                      </label>
-                      <Select
-                        id="municipality"
-                        name="municipality"
-                        options={municipalities}
-                        value={selectedMunicipality}
-                        onChange={handleMunicipalityChange}
-                        placeholder="Select Municipality"
-                        isDisabled={!selectedProvince}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex text-[#999999] gap-4">
-                    <div className="w-1/2">
-                      <label htmlFor="contact_number" className="text-[14px]">
-                        Contact Number
-                      </label>
-                      <input
-                        type="text"
-                        name="contact_number"
-                        value={formData.contact_number}
-                        onChange={handleChange}
-                        className="w-full h-12 px-2 py-3 border-2 border-[#999999] rounded-md text-black"
-                        placeholder="Enter contact number"
-                      />
-                    </div>
-                    <div className="w-1/2">
-                      <label htmlFor="email" className="text-[14px]">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full h-12 px-2 py-3 border-2 border-[#999999] rounded-md text-black"
-                        placeholder="Enter email"
-                      />
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    <label htmlFor="doctorId" className="text-[14px]">
-                      Attending Doctor
-                    </label>
-                    <select
-                      name="doctorId"
-                      value={formData.doctorId}
-                      onChange={handleChange}
-                      className="w-full h-12 px-2 border-2 border-[#999999] rounded-md text-black"
-                    >
-                      <option value="" disabled>
-                        Select Doctor
-                      </option>
-                      {doctorsList.map((doctor, key) => (
-                        <option key={key} value={doctor.id}>
-                          {`${doctor.name} (${doctor.position})`}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div className="flex gap-4 justify-end">
-                <div
-                  className="h-12 lg:w-24 xl:w-32 flex justify-center items-center gap-2 border-red-500 border-2 rounded-md p-2 text-red-500 cursor-pointer hover:bg-red-100 
-                "
-                  onClick={handleClear}
-                >
-                  <p className="">Clear</p>
-                </div>
-                <SubmitButton
-                  style={`w-2/4 hover:bg-[#16A085]`}
-                  value={"Submit"}
+
+                <label htmlFor="occupation" className="text-p-sm">
+                  Occupation (Optional)
+                </label>
+                <input
+                  type="text"
+                  name="occupation"
+                  value={formData.occupation}
+                  onChange={handleChange}
+                  className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                  placeholder="Enter middle name"
                 />
               </div>
+            </div>
+            <div className="p-8 w-full lg:w-[660px] rounded-lg bg-white mb-6">
+              <label className="text-p-lg font-semibold text-c-primary">
+                | Contact Information
+              </label>
+              <div className="mt-3 text-c-gray3">
+                <div className="flex gap-4 mb-4">
+                  <div className="w-1/2">
+                    <label htmlFor="province" className="block text-p-sm mb-1">
+                      Province
+                    </label>
+                    <Select
+                      id="province"
+                      value={selectedProvince}
+                      onChange={handleProvinceChange}
+                      options={provinceOptions}
+                      placeholder="Select Province"
+                    />
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      htmlFor="municipality"
+                      className="block text-p-sm mb-1"
+                    >
+                      Municipality
+                    </label>
+                    <Select
+                      id="municipality"
+                      name="municipality"
+                      options={municipalities}
+                      value={selectedMunicipality}
+                      onChange={handleMunicipalityChange}
+                      placeholder="Select Municipality"
+                      isDisabled={!selectedProvince}
+                    />
+                  </div>
+                </div>
+                <label htmlFor="contact_number" className="text-p-sm">
+                  Contact Number
+                </label>
+                <input
+                  type="text"
+                  name="contact_number"
+                  value={formData.contact_number}
+                  onChange={handleChange}
+                  className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                  placeholder="Enter contact number"
+                />
+                <label htmlFor="email" className="text-p-sm">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                  placeholder="Enter email"
+                />
+              </div>
+            </div>
+            <div className="p-8  w-full lg:w-[660px] rounded-lg bg-white mb-6">
+              <label className="text-p-lg font-semibold text-c-primary">
+                | Appoint a Doctor
+              </label>
+              <div className="mt-3 text-c-gray3">
+                <label htmlFor="doctorId" className="text-p-sm">
+                  Attending Doctor
+                </label>
+                <select
+                  name="doctorId"
+                  value={formData.doctorId}
+                  onChange={handleChange}
+                  className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                >
+                  <option value="" disabled>
+                    Select Doctor
+                  </option>
+                  {doctorsList.map((doctor, key) => (
+                    <option key={key} value={doctor.id}>
+                      {`${doctor.name} (${doctor.position})`}
+                    </option>
+                  ))}
+                </select>
+                <label htmlFor="reason_visit" className="text-p-sm">
+                  Reason for Visit
+                </label>
+                <select
+                  name="reason_visit"
+                  value={formData.reason_visit}
+                  onChange={handleChange}
+                  className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                >
+                  <option value="" disabled className="text-c-gray3">
+                    Select Reason
+                  </option>
+                  <option value="Male">Check Up</option>
+                  <option value="Male">Consultation</option>
+                  <option value="Female">Eye Glass</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex justify-end mb-10">
+              <SubmitButton
+                style={`hover:bg-hover-c-primary active:bg-pressed-c-primary`}
+                value={"Save Infomation"}
+              />
             </div>
           </form>
         </div>

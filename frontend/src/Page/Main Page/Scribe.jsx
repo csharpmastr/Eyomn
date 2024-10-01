@@ -1,4 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
+
+import { IoMdSearch } from "react-icons/io";
+import { IoIosAddCircleOutline } from "react-icons/io";
+
 import PatientScribeCard from "../../Component/ui/PatientScribeCard";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -82,9 +86,34 @@ const Scribe = () => {
         {hasSelected ? (
           <Outlet />
         ) : (
-          <div className="px-8 pt-4">
-            <h1 className="font-Poppins text-[24px]">Scribe History</h1>
-            <div className="w-auto h-auto mt-10">
+          <div className="px-4 md:p-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between">
+              <p className="font-Poppins text-p-lg font-semibold text-f-dark">
+                0 <span className="text-f-gray2">Total patient</span>
+              </p>
+              <div className="mt-8 md:mt-0 flex flex-row">
+                <div className="w-full flex flex-row border border-c-gray3 px-4 rounded-md justify-center items-center md:w-80">
+                  <IoMdSearch className="h-8 w-8 text-c-secondary" />
+                  <input
+                    type="text"
+                    placeholder="Search patient..."
+                    className="w-full text-f-dark font-Poppins focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
+                  />
+                </div>
+                <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 font-Poppins border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
+                  <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
+                  <select className="md:block hover:cursor-pointer focus:outline-none bg-bg-mc">
+                    <option value="" disabled selected>
+                      Filter
+                    </option>
+                    <option value="filter1">Filter 1</option>
+                    <option value="filter2">Filter 2</option>
+                    <option value="filter3">Filter 3</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="w-auto h-auto mt-8">
               {sortedInitials.length > 0 ? (
                 sortedInitials.map((initial) => (
                   <div key={initial} className="mb-8">
