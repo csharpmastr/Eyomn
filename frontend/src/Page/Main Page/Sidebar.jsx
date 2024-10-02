@@ -6,7 +6,7 @@ import { FaRegStickyNote } from "react-icons/fa";
 import { FiUser } from "react-icons/fi";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
-import { IoLogOutOutline } from "react-icons/io5";
+import { IoAddCircle, IoLogOutOutline } from "react-icons/io5";
 import { SlOrganization } from "react-icons/sl";
 import SidebarLogo from "../../assets/Image/sidebar_logo.png";
 import Cookies from "universal-cookie";
@@ -41,7 +41,7 @@ const SideBar = () => {
         isCollapsed ? "xl:w-24" : "xl:w-64"
       } bg-c-primary xl:bg-[#EEF1F1] border-r-2  border-f-gray transition-all duration-300 ease-in-out`}
     >
-      <div className="flex items-center justify-between xl:mb-10 px-4 md:px-6 lg:px-8">
+      <div className="flex items-center justify-between px-4 md:px-6 lg:px-8">
         {isMenuOpen ? (
           <IoMdClose
             className="text-f-light text-2xl xl:hidden"
@@ -78,17 +78,24 @@ const SideBar = () => {
         </button>
       </div>
       <div
-        className={`xl:flex xl:flex-col px-4 xl:space-y-3 xl:px-6 xl:pt-5 xl:pb-5 transition-all duration-300 ease-in-out overflow-hidden xl:h-full ${
+        className={`xl:flex xl:flex-col px-4 xl:space-y-3 xl:px-6 xl:pt-10 xl:pb-5 transition-all duration-300 ease-in-out overflow-hidden xl:h-full ${
           isMenuOpen
             ? "block max-h-screen bg-[#EEF1F1] fixed xl:static w-full xl:w-auto"
             : "hidden xl:block"
         }`}
       >
-        <div className="flex flex-col xl:gap-4 mt-2">
+        {isCollapsed ? (
+          ""
+        ) : (
+          <h1 className="ml-5 text-[14px] text-c-gray3 font-Poppins">
+            MAIN MENU
+          </h1>
+        )}
+        <div className="flex flex-col xl:gap-2 mt-2">
           {(role === "0" || role === "1") && (
             <>
               <NavLink
-                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "dashboard"
                     ? "xl:bg-c-primary text-f-light font-semibold "
                     : "text-f-dark font-medium"
@@ -103,8 +110,8 @@ const SideBar = () => {
                 <TbLayoutDashboard
                   className={`${
                     isCollapsed
-                      ? " h-[25px] w-[25px] "
-                      : " h-[25px] w-[25px] xl:mr-3 "
+                      ? " h-[26px] w-[26px] "
+                      : " h-[26px] w-[26px] xl:mr-3 "
                   }`}
                 />
                 {!isCollapsed && (
@@ -112,29 +119,7 @@ const SideBar = () => {
                 )}
               </NavLink>
               <NavLink
-                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
-                  selected === "patient"
-                    ? "xl:bg-c-primary text-f-light font-semibold "
-                    : "text-f-dark font-medium"
-                }${
-                  isCollapsed
-                    ? " xl:px-2 py-2 xl:justify-center"
-                    : " xl:py-3 xl:px-4 "
-                }`}
-                onClick={() => setSelected("patient")}
-                to="patient"
-              >
-                <FiUser
-                  className={`${
-                    isCollapsed
-                      ? " h-[25px] w-[25px]"
-                      : " h-[25px] w-[25px] xl:mr-3"
-                  }`}
-                />
-                {!isCollapsed && <span className="ml-2">Patients</span>}
-              </NavLink>
-              <NavLink
-                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "organization"
                     ? "xl:bg-c-primary text-f-light font-semibold "
                     : "text-f-dark font-medium"
@@ -149,24 +134,114 @@ const SideBar = () => {
                 <SlOrganization
                   className={`${
                     isCollapsed
-                      ? " h-[25px] w-[25px]"
-                      : " h-[25px] w-[25px] xl:mr-3"
+                      ? " h-[26px] w-[26px]"
+                      : " h-[26px] w-[26px] xl:mr-3"
                   }`}
                 />
                 {!isCollapsed && <span className="ml-2">Organization</span>}
+              </NavLink>
+              <NavLink
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
+                  selected === "patient"
+                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
+                }${
+                  isCollapsed
+                    ? " xl:px-2 py-2 xl:justify-center"
+                    : " xl:py-3 xl:px-4 "
+                }`}
+                onClick={() => setSelected("patient")}
+                to="patient"
+              >
+                <FiUser
+                  className={`${
+                    isCollapsed
+                      ? " h-[26px] w-[26px]"
+                      : " h-[26px] w-[26px] xl:mr-3"
+                  }`}
+                />
+                {!isCollapsed && <span className="ml-2">Patients</span>}
+              </NavLink>
+              <NavLink
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
+                  selected === "appointment"
+                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
+                }${
+                  isCollapsed
+                    ? "xl:px-2 py-2 justify-center"
+                    : "xl:py-3 xl:px-4 "
+                }`}
+                //onClick={() => setSelected("appointment")}
+                //to="appointment"
+              >
+                <FaRegStickyNote
+                  className={`${
+                    isCollapsed
+                      ? " h-[26px] w-[26px]"
+                      : " h-[26px] w-[26px] xl:mr-3"
+                  }`}
+                />
+                {!isCollapsed && <span className="ml-2">Appointment</span>}
+              </NavLink>
+              <NavLink
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
+                  selected === "inventory"
+                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
+                }${
+                  isCollapsed
+                    ? "xl:px-2 py-2 justify-center"
+                    : "xl:py-3 xl:px-4 "
+                }`}
+                //onClick={() => setSelected("inventory")}
+                //to="inventory"
+              >
+                <FaRegStickyNote
+                  className={`${
+                    isCollapsed
+                      ? " h-[26px] w-[26px]"
+                      : " h-[26px] w-[26px] xl:mr-3"
+                  }`}
+                />
+                {!isCollapsed && <span className="ml-2">Inventory</span>}
               </NavLink>
             </>
           )}
           {role === "2" && (
             <>
               <NavLink
-                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
+                  selected === "dashboard"
+                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
+                }${
+                  isCollapsed
+                    ? " xl:justify-center xl:px-2 py-2 "
+                    : " xl:py-3 xl:px-4 "
+                }`}
+                onClick={() => setSelected("dashboard")}
+                to="dashboard"
+              >
+                <TbLayoutDashboard
+                  className={`${
+                    isCollapsed
+                      ? " h-[26px] w-[26px] "
+                      : " h-[26px] w-[26px] xl:mr-3 "
+                  }`}
+                />
+                {!isCollapsed && (
+                  <span className="ml-2">{isCollapsed ? "" : "Dashboard"}</span>
+                )}
+              </NavLink>
+              {/* <NavLink
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "scan"
                     ? "xl:bg-c-primary text-f-light font-semibold "
                     : "text-f-dark font-medium"
                 }${
                   isCollapsed
-                    ? " xl:px-2 py-2  justify-center"
+                    ? "xl:px-2 py-2 justify-center"
                     : "xl:py-3 xl:px-4 "
                 }`}
                 onClick={() => setSelected("scan")}
@@ -175,20 +250,20 @@ const SideBar = () => {
                 <TbScan
                   className={`${
                     isCollapsed
-                      ? " h-[25px] w-[25px] "
-                      : " h-[25px] w-[25px] xl:mr-3"
+                      ? " h-[26px] w-[26px] "
+                      : " h-[26px] w-[26px] xl:mr-3"
                   }`}
                 />
                 {!isCollapsed && <span className="ml-2">Scan Fundus</span>}
-              </NavLink>
+              </NavLink> */}
               <NavLink
-                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "scribe"
                     ? "xl:bg-c-primary text-f-light font-semibold "
                     : "text-f-dark font-medium"
                 }${
                   isCollapsed
-                    ? " xl:px-2 py-2 justify-center"
+                    ? "xl:px-2 py-2 justify-center"
                     : "xl:py-3 xl:px-4 "
                 }`}
                 onClick={() => setSelected("scribe")}
@@ -197,14 +272,14 @@ const SideBar = () => {
                 <FaRegStickyNote
                   className={`${
                     isCollapsed
-                      ? " h-[25px] w-[25px]"
-                      : " h-[25px] w-[25px] xl:mr-3"
+                      ? " h-[26px] w-[26px]"
+                      : " h-[26px] w-[26px] xl:mr-3"
                   }`}
                 />
                 {!isCollapsed && <span className="ml-2">Scribe</span>}
               </NavLink>
               <NavLink
-                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "patient"
                     ? "xl:bg-c-primary text-f-light font-semibold "
                     : "text-f-dark font-medium"
@@ -219,58 +294,219 @@ const SideBar = () => {
                 <FiUser
                   className={`${
                     isCollapsed
-                      ? " h-[25px] w-[25px]  justify-center"
-                      : " h-[25px] w-[25px] xl:mr-3"
+                      ? " h-[26px] w-[26px]  justify-center"
+                      : " h-[26px] w-[26px] xl:mr-3"
                   }`}
                 />
                 {!isCollapsed && <span className="ml-2">Patients</span>}
               </NavLink>
+              <NavLink
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
+                  selected === "appointment"
+                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
+                }${
+                  isCollapsed
+                    ? "xl:px-2 py-2 justify-center"
+                    : "xl:py-3 xl:px-4 "
+                }`}
+                //onClick={() => setSelected("appointment")}
+                //to="appointment"
+              >
+                <FaRegStickyNote
+                  className={`${
+                    isCollapsed
+                      ? " h-[26px] w-[26px]"
+                      : " h-[26px] w-[26px] xl:mr-3"
+                  }`}
+                />
+                {!isCollapsed && <span className="ml-2">Appointment</span>}
+              </NavLink>
             </>
           )}
           {role === "3" && (
-            <NavLink
-              className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
-                selected === "add-patient"
-                  ? "xl:bg-c-primary text-f-light font-semibold "
-                  : "text-f-dark font-medium"
-              }${
-                isCollapsed
-                  ? " xl:px-2 py-2 justify-center"
-                  : "xl:py-3 xl:px-4 "
-              } `}
-              onClick={() => setSelected("add-patient")}
-              to="add-patient"
-            >
-              <FiUser
-                className={`${
+            <>
+              <NavLink
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
+                  selected === "dashboard"
+                    ? "xl:bg-c-secondary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
+                }${
                   isCollapsed
-                    ? " h-[25px] w-[25px]  justify-center "
-                    : " h-[25px] w-[25px] xl:mr-3 "
+                    ? " xl:justify-center xl:px-2 py-2 "
+                    : " xl:py-3 xl:px-4 "
                 }`}
-              />
-              {!isCollapsed && <span className=" ml-2 ">Add Patient</span>}
-            </NavLink>
+                onClick={() => setSelected("dashboard")}
+                to="dashboard"
+              >
+                <TbLayoutDashboard
+                  className={`${
+                    isCollapsed
+                      ? " h-[26px] w-[26px] "
+                      : " h-[26px] w-[26px] xl:mr-3 "
+                  }`}
+                />
+                {!isCollapsed && (
+                  <span className="ml-2">{isCollapsed ? "" : "Dashboard"}</span>
+                )}
+              </NavLink>
+              <NavLink
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
+                  selected === "add-patient"
+                    ? "xl:bg-c-secondary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
+                }${
+                  isCollapsed
+                    ? " xl:px-2 py-2 justify-center"
+                    : "xl:py-3 xl:px-4 "
+                } `}
+                onClick={() => setSelected("add-patient")}
+                to="add-patient"
+              >
+                <FiUser
+                  className={`${
+                    isCollapsed
+                      ? " h-[26px] w-[26px]  justify-center "
+                      : " h-[26px] w-[26px] xl:mr-3 "
+                  }`}
+                />
+                {!isCollapsed && <span className=" ml-2 ">Add Patient</span>}
+              </NavLink>
+              <NavLink
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
+                  selected === "patient"
+                    ? "xl:bg-c-secondary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
+                }${
+                  isCollapsed
+                    ? " xl:px-2 py-2 xl:justify-center"
+                    : " xl:py-3 xl:px-4 "
+                }`}
+                onClick={() => setSelected("patient")}
+                to="patient"
+              >
+                <FiUser
+                  className={`${
+                    isCollapsed
+                      ? " h-[26px] w-[26px]"
+                      : " h-[26px] w-[26px] xl:mr-3"
+                  }`}
+                />
+                {!isCollapsed && <span className="ml-2">Patients</span>}
+              </NavLink>
+              <NavLink
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
+                  selected === "appointment"
+                    ? "xl:bg-c-secondary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
+                }${
+                  isCollapsed
+                    ? "xl:px-2 py-2 justify-center"
+                    : "xl:py-3 xl:px-4 "
+                }`}
+                //onClick={() => setSelected("appointment")}
+                //to="appointment"
+              >
+                <FaRegStickyNote
+                  className={`${
+                    isCollapsed
+                      ? " h-[26px] w-[26px]"
+                      : " h-[26px] w-[26px] xl:mr-3"
+                  }`}
+                />
+                {!isCollapsed && <span className="ml-2">Appointment</span>}
+              </NavLink>
+              <NavLink
+                className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
+                  selected === "inventory"
+                    ? "xl:bg-c-secondary text-f-light font-semibold "
+                    : "text-f-dark font-medium"
+                }${
+                  isCollapsed
+                    ? "xl:px-2 py-2 justify-center"
+                    : "xl:py-3 xl:px-4 "
+                }`}
+                //onClick={() => setSelected("inventory")}
+                //to="inventory"
+              >
+                <FaRegStickyNote
+                  className={`${
+                    isCollapsed
+                      ? " h-[26px] w-[26px]"
+                      : " h-[26px] w-[26px] xl:mr-3"
+                  }`}
+                />
+                {!isCollapsed && <span className="ml-2">Inventory</span>}
+              </NavLink>
+            </>
           )}
         </div>
-        <div className={`mb-2 ${role === "0" ? `xl:pt-72` : `xl:pt-72`}`}>
+        <div className="flex flex-col xl:gap-2 h-1/2">
+          <hr className="my-5  border-f-gray" />
+          {isCollapsed ? (
+            ""
+          ) : (
+            <h1 className="ml-5 text-[14px] text-c-gray3 font-Poppins">
+              OTHER
+            </h1>
+          )}
+
           <NavLink
-            className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime ${
-              isCollapsed
+            className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
+              selected === "setting"
                 ? "xl:bg-c-primary text-f-light font-semibold "
                 : "text-f-dark font-medium"
+            }${
+              isCollapsed ? "xl:px-2 py-2 justify-center" : "xl:py-3 xl:px-4 "
             }`}
-            onClick={logout}
+            //onClick={() => setSelected("setting")}
+            //to="setting"
           >
-            <IoLogOutOutline
+            <FaRegStickyNote
               className={`${
                 isCollapsed
-                  ? " xl:h-[25px] xl:w-[25px] h-[30px] w-[30px] "
-                  : " h-[25px] w-[25px]  xl:h-[30px] xl:w-[30px] xl:mr-3 "
+                  ? " h-[26px] w-[26px]"
+                  : " h-[26px] w-[26px] xl:mr-3"
               }`}
             />
-            {!isCollapsed && <span className="ml-2">Logout</span>}
+            {!isCollapsed && <span className="ml-2">Settings</span>}
+          </NavLink>
+          <NavLink
+            className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
+              selected === "help"
+                ? "xl:bg-c-primary text-f-light font-semibold "
+                : "text-f-dark font-medium"
+            }${
+              isCollapsed ? "xl:px-2 py-2 justify-center" : "xl:py-3 xl:px-4 "
+            }`}
+            //onClick={() => setSelected("help")}
+            //to="help"
+          >
+            <FaRegStickyNote
+              className={`${
+                isCollapsed
+                  ? " h-[26px] w-[26px]"
+                  : " h-[26px] w-[26px] xl:mr-3"
+              }`}
+            />
+            {!isCollapsed && <span className="ml-2">Help</span>}
           </NavLink>
         </div>
+        <NavLink
+          className={`font-Poppins flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
+            isCollapsed ? "xl:px-2 py-2 justify-center" : "xl:py-3 xl:px-4 "
+          }`}
+          onClick={logout}
+        >
+          <IoLogOutOutline
+            className={`${
+              isCollapsed
+                ? " xl:h-[25px] xl:w-[25px] h-[30px] w-[30px] "
+                : " h-[26px] w-[26px]  xl:h-[30px] xl:w-[30px] xl:mr-3 "
+            }`}
+          />
+          {!isCollapsed && <span className="ml-2">Logout</span>}
+        </NavLink>
       </div>
     </div>
   );

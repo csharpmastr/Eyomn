@@ -117,7 +117,9 @@ const Scribe = () => {
               {sortedInitials.length > 0 ? (
                 sortedInitials.map((initial) => (
                   <div key={initial} className="mb-8">
-                    <h2 className="font-Poppins text-[20px] mb-4">{initial}</h2>
+                    <h2 className="font-Poppins text-p-lg text-f-gray2 mb-4">
+                      {initial}
+                    </h2>
                     <div className="grid grid-cols-5 gap-8 px-4">
                       {groupedPatients[initial].map((patient, index) => (
                         <PatientScribeCard
