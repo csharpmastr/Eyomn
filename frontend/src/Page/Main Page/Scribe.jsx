@@ -106,9 +106,9 @@ const Scribe = () => {
                     <option value="" disabled selected>
                       Filter
                     </option>
-                    <option value="filter1">Filter 1</option>
-                    <option value="filter2">Filter 2</option>
-                    <option value="filter3">Filter 3</option>
+                    <option value="filter1">A to Z</option>
+                    <option value="filter2">Newest to Oldest</option>
+                    <option value="filter3">Highest to Lowest</option>
                   </select>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import SideBar from "./Main Page/SideBar";
+import SideBar from "./Main Page/Sidebar";
 import { Outlet } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { WebSocketProvider } from "../Context/WebSocketContext";
