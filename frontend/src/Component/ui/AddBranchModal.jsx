@@ -31,7 +31,7 @@ const AddBranchModal = ({ onClose }) => {
         </footer>
       </div>
     </div>,
-    document.body // This renders the modal outside the usual DOM structure
+    document.body
   );
 };
 
