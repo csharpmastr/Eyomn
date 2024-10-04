@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import SideBar from "./Main Page/SideBar";
 import { Outlet } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { WebSocketProvider } from "../Context/WebSocketContext";
+import { AuthContext } from "../Context/AuthContext";
 
 const MVP = () => {
   const location = useLocation();

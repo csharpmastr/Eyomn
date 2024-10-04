@@ -18,7 +18,7 @@ const ScribePatient = () => {
   const [buttonText, setButtonText] = useState("Save Scribe");
   const [rawScribeText, setRawScribeText] = useState("");
 
-  const doctor = useSelector((state) => state.reducer.doctor.doctor);
+  const doctor = useSelector((state) => state.reducer.user.user);
   const doctorName = doctor.first_name + " " + doctor.last_name;
   const currentDate = formatDate(new Date());
   const navigate = useNavigate();
@@ -71,7 +71,7 @@ const ScribePatient = () => {
             </p>
             <span className="h-[40px] w-[1.5px] bg-[#C8C8C8] mx-2 "></span>
             <p className="flex items-center justify-center">
-              {doctor.position}: {doctor.name}
+              {doctorName} : {doctor.position}
             </p>
           </div>
           <div className="hidden lg:flex lg:flex-row">

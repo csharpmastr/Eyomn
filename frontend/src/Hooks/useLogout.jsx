@@ -20,16 +20,17 @@ export const useLogout = () => {
     setIsLoading(true);
     setError(null);
     try {
-      navigate("/");
+      dispatch({ type: "LOGOUT" });
+      sessionStorage.removeItem("selectedTab");
+
       cookies.remove("accessToken", { path: "/" });
       cookies.remove("refreshToken", { path: "/" });
-      dispatch({ type: "LOGOUT" });
+
       reduxDispatch(clearDoctor());
       reduxDispatch(clearPatients());
       reduxDispatch(clearStaffs());
       reduxDispatch(removeUser());
-
-      sessionStorage.removeItem("selectedTab");
+      navigate("/login");
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred during logout.");
     } finally {

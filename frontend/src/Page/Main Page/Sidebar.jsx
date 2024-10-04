@@ -260,6 +260,7 @@ const SideBar = () => {
                 : "text-f-dark font-medium"
             }`}
             onClick={logout}
+            to="login"
           >
             <IoLogOutOutline
               className={`${

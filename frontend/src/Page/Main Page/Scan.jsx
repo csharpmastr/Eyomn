@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PatientModal from "../../Component/ui/PatientModal";
 import { Outlet } from "react-router-dom";
+import MedForm from "./MedForm";
 
 const Scan = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -8,9 +9,10 @@ const Scan = () => {
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="h-full flex justify-center items-center">
-      {isModalOpen && <PatientModal onClose={closeModal} tab={"scan"} />}
-      <Outlet />
+    <div className="h-full ">
+      {/* {isModalOpen && <PatientModal onClose={closeModal} tab={"scan"} />}
+      <Outlet /> */}
+      <MedForm />
     </div>
   );
 };
