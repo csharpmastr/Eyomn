@@ -497,6 +497,7 @@ const SideBar = () => {
             isCollapsed ? "xl:px-2 py-2 justify-center" : "xl:py-3 xl:px-4 "
           }`}
           onClick={logout}
+          to={"/login"}
         >
           <IoLogOutOutline
             className={`${
