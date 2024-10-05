@@ -15,9 +15,9 @@ const formatDate = (dateString) => {
 
 const Table = ({ data }) => {
   return (
-    <table className="w-full font-Poppins rounded-t-lg table-fixed">
+    <table className="w-full font-Poppins rounded-t-lg table-fixed bg-white">
       <thead className="w-full h-20">
-        <tr className="text-left bg-white font-semibold text-c-secondary">
+        <tr className="text-left font-semibold text-c-secondary">
           <th className="pl-8 w-1/4">Patient Name</th>
           <th className="w-1/4">Contact</th>
           <th className="w-1/4">Email</th>
@@ -29,7 +29,7 @@ const Table = ({ data }) => {
           <tr
             key={index}
             className={`border-b-[1px] border-[#E1E1E1] h-20 text-c-secondary text-p-rg ${
-              index % 2 === 0 ? "bg-none" : `bg-white`
+              index % 2 === 0 ? "bg-bg-mc" : `bg-white`
             }`}
           >
             <td className="pl-8">

@@ -37,6 +37,8 @@ export default {
         "pressed-c-primary": "#0C6969",
         "sb-hover-prime": "#C7E1E1",
         "sb-pressed-prime": "#0C6969",
+        "sb-hover-secondary": "#D5E4F3",
+        "sb-pressed-secondary": "#1D364F",
       },
       fontSize: {
         "p-sm": "13.33px",

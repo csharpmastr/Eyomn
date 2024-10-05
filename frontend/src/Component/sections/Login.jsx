@@ -31,8 +31,8 @@ const Login = () => {
           sessionStorage.setItem("selectedTab", "dashboard");
           navigate("/dashboard");
         } else if (response.role === "2") {
-          sessionStorage.setItem("selectedTab", "scan");
-          navigate("/scan");
+          sessionStorage.setItem("selectedTab", "dashboard");
+          navigate("/dashboard");
         } else {
           sessionStorage.setItem("selectedTab", "add-patient");
           navigate("/add-patient");
