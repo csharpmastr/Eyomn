@@ -15,7 +15,7 @@ const DocViewPatientProfile = ({
   address,
 }) => {
   return (
-    <div className="w-full">
+    <div className="w-full font-poppins">
       <header className="flex flex-wrap gap-3 justify-between items-center p-5 rounded-lg bg-bg-sb border border-c-primary mb-8 md:flex-row md:gap-0">
         <section>
           <p className="text-f-dark font-medium text-p-rg">{name}</p>

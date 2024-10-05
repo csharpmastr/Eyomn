@@ -129,12 +129,9 @@ const StaffAddPatientPage = () => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className="h-full w-full flex justify-center bg-bg-mc overflow-auto p-4 md:p-12">
+      <div className="h-full w-full flex justify-center bg-bg-mc overflow-auto p-4 md:p-12 font-Poppins">
         <div>
-          <form
-            className="flex flex-col font-Poppins h-auto w-auto"
-            onSubmit={handleSubmit}
-          >
+          <form className="flex flex-col h-auto w-auto" onSubmit={handleSubmit}>
             <div className="p-8 w-full lg:w-[660px] rounded-lg bg-white mb-6">
               <label className="text-p-lg font-semibold text-c-primary">
                 | Personal Information

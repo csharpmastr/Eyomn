@@ -36,11 +36,11 @@ const Patient = () => {
   };
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full font-Poppins">
       {isLoading && <Loader />}
       <div className="p-4 md:p-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between">
-          <p className="font-Poppins text-p-lg font-semibold text-f-dark">
+          <p className="text-p-lg font-semibold text-f-dark">
             {totalPatient} <span className="text-f-gray2">Total patient</span>
           </p>
           <div className="mt-8 md:mt-0 flex flex-row">
@@ -52,13 +52,13 @@ const Patient = () => {
               <IoMdSearch className="h-8 w-8 text-c-secondary" />
               <input
                 type="text"
-                className="w-full text-f-dark font-Poppins focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
+                className="w-full text-f-dark focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
                 placeholder="Search patient... "
                 value={searchTerm}
                 onChange={handleSearchChange}
               />
             </div>
-            <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 font-Poppins border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
+            <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
               <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
               <select className="md:block hover:cursor-pointer focus:outline-none bg-bg-mc">
                 <option value="" disabled selected>
@@ -74,7 +74,7 @@ const Patient = () => {
             ) : (
               <>
                 <div
-                  className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 font-Poppins bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+                  className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
                   onClick={openAddPatient}
                 >
                   <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />

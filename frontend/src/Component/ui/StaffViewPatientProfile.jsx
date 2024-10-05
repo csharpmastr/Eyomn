@@ -15,7 +15,7 @@ const StaffViewPatientProfile = ({
   address,
 }) => {
   return (
-    <div className="w-full">
+    <div className="w-full font-poppins">
       <div className="w-full flex flex-col gap-8 flex-1 md:flex-row">
         <div className="w-full">
           <header className="w-full h-fit flex justify-between items-center p-5 rounded-lg bg-bg-sb border border-c-primary mb-8 md:flex-row md:gap-0">

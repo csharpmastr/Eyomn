@@ -86,9 +86,9 @@ const Scribe = () => {
         {hasSelected ? (
           <Outlet />
         ) : (
-          <div className="px-4 md:p-8">
+          <div className="px-4 md:p-8 font-Poppins">
             <div className="flex flex-col md:flex-row md:items-center justify-between">
-              <p className="font-Poppins text-p-lg font-semibold text-f-dark">
+              <p className="text-p-lg font-semibold text-f-dark">
                 {patients.length || 0}{" "}
                 <span className="text-f-gray2">Total patient</span>
               </p>
@@ -98,10 +98,10 @@ const Scribe = () => {
                   <input
                     type="text"
                     placeholder="Search patient..."
-                    className="w-full text-f-dark font-Poppins focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
+                    className="w-full text-f-dark focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
                   />
                 </div>
-                <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 font-Poppins border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
+                <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
                   <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
                   <select className="md:block hover:cursor-pointer focus:outline-none bg-bg-mc">
                     <option value="" disabled selected>
@@ -118,9 +118,7 @@ const Scribe = () => {
               {sortedInitials.length > 0 ? (
                 sortedInitials.map((initial) => (
                   <div key={initial} className="mb-8">
-                    <h2 className="font-Poppins text-p-lg text-f-gray2 mb-4">
-                      {initial}
-                    </h2>
+                    <h2 className="text-p-lg text-f-gray2 mb-4">{initial}</h2>
                     <div className="grid grid-cols-5 gap-8 px-4">
                       {groupedPatients[initial].map((patient, index) => (
                         <PatientScribeCard

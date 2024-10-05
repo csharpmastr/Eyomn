@@ -5,7 +5,7 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 
 const POS = ({ onClose }) => {
   return ReactDOM.createPortal(
-    <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50">
+    <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-poppins">
       <div className="w-[1100px] h-[800px]">
         <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
           <h1 className="text-p-lg text-c-secondary font-semibold">
@@ -21,13 +21,13 @@ const POS = ({ onClose }) => {
                   <IoMdSearch className="h-8 w-8 text-c-secondary" />
                   <input
                     type="text"
-                    className="w-full text-f-dark font-Poppins focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
+                    className="w-full text-f-dark focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
                     placeholder="Search product... "
                     //value={searchTerm}
                     //onChange={handleSearchChange}
                   />
                 </div>
-                <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 font-Poppins border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
+                <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
                   <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
                   <select className="md:block hover:cursor-pointer focus:outline-none bg-bg-mc">
                     <option value="" disabled selected>

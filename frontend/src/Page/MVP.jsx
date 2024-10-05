@@ -1,4 +1,3 @@
-
 import React, { useContext } from "react";
 import SideBar from "./Main Page/SideBar";
 import { Outlet } from "react-router-dom";
@@ -25,6 +24,10 @@ const MVP = () => {
       return "Organization";
     } else if (currentPath.startsWith("/add-patient")) {
       return "Add Patient";
+    } else if (currentPath.startsWith("/appointment")) {
+      return "Appointment";
+    } else if (currentPath.startsWith("/inventory")) {
+      return "Inventory";
     } else {
       return "";
     }

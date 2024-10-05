@@ -115,11 +115,9 @@ const AddStaffModal = ({ onClose }) => {
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50 font-poppins">
           <div className="bg-white p-6 rounded-lg shadow-lg w-[90vw] xl:w-[80vw] h-[80vh] md:h-auto xl:h-[auto] 2xl:w-[auto] transform transition-all duration-300 ease-out scale-95 opacity-100 overflow-scroll md:overflow-auto">
-            <h1 className="text-2xl font-Poppins text-black mb-4">
-              Add New Member
-            </h1>
+            <h1 className="text-2xl text-black mb-4">Add New Member</h1>
             <form
               onSubmit={handleSubmit}
               className="flex flex-col md:flex-row md:justify-center"
@@ -149,7 +147,7 @@ const AddStaffModal = ({ onClose }) => {
                 </label>
               </div>
 
-              <div className="lg:w-1/3 xl:w-1/2 font-Poppins pl-6">
+              <div className="lg:w-1/3 xl:w-1/2 pl-6">
                 <div className="mb-2 text-[20px]">
                   <h1>| Personal Information</h1>
                 </div>
@@ -176,7 +174,7 @@ const AddStaffModal = ({ onClose }) => {
                 </div>
                 <div className="mt-4">
                   <h1 className="text-[20px] mb-2">| Contact Information</h1>
-                  <div className="text-[#999999] font-Poppins">
+                  <div className="text-[#999999]">
                     <div className=" gap-2">
                       <div>
                         <div className="mb-4 xl:w-full flex lg:flex-col xl:flex-row gap-2">
@@ -221,7 +219,7 @@ const AddStaffModal = ({ onClose }) => {
                   </div>
                 </div>
               </div>
-              <div className="lg:w-1/3 xl:w-1/2 font-Poppins px-4">
+              <div className="lg:w-1/3 xl:w-1/2 px-4">
                 <div className="flex flex-col  h-full">
                   <div className="mb-2 text-[#999999]">
                     <h1 className="text-[20px] mb-2 text-[#222222]">

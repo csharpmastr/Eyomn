@@ -91,7 +91,7 @@ const AddPatientUICard = () => {
     }));
 
   return (
-    <div className="flex flex-col items-center lg:items-end justify-center h-full bg-c-gray3 bg-opacity-50">
+    <div className="flex flex-col items-center lg:items-end justify-center h-full bg-c-gray3 bg-opacity-50 font-poppins">
       <div className="w-[400px] md:w-[600px] md:mr-8">
         <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
           <h1 className="text-p-lg text-c-secondary font-semibold">
