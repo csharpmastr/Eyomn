@@ -182,7 +182,7 @@ const MedForm = () => {
     },
   });
   const handleChange = (e, nestedPath) => {
-    const { type, checked, value } = e.target; // Destructure checked and value
+    const { type, checked, value } = e.target;
 
     if (nestedPath) {
       const keys = nestedPath.split(".");
@@ -193,7 +193,6 @@ const MedForm = () => {
 
         keys.forEach((key, index) => {
           if (index === keys.length - 1) {
-            // Update the final key with the correct value based on input type
             nested[key] = type === "checkbox" ? checked : value;
           } else {
             nested[key] = nested[key] || {};
@@ -204,7 +203,6 @@ const MedForm = () => {
         return current;
       });
     } else {
-      // Handle top-level input changes (not nested)
       setMedformData((prevData) => ({
         ...prevData,
         [e.target.name]: type === "checkbox" ? checked : value,
@@ -245,7 +243,7 @@ const MedForm = () => {
                   value={medformData.initial_observation}
                   onChange={handleChange}
                   className="mt-3 h-20 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                  placeholder="enter your initial observation"
+                  placeholder="Enter your initial observation"
                 />
               </section>
               <section className="p-2 md:p-6 bg-white rounded-lg border border-f-gray">
@@ -262,7 +260,7 @@ const MedForm = () => {
                     value={medformData.chief_complaints}
                     onChange={handleChange}
                     className="mt-1 h-20 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                    placeholder="enter your initial observation"
+                    placeholder="Enter patient's complaint"
                   />
                 </div>
                 <div className="mt-6 p-2 md:p-4 bg-bg-sb rounded-lg flex gap-4">
@@ -278,7 +276,7 @@ const MedForm = () => {
                         handleChange(e, "occular_history.description")
                       }
                       className="mt-1 h-20 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                      placeholder="enter your occular obhshshs"
+                      placeholder="Enter patient's occular history"
                     />
                   </div>
                   <div>
@@ -310,7 +308,7 @@ const MedForm = () => {
                         handleChange(e, "gen_health_hx.description")
                       }
                       className="mt-1 h-20 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                      placeholder="enter your initial observation"
+                      placeholder="Enter patient's general health history"
                     />
                   </div>
                   <div>
@@ -1035,7 +1033,6 @@ const MedForm = () => {
                           )
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
                       />
                     </div>
                     <div className="flex flex-1 items-center gap-1">
@@ -1053,7 +1050,6 @@ const MedForm = () => {
                           )
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
                       />
                     </div>
                   </div>
@@ -1230,7 +1226,7 @@ const MedForm = () => {
                           handleChange(e, "external_examination.lids_lashes.od")
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
+                        placeholder="Input here..."
                       />
                     </div>
                     <div className="flex flex-1 items-center gap-1">
@@ -1243,7 +1239,7 @@ const MedForm = () => {
                           handleChange(e, "external_examination.lids_lashes.os")
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
+                        placeholder="Input here..."
                       />
                     </div>
                   </div>
@@ -1268,7 +1264,7 @@ const MedForm = () => {
                           )
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
+                        placeholder="Input here..."
                       />
                     </div>
                     <div className="flex flex-1 items-center gap-1">
@@ -1286,7 +1282,7 @@ const MedForm = () => {
                           )
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
+                        placeholder="Input here..."
                       />
                     </div>
                   </div>
@@ -1313,7 +1309,7 @@ const MedForm = () => {
                           )
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
+                        placeholder="Input here..."
                       />
                     </div>
                     <div className="flex flex-1 items-center gap-1">
@@ -1332,7 +1328,7 @@ const MedForm = () => {
                           )
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
+                        placeholder="Input here..."
                       />
                     </div>
                   </div>
@@ -1350,7 +1346,7 @@ const MedForm = () => {
                           handleChange(e, "external_examination.cornea.od")
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
+                        placeholder="Input here..."
                       />
                     </div>
                     <div className="flex flex-1 items-center gap-1">
@@ -1363,7 +1359,7 @@ const MedForm = () => {
                           handleChange(e, "external_examination.cornea.os")
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
+                        placeholder="Input here..."
                       />
                     </div>
                   </div>
@@ -1388,7 +1384,7 @@ const MedForm = () => {
                           )
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
+                        placeholder="Input here..."
                       />
                     </div>
                     <div className="flex flex-1 items-center gap-1">
@@ -1406,7 +1402,7 @@ const MedForm = () => {
                           )
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
+                        placeholder="Input here..."
                       />
                     </div>
                   </div>
@@ -1424,7 +1420,7 @@ const MedForm = () => {
                           handleChange(e, "external_examination.iris.od")
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
+                        placeholder="Input here..."
                       />
                     </div>
                     <div className="flex flex-1 items-center gap-1">
@@ -1437,7 +1433,7 @@ const MedForm = () => {
                           handleChange(e, "external_examination.iris.os")
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
+                        placeholder="Input here..."
                       />
                     </div>
                   </div>
@@ -1455,7 +1451,7 @@ const MedForm = () => {
                           handleChange(e, "external_examination.lens.od")
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
+                        placeholder="Input here..."
                       />
                     </div>
                     <div className="flex flex-1 items-center gap-1">
@@ -1468,7 +1464,7 @@ const MedForm = () => {
                           handleChange(e, "external_examination.lens.os")
                         }
                         className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter middle name"
+                        placeholder="Input here..."
                       />
                     </div>
                   </div>
