@@ -1,4 +1,3 @@
-
 import React, { useContext } from "react";
 import SideBar from "./Main Page/SideBar";
 import { Outlet } from "react-router-dom";

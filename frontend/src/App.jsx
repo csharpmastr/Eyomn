@@ -21,6 +21,7 @@ import { persistStore } from "redux-persist";
 import Organization from "./Page/Main Page/Organization";
 import StaffAddPatientPage from "./Page/Main Page/StaffAddPatientPage";
 import { useAuthContext } from "./Hooks/useAuthContext";
+import OrgStaff from "./Page/Main Page/OrgStaff";
 let persistor = persistStore(store);
 
 const ProtectedRoute = ({ children }) => {
@@ -80,11 +81,11 @@ const AppRoutes = () => {
           <Route path=":id" element={<ScribePatient />} />
         </Route>
         <Route path="patient" element={<Patient />} />
-        <Route path="organization" element={<Organization />} />
+        <Route path="organization" element={<Organization />}>
+          <Route path=":branchId" element={<OrgStaff />} />
+        </Route>
         <Route path="add-patient" element={<StaffAddPatientPage />} />
       </Route>
-
-      {/* Catch-all route */}
     </Routes>
   );
 };

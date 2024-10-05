@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Cookies from "universal-cookie";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addStaff } from "../Slice/StaffSlice";
-import { addStaffService } from "../Service/StaffService";
+import { addStaffService } from "../Service/organizationService";
 
 export const useAddStaff = () => {
   const cookies = new Cookies();
@@ -10,15 +10,18 @@ export const useAddStaff = () => {
   const [error, setError] = useState(null);
   const accessToken = cookies.get("accessToken", { path: "/" });
   const refreshToken = cookies.get("refreshToken", { path: "/" });
+  const user = useSelector((state) => state.reducer.user.user);
   const reduxDispatch = useDispatch();
-  const addStaffHook = async (staffData) => {
+  const addStaffHook = async (staffData, branchId) => {
     setIsLoading(true);
     setError(null);
     try {
       const response = await addStaffService(
         staffData,
         accessToken,
-        refreshToken
+        refreshToken,
+        user.userId,
+        branchId
       );
       reduxDispatch(addStaff(staffData));
       return response;
