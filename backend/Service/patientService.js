@@ -26,7 +26,14 @@ const addPatient = async (organizationId, branchId, doctorId, patientData) => {
 
     const encryptedPatientData = encryptDocument(
       { ...basePatientData, ...patientData },
-      ["doctorId", "patientId", "organizationId", "branchId", "isDeleted"]
+      [
+        "doctorId",
+        "patientId",
+        "organizationId",
+        "branchId",
+        "isDeleted",
+        "createdAt",
+      ]
     );
 
     const branchRef = branchCollection.doc(branchId);

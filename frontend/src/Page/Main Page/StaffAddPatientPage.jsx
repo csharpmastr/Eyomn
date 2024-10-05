@@ -13,8 +13,9 @@ const StaffAddPatientPage = () => {
   const { addPatientHook, isLoading, error } = useAddPatient();
   const [isSuccess, setIsSuccess] = useState(false);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
+
   const doctorsList = useSelector((state) => state.reducer.doctor.doctor);
-  const user = useSelector((state) => state.reducer.user.user);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -28,9 +29,13 @@ const StaffAddPatientPage = () => {
     municipality: "",
     contact_number: "",
     email: "",
-    doctorId: "",
     reason_visit: "",
   });
+  const handleDoctorChange = (e) => {
+    const doctorId = e.target.value;
+    const selected = doctorsList.find((doc) => doc.staffId === doctorId);
+    setSelectedDoctor(selected);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,17 +68,20 @@ const StaffAddPatientPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    console.log(selectedDoctor.staffId);
+
     try {
-      const res = await addPatientHook(formData);
+      const res = await addPatientHook(formData, selectedDoctor.staffId);
       if (res) {
         setIsSuccess(true);
         handleClear();
+        setSelectedDoctor(null);
       }
     } catch (err) {
       console.log(err);
     }
   };
+
   const handleClear = () => {
     setFormData({
       first_name: "",
@@ -315,21 +323,20 @@ const StaffAddPatientPage = () => {
                 </label>
                 <select
                   name="doctorId"
-                  value={formData.doctorId}
-                  onChange={handleChange}
+                  value={selectedDoctor?.staffId || ""}
+                  onChange={handleDoctorChange}
                   className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                 >
                   <option value="" disabled>
                     Select Doctor
                   </option>
-                  {doctorsList.map((doctor, key) => (
-                    <option key={key} value={doctor.id}>
-                      {`${doctor.first_name + " " + doctor.last_name} (${
-                        doctor.position
-                      })`}
+                  {doctorsList.map((doctor) => (
+                    <option key={doctor.staffId} value={doctor.staffId}>
+                      {doctor.first_name} {doctor.last_name} ({doctor.position})
                     </option>
                   ))}
                 </select>
+
                 <label htmlFor="reason_visit" className="text-p-sm">
                   Reason for Visit
                 </label>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Cookies from "universal-cookie";
 import { addPatientService } from "../Service/PatientService";
 import { addPatient } from "../Slice/PatientSlice";
@@ -9,14 +9,21 @@ export const useAddPatient = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const cookies = new Cookies();
-
+  const user = useSelector((state) => state.reducer.user.user);
   const accessToken = cookies.get("accessToken", { path: "/" });
   const refreshToken = cookies.get("refreshToken", { path: "/" });
 
-  const addPatientHook = async (data) => {
+  const addPatientHook = async (data, doctorId) => {
     setIsLoading(true);
     try {
-      const response = await addPatientService(data, accessToken, refreshToken);
+      const response = await addPatientService(
+        data,
+        accessToken,
+        refreshToken,
+        user.organizationId,
+        user.branchId,
+        doctorId
+      );
 
       reduxDispatch(addPatient({ ...data, id: response.data.id }));
       return response;

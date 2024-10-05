@@ -1,15 +1,19 @@
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const PATIENT_API_BASE_URL = "http://localhost:3000/api/v1/patient";
 
 export const addPatientService = async (
   patientData,
   accessToken,
-  refreshToken
+  refreshToken,
+  organizationID,
+  branchId,
+  doctorId
 ) => {
   try {
     const response = await axios.post(
-      `${PATIENT_API_BASE_URL}/add`,
+      `${PATIENT_API_BASE_URL}/add-patient/${organizationID}/${branchId}/${doctorId}`,
       patientData,
       {
         headers: {
@@ -74,3 +78,5 @@ export const getPatients = async (
     throw err;
   }
 };
+
+export const addPatientNote = async (note) => {};
