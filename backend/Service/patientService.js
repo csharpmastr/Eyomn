@@ -68,35 +68,34 @@ const addNote = async (patientId, visitId, noteDetails) => {
       .collection("notes")
       .doc(visitId);
 
-    const encryptedNoteDetails = {};
-
     const encryptValue = (value) => {
-      if (typeof value === "string" && isNaN(Date.parse(value))) {
+      if (typeof value === "string") {
         return encryptData(value);
       }
       return value;
     };
 
-    for (const [key, value] of Object.entries(noteDetails)) {
-      if (
-        typeof value === "object" &&
-        value !== null &&
-        !Array.isArray(value)
-      ) {
-        encryptedNoteDetails[key] = Object.fromEntries(
-          Object.entries(value).map(([nestedKey, nestedValue]) => [
-            nestedKey,
-            encryptValue(nestedValue),
-          ])
-        );
-      } else {
-        encryptedNoteDetails[key] = encryptValue(value);
+    const deepEncrypt = (data) => {
+      const encryptedData = {};
+      for (const [key, value] of Object.entries(data)) {
+        if (
+          typeof value === "object" &&
+          value !== null &&
+          !Array.isArray(value)
+        ) {
+          encryptedData[key] = deepEncrypt(value);
+        } else {
+          encryptedData[key] = encryptValue(value);
+        }
       }
-    }
+      return encryptedData;
+    };
+
+    const finalEncryptedData = deepEncrypt(noteDetails);
 
     await noteRef.set({
       noteId,
-      ...encryptedNoteDetails,
+      ...finalEncryptedData,
       createdAt: new Date().toISOString(),
     });
   } catch (error) {
@@ -118,7 +117,6 @@ const getNote = async (patientId, visitId) => {
       throw new Error("Note not found");
     }
 
-    const decryptedNoteDetails = {};
     const noteDetails = noteData.data();
 
     const decryptValue = (key, value) => {
@@ -131,24 +129,25 @@ const getNote = async (patientId, visitId) => {
       return value;
     };
 
-    for (const [key, value] of Object.entries(noteDetails)) {
-      if (
-        typeof value === "object" &&
-        value !== null &&
-        !Array.isArray(value)
-      ) {
-        decryptedNoteDetails[key] = Object.fromEntries(
-          Object.entries(value).map(([nestedKey, nestedValue]) => [
-            nestedKey,
-            decryptValue(nestedKey, nestedValue),
-          ])
-        );
-      } else {
-        decryptedNoteDetails[key] = decryptValue(key, value);
+    const deepDecrypt = (data) => {
+      const decryptedData = {};
+      for (const [key, value] of Object.entries(data)) {
+        if (
+          typeof value === "object" &&
+          value !== null &&
+          !Array.isArray(value)
+        ) {
+          decryptedData[key] = deepDecrypt(value);
+        } else {
+          decryptedData[key] = decryptValue(key, value);
+        }
       }
-    }
+      return decryptedData;
+    };
 
-    return decryptedNoteDetails;
+    const finalDecryptedData = deepDecrypt(noteDetails);
+
+    return finalDecryptedData;
   } catch (error) {
     console.error("Error getting note:", error);
     throw error;

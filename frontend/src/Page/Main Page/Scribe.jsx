@@ -22,13 +22,11 @@ const groupPatientsByInitial = (patients) => {
 
 const Scribe = () => {
   const [hasSelected, setHasSelected] = useState(false);
-  const clinicId = useSelector((state) => state.reducer.user.user.clinicId);
-  const doctorId = useSelector((state) => state.reducer.user.user.userId);
+
   const patients = useSelector((state) => state.reducer.patient.patients);
+
   const navigate = useNavigate();
   const location = useLocation();
-  const ws = useRef(null);
-  const reduxDispatch = useDispatch();
   useEffect(() => {
     if (location.state && location.state.resetSelected) {
       setHasSelected(false);
@@ -63,7 +61,7 @@ const Scribe = () => {
   // }, [clinicId, doctorId, reduxDispatch]);
 
   const handleClickPatient = (id) => {
-    const clickedPatient = patients.find((patient) => patient.id === id);
+    const clickedPatient = patients.find((patient) => patient.patientId === id); // Use patientId here
     setHasSelected(true);
     if (clickedPatient) {
       sessionStorage.setItem("currentPatientId", id);
@@ -78,6 +76,8 @@ const Scribe = () => {
   };
 
   const groupedPatients = groupPatientsByInitial(patients);
+  console.log(groupedPatients);
+
   const sortedInitials = Object.keys(groupedPatients).sort();
 
   return (
@@ -89,7 +89,8 @@ const Scribe = () => {
           <div className="px-4 md:p-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between">
               <p className="font-Poppins text-p-lg font-semibold text-f-dark">
-                0 <span className="text-f-gray2">Total patient</span>
+                {patients.length || 0}{" "}
+                <span className="text-f-gray2">Total patient</span>
               </p>
               <div className="mt-8 md:mt-0 flex flex-row">
                 <div className="w-full flex flex-row border border-c-gray3 px-4 rounded-md justify-center items-center md:w-80">
@@ -125,7 +126,7 @@ const Scribe = () => {
                         <PatientScribeCard
                           key={index}
                           name={`${patient.first_name} ${patient.last_name}`}
-                          onClick={() => handleClickPatient(patient.id)}
+                          onClick={() => handleClickPatient(patient.patientId)}
                         />
                       ))}
                     </div>

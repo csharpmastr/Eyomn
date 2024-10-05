@@ -20,14 +20,24 @@ import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 import Organization from "./Page/Main Page/Organization";
 import StaffAddPatientPage from "./Page/Main Page/StaffAddPatientPage";
+import { useAuthContext } from "./Hooks/useAuthContext";
 let persistor = persistStore(store);
+
+const ProtectedRoute = ({ children }) => {
+  const { user } = useAuthContext();
+  return user ? children : <Navigate to="/login" />;
+};
 const AppRoutes = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuthContext();
   const selectedTab = sessionStorage.getItem("selectedTab") || "dashboard";
   const currentPatientId = sessionStorage.getItem("currentPatientId");
 
   return (
     <Routes>
+      <Route
+        path="/*"
+        element={<Navigate to={user ? `/${selectedTab}` : "/login"} />}
+      />
       <Route
         path="/"
         element={<Navigate to={user ? `/${selectedTab}` : "/login"} />}
@@ -54,7 +64,14 @@ const AppRoutes = () => {
       />
 
       {/* Protected routes */}
-      <Route path="/" element={<MVP />}>
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <MVP />
+          </ProtectedRoute>
+        }
+      >
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="scan" element={<Scan />}>
           <Route path=":id" element={<ScanFundus />} />
@@ -68,7 +85,6 @@ const AppRoutes = () => {
       </Route>
 
       {/* Catch-all route */}
-      <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );
 };

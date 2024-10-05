@@ -56,15 +56,12 @@ export const useLogin = () => {
         );
         reduxDispatch(setPatients(patients));
       } else {
-        if (role === "3") {
-          reduxDispatch(setPatients(patients));
-        }
         const first_name = staffData.first_name;
         const last_name = staffData.last_name;
         const email = staffData.email;
         const location = staffData.location;
         const branchId = staffData.branchId;
-
+        const position = staffData.position;
         reduxDispatch(
           setUser({
             userId,
@@ -76,8 +73,10 @@ export const useLogin = () => {
             location,
             organizationId,
             branchId,
+            position,
           })
         );
+        reduxDispatch(setPatients(patients));
         reduxDispatch(setDoctor(doctors));
       }
       return response;

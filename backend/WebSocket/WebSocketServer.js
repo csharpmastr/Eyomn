@@ -1,9 +1,7 @@
 const WebSocket = require("ws");
-const { getPatients } = require("../Helper/Helper");
-const { getVisit } = require("../Helper/Helper");
+const { decryptDocument } = require("../Helper/Helper");
 const { query, where, onSnapshot } = require("firebase/firestore");
 const { patientCol } = require("../Config/FirebaseClientSDK");
-const { decryptData } = require("../Security/DataHashing");
 
 const startWebSocketServer = () => {
   const wss = new WebSocket.Server({ port: 8080 });
@@ -20,18 +18,7 @@ const startWebSocketServer = () => {
     const sentPatientIds = new Set();
 
     try {
-      const patients = await getPatients(null, staffId, branchId, "2");
-
-      for (const patient of patients) {
-        const visits = await getVisit(patient.patientId, staffId);
-        patient.visits = visits;
-
-        if (!sentPatientIds.has(patient.patientId)) {
-          ws.send(JSON.stringify(patient));
-          sentPatientIds.add(patient.patientId);
-        }
-      }
-
+      // Set up a Firestore query to listen for real-time updates
       const q = query(
         patientCol,
         where("branchId", "==", branchId),
@@ -44,36 +31,24 @@ const startWebSocketServer = () => {
 
           if (change.type === "added") {
             const newPatient = change.doc.data();
-            const decryptedPatientData = {};
-
-            for (const [key, value] of Object.entries(newPatient)) {
-              if (
-                key !== "patientId" &&
-                key !== "branchId" &&
-                key !== "doctorId" &&
-                key !== "organizationId" &&
-                key !== "createdAt" &&
-                key !== "isDeleted"
-              ) {
-                decryptedPatientData[key] = decryptData(value);
-              } else {
-                decryptedPatientData[key] = value;
-              }
-            }
-
+            const decryptedPatientData = decryptDocument(newPatient, [
+              "patientId",
+              "branchId",
+              "doctorId",
+              "organizationId",
+              "createdAt",
+              "isDeleted",
+            ]);
             if (!sentPatientIds.has(patientId)) {
               ws.send(JSON.stringify(decryptedPatientData));
               sentPatientIds.add(patientId);
             }
           }
         });
-        console.log(sentPatientIds);
       });
-
-      console.log(sentPatientIds);
     } catch (error) {
-      console.error("Error fetching patients:", error.message);
-      ws.send(JSON.stringify({ error: "Failed to fetch patients" }));
+      console.error("Error fetching real-time patient updates:", error.message);
+      ws.send(JSON.stringify({ error: "Failed to fetch real-time updates" }));
     }
 
     ws.on("close", () => {
