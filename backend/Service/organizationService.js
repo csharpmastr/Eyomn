@@ -120,6 +120,8 @@ const addBranch = async (ogrId, branchData) => {
 
     await branchRef.set(encryptedBranchData);
     await userRef.set(encryptedBranchCredentials);
+
+    return branchId;
   } catch (err) {
     console.error("Error adding branch:", err);
     throw err;

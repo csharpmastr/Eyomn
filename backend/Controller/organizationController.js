@@ -87,10 +87,11 @@ const addBranchHandler = async (req, res) => {
         .json({ message: "Organization ID and branch data are required." });
     }
 
-    await addBranch(organizationId, branchData);
+    const branchId = await addBranch(organizationId, branchData);
 
     return res.status(201).json({
       message: "Branch added successfully.",
+      branchId: branchId,
     });
   } catch (err) {
     if (err instanceof EmailAlreadyExistsError) {
