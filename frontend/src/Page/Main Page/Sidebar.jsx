@@ -116,28 +116,32 @@ const SideBar = () => {
                   <span className="ml-2">{isCollapsed ? "" : "Dashboard"}</span>
                 )}
               </NavLink>
-              <NavLink
-                className={` flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-                  selected === "organization"
-                    ? "xl:bg-c-primary text-f-light font-semibold "
-                    : "text-f-dark font-medium"
-                }${
-                  isCollapsed
-                    ? " xl:px-2 py-2 xl:justify-center "
-                    : "xl:py-3 xl:px-4 "
-                }`}
-                onClick={() => setSelected("organization")}
-                to="organization"
-              >
-                <SlOrganization
-                  className={`${
+              {role === "0" ? (
+                <NavLink
+                  className={` flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
+                    selected === "organization"
+                      ? "xl:bg-c-primary text-f-light font-semibold "
+                      : "text-f-dark font-medium"
+                  }${
                     isCollapsed
-                      ? " h-[26px] w-[26px]"
-                      : " h-[26px] w-[26px] xl:mr-3"
+                      ? " xl:px-2 py-2 xl:justify-center "
+                      : "xl:py-3 xl:px-4 "
                   }`}
-                />
-                {!isCollapsed && <span className="ml-2">Organization</span>}
-              </NavLink>
+                  onClick={() => setSelected("organization")}
+                  to="organization"
+                >
+                  <SlOrganization
+                    className={`${
+                      isCollapsed
+                        ? " h-[26px] w-[26px]"
+                        : " h-[26px] w-[26px] xl:mr-3"
+                    }`}
+                  />
+                  {!isCollapsed && <span className="ml-2">Organization</span>}
+                </NavLink>
+              ) : (
+                ""
+              )}
               <NavLink
                 className={` flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "patient"
