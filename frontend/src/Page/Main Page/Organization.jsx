@@ -8,7 +8,9 @@ import { Outlet, useNavigate } from "react-router-dom";
 const Organization = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const branch = useSelector((state) => state.reducer.branch.branch);
-  const [hasSelected, setHasSelected] = useState(false);
+
+  const [hasSelectedBranch, setHasSelectedBranch] = useState(false);
+
   const navigate = useNavigate();
 
   const handleOpenStaffModal = () => {
@@ -20,16 +22,14 @@ const Organization = () => {
   };
 
   const handleBranchClick = (branchId) => {
-    setHasSelected(true);
-    console.log(`Branch clicked: ${branchId}`);
+    setHasSelectedBranch(true);
+
     navigate(`/organization/${branchId}`);
   };
 
   return (
     <div className="w-full h-full flex flex-col items-center p-4 md:p-8">
-      {hasSelected ? (
-        <Outlet />
-      ) : (
+      {!hasSelectedBranch ? (
         <>
           <div className="w-full flex flex-row-reverse">
             <div
@@ -40,7 +40,6 @@ const Organization = () => {
               <h1 className="hidden md:block">Add Branch</h1>
             </div>
           </div>
-
           {branch && branch.length > 0 ? (
             <div className="flex flex-wrap justify-center gap-4 mt-4 items-center w-full h-full">
               {branch.map((branchItem) => (
@@ -62,6 +61,8 @@ const Organization = () => {
 
           {isModalOpen && <AddBranchModel onClose={handleCloseStaffModal} />}
         </>
+      ) : (
+        <Outlet />
       )}
     </div>
   );

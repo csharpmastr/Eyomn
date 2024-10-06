@@ -5,7 +5,7 @@ import InventoryTable from "../../Component/ui/InventoryTable";
 
 const Inventory = () => {
   return (
-    <div className="font-Poppins text-f-dark p-3 md:p-8">
+    <div className="text-f-dark p-3 md:p-8 font-Poppins">
       <nav className="flex flex-col gap-3 lg:gap-0 lg:flex-row justify-between mb-8">
         <div>
           <h1 className="text-p-lg">All Product</h1>
@@ -20,13 +20,13 @@ const Inventory = () => {
             <IoMdSearch className="h-8 w-8 text-c-secondary" />
             <input
               type="text"
-              className="w-full text-f-dark font-Poppins focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
+              className="w-full text-f-dark focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
               placeholder="Search product... "
               //value={searchTerm}
               //onChange={handleSearchChange}
             />
           </div>
-          <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 font-Poppins border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
+          <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
             <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
             <select className="md:block hover:cursor-pointer focus:outline-none bg-bg-mc">
               <option value="" disabled selected>
@@ -37,7 +37,7 @@ const Inventory = () => {
               <option value="filter3">Filter 3</option>
             </select>
           </div>
-          <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 font-Poppins bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary">
+          <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary">
             <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
             <h1 className="hidden md:block">Add Product</h1>
           </div>

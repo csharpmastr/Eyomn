@@ -18,11 +18,11 @@ const ScribeRecord = () => {
 
   return (
     <>
-      <div className="p-8 h-full">
+      <div className="p-8 h-full font-Poppins">
         <div className="flex justify-between mb-8">
           <h1 className="text-p-lg font-semibold">Bradley Simpon</h1>
           <div
-            className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 font-Poppins bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+            className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
             //onClick={openAddPatient}
           >
             <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />

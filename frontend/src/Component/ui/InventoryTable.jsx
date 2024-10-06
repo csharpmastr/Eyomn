@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 
 const InventoryTable = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const handleCollapseToggle = () => {
     setIsCollapsed(!isCollapsed);
   };
 
   return (
-    <div className="w-fit md:w-full rounded-lg bg-white text-f-dark overflow-x-auto">
+    <div className="w-fit md:w-full rounded-lg bg-white text-f-dark overflow-x-auto font-poppins">
       <header className="flex text-p-rg font-semibold py-8 border border-b-f-gray">
         <div className="flex-1 pl-4">Product Name</div>
         <div className="flex-1 pl-4">Category</div>

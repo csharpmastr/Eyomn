@@ -3,7 +3,7 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 
 const ReasonVisitCard = ({ doc_name, staff, reason, data, time }) => {
   return (
-    <div className="w-full h-full p-5 bg-white rounded-lg">
+    <div className="w-full h-full p-5 bg-white rounded-lg font-poppins">
       <header className="flex w-full h-auto mb-5 justify-between">
         <h1 className="text-p-rg font-medium text-c-gray3">Reason for Visit</h1>
         <button>

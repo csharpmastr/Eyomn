@@ -22,16 +22,11 @@ export const getStaffs = async (clinicId, accessToken, refreshToken) => {
   }
 };
 
-export const addStaffService = async (
-  staffData,
-  accessToken,
-  refreshToken,
-  organizationId,
-  branchId
-) => {
+export const addStaffService = async (staffData, accessToken, refreshToken) => {
   try {
     const response = await axios.post(
-      `${ORGANIZATION_API_BASE_URL}/add-staff/${organizationId}/${branchId}`,
+      `${ORGANIZATION_API_BASE_URL}/add`,
+
       staffData,
       {
         headers: {

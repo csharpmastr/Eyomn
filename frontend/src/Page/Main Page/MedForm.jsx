@@ -228,7 +228,7 @@ const MedForm = () => {
   };
 
   return (
-    <div className="w-full p-2 md:p-8 flex flex-col-reverse lg:flex-row bg-bg-mc gap-8">
+    <div className="w-full p-2 md:p-8 flex flex-col-reverse lg:flex-row bg-bg-mc gap-8 font-Poppins">
       <div className="w-full lg:w-[calc(100%-288px)]">
         <form onSubmit={handleSubmit}>
           {currentCardIndex === 0 && (

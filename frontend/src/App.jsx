@@ -11,6 +11,8 @@ import Scribe from "./Page/Main Page/Scribe";
 import Scan from "./Page/Main Page/Scan";
 import Patient from "./Page/Main Page/Patient";
 import ScanFundus from "./Page/Main Page/Scan/ScanFundus";
+import Appointment from "./Page/Main Page/Appointment";
+import Inventory from "./Page/Main Page/Inventory";
 import { useContext } from "react";
 import { AuthContext, AuthContextProvider } from "./Context/AuthContext";
 import ScribePatient from "./Page/Main Page/Scribe/ScribePatient";
@@ -85,6 +87,8 @@ const AppRoutes = () => {
           <Route path=":branchId" element={<OrgStaff />} />
         </Route>
         <Route path="add-patient" element={<StaffAddPatientPage />} />
+        <Route path="appointment" element={<Appointment />} />
+        <Route path="inventory" element={<Inventory />} />
       </Route>
     </Routes>
   );

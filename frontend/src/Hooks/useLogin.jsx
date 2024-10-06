@@ -43,16 +43,19 @@ export const useLogin = () => {
 
       if (role === "0") {
         const resPatients = branch.flatMap((branch) => branch.patients);
-        const cleanedBranches = branch.map(
-          ({ appointments, patients, staffs, ...rest }) => ({
-            ...rest,
-          })
-        );
+
+        const resBranch = branch.map(({ branchId, name, location, email }) => ({
+          branchId,
+          name,
+          location,
+          email,
+        }));
         const resStaffs = branch.flatMap((branch) => branch.staffs);
+
         reduxDispatch(setUser({ userId, organization, role }));
         reduxDispatch(setPatients(resPatients));
-        reduxDispatch(setBranch(cleanedBranches));
         reduxDispatch(setStaffs(resStaffs));
+        reduxDispatch(setBranch(resBranch));
       } else if (role === "1") {
         const name = branchData.name;
         const email = branchData.email;
