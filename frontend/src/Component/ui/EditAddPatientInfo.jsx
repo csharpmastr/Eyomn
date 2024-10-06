@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Select from "react-select";
 import { useSelector } from "react-redux";
-import PhList from "../assets/Data/location_list.json";
+import PhList from "../../assets/Data/location_list.json";
 
-const AddPatientUICard = () => {
+const AddPatientUICard = ({ onClose }) => {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
 
@@ -91,13 +91,13 @@ const AddPatientUICard = () => {
     }));
 
   return (
-    <div className="flex flex-col items-center lg:items-end justify-center h-full bg-c-gray3 bg-opacity-50">
+    <div className="flex flex-col items-center lg:items-end justify-center h-full bg-c-gray3 bg-opacity-50 font-poppins">
       <div className="w-[400px] md:w-[600px] md:mr-8">
         <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
           <h1 className="text-p-lg text-c-secondary font-semibold">
             Patient Information
           </h1>
-          <button>x</button>
+          <button onClick={onClose}>&times;</button>
         </header>
         <div className="bg-white h-[600px] overflow-y-scroll">
           {currentCardIndex == 0 ? (

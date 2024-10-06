@@ -45,13 +45,13 @@ const PatientModal = ({ onClose, tab }) => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className="w-[85vw] h-[60vh] md:h-[55vh] md:w-[60vw] lg:w-[50vw] lg:h-[50vh] xl:h-[70vh] xl:w-[40vw] p-4 border-2 border-[#C8C8C8] rounded-lg shadow-lg">
+      <div className="w-[85vw] h-[60vh] md:h-[55vh] md:w-[60vw] lg:w-[50vw] lg:h-[50vh] xl:h-[70vh] xl:w-[40vw] p-4 border-2 border-[#C8C8C8] rounded-lg shadow-lg font-poppins">
         <div className="flex flex-row justify-between mx-auto h-auto">
-          <h1 className="flex justify-center items-center font-Poppins text-black pl-2">
+          <h1 className="flex justify-center items-center text-black pl-2">
             Patient List
           </h1>
           <div
-            className="h-12 flex justify-center items-center border-2 border-[#222222] rounded-md py-2 px-2 md:px-4 font-Poppins cursor-pointer"
+            className="h-12 flex justify-center items-center border-2 border-[#222222] rounded-md py-2 px-2 md:px-4 cursor-pointer"
             onClick={openAddPatientModal}
           >
             <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
@@ -62,7 +62,7 @@ const PatientModal = ({ onClose, tab }) => {
           <IoMdSearch className="h-10 w-10 text-[#A7A7A7]" />
           <input
             type="text"
-            className="w-full text-black px-2 font-Poppins"
+            className="w-full text-black px-2"
             placeholder="Search patient... "
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

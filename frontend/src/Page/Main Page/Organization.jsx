@@ -14,10 +14,10 @@ const Organization = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center p-4 md:p-8">
+    <div className="w-full h-full flex flex-col items-center p-4 md:p-8  font-Poppins">
       <div className="w-full flex flex-row-reverse">
         <div
-          className="h-12 px-2 w-fit flex justify-center items-center border-2 border-[#222222] rounded-md py-2 md:px-4 font-Poppins cursor-pointer"
+          className="h-12 px-2 w-fit flex justify-center items-center border-2 border-[#222222] rounded-md py-2 md:px-4 cursor-pointer"
           onClick={handleOpenStaffModal}
         >
           <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />

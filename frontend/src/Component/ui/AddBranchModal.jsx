@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 
 const AddBranchModal = ({ onClose }) => {
   return ReactDOM.createPortal(
-    <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50">
+    <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
       <div className="w-[500px]">
         <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
           <h1 className="text-p-lg text-c-secondary font-semibold">
@@ -12,11 +12,32 @@ const AddBranchModal = ({ onClose }) => {
           <button onClick={onClose}> &times; </button>
         </header>
         <div className="py-10 px-6 bg-white">
-          <input
-            type="text"
-            className="w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-            placeholder="Enter branch name"
-          />
+          <section>
+            <label
+              htmlFor="branch_name"
+              className="text-p-sm text-c-gray3 font-medium"
+            >
+              Branch Name:
+            </label>
+            <input
+              type="text"
+              className="mt-1 mb-6 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+              placeholder="Enter branch name"
+            />
+          </section>
+          <section>
+            <label
+              htmlFor="branch_description"
+              className="text-p-sm text-c-gray3 font-medium"
+            >
+              Branch Description:
+            </label>
+            <textarea
+              type="text"
+              className="mt-1 w-full px-4 py-3 h-24 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+              placeholder="Enter branch description"
+            />
+          </section>
         </div>
         <footer className="border border-t-f-gray bg-white rounded-b-lg flex gap-2 justify-end py-6 px-4">
           <button
