@@ -13,6 +13,8 @@ const {
   decryptData,
 } = require("../Security/DataHashing");
 const { EmailAlreadyExistsError } = require("./UserService");
+const { getStaffs, getPatients, decryptDocument } = require("../Helper/Helper");
+const { getAppointment } = require("./appointmentService");
 
 const addStaff = async (organizationId, branchId, staffData) => {
   try {
@@ -193,9 +195,62 @@ const getDoctorsList = async (clinicId) => {
     throw error;
   }
 };
+const getBranchData = async (organizationId) => {
+  try {
+    const orgRef = await organizationCollection.doc(organizationId).get();
+
+    if (!orgRef.exists) {
+      console.error("No such organization found!");
+      return null;
+    }
+
+    const orgData = orgRef.data();
+    const orgBranches = orgData.branch;
+    console.log(orgData);
+
+    const branches = [];
+
+    for (const branchId of orgBranches) {
+      const branchRef = branchCollection.doc(branchId);
+      const branchSnap = await branchRef.get();
+
+      if (branchSnap.exists) {
+        const branchData = branchSnap.data();
+
+        const decryptedBranchData = decryptDocument(branchData, [
+          "email",
+          "patients",
+          "staffs",
+          "branchId",
+        ]);
+
+        const staffs = await getStaffs(orgData.id, branchId);
+        const patients = await getPatients(
+          orgData.id,
+          null,
+          branchId,
+          orgData.role
+        );
+        const appointments = await getAppointment(branchId);
+
+        decryptedBranchData.staffs = staffs;
+        decryptedBranchData.patients = patients;
+        decryptedBranchData.appointments = appointments;
+
+        branches.push(decryptedBranchData);
+      }
+    }
+
+    return branches;
+  } catch (error) {
+    console.error("Error fetching branch data:", error);
+    return null;
+  }
+};
 
 module.exports = {
   addStaff,
+  getBranchData,
   // getAllStaff,
   // getDoctorsList,
   addBranch,

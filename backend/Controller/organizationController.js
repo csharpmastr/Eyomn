@@ -3,6 +3,7 @@ const {
   getAllStaff,
   getDoctorsList,
   addBranch,
+  getBranchData,
 } = require("../Service/organizationService");
 const { EmailAlreadyExistsError } = require("../Service/UserService");
 
@@ -105,9 +106,28 @@ const addBranchHandler = async (req, res) => {
   }
 };
 
+const getBranchDataHandler = async (req, res) => {
+  try {
+    const organizationId = req.params.organizationId;
+    if (!organizationId) {
+      return res
+        .status(400)
+        .json({ message: "Organization ID and branch data are required." });
+    }
+    const branchData = await getBranchData(organizationId);
+
+    return res.status(200).json(branchData);
+  } catch (err) {
+    console.error("Error fetching doctors:", err);
+    return res
+      .status(500)
+      .json({ message: "Server error while fetching doctors." });
+  }
+};
 module.exports = {
   addStaffHandler,
   getStaffsHandler,
   getDoctorsListHandler,
   addBranchHandler,
+  getBranchDataHandler,
 };

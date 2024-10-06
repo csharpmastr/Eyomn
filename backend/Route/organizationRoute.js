@@ -4,6 +4,7 @@ const {
   getStaffsHandler,
   getDoctorsListHandler,
   addBranchHandler,
+  getBranchDataHandler,
 } = require("../Controller/organizationController");
 const { validateToken } = require("../Wrapper/Wrapper");
 
@@ -13,5 +14,6 @@ router.post("/add-staff/:organizationId/:branchId", addStaffHandler);
 router.post("/get-staffs", validateToken, getStaffsHandler);
 router.get("/get-doctors", validateToken, getDoctorsListHandler);
 router.post("/add-branch/:organizationId", addBranchHandler);
+router.get("/get-branch-data/:organizationId", getBranchDataHandler);
 
 module.exports = router;

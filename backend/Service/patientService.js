@@ -6,7 +6,7 @@ const {
   patientCollection,
   branchCollection,
 } = require("../Config/FirebaseConfig");
-const { encryptDocument } = require("../Helper/Helper");
+const { encryptDocument, decryptDocument } = require("../Helper/Helper");
 
 const addPatient = async (organizationId, branchId, doctorId, patientData) => {
   const currentDate = new Date();
@@ -51,6 +51,57 @@ const addPatient = async (organizationId, branchId, doctorId, patientData) => {
     throw error;
   }
 };
+const getPatients = async (organizationId, branchId, doctorId, role) => {
+  try {
+    let patientQuery;
+
+    if (role === "0") {
+      patientQuery = patientCollection.where(
+        "organizationId",
+        "==",
+        organizationId
+      );
+    } else if (role === "1" || role === "3") {
+      patientQuery = patientCollection.where("branchId", "==", branchId);
+    } else if (role === "2") {
+      if (!doctorId) {
+        throw new Error("Doctor ID must be provided for doctor-level access.");
+      }
+      patientQuery = patientCollection
+        .where("doctorId", "==", doctorId)
+        .where("branchId", "==", branchId);
+    } else {
+      throw new Error("Invalid role provided.");
+    }
+
+    const patientSnapshot = await patientQuery.get();
+
+    if (patientSnapshot.empty) {
+      console.warn("No patients found, returning an empty array.");
+      return [];
+    }
+
+    const patients = patientSnapshot.docs.map((patientDoc) => {
+      const patientData = patientDoc.data();
+      const decryptedPatientData = decryptDocument(patientData, [
+        "patientId",
+        "branchId",
+        "doctorId",
+        "organizationId",
+        "createdAt",
+        "isDeleted",
+      ]);
+
+      return decryptedPatientData;
+    });
+
+    return patients;
+  } catch (error) {
+    console.error("Error fetching patients:", error.message);
+    throw new Error("Error fetching patients: " + error.message);
+  }
+};
+
 const addVisit = async (patientId, doctorId) => {
   const currentDate = new Date();
   const visitId = uuidv4();
@@ -266,6 +317,7 @@ const retrievePatient = async (patientId) => {
 
 module.exports = {
   addPatient,
+  getPatients,
   updatePatientDetails,
   deletePatient,
   retrievePatient,

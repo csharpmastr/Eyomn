@@ -115,41 +115,10 @@ const loginUser = async (userData) => {
 
       const branches = [];
 
-      for (const branchId of orgBranches) {
-        const branchRef = branchCollection.doc(branchId);
-        const branchSnap = await branchRef.get();
-
-        if (branchSnap.exists) {
-          const branchData = branchSnap.data();
-          const decryptedBranchData = decryptDocument(branchData, [
-            "email",
-            "patients",
-            "staffs",
-            "branchId",
-          ]);
-
-          const staffs = await getStaffs(user.id, branchId);
-          decryptedBranchData.staffs = staffs;
-
-          const patients = await getPatients(
-            user.id,
-            null,
-            branchId,
-            user.role
-          );
-          const appointments = await getAppointment(branchId);
-          decryptedBranchData.appointments = appointments;
-          decryptedBranchData.patients = patients;
-
-          branches.push(decryptedBranchData);
-        }
-      }
-
       data = {
         userId: user.id,
         role: user.role,
         organization: org,
-        branches,
       };
     } else if (user.role === "1") {
       const branchQuery = branchCollection.where(
@@ -171,22 +140,13 @@ const loginUser = async (userData) => {
         "staffs",
         "patients",
       ]);
-      const staffs = await getStaffs(
-        user.organizationId,
-        user.branchId,
-        user.role
-      );
-      const patients = await getPatients(null, null, user.branchId, user.role);
-      const appointments = await getAppointment(user.branchId);
+
       data = {
         role: user.role,
         userId: user.branchId,
         organizationId: user.organizationId,
         branchData,
         organization,
-        patients,
-        staffs,
-        appointments,
       };
     } else if (user.role === "2") {
       const staffQuery = staffCollection.where("staffId", "==", user.staffId);
@@ -206,12 +166,7 @@ const loginUser = async (userData) => {
       ]);
 
       const organization = await getOrganizationName(user.organizationId);
-      const patients = await getPatients(
-        user.organizationId,
-        user.staffId,
-        user.branchId,
-        user.role
-      );
+
       data = {
         role: user.role,
         userId: user.staffId,
@@ -219,7 +174,6 @@ const loginUser = async (userData) => {
         organizationId: user.organizationId,
         organization,
         staffData,
-        patients,
       };
     } else {
       const staffQuery = staffCollection.where("staffId", "==", user.staffId);
@@ -239,22 +193,6 @@ const loginUser = async (userData) => {
       ]);
 
       const organization = await getOrganizationName(user.organizationId);
-      const patients = await getPatients(
-        null,
-        user.staffId,
-        user.branchId,
-        user.role
-      );
-
-      const patientsWithVisits = await Promise.all(
-        patients.map(async (patient) => {
-          const visits = await getVisit(patient.patientId, patient.doctorId);
-          return {
-            ...patient,
-            visits,
-          };
-        })
-      );
 
       const doctors = await getBranchDoctors(
         user.organizationId,
@@ -269,8 +207,6 @@ const loginUser = async (userData) => {
         organizationId: user.organizationId,
         organization,
         staffData,
-        patients: patientsWithVisits,
-        doctors,
       };
     }
 

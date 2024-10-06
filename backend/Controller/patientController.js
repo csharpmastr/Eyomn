@@ -60,11 +60,16 @@ const getPatientsByDoctorHandler = async (req, res) => {
 
 const getPatientsHandler = async (req, res) => {
   try {
-    const { clinicId } = req.query;
-    if (!clinicId) {
-      return res.status(400).json({ message: "Clinic ID is required." });
+    const { organizationId, branchId, doctorId, role } = req.query;
+    if (!organizationId) {
+      return res.status(400).json({ message: "Organization ID is required." });
     }
-    const patients = await getPatients(clinicId);
+    const patients = await getPatients(
+      organizationId,
+      branchId,
+      doctorId,
+      role
+    );
     return res.status(200).json(patients);
   } catch (error) {
     console.error("Error fetching patients: ", error);
