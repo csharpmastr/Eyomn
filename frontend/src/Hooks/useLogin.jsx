@@ -4,10 +4,10 @@ import { userLogin } from "../Service/UserService";
 import Cookies from "universal-cookie";
 import { useDispatch } from "react-redux";
 import { setDoctor } from "../Slice/doctorSlice";
-import { getDoctorList, getStaffs } from "../Service/OrganizationService";
+
 import { setStaffs } from "../Slice/StaffSlice";
 import { setUser } from "../Slice/UserSlice";
-import { getPatients, getPatientsByDoctor } from "../Service/PatientService";
+
 import { setPatients } from "../Slice/PatientSlice";
 import { setBranch } from "../Slice/BranchSlice";
 
@@ -52,7 +52,6 @@ export const useLogin = () => {
           email,
         }));
         const resStaffs = branch.flatMap((branch) => branch.staffs);
-        console.log();
 
         reduxDispatch(setUser({ userId, organization, role }));
         reduxDispatch(setPatients(resPatients));
