@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const STAFF_API_BASE_URL = "http://localhost:3000/api/v1/staff";
+const ORGANIZATION_API_BASE_URL = "http://localhost:3000/api/v1/organization";
 export const getStaffs = async (clinicId, accessToken, refreshToken) => {
   try {
     const response = await axios.post(
-      `${STAFF_API_BASE_URL}/get-staffs`,
+      `${ORGANIZATION_API_BASE_URL}/get-staffs`,
       {
         clinicId,
       },
@@ -24,12 +24,16 @@ export const getStaffs = async (clinicId, accessToken, refreshToken) => {
 
 export const addStaffService = async (staffData, accessToken, refreshToken) => {
   try {
-    const response = await axios.post(`${STAFF_API_BASE_URL}/add`, staffData, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "x-refresh-token": refreshToken,
-      },
-    });
+    const response = await axios.post(
+      `${ORGANIZATION_API_BASE_URL}/add`,
+      staffData,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
     return response;
   } catch (err) {
     throw err;
@@ -43,16 +47,19 @@ export const getDoctorList = async (
   refreshToken
 ) => {
   try {
-    const response = await axios.get(`${STAFF_API_BASE_URL}/get-doctors`, {
-      params: {
-        clinicId,
-        doctorId,
-      },
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "x-refresh-token": refreshToken,
-      },
-    });
+    const response = await axios.get(
+      `${ORGANIZATION_API_BASE_URL}/get-doctors`,
+      {
+        params: {
+          clinicId,
+          doctorId,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
 
     return response.data;
   } catch (error) {
@@ -60,3 +67,5 @@ export const getDoctorList = async (
     throw error;
   }
 };
+
+export const addBranch = async (branchDetails) => {};

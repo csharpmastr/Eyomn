@@ -1,12 +1,18 @@
 import React, { useState } from "react";
-import StaffCard from "../../Component/ui/StaffCard";
-import AddStaffModal from "../../Component/ui/AddStaffModal";
 import { useSelector } from "react-redux";
 import { IoIosAddCircleOutline } from "react-icons/io";
+import { useParams } from "react-router-dom";
+import StaffCard from "../../Component/ui/StaffCard";
+import AddStaffModal from "../../Component/ui/AddStaffModal";
 
 const OrgStaff = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { branchId } = useParams();
+
   const staffs = useSelector((state) => state.reducer.staff.staffs);
+
+  const filteredStaffs = staffs.filter((staff) => staff.branchId === branchId);
 
   const handleOpenStaffModal = () => {
     setIsModalOpen(true);
@@ -17,10 +23,10 @@ const OrgStaff = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center p-4 md:p-8 font-Poppins">
+    <div className="w-full h-full flex flex-col items-center ">
       <div className="w-full flex flex-row-reverse">
         <div
-          className="h-12 w-40 flex justify-center items-center border-2 border-[#222222] rounded-md py-2 px-2 md:px-4 cursor-pointer"
+          className="h-12 w-40 flex justify-center items-center border-2 border-[#222222] rounded-md py-2 px-2 md:px-4 font-Poppins cursor-pointer"
           onClick={handleOpenStaffModal}
         >
           <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
@@ -29,8 +35,8 @@ const OrgStaff = () => {
       </div>
 
       <div className="flex flex-wrap justify-center gap-4 mt-4 items-center w-full h-full">
-        {staffs.length > 0 ? (
-          staffs.map((staff, index) => (
+        {filteredStaffs.length > 0 ? (
+          filteredStaffs.map((staff, index) => (
             <StaffCard
               key={index}
               name={

@@ -4,11 +4,12 @@ import { userLogin } from "../Service/UserService";
 import Cookies from "universal-cookie";
 import { useDispatch } from "react-redux";
 import { setDoctor } from "../Slice/doctorSlice";
-import { getDoctorList, getStaffs } from "../Service/StaffService";
+import { getDoctorList, getStaffs } from "../Service/OrganizationService";
 import { setStaffs } from "../Slice/StaffSlice";
 import { setUser } from "../Slice/UserSlice";
 import { getPatients, getPatientsByDoctor } from "../Service/PatientService";
 import { setPatients } from "../Slice/PatientSlice";
+import { setBranch } from "../Slice/BranchSlice";
 
 export const useLogin = () => {
   const cookies = new Cookies();
@@ -44,8 +45,19 @@ export const useLogin = () => {
 
       if (role === "0") {
         const resPatients = branch.flatMap((branch) => branch.patients);
+        const resBranch = branch.map(({ branchId, name, location, email }) => ({
+          branchId,
+          name,
+          location,
+          email,
+        }));
+        const resStaffs = branch.flatMap((branch) => branch.staffs);
+        console.log();
+
         reduxDispatch(setUser({ userId, organization, role }));
         reduxDispatch(setPatients(resPatients));
+        reduxDispatch(setStaffs(resStaffs));
+        reduxDispatch(setBranch(resBranch));
       } else if (role === "1") {
         const name = branchData.name;
         const email = branchData.email;

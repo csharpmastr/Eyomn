@@ -19,6 +19,7 @@
     "axios": "^1.7.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
     "gapi-script": "^1.2.0",
     "i": "^0.3.7",

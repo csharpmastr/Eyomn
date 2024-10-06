@@ -2,7 +2,7 @@ import { useState } from "react";
 import Cookies from "universal-cookie";
 import { useDispatch } from "react-redux";
 import { addStaff } from "../Slice/StaffSlice";
-import { addStaffService } from "../Service/StaffService";
+import { addStaffService } from "../Service/OrganizationService";
 
 export const useAddStaff = () => {
   const cookies = new Cookies();

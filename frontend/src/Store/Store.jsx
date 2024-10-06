@@ -3,6 +3,7 @@ import patientReducer from "../Slice/PatientSlice";
 import doctorReducer from "../Slice/doctorSlice";
 import staffReducer from "../Slice/StaffSlice";
 import userReducer from "../Slice/UserSlice";
+import branchReducer from "../Slice/BranchSlice";
 import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
 import { combineReducers } from "@reduxjs/toolkit";
@@ -18,6 +19,7 @@ const reducer = combineReducers({
   patient: patientReducer,
   staff: staffReducer,
   user: userReducer,
+  branch: branchReducer,
 });
 const persistedReducer = persistReducer(persistConfig, reducer);
 export const store = configureStore({
