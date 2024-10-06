@@ -9,8 +9,12 @@ const patientSlice = createSlice({
   initialState,
   reducers: {
     addPatient: (state, action) => {
+      if (!Array.isArray(state.patients)) {
+        state.patients = [];
+      }
       state.patients.push(action.payload);
     },
+
     removePatient: (state, action) => {
       state.patients = state.patients.filter(
         (patient) => patient.id !== action.payload
@@ -33,7 +37,6 @@ const patientSlice = createSlice({
     },
   },
 });
-
 
 export const {
   addPatient,

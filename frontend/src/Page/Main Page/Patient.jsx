@@ -18,15 +18,16 @@ const Patient = () => {
   const patients = useSelector((state) => state.reducer.patient.patients);
   const totalPatient = patients.length;
 
-  const filteredPatients = useMemo(
-    () =>
-      patients.filter((patient) =>
-        `${patient.first_name} ${patient.last_name}`
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-      ),
-    [searchTerm, patients]
-  );
+  const filteredPatients = useMemo(() => {
+    if (!Array.isArray(patients) || patients.length === 0) {
+      return [];
+    }
+    return patients.filter((patient) =>
+      `${patient.first_name} ${patient.last_name}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm, patients]);
 
   const openAddPatient = () => setisAddPatientModalOpen(true);
   const closeAddPatient = () => setisAddPatientModalOpen(false);

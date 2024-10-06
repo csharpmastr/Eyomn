@@ -93,3 +93,31 @@ export const addBranch = async (
     throw error;
   }
 };
+
+export const getBranchData = async (
+  organizationId,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.get(
+      `${ORGANIZATION_API_BASE_URL}/get-branch-data/${organizationId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "X-Refresh-Token": refreshToken,
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      console.error("Failed to fetch branch data:", response.statusText);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching branch data:", error);
+    return null;
+  }
+};

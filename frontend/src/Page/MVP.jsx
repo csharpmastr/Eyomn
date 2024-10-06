@@ -1,13 +1,23 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import SideBar from "./Main Page/SideBar";
 import { Outlet } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { WebSocketProvider } from "../Context/WebSocketContext";
 import { AuthContext } from "../Context/AuthContext";
+import { useDispatch, useSelector } from "react-redux";
+import { getBranchData } from "../Service/OrganizationService";
+import Cookies from "universal-cookie";
+import { useFetchData } from "../Hooks/useFetchData";
+import { setPatients } from "../Slice/PatientSlice";
 
 const MVP = () => {
+  const { fetchData } = useFetchData();
+  const cookies = new Cookies();
   const location = useLocation();
   const currentPath = location.pathname;
+  const user = useSelector((state) => state.reducer.user.user);
+  const [hasFetched, setHasFetched] = useState(false);
+  const reduxDispatch = useDispatch();
 
   const getCurrentTab = () => {
     if (currentPath.startsWith("/dashboard")) {
@@ -32,6 +42,13 @@ const MVP = () => {
       return "";
     }
   };
+
+  useEffect(() => {
+    if (!hasFetched) {
+      fetchData();
+      setHasFetched(true);
+    }
+  }, [hasFetched]);
 
   const currentTab = getCurrentTab();
 

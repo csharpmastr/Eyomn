@@ -13,15 +13,19 @@ export const WebSocketProvider = ({ children }) => {
   );
   const branchId = useSelector((state) => state.reducer.user.user.branchId);
   const doctorId = useSelector((state) => state.reducer.user.user.userId);
-  const patients = useSelector((state) => state.reducer.patient.patients);
+  const patients = useSelector((state) => state.reducer.patient.patients || []);
 
   const existingPatientIds = useRef(
-    new Set(patients.map((patient) => patient.patientId))
+    Array.isArray(patients)
+      ? new Set(patients.map((patient) => patient.patientId))
+      : new Set()
   );
 
   useEffect(() => {
     existingPatientIds.current = new Set(
-      patients.map((patient) => patient.patientId)
+      Array.isArray(patients)
+        ? patients.map((patient) => patient.patientId)
+        : []
     );
   }, [patients]);
 

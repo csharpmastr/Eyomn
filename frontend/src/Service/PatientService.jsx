@@ -57,15 +57,20 @@ export const getPatientsByDoctor = async (
 };
 
 export const getPatients = async (
-  clinicId,
-
+  organizationId,
+  branchId = null,
+  doctorId = null,
   accessToken,
-  refreshToken
+  refreshToken,
+  role
 ) => {
   try {
-    const response = await axios.get(`${PATIENT_API_BASE_URL}/get-all`, {
+    const response = await axios.get(`${PATIENT_API_BASE_URL}/get-patients`, {
       params: {
-        clinicId,
+        organizationId,
+        branchId,
+        doctorId,
+        role,
       },
       headers: {
         Authorization: `Bearer ${accessToken}`,

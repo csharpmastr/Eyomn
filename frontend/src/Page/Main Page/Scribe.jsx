@@ -8,14 +8,25 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addPatient } from "../../Slice/PatientSlice";
 
-// Function to group patients by initial letter
 const groupPatientsByInitial = (patients) => {
+  // Check if patients is not an array or is empty
+  if (!Array.isArray(patients) || patients.length === 0) {
+    return {};
+  }
+
   return patients.reduce((acc, patient) => {
+    // Check if patient or first_name is null or undefined
+    if (!patient || !patient.first_name) {
+      return acc; // Skip this patient and continue
+    }
+
     const initial = patient.first_name[0].toUpperCase();
+
     if (!acc[initial]) {
       acc[initial] = [];
     }
     acc[initial].push(patient);
+
     return acc;
   }, {});
 };
@@ -61,7 +72,7 @@ const Scribe = () => {
   // }, [clinicId, doctorId, reduxDispatch]);
 
   const handleClickPatient = (id) => {
-    const clickedPatient = patients.find((patient) => patient.patientId === id); // Use patientId here
+    const clickedPatient = patients.find((patient) => patient.patientId === id);
     setHasSelected(true);
     if (clickedPatient) {
       sessionStorage.setItem("currentPatientId", id);

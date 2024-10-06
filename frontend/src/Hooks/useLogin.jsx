@@ -29,11 +29,8 @@ export const useLogin = () => {
         tokens,
         organizationId,
         organization,
-        branch,
-        branchData,
-        patients,
         staffData,
-        doctors,
+        branchData,
       } = response;
       const { accessToken, refreshToken } = tokens;
 
@@ -42,29 +39,23 @@ export const useLogin = () => {
       cookies.set("refreshToken", refreshToken, { path: "/" });
 
       if (role === "0") {
-        const resPatients = branch.flatMap((branch) => branch.patients);
-
-        const resBranch = branch.map(({ branchId, name, location, email }) => ({
-          branchId,
-          name,
-          location,
-          email,
-        }));
-        const resStaffs = branch.flatMap((branch) => branch.staffs);
-
         reduxDispatch(setUser({ userId, organization, role }));
-        reduxDispatch(setPatients(resPatients));
-        reduxDispatch(setStaffs(resStaffs));
-        reduxDispatch(setBranch(resBranch));
       } else if (role === "1") {
         const name = branchData.name;
         const email = branchData.email;
         const location = branchData.location;
 
         reduxDispatch(
-          setUser({ userId, organization, role, name, email, location })
+          setUser({
+            userId,
+            organization,
+            role,
+            name,
+            email,
+            location,
+            organizationId,
+          })
         );
-        reduxDispatch(setPatients(patients));
       } else {
         const first_name = staffData.first_name;
         const last_name = staffData.last_name;
@@ -72,6 +63,7 @@ export const useLogin = () => {
         const location = staffData.location;
         const branchId = staffData.branchId;
         const position = staffData.position;
+
         reduxDispatch(
           setUser({
             userId,
@@ -86,8 +78,6 @@ export const useLogin = () => {
             position,
           })
         );
-        reduxDispatch(setPatients(patients));
-        reduxDispatch(setDoctor(doctors));
       }
       return response;
     } catch (err) {
