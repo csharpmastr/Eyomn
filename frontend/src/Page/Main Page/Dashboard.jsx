@@ -61,7 +61,7 @@ const Dashboard = () => {
           <h1 className="text-p-lg text-c-secondary font-semibold mb-3">
             | Recent Patient
           </h1>
-          <div className="h-full">
+          <div className="h-auto">
             <DbTable />
           </div>
         </div>
