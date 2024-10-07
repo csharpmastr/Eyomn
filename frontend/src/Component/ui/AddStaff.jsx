@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { FiUser } from "react-icons/fi";
+import { FaRegEyeSlash } from "react-icons/fa";
+import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { useSelector } from "react-redux";
 import Select from "react-select";
 import PhList from "../../assets/Data/location_list.json";
@@ -10,6 +12,9 @@ const AddStaff = ({ onClose }) => {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [repeatPass, setRepeatPass] = useState("");
+  const [passVisible, setPassVisible] = useState(false);
+  const [cpVisible, setCpVisible] = useState(false);
   const user = useSelector((state) => state.reducer.user.user);
   const [formData, setFormData] = useState({
     full_name: "",
@@ -20,6 +25,7 @@ const AddStaff = ({ onClose }) => {
     contact: "",
     role: "",
     emp_type: "",
+    password: "",
     clinicId: user.userId,
   });
 
@@ -30,12 +36,17 @@ const AddStaff = ({ onClose }) => {
     }
   };
 
+  const handleRemoveImage = () => {
+    setImage(null);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    if (name === "confirmpassword") {
+      setRepeatPass(value);
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleProvinceChange = (selectedOption) => {
@@ -81,7 +92,7 @@ const AddStaff = ({ onClose }) => {
     }));
 
   const handleNext = () => {
-    if (currentCardIndex < 1) {
+    if (currentCardIndex < 2) {
       setCurrentCardIndex(currentCardIndex + 1);
     }
   };
@@ -105,12 +116,14 @@ const AddStaff = ({ onClose }) => {
       <div className="w-[500px] md:w-[600px] md:mr-8">
         <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
           <h1 className="text-p-lg text-c-secondary font-semibold">
-            Patient Information
+            {currentCardIndex === 0 && "Personal Information & Contact"}
+            {currentCardIndex === 1 && "Job Role & Working Hours"}
+            {currentCardIndex === 2 && "Login Credentials"}
           </h1>
           <button onClick={onClose}>&times;</button>
         </header>
         <form>
-          {currentCardIndex == 0 ? (
+          {currentCardIndex === 0 && (
             <div className="p-6 bg-white h-[600px] overflow-y-scroll">
               <label className="flex items-center mb-8 gap-4">
                 {image ? (
@@ -120,17 +133,42 @@ const AddStaff = ({ onClose }) => {
                     className="h-24 w-24 rounded-full object-cover hover:cursor-pointer"
                   />
                 ) : (
-                  <div className="h-24 w-24 rounded-full bg-gray-300 flex justify-center items-center text-gray-500 cursor-pointer">
+                  <div className="h-24 w-24 rounded-full bg-blue-200 flex justify-center items-center text-gray-500">
                     <FiUser className="w-12 h-12" />
                   </div>
                 )}
+
                 <input
+                  id="imageUpload"
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  className="hidden "
+                  className="hidden"
                 />
-                <h1>An image of the staff</h1>
+
+                <div>
+                  <div className="flex gap-2 items-center mb-1">
+                    <button
+                      type="button"
+                      className="text-blue-400 text-lg font-medium"
+                      onClick={() =>
+                        document.getElementById("imageUpload").click()
+                      }
+                    >
+                      Upload
+                    </button>
+                    <span className="text-gray-400">|</span>
+                    <button
+                      type="button"
+                      className="text-red-400 text-lg font-medium"
+                      onClick={handleRemoveImage}
+                      disabled={!image}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  <p className="text-gray-500 text-sm">An image of the staff</p>
+                </div>
               </label>
               <div className="mb-5">
                 <header>
@@ -164,8 +202,8 @@ const AddStaff = ({ onClose }) => {
                   <input
                     type="date"
                     name="birthdate"
-                    //value={formData.birthdate}
-                    //onChange={handleChange}
+                    value={formData.birthdate}
+                    onChange={handleChange}
                     className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                   />
                 </section>
@@ -226,25 +264,10 @@ const AddStaff = ({ onClose }) => {
                     placeholder="Enter contact number"
                   />
                 </section>
-                <section>
-                  <label
-                    htmlFor="email"
-                    className="text-p-sm text-c-gray3 font-medium"
-                  >
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                    placeholder="Enter email"
-                  />
-                </section>
               </div>
             </div>
-          ) : (
+          )}
+          {currentCardIndex === 1 && (
             <div className="p-6 bg-white h-[600px] overflow-y-scroll">
               <div className="mb-5">
                 <header>
@@ -567,14 +590,14 @@ const AddStaff = ({ onClose }) => {
                 <div className="flex items-center justify-between">
                   <div className="flex gap-4">
                     <div
-                      className={`w-12 h-6 flex items-center bg-${
-                        isSunOn ? "blue-500" : "gray-300"
+                      className={`w-12 h-6 flex items-center ${
+                        isSunOn ? "bg-blue-500" : "bg-gray-300"
                       } rounded-full p-1 cursor-pointer`}
                       onClick={() => setIsSunOn(!isSunOn)}
                     >
                       <div
                         className={`bg-white w-5 h-5 rounded-full shadow-md transform ${
-                          isMonOn ? "translate-x-6" : "translate-x-0"
+                          isSunOn ? "translate-x-6" : "translate-x-0"
                         } transition-transform`}
                       ></div>
                     </div>
@@ -611,33 +634,111 @@ const AddStaff = ({ onClose }) => {
               </div>
             </div>
           )}
+          {currentCardIndex === 2 && (
+            <div className="p-6 bg-white h-[600px] overflow-y-scroll">
+              <div className="mb-5">
+                <header>
+                  <h1 className="text-p-rg font-medium text-c-secondary mb-4">
+                    | Email & Password
+                  </h1>
+                </header>
+                <section>
+                  <label
+                    htmlFor="email"
+                    className="text-p-sm text-c-gray3 font-medium"
+                  >
+                    Email Address:
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                    placeholder="Enter email"
+                  />
+                </section>
+                <section>
+                  <label
+                    htmlFor="password"
+                    className="text-p-sm text-c-gray3 font-medium"
+                  >
+                    Password:
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={passVisible ? "text" : "password"}
+                      name="password"
+                      onChange={handleChange}
+                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                      placeholder="Enter password"
+                    />
+                    <button
+                      type="button"
+                      className="absolute top-4 right-2 text-[#999999]"
+                      onClick={() => setPassVisible(!passVisible)}
+                    >
+                      {passVisible ? (
+                        <MdOutlineRemoveRedEye className="w-6 h-6" />
+                      ) : (
+                        <FaRegEyeSlash className="w-6 h-6" />
+                      )}
+                    </button>
+                  </div>
+                </section>
+                <section>
+                  <label
+                    htmlFor="confirmpassword"
+                    className="text-p-sm text-c-gray3 font-medium"
+                  >
+                    Confirm Password:
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={cpVisible ? "text" : "password"}
+                      name="confirmpassword"
+                      onChange={handleChange}
+                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                      placeholder="Confirm password"
+                    />
+                    <button
+                      type="button"
+                      className="absolute top-4 right-2 text-[#999999]"
+                      onClick={() => setCpVisible(!cpVisible)}
+                    >
+                      {cpVisible ? (
+                        <MdOutlineRemoveRedEye className="w-6 h-6" />
+                      ) : (
+                        <FaRegEyeSlash className="w-6 h-6" />
+                      )}
+                    </button>
+                  </div>
+                </section>
+              </div>
+            </div>
+          )}
         </form>
-        <footer className="flex justify-end px-3 py-6 bg-white border border-t-f-gray rounded-b-lg">
-          {currentCardIndex == 0 ? (
-            ""
-          ) : (
+        <footer className="flex justify-end px-3 py-6 bg-white border-2 border-t-f-gray rounded-b-lg">
+          {currentCardIndex > 0 && (
             <button
               className="px-8 py-2 text-c-secondary text-p-rg font-semibold rounded-md"
               onClick={handleBack}
-              disabled={currentCardIndex === 0}
             >
               Back
             </button>
           )}
-          {currentCardIndex == 0 ? (
+
+          {currentCardIndex < 2 && (
             <button
               className="ml-2 px-8 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
               onClick={handleNext}
-              disabled={currentCardIndex === 1}
             >
               Next
             </button>
-          ) : (
-            <button
-              className="ml-2 px-8 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
-              onClick={handleNext}
-              disabled={currentCardIndex === 1}
-            >
+          )}
+
+          {currentCardIndex === 2 && (
+            <button className="ml-2 px-8 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary">
               Save
             </button>
           )}

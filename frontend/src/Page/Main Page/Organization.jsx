@@ -3,6 +3,7 @@ import AddBranchModel from "../../Component/ui/AddBranchModal";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { useSelector } from "react-redux";
 import StaffCard from "../../Component/ui/StaffCard";
+import BranchCard from "../../Component/ui/BranchCard";
 import { Outlet, useNavigate } from "react-router-dom";
 
 const Organization = () => {
@@ -47,7 +48,7 @@ const Organization = () => {
                   key={branchItem.branchId}
                   onClick={() => handleBranchClick(branchItem.branchId)}
                 >
-                  <StaffCard name={branchItem.name} showImage={false} />
+                  <BranchCard name={branchItem.name} />
                 </div>
               ))}
             </div>

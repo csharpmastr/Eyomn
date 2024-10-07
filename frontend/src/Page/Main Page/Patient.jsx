@@ -6,6 +6,7 @@ import Form from "../../Component/ui/Form";
 
 import Loader from "../../Component/ui/Loader";
 import AddPatientModal from "../../Component/ui/AddPatientModal";
+import AddEditPatient from "../../Component/ui/AddEditPatient";
 import Table from "../../Component/ui/Table";
 import { useSelector } from "react-redux";
 
@@ -89,9 +90,7 @@ const Patient = () => {
           <Table data={filteredPatients} />
         </div>
       </div>
-      <AddPatientModal isOpen={isAddPatientModalOpen} onClose={closeAddPatient}>
-        <Form />
-      </AddPatientModal>
+      {isAddPatientModalOpen && <AddEditPatient onClose={closeAddPatient} />}
     </div>
   );
 };

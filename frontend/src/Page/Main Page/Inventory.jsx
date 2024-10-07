@@ -1,9 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { IoMdSearch } from "react-icons/io";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import InventoryTable from "../../Component/ui/InventoryTable";
+import AddEditProduct from "../../Component/ui/AddEditProduct";
 
 const Inventory = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="text-f-dark p-3 md:p-8 font-Poppins">
       <nav className="flex flex-col gap-3 lg:gap-0 lg:flex-row justify-between mb-8">
@@ -37,7 +48,10 @@ const Inventory = () => {
               <option value="filter3">Filter 3</option>
             </select>
           </div>
-          <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary">
+          <div
+            className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+            onClick={handleOpenModal}
+          >
             <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
             <h1 className="hidden md:block">Add Product</h1>
           </div>
@@ -46,6 +60,7 @@ const Inventory = () => {
       <main className="overflow-x-auto">
         <InventoryTable />
       </main>
+      {isModalOpen && <AddEditProduct onClose={handleCloseModal} />}
     </div>
   );
 };

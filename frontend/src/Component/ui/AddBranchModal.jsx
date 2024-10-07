@@ -1,43 +1,219 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
+import Select from "react-select";
+import { FaRegEyeSlash } from "react-icons/fa";
+import { MdOutlineRemoveRedEye } from "react-icons/md";
+import PhList from "../../assets/Data/location_list.json";
 
 const AddBranchModal = ({ onClose }) => {
+  const [selectedProvince, setSelectedProvince] = useState(null);
+  const [selectedMunicipality, setSelectedMunicipality] = useState(null);
+  const [repeatPass, setRepeatPass] = useState("");
+  const [passVisible, setPassVisible] = useState(false);
+  const [cpVisible, setCpVisible] = useState(false);
+  const [formData, setFormData] = useState({
+    branch_name: "",
+    province: "",
+    municipality: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "confirmpassword") {
+      setRepeatPass(value);
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleProvinceChange = (selectedOption) => {
+    setSelectedProvince(selectedOption);
+    setSelectedMunicipality(null);
+    setFormData((prevData) => ({
+      ...prevData,
+      province: selectedOption ? selectedOption.value : "",
+      municipality: "",
+    }));
+  };
+
+  const handleMunicipalityChange = (selectedOption) => {
+    setSelectedMunicipality(selectedOption);
+    setFormData((prevData) => ({
+      ...prevData,
+      municipality: selectedOption ? selectedOption.value : "",
+    }));
+  };
+
+  const provinceOptions = Object.keys(PhList).reduce((acc, regionKey) => {
+    const provinceList = PhList[regionKey].province_list;
+    return [
+      ...acc,
+      ...Object.keys(provinceList).map((provinceName) => ({
+        value: provinceName,
+        label: provinceName,
+      })),
+    ];
+  }, []);
+
+  const municipalities =
+    selectedProvince &&
+    Object.keys(
+      PhList[
+        Object.keys(PhList).find(
+          (regionKey) => PhList[regionKey].province_list[selectedProvince.value]
+        )
+      ].province_list[selectedProvince.value].municipality_list
+    ).map((municipalityName) => ({
+      value: municipalityName,
+      label: municipalityName,
+    }));
+
   return ReactDOM.createPortal(
     <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-      <div className="w-[500px]">
+      <div className="w-[600px]">
         <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
           <h1 className="text-p-lg text-c-secondary font-semibold">
             Add Branch
           </h1>
           <button onClick={onClose}> &times; </button>
         </header>
-        <div className="py-10 px-6 bg-white">
-          <section>
-            <label
-              htmlFor="branch_name"
-              className="text-p-sm text-c-gray3 font-medium"
-            >
-              Branch Name:
-            </label>
-            <input
-              type="text"
-              className="mt-1 mb-6 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-              placeholder="Enter branch name"
-            />
-          </section>
-          <section>
-            <label
-              htmlFor="branch_description"
-              className="text-p-sm text-c-gray3 font-medium"
-            >
-              Branch Description:
-            </label>
-            <textarea
-              type="text"
-              className="mt-1 w-full px-4 py-3 h-24 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-              placeholder="Enter branch description"
-            />
-          </section>
+        <div className="py-6 px-6 h-[500px] bg-white overflow-y-scroll">
+          <div>
+            <header>
+              <h1 className="text-p-rg font-medium text-c-secondary mb-4">
+                | Branch Details
+              </h1>
+            </header>
+            <section>
+              <label
+                htmlFor="branch_name"
+                className="text-p-sm text-c-gray3 font-medium"
+              >
+                Branch Name:
+              </label>
+              <input
+                type="text"
+                name="branch_name"
+                className="mt-1 mb-6 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                placeholder="Enter branch name"
+              />
+            </section>
+            <div className="flex gap-4 mb-8">
+              <div className="w-1/2">
+                <label
+                  htmlFor="province"
+                  className="text-p-sm text-c-gray3 font-medium"
+                >
+                  Province
+                </label>
+                <Select
+                  id="province"
+                  value={selectedProvince}
+                  onChange={handleProvinceChange}
+                  options={provinceOptions}
+                  placeholder="Select Province"
+                />
+              </div>
+              <div className="w-1/2">
+                <label
+                  htmlFor="municipality"
+                  className="text-p-sm text-c-gray3 font-medium"
+                >
+                  Municipality
+                </label>
+                <Select
+                  id="municipality"
+                  name="municipality"
+                  options={municipalities}
+                  value={selectedMunicipality}
+                  onChange={handleMunicipalityChange}
+                  placeholder="Select Municipality"
+                  isDisabled={!selectedProvince}
+                />
+              </div>
+            </div>
+            <div>
+              <header>
+                <h1 className="text-p-rg font-medium text-c-secondary mb-4">
+                  | Login Credentials
+                </h1>
+              </header>
+              <section>
+                <label
+                  htmlFor="email"
+                  className="text-p-sm text-c-gray3 font-medium"
+                >
+                  Email Address:
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                  placeholder="Enter email"
+                />
+              </section>
+              <section>
+                <label
+                  htmlFor="password"
+                  className="text-p-sm text-c-gray3 font-medium"
+                >
+                  Password:
+                </label>
+                <div className="relative">
+                  <input
+                    type={passVisible ? "text" : "password"}
+                    name="password"
+                    onChange={handleChange}
+                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                    placeholder="Enter password"
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-4 right-2 text-[#999999]"
+                    onClick={() => setPassVisible(!passVisible)}
+                  >
+                    {passVisible ? (
+                      <MdOutlineRemoveRedEye className="w-6 h-6" />
+                    ) : (
+                      <FaRegEyeSlash className="w-6 h-6" />
+                    )}
+                  </button>
+                </div>
+              </section>
+              <section>
+                <label
+                  htmlFor="confirmpassword"
+                  className="text-p-sm text-c-gray3 font-medium"
+                >
+                  Confirm Password:
+                </label>
+                <div className="relative">
+                  <input
+                    type={cpVisible ? "text" : "password"}
+                    name="confirmpassword"
+                    onChange={handleChange}
+                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                    placeholder="Confirm password"
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-4 right-2 text-[#999999]"
+                    onClick={() => setCpVisible(!cpVisible)}
+                  >
+                    {cpVisible ? (
+                      <MdOutlineRemoveRedEye className="w-6 h-6" />
+                    ) : (
+                      <FaRegEyeSlash className="w-6 h-6" />
+                    )}
+                  </button>
+                </div>
+              </section>
+            </div>
+          </div>
         </div>
         <footer className="border border-t-f-gray bg-white rounded-b-lg flex gap-2 justify-end py-6 px-4">
           <button
