@@ -7,6 +7,8 @@ import ReactDOM from "react-dom";
 const AddEditPatient = ({ onClose }) => {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [errors, setErrors] = useState({});
 
   const user = useSelector((state) => state.reducer.user.user);
   const [formData, setFormData] = useState({
@@ -29,6 +31,14 @@ const AddEditPatient = ({ onClose }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (errors[name]) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: "",
+      }));
+    }
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -53,10 +63,9 @@ const AddEditPatient = ({ onClose }) => {
     }));
   };
 
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
-
   const handleNext = () => {
-    if (currentCardIndex < 1) {
+    const isValid = validateForm();
+    if (isValid) {
       setCurrentCardIndex(currentCardIndex + 1);
     }
   };
@@ -91,6 +100,36 @@ const AddEditPatient = ({ onClose }) => {
       label: municipalityName,
     }));
 
+  const validateForm = () => {
+    let newErrors = {};
+
+    if (currentCardIndex === 0) {
+      if (!formData.first_name)
+        newErrors.first_name = "First name is required.";
+      if (!formData.last_name) newErrors.last_name = "Last name is required.";
+      if (!formData.age || formData.age <= 0)
+        newErrors.age = "Age is required.";
+      if (!formData.sex) newErrors.sex = "Sex is required.";
+      if (!formData.birthdate)
+        newErrors.birthdate = "Date of birth is required.";
+    } else if (currentCardIndex === 1) {
+      if (!formData.civil_status)
+        newErrors.civil_status = "Civil status is required.";
+      if (!formData.contact_number)
+        newErrors.contact_number = "Contact number is required.";
+      if (
+        !formData.email ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+      ) {
+        newErrors.email = "Valid email is required.";
+      }
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   return ReactDOM.createPortal(
     <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
       <div className="w-[400px] md:w-[600px] md:mr-8">
@@ -120,8 +159,14 @@ const AddEditPatient = ({ onClose }) => {
                   name="first_name"
                   value={formData.first_name}
                   onChange={handleChange}
-                  className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                  placeholder="Enter first name"
+                  className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                    errors.first_name
+                      ? "border-red-400 focus:outline-red-400"
+                      : "border-c-gray3 focus:outline-c-primary"
+                  }`}
+                  placeholder={
+                    errors.first_name ? errors.first_name : "Enter first Name"
+                  }
                 />
               </section>
               <section>
@@ -136,8 +181,14 @@ const AddEditPatient = ({ onClose }) => {
                   name="last_name"
                   value={formData.last_name}
                   onChange={handleChange}
-                  className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                  placeholder="Enter last name"
+                  className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                    errors.last_name
+                      ? "border-red-400 focus:outline-red-400"
+                      : "border-c-gray3 focus:outline-c-primary"
+                  }`}
+                  placeholder={
+                    errors.last_name ? errors.last_name : "Enter last Name"
+                  }
                 />
               </section>
               <section>
@@ -170,8 +221,12 @@ const AddEditPatient = ({ onClose }) => {
                     min={0}
                     value={formData.age}
                     onChange={handleChange}
-                    className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                    placeholder="Enter age"
+                    className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                      errors.age
+                        ? "border-red-400 focus:outline-red-400"
+                        : "border-c-gray3 focus:outline-c-primary"
+                    }`}
+                    placeholder={errors.age ? errors.age : "Enter age"}
                   />
                 </div>
                 <div className="w-1/2">
@@ -185,10 +240,14 @@ const AddEditPatient = ({ onClose }) => {
                     name="sex"
                     value={formData.sex}
                     onChange={handleChange}
-                    className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                    className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                      errors.sex
+                        ? "border-red-400 focus:outline-red-400"
+                        : "border-c-gray3 focus:outline-c-primary"
+                    }`}
                   >
                     <option value="" disabled className="text-c-gray3">
-                      Select Sex
+                      {errors.sex ? errors.sex : "Select Sex"}
                     </option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -207,7 +266,11 @@ const AddEditPatient = ({ onClose }) => {
                   name="birthdate"
                   value={formData.birthdate}
                   onChange={handleChange}
-                  className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                  className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                    errors.birthdate
+                      ? "border-red-400 focus:outline-red-400"
+                      : "border-c-gray3 focus:outline-c-primary"
+                  }`}
                 />
               </section>
             </div>
@@ -230,10 +293,16 @@ const AddEditPatient = ({ onClose }) => {
                     name="civil_status"
                     value={formData.civil_status}
                     onChange={handleChange}
-                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                    className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                      errors.civil_status
+                        ? "border-red-400 focus:outline-red-400"
+                        : "border-c-gray3 focus:outline-c-primary"
+                    }`}
                   >
                     <option value="" disabled className="text-c-gray3">
-                      Select Status
+                      {errors.civil_status
+                        ? errors.civil_status
+                        : "Select Status"}
                     </option>
                     <option value="Single">Single</option>
                     <option value="Married">Married</option>
@@ -245,7 +314,7 @@ const AddEditPatient = ({ onClose }) => {
                     htmlFor="occupation"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Occupation
+                    Occupation (Optional)
                   </label>
                   <input
                     type="text"
@@ -309,8 +378,16 @@ const AddEditPatient = ({ onClose }) => {
                     name="contact_number"
                     value={formData.contact_number}
                     onChange={handleChange}
-                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                    placeholder="Enter contact number"
+                    className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                      errors.contact_number
+                        ? "border-red-400 focus:outline-red-400"
+                        : "border-c-gray3 focus:outline-c-primary"
+                    }`}
+                    placeholder={
+                      errors.contact_number
+                        ? errors.contact_number
+                        : "Enter contact number"
+                    }
                   />
                 </section>
                 <section>
@@ -325,8 +402,14 @@ const AddEditPatient = ({ onClose }) => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                    placeholder="Enter email"
+                    className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                      errors.email
+                        ? "border-red-400 focus:outline-red-400"
+                        : "border-c-gray3 focus:outline-c-primary"
+                    }`}
+                    placeholder={
+                      errors.email ? errors.email : "Enter email address"
+                    }
                   />
                 </section>
               </div>
