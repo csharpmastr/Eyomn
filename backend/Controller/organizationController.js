@@ -1,3 +1,4 @@
+const { getBranchDoctors } = require("../Helper/Helper");
 const {
   addStaff,
   getAllStaff,
@@ -55,20 +56,20 @@ const getStaffsHandler = async (req, res) => {
 
 const getDoctorsListHandler = async (req, res) => {
   try {
-    const { clinicId } = req.query;
+    const { organizationId, branchId } = req.query;
 
-    if (!clinicId || Object.keys(clinicId).length === 0) {
+    if (!organizationId || !branchId) {
       return res
         .status(400)
-        .json({ message: "Clinic ID and patient data are required." });
+        .json({ message: "Clinic ID and Branch ID are required." });
     }
-    const doctors = await getDoctorsList(clinicId);
+    const doctors = await getBranchDoctors(organizationId, branchId);
     if (!doctors || doctors.length === 0) {
       return res
         .status(404)
         .json({ message: "No doctors found for the provided clinic ID." });
     }
-    return res.status(200).json({ doctors });
+    return res.status(200).json(doctors);
   } catch (err) {
     console.error("Error fetching doctors:", err);
     return res
@@ -124,6 +125,7 @@ const getBranchDataHandler = async (req, res) => {
       .json({ message: "Server error while fetching doctors." });
   }
 };
+
 module.exports = {
   addStaffHandler,
   getStaffsHandler,

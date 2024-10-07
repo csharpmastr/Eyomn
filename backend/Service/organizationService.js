@@ -130,71 +130,71 @@ const addBranch = async (ogrId, branchData) => {
   }
 };
 
-const getAllStaff = async (clinicId) => {
-  try {
-    const clinicStaffRef = doc(db, "clinicStaff", clinicId);
-    const staffCollectionRef = collection(clinicStaffRef, "Staff");
-    const querySnapshot = await getDocs(staffCollectionRef);
+// const getAllStaff = async (clinicId) => {
+//   try {
+//     const clinicStaffRef = doc(db, "clinicStaff", clinicId);
+//     const staffCollectionRef = collection(clinicStaffRef, "Staff");
+//     const querySnapshot = await getDocs(staffCollectionRef);
 
-    if (querySnapshot.empty) {
-      return [];
-    }
+//     if (querySnapshot.empty) {
+//       return [];
+//     }
 
-    const staffsData = querySnapshot.docs.map((doc) => {
-      const data = doc.data();
-      const decryptedData = {};
+//     const staffsData = querySnapshot.docs.map((doc) => {
+//       const data = doc.data();
+//       const decryptedData = {};
 
-      for (const [key, value] of Object.entries(data)) {
-        if (key === "role" || key === "staffId" || key === "email") {
-          decryptedData[key] = value;
-        } else {
-          decryptedData[key] = decryptData(value);
-        }
-      }
+//       for (const [key, value] of Object.entries(data)) {
+//         if (key === "role" || key === "staffId" || key === "email") {
+//           decryptedData[key] = value;
+//         } else {
+//           decryptedData[key] = decryptData(value);
+//         }
+//       }
 
-      return {
-        id: doc.id,
-        ...decryptedData,
-      };
-    });
+//       return {
+//         id: doc.id,
+//         ...decryptedData,
+//       };
+//     });
 
-    return staffsData;
-  } catch (err) {
-    console.error("Error retrieving staff: ", err);
-    throw err;
-  }
-};
+//     return staffsData;
+//   } catch (err) {
+//     console.error("Error retrieving staff: ", err);
+//     throw err;
+//   }
+// };
 
-const getDoctorsList = async (clinicId) => {
-  try {
-    const clinicStaffRef = doc(db, "clinicStaff", clinicId);
-    const staffCollectionRef = collection(clinicStaffRef, "Staff");
+// const getDoctorsList = async (clinicId) => {
+//   try {
+//     const clinicStaffRef = doc(db, "clinicStaff", clinicId);
+//     const staffCollectionRef = collection(clinicStaffRef, "Staff");
 
-    const querySnapshot = await getDocs(staffCollectionRef);
-    const doctorNames = [];
-    querySnapshot.forEach((doc) => {
-      const staffData = doc.data();
+//     const querySnapshot = await getDocs(staffCollectionRef);
+//     const doctorNames = [];
+//     querySnapshot.forEach((doc) => {
+//       const staffData = doc.data();
 
-      const decryptedPosition = decryptData(staffData.position);
-      const decryptedName = decryptData(staffData.name);
-      if (
-        decryptedPosition === "Optometrist" ||
-        decryptedPosition === "Ophthalmologist"
-      ) {
-        doctorNames.push({
-          id: doc.id,
-          name: decryptedName,
-          position: decryptedPosition,
-        });
-      }
-    });
+//       const decryptedPosition = decryptData(staffData.position);
+//       const decryptedName = decryptData(staffData.name);
+//       if (
+//         decryptedPosition === "Optometrist" ||
+//         decryptedPosition === "Ophthalmologist"
+//       ) {
+//         doctorNames.push({
+//           id: doc.id,
+//           name: decryptedName,
+//           position: decryptedPosition,
+//         });
+//       }
+//     });
 
-    return doctorNames;
-  } catch (error) {
-    console.error("Error fetching doctor list:", error);
-    throw error;
-  }
-};
+//     return doctorNames;
+//   } catch (error) {
+//     console.error("Error fetching doctor list:", error);
+//     throw error;
+//   }
+// };
 const getBranchData = async (organizationId) => {
   try {
     const orgRef = await organizationCollection.doc(organizationId).get();
@@ -225,16 +225,11 @@ const getBranchData = async (organizationId) => {
         ]);
 
         const staffs = await getStaffs(orgData.id, branchId);
-        const patients = await getPatients(
-          orgData.id,
-          null,
-          branchId,
-          orgData.role
-        );
+
         const appointments = await getAppointment(branchId);
 
         decryptedBranchData.staffs = staffs;
-        decryptedBranchData.patients = patients;
+
         decryptedBranchData.appointments = appointments;
 
         branches.push(decryptedBranchData);

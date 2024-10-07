@@ -5,7 +5,7 @@ const {
 
 const addScheduleHandler = async (req, res) => {
   try {
-    const branchId = req.params.branchId;
+    const { branchId } = req.query;
     const scheduleDetails = req.body;
 
     await addSchedule(branchId, scheduleDetails);
@@ -16,8 +16,8 @@ const addScheduleHandler = async (req, res) => {
 };
 const deleteScheduleHandler = async (req, res) => {
   try {
-    const branchId = req.params.branchId;
-    const appointmentId = req.params.appointmentId;
+    const { branchId, appointmentId } = req.query;
+
     console.log(branchId, appointmentId);
 
     if (!branchId || !appointmentId) {
