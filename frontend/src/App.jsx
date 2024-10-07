@@ -80,7 +80,7 @@ const AppRoutes = () => {
           <Route path=":id" element={<ScanFundus />} />
         </Route>
         <Route path="scribe" element={<Scribe />}>
-          <Route path=":id" element={<ScribePatient />} />
+          <Route path=":patientId" element={<ScribePatient />} />
         </Route>
         <Route path="patient" element={<Patient />} />
         <Route path="organization" element={<Organization />}>
