@@ -1,20 +1,21 @@
 import React, { useState } from "react";
+import ReactDOM from "react-dom";
 
-const AddEditProduct = () => {
+const AddEditProduct = ({ onClose }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
   };
 
-  return (
-    <div className="flex flex-col items-center lg:items-end justify-center h-full bg-c-gray3 bg-opacity-50 font-Poppins">
+  return ReactDOM.createPortal(
+    <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
       <div className="w-[400px] md:w-[600px] md:mr-8">
         <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
           <h1 className="text-p-lg text-c-secondary font-semibold">
             Manage Product
           </h1>
-          <button>&times;</button>
+          <button onClick={onClose}>&times;</button>
         </header>
         <div className="bg-white h-[600px] overflow-y-scroll">
           <div className="p-3 md:p-8">
@@ -544,7 +545,8 @@ const AddEditProduct = () => {
           </button>
         </footer>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

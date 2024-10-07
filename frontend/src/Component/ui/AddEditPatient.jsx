@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import Select from "react-select";
 import { useSelector } from "react-redux";
 import PhList from "../../assets/Data/location_list.json";
+import ReactDOM from "react-dom";
 
-const AddPatientUICard = ({ onClose }) => {
+const AddEditPatient = ({ onClose }) => {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
 
@@ -90,8 +91,8 @@ const AddPatientUICard = ({ onClose }) => {
       label: municipalityName,
     }));
 
-  return (
-    <div className="flex flex-col items-center lg:items-end justify-center h-full bg-c-gray3 bg-opacity-50 font-poppins">
+  return ReactDOM.createPortal(
+    <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
       <div className="w-[400px] md:w-[600px] md:mr-8">
         <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
           <h1 className="text-p-lg text-c-secondary font-semibold">
@@ -363,8 +364,9 @@ const AddPatientUICard = ({ onClose }) => {
           )}
         </footer>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
-export default AddPatientUICard;
+export default AddEditPatient;

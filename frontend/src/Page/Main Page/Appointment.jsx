@@ -8,21 +8,10 @@ const Appointment = () => {
   const [isModalSetApp, setIsModalSetApp] = useState(false);
   const [isModalViewApp, setIsModalViewApp] = useState(false);
 
-  const handleOpenSetApp = () => {
-    setIsModalSetApp(true);
-  };
-
-  const handleCloseSetApp = () => {
-    setIsModalSetApp(false);
-  };
-
-  const handleOpenViewApp = () => {
-    setIsModalViewApp(true);
-  };
-
-  const handleCloseViewApp = () => {
-    setIsModalViewApp(false);
-  };
+  const handleOpenSetApp = () => setIsModalSetApp(true);
+  const handleCloseSetApp = () => setIsModalSetApp(false);
+  const handleOpenViewApp = () => setIsModalViewApp(true);
+  const handleCloseViewApp = () => setIsModalViewApp(false);
 
   const [currentDate, setCurrentDate] = useState(dayjs());
 
