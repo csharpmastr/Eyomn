@@ -42,8 +42,8 @@ export const addStaffService = async (staffData, accessToken, refreshToken) => {
 };
 
 export const getDoctorList = async (
-  clinicId,
-  doctorId,
+  organizationId,
+  branchId,
   accessToken,
   refreshToken
 ) => {
@@ -52,8 +52,8 @@ export const getDoctorList = async (
       `${ORGANIZATION_API_BASE_URL}/get-doctors`,
       {
         params: {
-          clinicId,
-          doctorId,
+          organizationId,
+          branchId,
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,

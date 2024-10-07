@@ -68,7 +68,6 @@ const StaffAddPatientPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(selectedDoctor.staffId);
 
     try {
       const res = await addPatientHook(formData, selectedDoctor.staffId);

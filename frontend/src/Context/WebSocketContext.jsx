@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useRef, useEffect } from "react";
-import { addPatient } from "../Slice/PatientSlice"; // Ensure addPatient is defined in your PatientSlice
+import { addPatient } from "../Slice/PatientSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const WebSocketContext = createContext();
