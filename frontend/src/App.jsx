@@ -24,6 +24,7 @@ import Organization from "./Page/Main Page/Organization";
 import StaffAddPatientPage from "./Page/Main Page/StaffAddPatientPage";
 import { useAuthContext } from "./Hooks/useAuthContext";
 import OrgStaff from "./Page/Main Page/OrgStaff";
+import ScribeRecord from "./Page/Main Page/Scribe/ScribeRecord";
 let persistor = persistStore(store);
 
 const ProtectedRoute = ({ children }) => {
@@ -80,7 +81,7 @@ const AppRoutes = () => {
           <Route path=":id" element={<ScanFundus />} />
         </Route>
         <Route path="scribe" element={<Scribe />}>
-          <Route path=":patientId" element={<ScribePatient />} />
+          <Route path=":patientId" element={<ScribeRecord />} />
         </Route>
         <Route path="patient" element={<Patient />} />
         <Route path="organization" element={<Organization />}>
