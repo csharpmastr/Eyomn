@@ -11,6 +11,7 @@ const AddBranchModal = ({ onClose }) => {
   const [repeatPass, setRepeatPass] = useState("");
   const [passVisible, setPassVisible] = useState(false);
   const [cpVisible, setCpVisible] = useState(false);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     branch_name: "",
     province: "",
@@ -21,6 +22,14 @@ const AddBranchModal = ({ onClose }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (errors[name]) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: "",
+      }));
+    }
+
     if (name === "confirmpassword") {
       setRepeatPass(value);
     } else {
@@ -70,6 +79,36 @@ const AddBranchModal = ({ onClose }) => {
       label: municipalityName,
     }));
 
+  //Call validateForm before saving
+  const validateForm = () => {
+    let newErrors = {};
+
+    if (
+      !formData.branch_name ||
+      !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.branch_name)
+    )
+      newErrors.branch_name = "(Branch name is required)";
+
+    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      newErrors.email = "(Valid email is required)";
+
+    if (
+      !formData.password ||
+      !/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$/.test(
+        formData.password
+      )
+    )
+      newErrors.password =
+        "(Invalid password. Ensure it has at least 8 characters, including uppercase, lowercase, numbers, and special characters)";
+
+    if (formData.password !== repeatPass)
+      newErrors.confirmpassword = "(Passwords do not match)";
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   return ReactDOM.createPortal(
     <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
       <div className="w-[600px]">
@@ -91,7 +130,11 @@ const AddBranchModal = ({ onClose }) => {
                 htmlFor="branch_name"
                 className="text-p-sm text-c-gray3 font-medium"
               >
-                Branch Name:
+                Branch Name:{" "}
+                <span className="text-red-400">
+                  {(formData.branch_name === "" || errors.branch_name) &&
+                    errors.branch_name}
+                </span>
               </label>
               <input
                 type="text"
@@ -145,7 +188,10 @@ const AddBranchModal = ({ onClose }) => {
                   htmlFor="email"
                   className="text-p-sm text-c-gray3 font-medium"
                 >
-                  Email Address:
+                  Email Address:{" "}
+                  <span className="text-red-400">
+                    {(formData.email === "" || errors.email) && errors.email}
+                  </span>
                 </label>
                 <input
                   type="email"
@@ -161,7 +207,11 @@ const AddBranchModal = ({ onClose }) => {
                   htmlFor="password"
                   className="text-p-sm text-c-gray3 font-medium"
                 >
-                  Password:
+                  Password:{" "}
+                  <span className="text-red-400">
+                    {(formData.password === "" || errors.password) &&
+                      errors.password}
+                  </span>
                 </label>
                 <div className="relative">
                   <input
@@ -189,7 +239,11 @@ const AddBranchModal = ({ onClose }) => {
                   htmlFor="confirmpassword"
                   className="text-p-sm text-c-gray3 font-medium"
                 >
-                  Confirm Password:
+                  Confirm Password:{" "}
+                  <span className="text-red-400">
+                    {(repeatPass === "" || errors.confirmpassword) &&
+                      errors.confirmpassword}
+                  </span>
                 </label>
                 <div className="relative">
                   <input

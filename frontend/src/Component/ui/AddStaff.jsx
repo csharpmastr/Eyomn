@@ -16,6 +16,7 @@ const AddStaff = ({ onClose }) => {
   const [passVisible, setPassVisible] = useState(false);
   const [cpVisible, setCpVisible] = useState(false);
   const user = useSelector((state) => state.reducer.user.user);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     full_name: "",
     birthdate: "",
@@ -42,6 +43,14 @@ const AddStaff = ({ onClose }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (errors[name]) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: "",
+      }));
+    }
+
     if (name === "confirmpassword") {
       setRepeatPass(value);
     } else {
@@ -92,7 +101,8 @@ const AddStaff = ({ onClose }) => {
     }));
 
   const handleNext = () => {
-    if (currentCardIndex < 2) {
+    const isValid = validateForm();
+    if (isValid) {
       setCurrentCardIndex(currentCardIndex + 1);
     }
   };
@@ -110,6 +120,54 @@ const AddStaff = ({ onClose }) => {
   const [isFriOn, setIsFriOn] = useState(true);
   const [isSatOn, setIsSatOn] = useState(false);
   const [isSunOn, setIsSunOn] = useState(false);
+
+  const validateForm = () => {
+    let newErrors = {};
+
+    if (currentCardIndex === 0) {
+      if (
+        !formData.full_name ||
+        !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.full_name)
+      )
+        newErrors.full_name = "(Full name is required)";
+
+      if (!formData.birthdate)
+        newErrors.birthdate = "(Date of birth is required)";
+
+      if (
+        !formData.contact_number ||
+        !/^09\d{9}$/.test(formData.contact_number)
+      )
+        newErrors.contact_number =
+          "(A valid 11-digit contact number is required)";
+    } else if (currentCardIndex === 1) {
+      if (!formData.role) newErrors.role = "(Please select a role)";
+
+      if (!formData.emp_type)
+        newErrors.emp_type = "(Please select an employment type)";
+
+      //call validateForm before saving
+    } else if (currentCardIndex === 2) {
+      if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+        newErrors.email = "(Valid email is required)";
+
+      if (
+        !formData.password ||
+        !/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$/.test(
+          formData.password
+        )
+      )
+        newErrors.password =
+          "(Invalid password. Ensure it has at least 8 characters, including uppercase, lowercase, numbers, and special characters)";
+
+      if (formData.password !== repeatPass)
+        newErrors.confirmpassword = "(Passwords do not match)";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
 
   return ReactDOM.createPortal(
     <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
@@ -181,7 +239,11 @@ const AddStaff = ({ onClose }) => {
                     htmlFor="full_name"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Full Name:
+                    Full Name:{" "}
+                    <span className="text-red-400">
+                      {(formData.full_name === "" || errors.full_name) &&
+                        errors.full_name}
+                    </span>
                   </label>
                   <input
                     type="text"
@@ -197,7 +259,11 @@ const AddStaff = ({ onClose }) => {
                     htmlFor="birthdate"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Date of Birth:
+                    Date of Birth:{" "}
+                    <span className="text-red-400">
+                      {(formData.birthdate === "" || errors.birthdate) &&
+                        errors.birthdate}
+                    </span>
                   </label>
                   <input
                     type="date"
@@ -253,7 +319,12 @@ const AddStaff = ({ onClose }) => {
                     htmlFor="contact_number"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Contact Number
+                    Contact Number:{" "}
+                    <span className="text-red-400">
+                      {(formData.contact_number === "" ||
+                        errors.contact_number) &&
+                        errors.contact_number}
+                    </span>
                   </label>
                   <input
                     type="text"
@@ -280,7 +351,10 @@ const AddStaff = ({ onClose }) => {
                     htmlFor="role"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Role
+                    Role:{" "}
+                    <span className="text-red-400">
+                      {(formData.role === "" || errors.role) && errors.role}
+                    </span>
                   </label>
                   <select
                     name="role"
@@ -301,7 +375,11 @@ const AddStaff = ({ onClose }) => {
                     htmlFor="emp_type"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Employment Type
+                    Employment Type{" "}
+                    <span className="text-red-400">
+                      {(formData.emp_type === "" || errors.emp_type) &&
+                        errors.emp_type}
+                    </span>
                   </label>
                   <select
                     name="emp_type"
@@ -647,7 +725,10 @@ const AddStaff = ({ onClose }) => {
                     htmlFor="email"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Email Address:
+                    Email Address:{" "}
+                    <span className="text-red-400">
+                      {(formData.email === "" || errors.email) && errors.email}
+                    </span>
                   </label>
                   <input
                     type="email"
@@ -663,7 +744,11 @@ const AddStaff = ({ onClose }) => {
                     htmlFor="password"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Password:
+                    Password:{" "}
+                    <span className="text-red-400">
+                      {(formData.password === "" || errors.password) &&
+                        errors.password}
+                    </span>
                   </label>
                   <div className="relative">
                     <input
@@ -691,7 +776,11 @@ const AddStaff = ({ onClose }) => {
                     htmlFor="confirmpassword"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Confirm Password:
+                    Confirm Password:{" "}
+                    <span className="text-red-400">
+                      {(repeatPass === "" || errors.confirmpassword) &&
+                        errors.confirmpassword}
+                    </span>
                   </label>
                   <div className="relative">
                     <input

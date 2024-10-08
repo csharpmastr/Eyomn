@@ -7,7 +7,8 @@ import ReactDOM from "react-dom";
 const AddEditPatient = ({ onClose }) => {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
-
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [errors, setErrors] = useState({});
   const user = useSelector((state) => state.reducer.user.user);
   const [formData, setFormData] = useState({
     first_name: "",
@@ -29,6 +30,14 @@ const AddEditPatient = ({ onClose }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (errors[name]) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: "",
+      }));
+    }
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -53,10 +62,9 @@ const AddEditPatient = ({ onClose }) => {
     }));
   };
 
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
-
   const handleNext = () => {
-    if (currentCardIndex < 1) {
+    const isValid = validateForm();
+    if (isValid) {
       setCurrentCardIndex(currentCardIndex + 1);
     }
   };
@@ -91,6 +99,51 @@ const AddEditPatient = ({ onClose }) => {
       label: municipalityName,
     }));
 
+  const validateForm = () => {
+    let newErrors = {};
+
+    if (currentCardIndex === 0) {
+      if (
+        !formData.first_name ||
+        !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.first_name)
+      )
+        newErrors.first_name = "(First name is required)";
+
+      if (
+        !formData.last_name ||
+        !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.last_name)
+      )
+        newErrors.last_name = "(Last name is required)";
+
+      if (!formData.age || formData.age <= 0 || formData.age > 120)
+        newErrors.age = "(Age must be between 1 and 120)";
+
+      if (!formData.sex) newErrors.sex = "(Sex is required)";
+
+      if (!formData.birthdate)
+        newErrors.birthdate = "(Date of birth is required)";
+
+      //call validateForm before saving
+    } else if (currentCardIndex === 1) {
+      if (!formData.civil_status)
+        newErrors.civil_status = "(Civil status is required)";
+
+      if (
+        !formData.contact_number ||
+        !/^09\d{9}$/.test(formData.contact_number)
+      )
+        newErrors.contact_number =
+          "(A valid 11-digit contact number is required)";
+
+      if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+        newErrors.email = "(Valid email is required)";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   return ReactDOM.createPortal(
     <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
       <div className="w-[400px] md:w-[600px] md:mr-8">
@@ -113,15 +166,23 @@ const AddEditPatient = ({ onClose }) => {
                   htmlFor="first_name"
                   className="text-p-sm text-c-gray3 font-medium"
                 >
-                  First Name
+                  First Name{" "}
+                  <span className="text-red-400">
+                    {(formData.first_name === "" || errors.first_name) &&
+                      errors.first_name}
+                  </span>
                 </label>
                 <input
                   type="text"
                   name="first_name"
                   value={formData.first_name}
                   onChange={handleChange}
-                  className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                  placeholder="Enter first name"
+                  className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                    errors.first_name
+                      ? "border-red-400 focus:outline-red-400"
+                      : "border-c-gray3 focus:outline-c-primary"
+                  }`}
+                  placeholder="Enter first Name"
                 />
               </section>
               <section>
@@ -129,15 +190,23 @@ const AddEditPatient = ({ onClose }) => {
                   htmlFor="last_name"
                   className="text-p-sm text-c-gray3 font-medium"
                 >
-                  Last Name
+                  Last Name{" "}
+                  <span className="text-red-400">
+                    {(formData.last_name === "" || errors.last_name) &&
+                      errors.last_name}
+                  </span>
                 </label>
                 <input
                   type="text"
                   name="last_name"
                   value={formData.last_name}
                   onChange={handleChange}
-                  className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                  placeholder="Enter last name"
+                  className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                    errors.last_name
+                      ? "border-red-400 focus:outline-red-400"
+                      : "border-c-gray3 focus:outline-c-primary"
+                  }`}
+                  placeholder="Enter last Name"
                 />
               </section>
               <section>
@@ -162,7 +231,10 @@ const AddEditPatient = ({ onClose }) => {
                     htmlFor="age"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Age
+                    Age{" "}
+                    <span className="text-red-400">
+                      {(formData.age === "" || errors.age) && errors.age}
+                    </span>
                   </label>
                   <input
                     type="number"
@@ -170,7 +242,11 @@ const AddEditPatient = ({ onClose }) => {
                     min={0}
                     value={formData.age}
                     onChange={handleChange}
-                    className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                    className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                      errors.age
+                        ? "border-red-400 focus:outline-red-400"
+                        : "border-c-gray3 focus:outline-c-primary"
+                    }`}
                     placeholder="Enter age"
                   />
                 </div>
@@ -179,19 +255,27 @@ const AddEditPatient = ({ onClose }) => {
                     htmlFor="sex"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Sex
+                    Sex{" "}
+                    <span className="text-red-400">
+                      {(formData.sex === "" || errors.sex) && errors.sex}
+                    </span>
                   </label>
                   <select
                     name="sex"
                     value={formData.sex}
                     onChange={handleChange}
-                    className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                    className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                      errors.sex
+                        ? "border-red-400 focus:outline-red-400"
+                        : "border-c-gray3 focus:outline-c-primary"
+                    }`}
                   >
                     <option value="" disabled className="text-c-gray3">
                       Select Sex
                     </option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
+                    <option value="None">Prefer not to say</option>
                   </select>
                 </div>
               </div>
@@ -200,14 +284,22 @@ const AddEditPatient = ({ onClose }) => {
                   htmlFor="birthdate"
                   className="text-p-sm text-c-gray3 font-medium"
                 >
-                  Date of Birth
+                  Date of Birth{" "}
+                  <span className="text-red-400">
+                    {(formData.birthdate === "" || errors.birthdate) &&
+                      errors.birthdate}
+                  </span>
                 </label>
                 <input
                   type="date"
                   name="birthdate"
                   value={formData.birthdate}
                   onChange={handleChange}
-                  className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                  className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                    errors.birthdate
+                      ? "border-red-400 focus:outline-red-400"
+                      : "border-c-gray3 focus:outline-c-primary"
+                  }`}
                 />
               </section>
             </div>
@@ -224,13 +316,21 @@ const AddEditPatient = ({ onClose }) => {
                     htmlFor="civil_status"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Civil Status
+                    Civil Status{" "}
+                    <span className="text-red-400">
+                      {(formData.civil_status === "" || errors.civil_status) &&
+                        errors.civil_status}
+                    </span>
                   </label>
                   <select
                     name="civil_status"
                     value={formData.civil_status}
                     onChange={handleChange}
-                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                    className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                      errors.civil_status
+                        ? "border-red-400 focus:outline-red-400"
+                        : "border-c-gray3 focus:outline-c-primary"
+                    }`}
                   >
                     <option value="" disabled className="text-c-gray3">
                       Select Status
@@ -245,7 +345,7 @@ const AddEditPatient = ({ onClose }) => {
                     htmlFor="occupation"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Occupation
+                    Occupation (Optional)
                   </label>
                   <input
                     type="text"
@@ -302,14 +402,23 @@ const AddEditPatient = ({ onClose }) => {
                     htmlFor="contact_number"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Contact Number
+                    Contact Number{" "}
+                    <span className="text-red-400">
+                      {(formData.contact_number === "" ||
+                        errors.contact_number) &&
+                        errors.contact_number}
+                    </span>
                   </label>
                   <input
                     type="text"
                     name="contact_number"
                     value={formData.contact_number}
                     onChange={handleChange}
-                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                    className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                      errors.contact_number
+                        ? "border-red-400 focus:outline-red-400"
+                        : "border-c-gray3 focus:outline-c-primary"
+                    }`}
                     placeholder="Enter contact number"
                   />
                 </section>
@@ -318,15 +427,22 @@ const AddEditPatient = ({ onClose }) => {
                     htmlFor="email"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Email Address
+                    Email Address{" "}
+                    <span className="text-red-400">
+                      {(formData.email === "" || errors.email) && errors.email}
+                    </span>
                   </label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                    placeholder="Enter email"
+                    className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                      errors.email
+                        ? "border-red-400 focus:outline-red-400"
+                        : "border-c-gray3 focus:outline-c-primary"
+                    }`}
+                    placeholder="Enter email address"
                   />
                 </section>
               </div>

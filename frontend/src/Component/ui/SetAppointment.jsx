@@ -1,7 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 
 const SetAppointment = ({ onClose }) => {
+  const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState({
+    patient_name: "",
+    date: "",
+    time: "",
+    reason: "",
+    doctor: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (errors[name]) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: "",
+      }));
+    }
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  //Call validateForm before saving
+  const validateForm = () => {
+    let newErrors = {};
+
+    if (
+      !formData.patient_name ||
+      !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.patient_name)
+    )
+      newErrors.patient_name = "(Patient name is required)";
+
+    if (!formData.date) newErrors.date = "(Select appointment date)";
+
+    if (!formData.time) newErrors.time = "(Select appointment time)";
+
+    if (!formData.reason) newErrors.reason = "(Select reason for visit)";
+
+    if (!formData.doctor) newErrors.doctor = "(Select doctor to assign)";
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   return ReactDOM.createPortal(
     <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
       <div className="w-[500px]">
@@ -17,13 +65,17 @@ const SetAppointment = ({ onClose }) => {
               htmlFor="patient_name"
               className="text-p-sm text-c-gray3 font-medium"
             >
-              Patient Name:
+              Patient Name{" "}
+              <span className="text-red-400">
+                {(formData.patient_name === "" || errors.patient_name) &&
+                  errors.patient_name}
+              </span>
             </label>
             <input
               type="text"
               name="patient_name"
-              //value={formData.patient_name}
-              //onChange={handleChange}
+              value={formData.patient_name}
+              onChange={handleChange}
               className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
               placeholder="Enter patient name"
             />
@@ -34,14 +86,17 @@ const SetAppointment = ({ onClose }) => {
                 htmlFor="date"
                 className="text-p-sm text-c-gray3 font-medium"
               >
-                Date:
+                Date{" "}
+                <span className="text-red-400">
+                  {(formData.date === "" || errors.date) && errors.date}
+                </span>
               </label>
               <input
                 type="date"
                 name="date"
                 min={0}
-                //  value={formData.date}
-                //  onChange={handleChange}
+                value={formData.date}
+                onChange={handleChange}
                 className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
               />
             </div>
@@ -50,13 +105,16 @@ const SetAppointment = ({ onClose }) => {
                 htmlFor="time"
                 className="text-p-sm text-c-gray3 font-medium"
               >
-                Time:
+                Time{" "}
+                <span className="text-red-400">
+                  {(formData.time === "" || errors.time) && errors.time}
+                </span>
               </label>
               <input
                 type="time"
                 name="time"
-                //value={formData.time}
-                //onChange={handleChange}
+                value={formData.time}
+                onChange={handleChange}
                 className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
               />
             </div>
@@ -66,12 +124,15 @@ const SetAppointment = ({ onClose }) => {
               htmlFor="reason"
               className="text-p-sm text-c-gray3 font-medium"
             >
-              Reason:
+              Reason{" "}
+              <span className="text-red-400">
+                {(formData.reason === "" || errors.reason) && errors.reason}
+              </span>
             </label>
             <select
               name="reason"
-              //value={formData.reason}
-              //onChange={handleChange}
+              value={formData.reason}
+              onChange={handleChange}
               className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
             >
               <option value="" disabled className="text-c-gray3">
@@ -87,12 +148,15 @@ const SetAppointment = ({ onClose }) => {
               htmlFor="doctor"
               className="text-p-sm text-c-gray3 font-medium"
             >
-              Appoint a Doctor:
+              Appoint a Doctor{" "}
+              <span className="text-red-400">
+                {(formData.doctor === "" || errors.doctor) && errors.doctor}
+              </span>
             </label>
             <select
               name="doctor"
-              //value={formData.doctor}
-              //onChange={handleChange}
+              value={formData.doctor}
+              onChange={handleChange}
               className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
             >
               <option value="" disabled className="text-c-gray3">
