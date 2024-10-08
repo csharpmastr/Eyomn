@@ -18,10 +18,10 @@ export const useAddStaff = () => {
     try {
       const response = await addStaffService(
         staffData,
-        accessToken,
-        refreshToken,
         user.userId,
-        branchId
+        branchId,
+        accessToken,
+        refreshToken
       );
       reduxDispatch(addStaff(staffData));
       return response;

@@ -22,10 +22,16 @@ export const getStaffs = async (clinicId, accessToken, refreshToken) => {
   }
 };
 
-export const addStaffService = async (staffData, accessToken, refreshToken) => {
+export const addStaffService = async (
+  staffData,
+  organizationId,
+  branchId,
+  accessToken,
+  refreshToken
+) => {
   try {
     const response = await axios.post(
-      `${ORGANIZATION_API_BASE_URL}/add`,
+      `${ORGANIZATION_API_BASE_URL}/add-staff/${organizationId}/${branchId}`,
 
       staffData,
       {
@@ -35,7 +41,7 @@ export const addStaffService = async (staffData, accessToken, refreshToken) => {
         },
       }
     );
-    return response;
+    return response.data;
   } catch (err) {
     throw err;
   }
@@ -69,7 +75,7 @@ export const getDoctorList = async (
   }
 };
 
-export const addBranch = async (
+export const addBranchService = async (
   branchDetails,
   organizationId,
   accessToken,
