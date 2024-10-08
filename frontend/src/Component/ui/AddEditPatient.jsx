@@ -9,7 +9,6 @@ const AddEditPatient = ({ onClose }) => {
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [errors, setErrors] = useState({});
-
   const user = useSelector((state) => state.reducer.user.user);
   const [formData, setFormData] = useState({
     first_name: "",
@@ -104,25 +103,40 @@ const AddEditPatient = ({ onClose }) => {
     let newErrors = {};
 
     if (currentCardIndex === 0) {
-      if (!formData.first_name)
-        newErrors.first_name = "First name is required.";
-      if (!formData.last_name) newErrors.last_name = "Last name is required.";
-      if (!formData.age || formData.age <= 0)
-        newErrors.age = "Age is required.";
-      if (!formData.sex) newErrors.sex = "Sex is required.";
+      if (
+        !formData.first_name ||
+        !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.first_name)
+      )
+        newErrors.first_name = "(First name is required)";
+
+      if (
+        !formData.last_name ||
+        !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.last_name)
+      )
+        newErrors.last_name = "(Last name is required)";
+
+      if (!formData.age || formData.age <= 0 || formData.age > 120)
+        newErrors.age = "(Age must be between 1 and 120)";
+
+      if (!formData.sex) newErrors.sex = "(Sex is required)";
+
       if (!formData.birthdate)
-        newErrors.birthdate = "Date of birth is required.";
+        newErrors.birthdate = "(Date of birth is required)";
+
+      //call validateForm before saving
     } else if (currentCardIndex === 1) {
       if (!formData.civil_status)
-        newErrors.civil_status = "Civil status is required.";
-      if (!formData.contact_number)
-        newErrors.contact_number = "Contact number is required.";
+        newErrors.civil_status = "(Civil status is required)";
+
       if (
-        !formData.email ||
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-      ) {
-        newErrors.email = "Valid email is required.";
-      }
+        !formData.contact_number ||
+        !/^09\d{9}$/.test(formData.contact_number)
+      )
+        newErrors.contact_number =
+          "(A valid 11-digit contact number is required)";
+
+      if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+        newErrors.email = "(Valid email is required)";
     }
 
     setErrors(newErrors);
@@ -152,7 +166,11 @@ const AddEditPatient = ({ onClose }) => {
                   htmlFor="first_name"
                   className="text-p-sm text-c-gray3 font-medium"
                 >
-                  First Name
+                  First Name{" "}
+                  <span className="text-red-400">
+                    {(formData.first_name === "" || errors.first_name) &&
+                      errors.first_name}
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -164,9 +182,7 @@ const AddEditPatient = ({ onClose }) => {
                       ? "border-red-400 focus:outline-red-400"
                       : "border-c-gray3 focus:outline-c-primary"
                   }`}
-                  placeholder={
-                    errors.first_name ? errors.first_name : "Enter first Name"
-                  }
+                  placeholder="Enter first Name"
                 />
               </section>
               <section>
@@ -174,7 +190,11 @@ const AddEditPatient = ({ onClose }) => {
                   htmlFor="last_name"
                   className="text-p-sm text-c-gray3 font-medium"
                 >
-                  Last Name
+                  Last Name{" "}
+                  <span className="text-red-400">
+                    {(formData.last_name === "" || errors.last_name) &&
+                      errors.last_name}
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -186,9 +206,7 @@ const AddEditPatient = ({ onClose }) => {
                       ? "border-red-400 focus:outline-red-400"
                       : "border-c-gray3 focus:outline-c-primary"
                   }`}
-                  placeholder={
-                    errors.last_name ? errors.last_name : "Enter last Name"
-                  }
+                  placeholder="Enter last Name"
                 />
               </section>
               <section>
@@ -213,7 +231,10 @@ const AddEditPatient = ({ onClose }) => {
                     htmlFor="age"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Age
+                    Age{" "}
+                    <span className="text-red-400">
+                      {(formData.age === "" || errors.age) && errors.age}
+                    </span>
                   </label>
                   <input
                     type="number"
@@ -226,7 +247,7 @@ const AddEditPatient = ({ onClose }) => {
                         ? "border-red-400 focus:outline-red-400"
                         : "border-c-gray3 focus:outline-c-primary"
                     }`}
-                    placeholder={errors.age ? errors.age : "Enter age"}
+                    placeholder="Enter age"
                   />
                 </div>
                 <div className="w-1/2">
@@ -234,7 +255,10 @@ const AddEditPatient = ({ onClose }) => {
                     htmlFor="sex"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Sex
+                    Sex{" "}
+                    <span className="text-red-400">
+                      {(formData.sex === "" || errors.sex) && errors.sex}
+                    </span>
                   </label>
                   <select
                     name="sex"
@@ -247,10 +271,11 @@ const AddEditPatient = ({ onClose }) => {
                     }`}
                   >
                     <option value="" disabled className="text-c-gray3">
-                      {errors.sex ? errors.sex : "Select Sex"}
+                      Select Sex
                     </option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
+                    <option value="None">Prefer not to say</option>
                   </select>
                 </div>
               </div>
@@ -259,7 +284,11 @@ const AddEditPatient = ({ onClose }) => {
                   htmlFor="birthdate"
                   className="text-p-sm text-c-gray3 font-medium"
                 >
-                  Date of Birth
+                  Date of Birth{" "}
+                  <span className="text-red-400">
+                    {(formData.birthdate === "" || errors.birthdate) &&
+                      errors.birthdate}
+                  </span>
                 </label>
                 <input
                   type="date"
@@ -287,7 +316,11 @@ const AddEditPatient = ({ onClose }) => {
                     htmlFor="civil_status"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Civil Status
+                    Civil Status{" "}
+                    <span className="text-red-400">
+                      {(formData.civil_status === "" || errors.civil_status) &&
+                        errors.civil_status}
+                    </span>
                   </label>
                   <select
                     name="civil_status"
@@ -300,9 +333,7 @@ const AddEditPatient = ({ onClose }) => {
                     }`}
                   >
                     <option value="" disabled className="text-c-gray3">
-                      {errors.civil_status
-                        ? errors.civil_status
-                        : "Select Status"}
+                      Select Status
                     </option>
                     <option value="Single">Single</option>
                     <option value="Married">Married</option>
@@ -371,7 +402,12 @@ const AddEditPatient = ({ onClose }) => {
                     htmlFor="contact_number"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Contact Number
+                    Contact Number{" "}
+                    <span className="text-red-400">
+                      {(formData.contact_number === "" ||
+                        errors.contact_number) &&
+                        errors.contact_number}
+                    </span>
                   </label>
                   <input
                     type="text"
@@ -383,11 +419,7 @@ const AddEditPatient = ({ onClose }) => {
                         ? "border-red-400 focus:outline-red-400"
                         : "border-c-gray3 focus:outline-c-primary"
                     }`}
-                    placeholder={
-                      errors.contact_number
-                        ? errors.contact_number
-                        : "Enter contact number"
-                    }
+                    placeholder="Enter contact number"
                   />
                 </section>
                 <section>
@@ -395,7 +427,10 @@ const AddEditPatient = ({ onClose }) => {
                     htmlFor="email"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
-                    Email Address
+                    Email Address{" "}
+                    <span className="text-red-400">
+                      {(formData.email === "" || errors.email) && errors.email}
+                    </span>
                   </label>
                   <input
                     type="email"
@@ -407,9 +442,7 @@ const AddEditPatient = ({ onClose }) => {
                         ? "border-red-400 focus:outline-red-400"
                         : "border-c-gray3 focus:outline-c-primary"
                     }`}
-                    placeholder={
-                      errors.email ? errors.email : "Enter email address"
-                    }
+                    placeholder="Enter email address"
                   />
                 </section>
               </div>
