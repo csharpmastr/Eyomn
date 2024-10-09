@@ -4,6 +4,7 @@ import doctorReducer from "../Slice/doctorSlice";
 import staffReducer from "../Slice/StaffSlice";
 import userReducer from "../Slice/UserSlice";
 import branchReducer from "../Slice/BranchSlice";
+import productReducer from "../Slice/ProductSlice";
 import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
 import { combineReducers } from "@reduxjs/toolkit";
@@ -20,6 +21,7 @@ const reducer = combineReducers({
   staff: staffReducer,
   user: userReducer,
   branch: branchReducer,
+  product: productReducer,
 });
 const persistedReducer = persistReducer(persistConfig, reducer);
 export const store = configureStore({

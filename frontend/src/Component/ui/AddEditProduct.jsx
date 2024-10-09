@@ -1,48 +1,50 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
+import { addProduct } from "../../Service/InventoryService";
+import { useSelector } from "react-redux";
+import Cookies from "universal-cookie";
+import Loader from "./Loader";
+import SuccessModal from "./SuccessModal";
 
 const AddEditProduct = ({ onClose }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
+  const user = useSelector((state) => state.reducer.user.user);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const cookies = new Cookies();
+  const accessToken = cookies.get("accessToken");
+  const refreshToken = cookies.get("refreshToken");
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     category: "",
+    product_name: "",
+    price: "",
+    quantity: "",
+    brand: "",
+    expirationDate: "",
 
-    //Eye Glasses
-    eye_product_name: "",
-    eyeglass_category: "",
+    // Eye Glasses
     len_type: "",
     color_material: "",
-    eye_quantity: "",
-    eye_price: "",
-    eye_brand: "",
 
-    //Medication
-    md_product_name: "",
+    // Medication
     prescrip_otc: "",
     md_form: "",
     dosage: "",
-    md_expdate: "",
-    md_quantity: "",
-    md_price: "",
-    md_brand: "",
 
-    //Contact Lens
-    cl_product_name: "",
+    // Contact Lens
     ct_type: "",
     ct_material: "",
-    ct_expdate: "",
-    ct_quantity: "",
-    ct_price: "",
-    ct_brand: "",
 
-    //Other Product
-    other_product_name: "",
+    // Other Product
     other_description: "",
-    other_quantity: "",
-    other_price: "",
-    other_brand: "",
   });
-
+  const getMinDate = () => {
+    const today = new Date();
+    const nextYear = new Date(today);
+    nextYear.setFullYear(today.getFullYear() + 1);
+    return nextYear.toISOString().split("T")[0];
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -53,14 +55,26 @@ const AddEditProduct = ({ onClose }) => {
       }));
     }
 
+    const parsedValue =
+      name === "price" || name === "quantity" || name.includes("quantity")
+        ? Number(value)
+        : value;
+
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: parsedValue,
     }));
   };
 
   const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
+    const selectedValue = e.target.value;
+
+    setSelectedCategory(selectedValue);
+
+    setFormData((prevData) => ({
+      ...prevData,
+      category: selectedValue,
+    }));
   };
 
   const validateForm = () => {
@@ -69,14 +83,25 @@ const AddEditProduct = ({ onClose }) => {
     if (!formData.category) {
       newErrors.category = "(Please select a category)";
     }
+    if (
+      !formData.product_name ||
+      !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.product_name)
+    )
+      newErrors.product_name = "(Product name is required)";
+
+    if (!formData.quantity || formData.quantity <= 0)
+      newErrors.quantity = "(Input quantity)";
+
+    if (!formData.price || formData.price <= 0)
+      newErrors.price = "(Put product price)";
+
+    if (
+      !formData.md_brand ||
+      !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.md_brand)
+    )
+      newErrors.md_brand = "(Product brand is required)";
 
     if (selectedCategory === "Eye Glasses") {
-      if (
-        !formData.eye_product_name ||
-        !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.eye_product_name)
-      )
-        newErrors.eye_product_name = "(Product name is required)";
-
       if (!formData.eyeglass_category)
         newErrors.eyeglass_category = "(Select eyeglass category)";
 
@@ -92,24 +117,18 @@ const AddEditProduct = ({ onClose }) => {
       )
         newErrors.color_material = "(Product material is required)";
 
-      if (!formData.eye_quantity || formData.eye_quantity <= 0)
-        newErrors.eye_quantity = "(Input quantity)";
+      if (!formData.quantity || formData.quantity <= 0)
+        newErrors.quantity = "(Input quantity)";
 
       if (!formData.price || formData.price <= 0)
         newErrors.price = "(Put product price)";
 
       if (
-        !formData.eye_brand ||
+        !formData.brand ||
         !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.eye_brand)
       )
         newErrors.eye_brand = "(Product brand is required)";
     } else if (selectedCategory === "Medication") {
-      if (
-        !formData.md_product_name ||
-        !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.md_product_name)
-      )
-        newErrors.md_product_name = "(Product name is required)";
-
       if (!formData.prescrip_otc)
         newErrors.prescrip_otc = "(Select prescription or OTC)";
 
@@ -119,18 +138,6 @@ const AddEditProduct = ({ onClose }) => {
 
       if (!formData.md_expdate)
         newErrors.md_expdate = "(Input medication expiration)";
-
-      if (!formData.md_quantity || formData.md_quantity <= 0)
-        newErrors.md_quantity = "(Input quantity)";
-
-      if (!formData.md_price || formData.md_price <= 0)
-        newErrors.md_price = "(Put product price)";
-
-      if (
-        !formData.md_brand ||
-        !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.md_brand)
-      )
-        newErrors.md_brand = "(Product brand is required)";
     } else if (selectedCategory === "Contact Lens") {
       if (
         !formData.cl_product_name ||
@@ -189,670 +196,507 @@ const AddEditProduct = ({ onClose }) => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  const handleAddProduct = async () => {
+    setIsLoading(true);
+    try {
+      const response = await addProduct(
+        user.branchId,
+        formData,
+        accessToken,
+        refreshToken
+      );
+      if (response) {
+        setIsSuccess(true);
+      }
+    } catch (error) {
+      setIsSuccess(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return ReactDOM.createPortal(
-    <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-      <div className="w-[400px] md:w-[600px] md:mr-8">
-        <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-          <h1 className="text-p-lg text-c-secondary font-semibold">
-            Manage Product
-          </h1>
-          <button onClick={onClose}>&times;</button>
-        </header>
-        <div className="bg-white h-[600px] overflow-y-scroll">
-          <div className="p-3 md:p-8">
-            <section>
-              <header>
-                <h1 className="text-p-rg font-semibold text-c-secondary">
-                  | Product Category
-                </h1>
-              </header>
-              <span className="text-red-400 text-p-sm">
-                {(formData.first_name === "" || errors.first_name) &&
-                  errors.first_name}
-              </span>
-              <select
-                name="category"
-                value={selectedCategory}
-                onChange={handleCategoryChange}
-                className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
-              >
-                <option value="" disabled className="text-c-gray3">
-                  Select Category
-                </option>
-                <option value="Eye Glass">Eye Glass</option>
-                <option value="Contact Lens">Contact Lens</option>
-                <option value="Medication">Medication</option>
-                <option value="Other">Other</option>
-              </select>
-            </section>
-            <div>
-              {selectedCategory === "Eye Glass" && (
-                <div>
+    <>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
+          <div className="w-[400px] md:w-[600px] md:mr-8">
+            <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
+              <h1 className="text-p-lg text-c-secondary font-semibold">
+                Manage Product
+              </h1>
+              <button onClick={onClose}>&times;</button>
+            </header>
+            <div className="bg-white h-[600px] overflow-y-scroll">
+              <div className="p-3 md:p-8">
+                <section>
                   <header>
-                    <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
-                      | Eye Glass Details
+                    <h1 className="text-p-rg font-semibold text-c-secondary">
+                      | Product Category
                     </h1>
                   </header>
-                  <section>
-                    <label
-                      htmlFor="eye_product_name"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Product Name{" "}
-                      <span className="text-red-400">
-                        {(formData.eye_product_name === "" ||
-                          errors.eye_product_name) &&
-                          errors.eye_product_name}
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="eye_product_name"
-                      value={formData.eye_product_name}
-                      onChange={handleChange}
-                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                      placeholder="Enter product name"
-                    />
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="eyeglass_category"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Eye Glass Category{" "}
-                      <span className="text-red-400">
-                        {(formData.eyeglass_category === "" ||
-                          errors.eyeglass_category) &&
-                          errors.eyeglass_category}
-                      </span>
-                    </label>
-                    <select
-                      name="eyeglass_category"
-                      value={formData.eyeglass_category}
-                      onChange={handleChange}
-                      className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
-                    >
-                      <option value="" disabled className="text-c-gray3">
-                        Select Eye Glass Category
-                      </option>
-                      <option value="graded">Graded</option>
-                      <option value="not_graded">Not Graded</option>
-                    </select>
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="len_type"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Lens Type{" "}
-                      <span className="text-red-400">
-                        {(formData.len_type === "" || errors.len_type) &&
-                          errors.len_type}
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="len_type"
-                      value={formData.len_type}
-                      onChange={handleChange}
-                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                      placeholder="Single Vision / Bifocal / Progressive / Special Coatings"
-                    />
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="color_material"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Color/Material{" "}
-                      <span className="text-red-400">
-                        {(formData.color_material === "" ||
-                          errors.color_material) &&
-                          errors.color_material}
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="color_material"
-                      value={formData.color_material}
-                      onChange={handleChange}
-                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                      placeholder="Enter color eme and material"
-                    />
-                  </section>
-                  <div className="flex gap-4">
-                    <div className="w-1/2">
-                      <label
-                        htmlFor="eye_quantity"
-                        className="text-p-sm text-c-gray3 font-medium"
-                      >
-                        Quantity{" "}
-                        <span className="text-red-400">
-                          {(formData.eye_quantity === "" ||
-                            errors.eye_quantity) &&
-                            errors.eye_quantity}
-                        </span>
-                      </label>
-                      <input
-                        type="number"
-                        name="eye_quantity"
-                        min={0}
-                        value={formData.eye_quantity}
-                        onChange={handleChange}
-                        className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter quantity"
-                      />
-                    </div>
-                    <div className="w-1/2">
-                      <label
-                        htmlFor="eye_price"
-                        className="text-p-sm text-c-gray3 font-medium"
-                      >
-                        Price{" "}
-                        <span className="text-red-400">
-                          {(formData.eye_price === "" || errors.eye_price) &&
-                            errors.eye_price}
-                        </span>
-                      </label>
-                      <input
-                        type="text"
-                        name="eye_price"
-                        value={formData.eye_price}
-                        onChange={handleChange}
-                        className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter product price"
-                      />
-                    </div>
-                  </div>
-                  <section>
-                    <label
-                      htmlFor="eye_brand"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Brand{" "}
-                      <span className="text-red-400">
-                        {(formData.eye_brand === "" || errors.eye_brand) &&
-                          errors.eye_brand}
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="eye_brand"
-                      value={formData.eye_brand}
-                      onChange={handleChange}
-                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                      placeholder="Enter brand"
-                    />
-                  </section>
-                </div>
-              )}
-              {selectedCategory === "Medication" && (
+                  <span className="text-red-400 text-p-sm">
+                    {(formData.first_name === "" || errors.first_name) &&
+                      errors.first_name}
+                  </span>
+                  <select
+                    name="category"
+                    value={selectedCategory}
+                    onChange={handleCategoryChange}
+                    className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
+                  >
+                    <option value="" disabled className="text-c-gray3">
+                      Select Category
+                    </option>
+                    <option value="Eye Glass">Eye Glass</option>
+                    <option value="Contact Lens">Contact Lens</option>
+                    <option value="Medication">Medication</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </section>
                 <div>
-                  <header>
-                    <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
-                      | Medication Product Details
-                    </h1>
-                  </header>
-                  <section>
-                    <label
-                      htmlFor="md_product_name"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Product Name{" "}
-                      <span className="text-red-400">
-                        {(formData.md_product_name === "" ||
-                          errors.md_product_name) &&
-                          errors.md_product_name}
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="md_product_name"
-                      value={formData.md_product_name}
-                      onChange={handleChange}
-                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                      placeholder="Enter medication product name"
-                    />
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="prescrip_otc"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Prescription or OTC{" "}
-                      <span className="text-red-400">
-                        {(formData.prescrip_otc === "" ||
-                          errors.prescrip_otc) &&
-                          errors.prescrip_otc}
-                      </span>
-                    </label>
-                    <select
-                      name="prescrip_otc"
-                      value={formData.prescrip_otc}
-                      onChange={handleChange}
-                      className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
-                    >
-                      <option value="" disabled className="text-c-gray3">
-                        Select Type
-                      </option>
-                      <option value="prescription">Prescription</option>
-                      <option value="otc">OTC</option>
-                    </select>
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="md_form"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Medicine Form{" "}
-                      <span className="text-red-400">
-                        {(formData.md_form === "" || errors.md_form) &&
-                          errors.md_form}
-                      </span>
-                    </label>
-                    <select
-                      name="md_form"
-                      value={formData.md_form}
-                      onChange={handleChange}
-                      className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
-                    >
-                      <option value="" disabled className="text-c-gray3">
-                        Select Form
-                      </option>
-                      <option value="eye drop">Eye Drop</option>
-                      <option value="-">-</option>
-                    </select>
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="dosage"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Dosage and Strength{" "}
-                      <span className="text-red-400">
-                        {(formData.dosage === "" || errors.dosage) &&
-                          errors.dosage}
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="dosage"
-                      value={formData.dosage}
-                      onChange={handleChange}
-                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                      placeholder="Enter dosage and strength"
-                    />
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="md_expdate"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Expiration Date{" "}
-                      <span className="text-red-400">
-                        {(formData.md_expdate === "" || errors.md_expdate) &&
-                          errors.md_expdate}
-                      </span>
-                    </label>
-                    <input
-                      type="date"
-                      name="md_expdate"
-                      value={formData.md_expdate}
-                      onChange={handleChange}
-                      className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                    />
-                  </section>
-                  <div className="flex gap-4">
-                    <div className="w-1/2">
-                      <label
-                        htmlFor="md_quantity"
-                        className="text-p-sm text-c-gray3 font-medium"
-                      >
-                        Quantity{" "}
-                        <span className="text-red-400">
-                          {(formData.md_quantity === "" ||
-                            errors.md_quantity) &&
-                            errors.md_quantity}
-                        </span>
-                      </label>
-                      <input
-                        type="number"
-                        name="md_quantity"
-                        min={0}
-                        value={formData.md_quantity}
-                        onChange={handleChange}
-                        className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter quantity"
-                      />
+                  {selectedCategory === "Eye Glass" && (
+                    <div>
+                      <header>
+                        <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
+                          | Eye Glass Details
+                        </h1>
+                      </header>
+                      <section>
+                        <label
+                          htmlFor="product_name"
+                          className="text-p-sm text-c-gray3 font-medium"
+                        >
+                          Product Name{" "}
+                          <span className="text-red-400">
+                            {(formData.product_name === "" ||
+                              errors.product_name) &&
+                              errors.product_name}
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          name="product_name"
+                          value={formData.product_name}
+                          onChange={handleChange}
+                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          placeholder="Enter product name"
+                        />
+                      </section>
+                      <section>
+                        <label
+                          htmlFor="eyeglass_category"
+                          className="text-p-sm text-c-gray3 font-medium"
+                        >
+                          Eye Glass Category{" "}
+                          <span className="text-red-400">
+                            {(formData.eyeglass_category === "" ||
+                              errors.eyeglass_category) &&
+                              errors.eyeglass_category}
+                          </span>
+                        </label>
+                        <select
+                          name="eyeglass_category"
+                          value={formData.eyeglass_category}
+                          onChange={handleChange}
+                          className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
+                        >
+                          <option value="" disabled className="text-c-gray3">
+                            Select Eye Glass Category
+                          </option>
+                          <option value="graded">Graded</option>
+                          <option value="not_graded">Not Graded</option>
+                        </select>
+                      </section>
+                      <section>
+                        <label
+                          htmlFor="len_type"
+                          className="text-p-sm text-c-gray3 font-medium"
+                        >
+                          Lens Type{" "}
+                          <span className="text-red-400">
+                            {(formData.len_type === "" || errors.len_type) &&
+                              errors.len_type}
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          name="len_type"
+                          value={formData.len_type}
+                          onChange={handleChange}
+                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          placeholder="Single Vision / Bifocal / Progressive / Special Coatings"
+                        />
+                      </section>
+                      <section>
+                        <label
+                          htmlFor="color_material"
+                          className="text-p-sm text-c-gray3 font-medium"
+                        >
+                          Color/Material{" "}
+                          <span className="text-red-400">
+                            {(formData.color_material === "" ||
+                              errors.color_material) &&
+                              errors.color_material}
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          name="color_material"
+                          value={formData.color_material}
+                          onChange={handleChange}
+                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          placeholder="Enter color eme and material"
+                        />
+                      </section>
                     </div>
-                    <div className="w-1/2">
-                      <label
-                        htmlFor="md_price"
-                        className="text-p-sm text-c-gray3 font-medium"
-                      >
-                        Pricey{" "}
-                        <span className="text-red-400">
-                          {(formData.md_price === "" || errors.md_price) &&
-                            errors.md_price}
-                        </span>
-                      </label>
-                      <input
-                        type="text"
-                        name="md_price"
-                        value={formData.md_price}
-                        onChange={handleChange}
-                        className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter product price"
-                      />
+                  )}
+                  {selectedCategory === "Medication" && (
+                    <div>
+                      <header>
+                        <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
+                          | Medication Product Details
+                        </h1>
+                      </header>
+                      <section>
+                        <label
+                          htmlFor="product_name"
+                          className="text-p-sm text-c-gray3 font-medium"
+                        >
+                          Product Name{" "}
+                          <span className="text-red-400">
+                            {(formData.product_name === "" ||
+                              errors.product_name) &&
+                              errors.product_name}
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          name="product_name"
+                          value={formData.product_name}
+                          onChange={handleChange}
+                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          placeholder="Enter medication product name"
+                        />
+                      </section>
+                      <section>
+                        <label
+                          htmlFor="prescrip_otc"
+                          className="text-p-sm text-c-gray3 font-medium"
+                        >
+                          Prescription or OTC{" "}
+                          <span className="text-red-400">
+                            {(formData.prescrip_otc === "" ||
+                              errors.prescrip_otc) &&
+                              errors.prescrip_otc}
+                          </span>
+                        </label>
+                        <select
+                          name="prescrip_otc"
+                          value={formData.prescrip_otc}
+                          onChange={handleChange}
+                          className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
+                        >
+                          <option value="" disabled className="text-c-gray3">
+                            Select Type
+                          </option>
+                          <option value="prescription">Prescription</option>
+                          <option value="otc">OTC</option>
+                        </select>
+                      </section>
+                      <section>
+                        <label
+                          htmlFor="md_form"
+                          className="text-p-sm text-c-gray3 font-medium"
+                        >
+                          Medicine Form{" "}
+                          <span className="text-red-400">
+                            {(formData.md_form === "" || errors.md_form) &&
+                              errors.md_form}
+                          </span>
+                        </label>
+                        <select
+                          name="md_form"
+                          value={formData.md_form}
+                          onChange={handleChange}
+                          className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
+                        >
+                          <option value="" disabled className="text-c-gray3">
+                            Select Form
+                          </option>
+                          <option value="eye drop">Eye Drop</option>
+                          <option value="-">-</option>
+                        </select>
+                      </section>
+                      <section>
+                        <label
+                          htmlFor="dosage"
+                          className="text-p-sm text-c-gray3 font-medium"
+                        >
+                          Dosage and Strength{" "}
+                          <span className="text-red-400">
+                            {(formData.dosage === "" || errors.dosage) &&
+                              errors.dosage}
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          name="dosage"
+                          value={formData.dosage}
+                          onChange={handleChange}
+                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          placeholder="Enter dosage and strength"
+                        />
+                      </section>
                     </div>
-                  </div>
-                  <section>
-                    <label
-                      htmlFor="md_brand"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Brand{" "}
-                      <span className="text-red-400">
-                        {(formData.md_brand === "" || errors.md_brand) &&
-                          errors.md_brand}
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="md_brand"
-                      value={formData.md_brand}
-                      onChange={handleChange}
-                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                      placeholder="Enter brand"
-                    />
-                  </section>
+                  )}
+                  {selectedCategory === "Contact Lens" && (
+                    <div>
+                      <header>
+                        <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
+                          | Contact Lens Details
+                        </h1>
+                      </header>
+                      <section>
+                        <label
+                          htmlFor="product_name"
+                          className="text-p-sm text-c-gray3 font-medium"
+                        >
+                          Product Name{" "}
+                          <span className="text-red-400">
+                            {(formData.product_name === "" ||
+                              errors.product_name) &&
+                              errors.product_name}
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          name="product_name"
+                          value={formData.product_name}
+                          onChange={handleChange}
+                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          placeholder="Enter contact lens name"
+                        />
+                      </section>
+                      <section>
+                        <label
+                          htmlFor="ct_type"
+                          className="text-p-sm text-c-gray3 font-medium"
+                        >
+                          Type of Lens{" "}
+                          <span className="text-red-400">
+                            {(formData.ct_type === "" || errors.ct_type) &&
+                              errors.ct_type}
+                          </span>
+                        </label>
+                        <select
+                          name="ct_type"
+                          value={formData.ct_type}
+                          onChange={handleChange}
+                          className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
+                        >
+                          <option value="" disabled className="text-c-gray3">
+                            Select Type
+                          </option>
+                          <option value="Disposable">Disposable</option>
+                          <option value="Monthly">Monthly - Reusable</option>
+                          <option value="Yearly">Yearly - Reusable</option>
+                        </select>
+                      </section>
+                      <section>
+                        <label
+                          htmlFor="ct_material"
+                          className="text-p-sm text-c-gray3 font-medium"
+                        >
+                          Lens Material{" "}
+                          <span className="text-red-400">
+                            {(formData.ct_material === "" ||
+                              errors.ct_material) &&
+                              errors.ct_material}
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          name="ct_material"
+                          value={formData.ct_material}
+                          onChange={handleChange}
+                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          placeholder="Enter contact lens material"
+                        />
+                      </section>
+                    </div>
+                  )}
+                  {selectedCategory === "Other" && (
+                    <div>
+                      <header>
+                        <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
+                          | Product Details
+                        </h1>
+                      </header>
+                      <section>
+                        <label
+                          htmlFor="product_name"
+                          className="text-p-sm text-c-gray3 font-medium"
+                        >
+                          Product Name{" "}
+                          <span className="text-red-400">
+                            {(formData.product_name === "" ||
+                              errors.product_name) &&
+                              errors.product_name}
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          name="product_name"
+                          value={formData.product_name}
+                          onChange={handleChange}
+                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          placeholder="Enter product name"
+                        />
+                      </section>
+                      <section>
+                        <label
+                          htmlFor="other_description"
+                          className="text-p-sm text-c-gray3 font-medium"
+                        >
+                          Product Description{" "}
+                          <span className="text-red-400">
+                            {(formData.other_description === "" ||
+                              errors.other_description) &&
+                              errors.other_description}
+                          </span>
+                        </label>
+                        <textarea
+                          type="text"
+                          name="other_description"
+                          value={formData.other_description}
+                          onChange={handleChange}
+                          className="mt-1 w-full px-4 py-3 h-24 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          placeholder="Enter product description"
+                        />
+                      </section>
+                    </div>
+                  )}
+                  {selectedCategory && (
+                    <>
+                      {selectedCategory === "Medication" ||
+                      selectedCategory === "Contact Lens" ? (
+                        <section>
+                          <label
+                            htmlFor="expirationDate"
+                            className="text-p-sm text-c-gray3 font-medium"
+                          >
+                            Expiration Date{" "}
+                            <span className="text-red-400">
+                              {(formData.expirationDate === "" ||
+                                errors.expirationDate) &&
+                                errors.expirationDate}
+                            </span>
+                          </label>
+                          <input
+                            type="date"
+                            name="expirationDate"
+                            value={formData.expirationDate}
+                            onChange={handleChange}
+                            min={getMinDate()}
+                            className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          />
+                        </section>
+                      ) : (
+                        ""
+                      )}
+                      <div className="flex gap-4">
+                        <div className="w-1/2">
+                          <label
+                            htmlFor="price"
+                            className="text-p-sm text-c-gray3 font-medium"
+                          >
+                            Price{" "}
+                            <span className="text-red-400">
+                              {(formData.price === "" || errors.price) &&
+                                errors.price}
+                            </span>
+                          </label>
+                          <input
+                            type="number"
+                            name="price"
+                            min={0}
+                            value={formData.price}
+                            onChange={handleChange}
+                            className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                            placeholder="Enter product price"
+                          />
+                        </div>
+                        <div className="w-1/2">
+                          <label
+                            htmlFor="quantity"
+                            className="text-p-sm text-c-gray3 font-medium"
+                          >
+                            Quantity{" "}
+                            <span className="text-red-400">
+                              {(formData.quantity === "" || errors.quantity) &&
+                                errors.quantity}
+                            </span>
+                          </label>
+                          <input
+                            type="number"
+                            name="quantity"
+                            min={0}
+                            value={formData.quantity}
+                            onChange={handleChange}
+                            className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                            placeholder="Enter quantity"
+                          />
+                        </div>
+                      </div>
+                      <section>
+                        <label
+                          htmlFor="eye_brand"
+                          className="text-p-sm text-c-gray3 font-medium"
+                        >
+                          Brand{" "}
+                          <span className="text-red-400">
+                            {(formData.brand === "" || errors.brand) &&
+                              errors.brand}
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          name="brand"
+                          value={formData.brand}
+                          onChange={handleChange}
+                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          placeholder="Enter brand"
+                        />
+                      </section>
+                    </>
+                  )}
                 </div>
-              )}
-              {selectedCategory === "Contact Lens" && (
-                <div>
-                  <header>
-                    <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
-                      | Contact Lens Details
-                    </h1>
-                  </header>
-                  <section>
-                    <label
-                      htmlFor="cl_product_name"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Product Name{" "}
-                      <span className="text-red-400">
-                        {(formData.cl_product_name === "" ||
-                          errors.cl_product_name) &&
-                          errors.cl_product_name}
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="cl_product_name"
-                      value={formData.cl_product_name}
-                      onChange={handleChange}
-                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                      placeholder="Enter contact lens name"
-                    />
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="ct_type"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Type of Lens{" "}
-                      <span className="text-red-400">
-                        {(formData.ct_type === "" || errors.ct_type) &&
-                          errors.ct_type}
-                      </span>
-                    </label>
-                    <select
-                      name="ct_type"
-                      value={formData.ct_type}
-                      onChange={handleChange}
-                      className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
-                    >
-                      <option value="" disabled className="text-c-gray3">
-                        Select Type
-                      </option>
-                      <option value="disposable">Disposable</option>
-                      <option value="monthly">Monthly - Reusable</option>
-                      <option value="yearly">Yearly - Reusable</option>
-                    </select>
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="ct_material"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Lens Material{" "}
-                      <span className="text-red-400">
-                        {(formData.ct_material === "" || errors.ct_material) &&
-                          errors.ct_material}
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="ct_material"
-                      value={formData.ct_material}
-                      onChange={handleChange}
-                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                      placeholder="Enter contact lens material"
-                    />
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="ct_expdate"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Expiration Date{" "}
-                      <span className="text-red-400">
-                        {(formData.ct_expdate === "" || errors.ct_expdate) &&
-                          errors.ct_expdate}
-                      </span>
-                    </label>
-                    <input
-                      type="date"
-                      name="ct_expdate"
-                      value={formData.ct_expdate}
-                      onChange={handleChange}
-                      className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                    />
-                  </section>
-                  <div className="flex gap-4">
-                    <div className="w-1/2">
-                      <label
-                        htmlFor="ct_quantity"
-                        className="text-p-sm text-c-gray3 font-medium"
-                      >
-                        Quantity{" "}
-                        <span className="text-red-400">
-                          {(formData.ct_quantity === "" ||
-                            errors.ct_quantity) &&
-                            errors.ct_quantity}
-                        </span>
-                      </label>
-                      <input
-                        type="number"
-                        name="ct_quantity"
-                        min={0}
-                        value={formData.ct_quantity}
-                        onChange={handleChange}
-                        className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter quantity"
-                      />
-                    </div>
-                    <div className="w-1/2">
-                      <label
-                        htmlFor="ct_price"
-                        className="text-p-sm text-c-gray3 font-medium"
-                      >
-                        Price{" "}
-                        <span className="text-red-400">
-                          {(formData.ct_price === "" || errors.ct_price) &&
-                            errors.ct_price}
-                        </span>
-                      </label>
-                      <input
-                        type="text"
-                        name="ct_price"
-                        value={formData.ct_price}
-                        onChange={handleChange}
-                        className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter product price"
-                      />
-                    </div>
-                  </div>
-                  <section>
-                    <label
-                      htmlFor="ct_brand"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Brand{" "}
-                      <span className="text-red-400">
-                        {(formData.ct_brand === "" || errors.ct_brand) &&
-                          errors.ct_brand}
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="ct_brand"
-                      value={formData.ct_brand}
-                      onChange={handleChange}
-                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                      placeholder="Enter brand"
-                    />
-                  </section>
-                </div>
-              )}
-              {selectedCategory === "Other" && (
-                <div>
-                  <header>
-                    <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
-                      | Product Details
-                    </h1>
-                  </header>
-                  <section>
-                    <label
-                      htmlFor="other_product_name"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Product Name{" "}
-                      <span className="text-red-400">
-                        {(formData.other_product_name === "" ||
-                          errors.other_product_name) &&
-                          errors.other_product_name}
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="other_product_name"
-                      value={formData.other_product_name}
-                      onChange={handleChange}
-                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                      placeholder="Enter product name"
-                    />
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="other_description"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Product Description{" "}
-                      <span className="text-red-400">
-                        {(formData.other_description === "" ||
-                          errors.other_description) &&
-                          errors.other_description}
-                      </span>
-                    </label>
-                    <textarea
-                      type="text"
-                      name="other_description"
-                      value={formData.other_description}
-                      onChange={handleChange}
-                      className="mt-1 w-full px-4 py-3 h-24 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                      placeholder="Enter product description"
-                    />
-                  </section>
-                  <div className="flex gap-4">
-                    <div className="w-1/2">
-                      <label
-                        htmlFor="other_quantity"
-                        className="text-p-sm text-c-gray3 font-medium"
-                      >
-                        Quantity{" "}
-                        <span className="text-red-400">
-                          {(formData.other_quantity === "" ||
-                            errors.other_quantity) &&
-                            errors.other_quantity}
-                        </span>
-                      </label>
-                      <input
-                        type="number"
-                        name="other_quantity"
-                        min={0}
-                        value={formData.other_quantity}
-                        onChange={handleChange}
-                        className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter quantity"
-                      />
-                    </div>
-                    <div className="w-1/2">
-                      <label
-                        htmlFor="other_price"
-                        className="text-p-sm text-c-gray3 font-medium"
-                      >
-                        Price{" "}
-                        <span className="text-red-400">
-                          {(formData.other_price === "" ||
-                            errors.other_price) &&
-                            errors.other_price}
-                        </span>
-                      </label>
-                      <input
-                        type="text"
-                        name="other_price"
-                        value={formData.other_price}
-                        onChange={handleChange}
-                        className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter product price"
-                      />
-                    </div>
-                  </div>
-                  <section>
-                    <label
-                      htmlFor="other_brand"
-                      className="text-p-sm text-c-gray3 font-medium"
-                    >
-                      Brand{" "}
-                      <span className="text-red-400">
-                        {(formData.other_brand === "" || errors.other_brand) &&
-                          errors.other_brand}
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="other_brand"
-                      value={formData.other_brand}
-                      onChange={handleChange}
-                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                      placeholder="Enter brand"
-                    />
-                  </section>
-                </div>
-              )}
+              </div>
             </div>
+            <footer className="flex justify-end px-3 py-6 bg-white border border-t-f-gray rounded-b-lg">
+              <button
+                className="ml-2 px-8 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+                type="submit"
+                onClick={handleAddProduct}
+              >
+                Save
+              </button>
+            </footer>
           </div>
         </div>
-        <footer className="flex justify-end px-3 py-6 bg-white border border-t-f-gray rounded-b-lg">
-          <button className="ml-2 px-8 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary">
-            Save
-          </button>
-        </footer>
-      </div>
-    </div>,
+      )}
+      <SuccessModal
+        isOpen={isSuccess}
+        onClose={() => {
+          setIsSuccess(false);
+          onClose();
+        }}
+        title="Adding Success"
+        description="The branch has been registered in the system."
+      />
+    </>,
     document.body
   );
 };
