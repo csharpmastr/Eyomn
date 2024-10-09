@@ -1,4 +1,4 @@
-const { addProduct } = require("../Service/inventoryService");
+const { addProduct, getProducts } = require("../Service/inventoryService");
 
 const addProductHandler = async (req, res) => {
   try {
@@ -20,4 +20,22 @@ const addProductHandler = async (req, res) => {
   }
 };
 
-module.exports = { addProductHandler };
+const getProductsHandler = async (req, res) => {
+  try {
+    const { branchId } = req.query;
+    if (!branchId) {
+      return res.status(400).json({ message: "No Branch ID provided" });
+    }
+
+    const products = await getProducts(branchId);
+
+    return res.status(200).json(products);
+  } catch (error) {
+    console.error("Error getting products: ", error);
+    res
+      .status(500)
+      .json({ message: "Error getting products.", error: error.message });
+  }
+};
+
+module.exports = { addProductHandler, getProductsHandler };
