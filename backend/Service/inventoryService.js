@@ -1,13 +1,18 @@
 const { v4: uuid } = require("uuid");
 const { inventoryCollection } = require("../Config/FirebaseConfig");
-const { encryptDocument } = require("../Helper/Helper");
+const { encryptDocument, removeNullValues } = require("../Helper/Helper");
 
 const addProduct = async (branchId, productDetails) => {
   try {
     const productId = uuid();
 
     const inventoryRef = inventoryCollection;
-    const productRef = inventoryRef.doc(productId);
+    const productRef = inventoryRef
+      .doc(branchId)
+      .collection("products")
+      .doc(productId);
+    productDetails = removeNullValues(productDetails);
+    console.log(productDetails);
 
     const encryptedProduct = encryptDocument(productDetails, [
       "quantity",
@@ -15,7 +20,7 @@ const addProduct = async (branchId, productDetails) => {
       "expirationDate",
     ]);
 
-    await productRef.set({ ...encryptDocument, productId });
+    await productRef.set({ ...encryptedProduct, productId });
     return productId;
   } catch (error) {
     console.error("Error adding product:", error);

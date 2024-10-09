@@ -1,4 +1,4 @@
-import { addProduct } from "../Service/inventoryService";
+const { addProduct } = require("../Service/inventoryService");
 
 const addProductHandler = async (req, res) => {
   try {
@@ -11,7 +11,7 @@ const addProductHandler = async (req, res) => {
     const patientId = await addProduct(branchId, productDetails);
     return res
       .status(200)
-      .json({ message: "Patient added successfully", patientId: patientId });
+      .json({ message: "Product added successfully", productId: patientId });
   } catch (error) {
     console.error("Error adding product: ", error);
     res
@@ -20,6 +20,4 @@ const addProductHandler = async (req, res) => {
   }
 };
 
-module.exports = {
-  addProductHandler,
-};
+module.exports = { addProductHandler };

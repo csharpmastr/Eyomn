@@ -217,6 +217,12 @@ const getVisit = async (patientId, doctorId) => {
   }
 };
 
+const removeNullValues = (obj) => {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([key, value]) => value !== null && value !== "")
+  );
+};
+
 module.exports = {
   getOrganizationName,
   getPatients,
@@ -226,4 +232,5 @@ module.exports = {
   getBranchDoctors,
   addVisit,
   getVisit,
+  removeNullValues,
 };
