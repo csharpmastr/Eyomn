@@ -41,13 +41,16 @@ const Scribe = () => {
 
   useEffect(() => {
     const storedPatientId = sessionStorage.getItem("currentPatientId");
+    const storedLocation = sessionStorage.getItem("currentPath");
     if (storedPatientId) {
-      if (!currentPath.startsWith("/scribe/")) {
-        setHasSelected(true);
+      setHasSelected(true);
+      if (storedLocation.includes("new-record")) {
+        navigate(`/scribe/new-record/${storedPatientId}`);
+      } else {
         navigate(`/scribe/${storedPatientId}`);
       }
     }
-  }, [navigate]);
+  }, []);
 
   const handleClickPatient = (id) => {
     const clickedPatient = patients.find((patient) => patient.patientId === id);

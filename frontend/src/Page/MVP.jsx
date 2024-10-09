@@ -9,10 +9,8 @@ import Cookies from "universal-cookie";
 
 const MVP = () => {
   const { fetchData } = useFetchData();
-
   const location = useLocation();
   const currentPath = location.pathname;
-
   const [hasFetched, setHasFetched] = useState(false);
 
   const tabMapping = {
@@ -38,6 +36,7 @@ const MVP = () => {
 
   if (!currentPath.startsWith("/scribe")) {
     sessionStorage.removeItem("currentPatientId");
+    sessionStorage.removeItem("currentPath");
   }
 
   useEffect(() => {

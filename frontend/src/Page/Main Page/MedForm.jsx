@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const MedForm = () => {
   const [medformData, setMedformData] = useState({
@@ -181,6 +182,10 @@ const MedForm = () => {
       stereopsis: "",
     },
   });
+  const { patiendId } = useParams();
+  useEffect(() => {
+    sessionStorage.setItem("currentPath", location.pathname);
+  }, []);
   const handleChange = (e, nestedPath) => {
     const { type, checked, value } = e.target;
 
@@ -212,6 +217,7 @@ const MedForm = () => {
 
   const handleSubmit = () => {
     console.log(medformData);
+    console.log(patiendId);
   };
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
@@ -228,7 +234,7 @@ const MedForm = () => {
   };
 
   return (
-    <div className="w-full p-2 md:p-8 flex flex-col-reverse lg:flex-row bg-bg-mc gap-8 font-Poppins">
+    <div className="w-full p-2 md:p-8 flex flex-col-reverse lg:flex-row bg-bg-mc gap-8">
       <div className="w-full lg:w-[calc(100%-288px)]">
         <form onSubmit={handleSubmit}>
           {currentCardIndex === 0 && (
@@ -718,15 +724,15 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name="corneal_reflex_test_od" // Corrected name for grouping
+                            name="corneal_reflex_test_od"
                             value="present"
-                            checked={medformData.corneal_reflex_test.od.present} // Reflect current state
+                            checked={medformData.corneal_reflex_test.od.present}
                             onChange={() =>
                               setMedformData((prevData) => ({
                                 ...prevData,
                                 corneal_reflex_test: {
                                   ...prevData.corneal_reflex_test,
-                                  od: { present: true, absent: false }, // Update state
+                                  od: { present: true, absent: false },
                                 },
                               }))
                             }
@@ -739,15 +745,15 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name="corneal_reflex_test_od" // Corrected name for grouping
+                            name="corneal_reflex_test_od"
                             value="absent"
-                            checked={medformData.corneal_reflex_test.od.absent} // Reflect current state
+                            checked={medformData.corneal_reflex_test.od.absent}
                             onChange={() =>
                               setMedformData((prevData) => ({
                                 ...prevData,
                                 corneal_reflex_test: {
                                   ...prevData.corneal_reflex_test,
-                                  od: { present: false, absent: true }, // Update state
+                                  od: { present: false, absent: true },
                                 },
                               }))
                             }
@@ -765,15 +771,15 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name="corneal_reflex_test_os" // Corrected name for grouping
+                            name="corneal_reflex_test_os"
                             value="present"
-                            checked={medformData.corneal_reflex_test.os.present} // Reflect current state
+                            checked={medformData.corneal_reflex_test.os.present}
                             onChange={() =>
                               setMedformData((prevData) => ({
                                 ...prevData,
                                 corneal_reflex_test: {
                                   ...prevData.corneal_reflex_test,
-                                  os: { present: true, absent: false }, // Update state
+                                  os: { present: true, absent: false },
                                 },
                               }))
                             }
@@ -786,15 +792,15 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name="corneal_reflex_test_os" // Corrected name for grouping
+                            name="corneal_reflex_test_os"
                             value="absent"
-                            checked={medformData.corneal_reflex_test.os.absent} // Reflect current state
+                            checked={medformData.corneal_reflex_test.os.absent}
                             onChange={() =>
                               setMedformData((prevData) => ({
                                 ...prevData,
                                 corneal_reflex_test: {
                                   ...prevData.corneal_reflex_test,
-                                  os: { present: false, absent: true }, // Update state
+                                  os: { present: false, absent: true },
                                 },
                               }))
                             }
@@ -879,7 +885,7 @@ const MedForm = () => {
                               ...prevData,
                               dominant_EH: {
                                 ...prevData.dominant_EH,
-                                dominant_hand: { left: true, right: false }, // Correctly updates the state
+                                dominant_hand: { left: true, right: false },
                               },
                             }))
                           }
@@ -900,7 +906,7 @@ const MedForm = () => {
                               ...prevData,
                               dominant_EH: {
                                 ...prevData.dominant_EH,
-                                dominant_hand: { left: false, right: true }, // Correctly updates the state
+                                dominant_hand: { left: false, right: true },
                               },
                             }))
                           }
