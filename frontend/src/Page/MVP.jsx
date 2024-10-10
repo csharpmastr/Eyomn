@@ -11,7 +11,8 @@ const MVP = () => {
   const { fetchData } = useFetchData();
   const location = useLocation();
   const currentPath = location.pathname;
-  const [hasFetched, setHasFetched] = useState(false);
+  const hasFetched = localStorage.getItem("hasFetched");
+  const [isFetched, setIsFetched] = useState(hasFetched === "true");
 
   const tabMapping = {
     "/dashboard": "Dashboard",
@@ -40,11 +41,13 @@ const MVP = () => {
   }
 
   useEffect(() => {
-    if (!hasFetched) {
+    if (!isFetched) {
+      console.log("Testing");
       fetchData();
-      setHasFetched(true);
+      setIsFetched(true);
+      localStorage.setItem("hasFetched", true);
     }
-  }, [hasFetched]);
+  }, [isFetched, fetchData]);
 
   const currentTab = getCurrentTab();
 

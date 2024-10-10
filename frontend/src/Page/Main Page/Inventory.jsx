@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoMdSearch } from "react-icons/io";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import InventoryTable from "../../Component/ui/InventoryTable";
 import AddEditProduct from "../../Component/ui/AddEditProduct";
+import { getProducts } from "../../Service/InventoryService";
+import { useSelector } from "react-redux";
+import Cookies from "universal-cookie";
 
 const Inventory = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
