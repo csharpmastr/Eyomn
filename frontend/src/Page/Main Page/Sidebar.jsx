@@ -453,14 +453,14 @@ const SideBar = () => {
 
           <NavLink
             className={` flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-              selected === "setting"
+              selected === "profile"
                 ? "xl:bg-c-primary text-f-light font-semibold "
                 : "text-f-dark font-medium"
             }${
               isCollapsed ? "xl:px-2 py-2 justify-center" : "xl:py-3 xl:px-4 "
             }`}
-            //onClick={() => setSelected("setting")}
-            //to="setting"
+            onClick={() => setSelected("profile")}
+            to="profile"
           >
             <FaRegStickyNote
               className={`${
@@ -469,7 +469,7 @@ const SideBar = () => {
                   : " h-[26px] w-[26px] xl:mr-3"
               }`}
             />
-            {!isCollapsed && <span className="ml-2">Settings</span>}
+            {!isCollapsed && <span className="ml-2">Profile</span>}
           </NavLink>
           <NavLink
             className={` flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
@@ -479,8 +479,8 @@ const SideBar = () => {
             }${
               isCollapsed ? "xl:px-2 py-2 justify-center" : "xl:py-3 xl:px-4 "
             }`}
-            //onClick={() => setSelected("help")}
-            //to="help"
+            onClick={() => setSelected("help")}
+            to="help"
           >
             <FaRegStickyNote
               className={`${
@@ -489,7 +489,7 @@ const SideBar = () => {
                   : " h-[26px] w-[26px] xl:mr-3"
               }`}
             />
-            {!isCollapsed && <span className="ml-2">Help</span>}
+            {!isCollapsed && <span className="ml-2">Help Center</span>}
           </NavLink>
         </div>
         <NavLink

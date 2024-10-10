@@ -180,7 +180,9 @@ const MedForm = () => {
       },
       stereopsis: "",
     },
+    additional_note: "",
   });
+
   const handleChange = (e, nestedPath) => {
     const { type, checked, value } = e.target;
 
@@ -1862,6 +1864,21 @@ const MedForm = () => {
                     <option value="40 Arc Seconds">40 Arc Seconds</option>
                     <option value="-">-</option>
                   </select>
+                </div>
+              </section>
+              <section className="p-2 md:p-6 bg-white rounded-lg border border-f-gray mb-6">
+                <label className="text-p-lg font-semibold text-c-secondary">
+                  | Additional Notes
+                </label>
+                <div className="mt-6">
+                  <textarea
+                    type="text"
+                    name="additional_note"
+                    value={medformData.additional_note}
+                    onChange={(e) => handleChange(e, "additional_note")}
+                    className="mt-1 w-full px-4 py-3 h-52 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                    placeholder="Enter additional notes"
+                  />
                 </div>
               </section>
             </div>
