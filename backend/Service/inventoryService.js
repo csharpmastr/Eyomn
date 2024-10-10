@@ -81,9 +81,33 @@ const deleteProduct = async (branchId, productId) => {
     throw error;
   }
 };
+const updateProduct = async (branchId, productId, productDetails) => {
+  try {
+    const productRef = inventoryCollection
+      .doc(branchId)
+      .collection("products")
+      .doc(productId);
+
+    const docSnapshot = await productRef.get();
+    if (!docSnapshot.exists) {
+      throw new Error("Document does not exist");
+    }
+    const encryptedProductDetails = encryptDocument(productDetails, [
+      "price",
+      "quantity",
+      "expirationDate",
+    ]);
+
+    await productRef.update(encryptedProductDetails);
+  } catch (error) {
+    console.error("Error deleting product: ", error);
+    throw error;
+  }
+};
 
 module.exports = {
   addProduct,
   getProducts,
   deleteProduct,
+  updateProduct,
 };
