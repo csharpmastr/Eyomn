@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import { addProduct } from "../../Service/InventoryService";
-import { useSelector } from "react-redux";
+import { addProductService } from "../../Service/InventoryService";
+import { useDispatch, useSelector } from "react-redux";
 import Cookies from "universal-cookie";
 import Loader from "./Loader";
 import SuccessModal from "./SuccessModal";
-
+import { addProduct } from "../../Slice/ProductSlice";
 const AddEditProduct = ({ onClose }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const user = useSelector((state) => state.reducer.user.user);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const reduxDispatch = useDispatch();
   const cookies = new Cookies();
   const accessToken = cookies.get("accessToken");
   const refreshToken = cookies.get("refreshToken");
@@ -26,6 +27,7 @@ const AddEditProduct = ({ onClose }) => {
     // Eye Glasses
     len_type: "",
     color_material: "",
+    eyeglass_category: "",
 
     // Medication
     prescrip_otc: "",
@@ -39,6 +41,14 @@ const AddEditProduct = ({ onClose }) => {
     // Other Product
     other_description: "",
   });
+  const cleanFormData = (data) => {
+    return Object.fromEntries(
+      Object.entries(data).filter(
+        ([key, value]) => value !== "" && value !== null
+      )
+    );
+  };
+
   const getMinDate = () => {
     const today = new Date();
     const nextYear = new Date(today);
@@ -199,14 +209,20 @@ const AddEditProduct = ({ onClose }) => {
   const handleAddProduct = async () => {
     setIsLoading(true);
     try {
-      const response = await addProduct(
+      const cleanedData = cleanFormData(formData);
+
+      const response = await addProductService(
         user.branchId,
-        formData,
+        cleanedData,
         accessToken,
         refreshToken
       );
+      console.log(response);
+
       if (response) {
         setIsSuccess(true);
+        const productId = response.productId;
+        reduxDispatch(addProduct({ ...cleanedData, productId: productId }));
       }
     } catch (error) {
       setIsSuccess(false);
@@ -305,8 +321,8 @@ const AddEditProduct = ({ onClose }) => {
                           <option value="" disabled className="text-c-gray3">
                             Select Eye Glass Category
                           </option>
-                          <option value="graded">Graded</option>
-                          <option value="not_graded">Not Graded</option>
+                          <option value="Graded">Graded</option>
+                          <option value="Non Graded">Non Graded</option>
                         </select>
                       </section>
                       <section>
@@ -694,7 +710,7 @@ const AddEditProduct = ({ onClose }) => {
           onClose();
         }}
         title="Adding Success"
-        description="The branch has been registered in the system."
+        description="The product has been added in the system."
       />
     </>,
     document.body
