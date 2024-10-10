@@ -217,7 +217,6 @@ const AddEditProduct = ({ onClose }) => {
         accessToken,
         refreshToken
       );
-      console.log(response);
 
       if (response) {
         setIsSuccess(true);
