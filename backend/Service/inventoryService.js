@@ -64,7 +64,26 @@ const getProducts = async (branchId) => {
   }
 };
 
+const deleteProduct = async (branchId, productId) => {
+  try {
+    const productRef = inventoryCollection
+      .doc(branchId)
+      .collection("products")
+      .doc(productId);
+
+    const docSnapshot = await productRef.get();
+    if (!docSnapshot.exists) {
+      throw new Error("Document does not exist");
+    }
+    await productRef.delete();
+  } catch (error) {
+    console.error("Error deleting product: ", error);
+    throw error;
+  }
+};
+
 module.exports = {
   addProduct,
   getProducts,
+  deleteProduct,
 };
