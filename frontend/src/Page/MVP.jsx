@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import SideBar from "./Main Page/SideBar";
+import SideBar from "./Main Page/Sidebar";
 import { Outlet } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { WebSocketProvider } from "../Context/WebSocketContext";
@@ -24,6 +24,8 @@ const MVP = () => {
     "/add-patient": "Add Patient",
     "/appointment": "Appointment",
     "/inventory": "Inventory",
+    "/help": "Help Center",
+    "/profile": "Profile",
   };
 
   const getCurrentTab = () => {

@@ -13,6 +13,8 @@ import Patient from "./Page/Main Page/Patient";
 import ScanFundus from "./Page/Main Page/Scan/ScanFundus";
 import Appointment from "./Page/Main Page/Appointment";
 import Inventory from "./Page/Main Page/Inventory";
+import HelpCenter from "./Page/Main Page/HelpCenter";
+import UserProfile from "./Page/Main Page/UserProfile";
 import { useContext } from "react";
 import { AuthContext, AuthContextProvider } from "./Context/AuthContext";
 import ScribePatient from "./Page/Main Page/Scribe/ScribePatient";
@@ -92,6 +94,9 @@ const AppRoutes = () => {
         <Route path="add-patient" element={<StaffAddPatientPage />} />
         <Route path="appointment" element={<Appointment />} />
         <Route path="inventory" element={<Inventory />} />
+        <Route path="profile" element={<UserProfile />} />
+        <Route path="/help/:section" element={<HelpCenter />} />
+        <Route path="/help" element={<HelpCenter />} />
       </Route>
     </Routes>
   );
