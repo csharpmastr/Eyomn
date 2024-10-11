@@ -4,16 +4,30 @@ import Select from "react-select";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import PhList from "../../assets/Data/location_list.json";
+import Loader from "./Loader";
+import { addBranchService } from "../../Service/OrganizationService";
+import { useDispatch, useSelector } from "react-redux";
+import Cookies from "universal-cookie";
+import SuccessModal from "./SuccessModal";
+import { addBranch } from "../../Slice/BranchSlice";
 
 const AddBranchModal = ({ onClose }) => {
   const [selectedProvince, setSelectedProvince] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const reduxDispatch = useDispatch();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const cookies = new Cookies();
+  const accessToken = cookies.get("accessToken");
+  const refreshToken = cookies.get("refreshToken");
+  const user = useSelector((state) => state.reducer.user.user);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
   const [repeatPass, setRepeatPass] = useState("");
   const [passVisible, setPassVisible] = useState(false);
   const [cpVisible, setCpVisible] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    branch_name: "",
+    name: "",
     province: "",
     municipality: "",
     email: "",
@@ -109,180 +123,221 @@ const AddBranchModal = ({ onClose }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  return ReactDOM.createPortal(
-    <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-      <div className="w-[600px]">
-        <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-          <h1 className="text-p-lg text-c-secondary font-semibold">
-            Add Branch
-          </h1>
-          <button onClick={onClose}> &times; </button>
-        </header>
-        <div className="py-6 px-6 h-[500px] bg-white overflow-y-scroll">
-          <div>
-            <header>
-              <h1 className="text-p-rg font-medium text-c-secondary mb-4">
-                | Branch Details
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    try {
+      const response = await addBranchService(
+        formData,
+        user.userId,
+        accessToken,
+        refreshToken
+      );
+
+      if (response) {
+        setIsSuccess(true);
+        const { branchId } = response;
+        reduxDispatch(addBranch({ branchId, ...formData }));
+      }
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
+          <div className="w-[600px]">
+            <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
+              <h1 className="text-p-lg text-c-secondary font-semibold">
+                Add Branch
               </h1>
+              <button onClick={onClose}> &times; </button>
             </header>
-            <section>
-              <label
-                htmlFor="branch_name"
-                className="text-p-sm text-c-gray3 font-medium"
+            <div className="py-6 px-6 h-[500px] bg-white overflow-y-scroll">
+              <div>
+                <header>
+                  <h1 className="text-p-rg font-medium text-c-secondary mb-4">
+                    | Branch Details
+                  </h1>
+                </header>
+                <section>
+                  <label
+                    htmlFor="branch_name"
+                    className="text-p-sm text-c-gray3 font-medium"
+                  >
+                    Branch Name:{" "}
+                    <span className="text-red-400">
+                      {(formData.branch_name === "" || errors.branch_name) &&
+                        errors.branch_name}
+                    </span>
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="mt-1 mb-6 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                    placeholder="Enter branch name"
+                  />
+                </section>
+                <div className="flex gap-4 mb-8">
+                  <div className="w-1/2">
+                    <label
+                      htmlFor="province"
+                      className="text-p-sm text-c-gray3 font-medium"
+                    >
+                      Province
+                    </label>
+                    <Select
+                      id="province"
+                      value={selectedProvince}
+                      onChange={handleProvinceChange}
+                      options={provinceOptions}
+                      placeholder="Select Province"
+                    />
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      htmlFor="municipality"
+                      className="text-p-sm text-c-gray3 font-medium"
+                    >
+                      Municipality
+                    </label>
+                    <Select
+                      id="municipality"
+                      name="municipality"
+                      options={municipalities}
+                      value={selectedMunicipality}
+                      onChange={handleMunicipalityChange}
+                      placeholder="Select Municipality"
+                      isDisabled={!selectedProvince}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <header>
+                    <h1 className="text-p-rg font-medium text-c-secondary mb-4">
+                      | Login Credentials
+                    </h1>
+                  </header>
+                  <section>
+                    <label
+                      htmlFor="email"
+                      className="text-p-sm text-c-gray3 font-medium"
+                    >
+                      Email Address:{" "}
+                      <span className="text-red-400">
+                        {(formData.email === "" || errors.email) &&
+                          errors.email}
+                      </span>
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                      placeholder="Enter email"
+                    />
+                  </section>
+                  <section>
+                    <label
+                      htmlFor="password"
+                      className="text-p-sm text-c-gray3 font-medium"
+                    >
+                      Password:{" "}
+                      <span className="text-red-400">
+                        {(formData.password === "" || errors.password) &&
+                          errors.password}
+                      </span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={passVisible ? "text" : "password"}
+                        name="password"
+                        onChange={handleChange}
+                        className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                        placeholder="Enter password"
+                      />
+                      <button
+                        type="button"
+                        className="absolute top-4 right-2 text-[#999999]"
+                        onClick={() => setPassVisible(!passVisible)}
+                      >
+                        {passVisible ? (
+                          <MdOutlineRemoveRedEye className="w-6 h-6" />
+                        ) : (
+                          <FaRegEyeSlash className="w-6 h-6" />
+                        )}
+                      </button>
+                    </div>
+                  </section>
+                  <section>
+                    <label
+                      htmlFor="confirmpassword"
+                      className="text-p-sm text-c-gray3 font-medium"
+                    >
+                      Confirm Password:{" "}
+                      <span className="text-red-400">
+                        {(repeatPass === "" || errors.confirmpassword) &&
+                          errors.confirmpassword}
+                      </span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={cpVisible ? "text" : "password"}
+                        name="confirmpassword"
+                        onChange={handleChange}
+                        className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                        placeholder="Confirm password"
+                      />
+                      <button
+                        type="button"
+                        className="absolute top-4 right-2 text-[#999999]"
+                        onClick={() => setCpVisible(!cpVisible)}
+                      >
+                        {cpVisible ? (
+                          <MdOutlineRemoveRedEye className="w-6 h-6" />
+                        ) : (
+                          <FaRegEyeSlash className="w-6 h-6" />
+                        )}
+                      </button>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </div>
+            <footer className="border border-t-f-gray bg-white rounded-b-lg flex gap-2 justify-end py-6 px-4">
+              <button
+                className="w-28 h-12 text-f-dark text-p-rg font-semibold"
+                onClick={onClose}
               >
-                Branch Name:{" "}
-                <span className="text-red-400">
-                  {(formData.branch_name === "" || errors.branch_name) &&
-                    errors.branch_name}
-                </span>
-              </label>
-              <input
-                type="text"
-                name="branch_name"
-                className="mt-1 mb-6 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                placeholder="Enter branch name"
-              />
-            </section>
-            <div className="flex gap-4 mb-8">
-              <div className="w-1/2">
-                <label
-                  htmlFor="province"
-                  className="text-p-sm text-c-gray3 font-medium"
-                >
-                  Province
-                </label>
-                <Select
-                  id="province"
-                  value={selectedProvince}
-                  onChange={handleProvinceChange}
-                  options={provinceOptions}
-                  placeholder="Select Province"
-                />
-              </div>
-              <div className="w-1/2">
-                <label
-                  htmlFor="municipality"
-                  className="text-p-sm text-c-gray3 font-medium"
-                >
-                  Municipality
-                </label>
-                <Select
-                  id="municipality"
-                  name="municipality"
-                  options={municipalities}
-                  value={selectedMunicipality}
-                  onChange={handleMunicipalityChange}
-                  placeholder="Select Municipality"
-                  isDisabled={!selectedProvince}
-                />
-              </div>
-            </div>
-            <div>
-              <header>
-                <h1 className="text-p-rg font-medium text-c-secondary mb-4">
-                  | Login Credentials
-                </h1>
-              </header>
-              <section>
-                <label
-                  htmlFor="email"
-                  className="text-p-sm text-c-gray3 font-medium"
-                >
-                  Email Address:{" "}
-                  <span className="text-red-400">
-                    {(formData.email === "" || errors.email) && errors.email}
-                  </span>
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                  placeholder="Enter email"
-                />
-              </section>
-              <section>
-                <label
-                  htmlFor="password"
-                  className="text-p-sm text-c-gray3 font-medium"
-                >
-                  Password:{" "}
-                  <span className="text-red-400">
-                    {(formData.password === "" || errors.password) &&
-                      errors.password}
-                  </span>
-                </label>
-                <div className="relative">
-                  <input
-                    type={passVisible ? "text" : "password"}
-                    name="password"
-                    onChange={handleChange}
-                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                    placeholder="Enter password"
-                  />
-                  <button
-                    type="button"
-                    className="absolute top-4 right-2 text-[#999999]"
-                    onClick={() => setPassVisible(!passVisible)}
-                  >
-                    {passVisible ? (
-                      <MdOutlineRemoveRedEye className="w-6 h-6" />
-                    ) : (
-                      <FaRegEyeSlash className="w-6 h-6" />
-                    )}
-                  </button>
-                </div>
-              </section>
-              <section>
-                <label
-                  htmlFor="confirmpassword"
-                  className="text-p-sm text-c-gray3 font-medium"
-                >
-                  Confirm Password:{" "}
-                  <span className="text-red-400">
-                    {(repeatPass === "" || errors.confirmpassword) &&
-                      errors.confirmpassword}
-                  </span>
-                </label>
-                <div className="relative">
-                  <input
-                    type={cpVisible ? "text" : "password"}
-                    name="confirmpassword"
-                    onChange={handleChange}
-                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                    placeholder="Confirm password"
-                  />
-                  <button
-                    type="button"
-                    className="absolute top-4 right-2 text-[#999999]"
-                    onClick={() => setCpVisible(!cpVisible)}
-                  >
-                    {cpVisible ? (
-                      <MdOutlineRemoveRedEye className="w-6 h-6" />
-                    ) : (
-                      <FaRegEyeSlash className="w-6 h-6" />
-                    )}
-                  </button>
-                </div>
-              </section>
-            </div>
+                Cancel
+              </button>
+              <button
+                className="w-28 h-12 bg-[#3B7CF9] text-f-light text-p-rg font-semibold rounded-md hover:bg-[#77a0ec] active:bg-bg-[#2c4c86]"
+                onClick={handleSubmit}
+              >
+                Save
+              </button>
+            </footer>
           </div>
         </div>
-        <footer className="border border-t-f-gray bg-white rounded-b-lg flex gap-2 justify-end py-6 px-4">
-          <button
-            className="w-28 h-12 text-f-dark text-p-rg font-semibold"
-            onClick={onClose}
-          >
-            Cancel
-          </button>
-          <button className="w-28 h-12 bg-[#3B7CF9] text-f-light text-p-rg font-semibold rounded-md hover:bg-[#77a0ec] active:bg-bg-[#2c4c86]">
-            Save
-          </button>
-        </footer>
-      </div>
-    </div>,
-    document.body
+      )}
+      <SuccessModal
+        isOpen={isSuccess}
+        onClose={() => {
+          setIsSuccess(false);
+          onClose();
+        }}
+        title="Adding Success"
+        description="The branch has been registered in the system."
+      />
+    </>
   );
 };
 

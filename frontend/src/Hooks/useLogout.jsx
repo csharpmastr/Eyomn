@@ -23,7 +23,7 @@ export const useLogout = () => {
     try {
       dispatch({ type: "LOGOUT" });
       sessionStorage.removeItem("selectedTab");
-
+      localStorage.removeItem("hasFetched");
       cookies.remove("accessToken", { path: "/" });
       cookies.remove("refreshToken", { path: "/" });
 
@@ -32,6 +32,7 @@ export const useLogout = () => {
       reduxDispatch(clearStaffs());
       reduxDispatch(removeUser());
       reduxDispatch(clearBranch());
+
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred during logout.");

@@ -73,6 +73,7 @@ const StaffAddPatientPage = () => {
       const res = await addPatientHook(formData, selectedDoctor.staffId);
       if (res) {
         setIsSuccess(true);
+
         handleClear();
         setSelectedDoctor(null);
       }

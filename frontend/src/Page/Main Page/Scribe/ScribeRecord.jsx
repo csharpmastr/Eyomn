@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const ScribeRecord = () => {
   const { patientId } = useParams();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const patients = useSelector((state) => state.reducer.patient.patients);
   const [currentPatient, setCurrentPatient] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Dummy records data for display
   const medicalRecords = [
     { id: 1, name: "Medical Scribe Record 1", date: "2024-01-01" },
     { id: 2, name: "Medical Scribe Record 2", date: "2024-01-02" },
@@ -31,8 +32,12 @@ const ScribeRecord = () => {
       setCurrentCardIndex(currentCardIndex - 1);
     }
   };
+  const handleNewRecord = () => {
+    navigate(`/scribe/new-record/${patientId}`);
+  };
 
   useEffect(() => {
+    sessionStorage.setItem("currentPath", location.pathname);
     if (patients.length > 0) {
       const patient = patients.find((p) => p.patientId === patientId);
       setCurrentPatient(patient);
@@ -50,7 +55,7 @@ const ScribeRecord = () => {
           </h1>
           <div
             className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
-            //onClick={openAddPatient}
+            onClick={handleNewRecord}
           >
             <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
             <h1 className="hidden md:block">Create New Note</h1>

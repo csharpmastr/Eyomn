@@ -20,9 +20,11 @@ const addStaffHandler = async (req, res) => {
       });
     }
 
-    await addStaff(organizationId, branchId, staffData);
+    const staffId = await addStaff(organizationId, branchId, staffData);
 
-    return res.status(200).json({ message: "Staff added successfully" });
+    return res
+      .status(200)
+      .json({ message: "Staff added successfully", staffId: staffId });
   } catch (error) {
     if (error instanceof EmailAlreadyExistsError) {
       return res.status(400).json({ message: error.message });

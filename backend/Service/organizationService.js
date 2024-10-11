@@ -68,6 +68,7 @@ const addStaff = async (organizationId, branchId, staffData) => {
     await branchRef.update({
       staffs: admin.firestore.FieldValue.arrayUnion(staffId),
     });
+    return staffId;
   } catch (err) {
     console.error("Error adding staff: ", err);
     throw err;

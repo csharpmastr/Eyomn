@@ -9,11 +9,10 @@ import Cookies from "universal-cookie";
 
 const MVP = () => {
   const { fetchData } = useFetchData();
-
   const location = useLocation();
   const currentPath = location.pathname;
-
-  const [hasFetched, setHasFetched] = useState(false);
+  const hasFetched = localStorage.getItem("hasFetched");
+  const [isFetched, setIsFetched] = useState(hasFetched === "true");
 
   const tabMapping = {
     "/dashboard": "Dashboard",
@@ -40,14 +39,17 @@ const MVP = () => {
 
   if (!currentPath.startsWith("/scribe")) {
     sessionStorage.removeItem("currentPatientId");
+    sessionStorage.removeItem("currentPath");
   }
 
   useEffect(() => {
-    if (!hasFetched) {
+    if (!isFetched) {
+      console.log("Testing");
       fetchData();
-      setHasFetched(true);
+      setIsFetched(true);
+      localStorage.setItem("hasFetched", true);
     }
-  }, [hasFetched]);
+  }, [isFetched, fetchData]);
 
   const currentTab = getCurrentTab();
 
