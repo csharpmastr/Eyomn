@@ -35,7 +35,7 @@ const UserProfile = () => {
   return (
     <div className="text-f-dark p-3 md:p-8 font-Poppin h-full flex flex-col gap-8">
       <header className="w-full h-fit flex justify-between items-center">
-        <h1 className="text-p-lg font-semibold">Santa Cruz Branch</h1>
+        <h1 className="text-p-lg font-medium">Santa Cruz Branch</h1>
         <div
           className="h-fit flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
           onClick={edit}
@@ -51,7 +51,7 @@ const UserProfile = () => {
             alt="Profile Image"
           />
           <div>
-            <h1 className="text-p-lg font-medium">Modest Mouse</h1>
+            <h1 className="text-p-lg font-semibold">Modest Mouse</h1>
             <h3 className="text-p-rg text-f-gray">Optometrist</h3>
             <h3 className="text-p-rg text-f-gray">Pila Laguna, Philippines</h3>
           </div>

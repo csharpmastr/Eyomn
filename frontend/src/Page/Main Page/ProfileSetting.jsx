@@ -14,10 +14,10 @@ const ProfileSetting = () => {
   };
 
   return (
-    <div className="text-f-dark p-3 md:p-8 font-Poppins flex gap-10">
+    <div className="text-f-dark h-full p-3 md:p-8 font-Poppins flex gap-10">
       <nav className="w-1/5 flex flex-col gap-10">
         <div
-          className="flex w-fit h-fit items-center rounded-md text-f-dark font-md"
+          className="flex w-fit items-center rounded-md text-f-dark font-md"
           onClick={() => navigate(`/profile`)}
         >
           <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
@@ -42,7 +42,7 @@ const ProfileSetting = () => {
           </div>
         </div>
       </nav>
-      <aside className="w-4/5 h-full overflow-y-scroll bg-red-200">
+      <aside className="w-4/5 overflow-y-scroll">
         {selected && <ProfileSettingSection selected={selected} />}
       </aside>
     </div>
