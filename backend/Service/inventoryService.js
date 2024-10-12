@@ -82,6 +82,7 @@ const getProducts = async (branchId) => {
         "product",
         "productId",
         "expirationDate",
+        "productSKU",
         "price",
         "quantity",
       ]);
