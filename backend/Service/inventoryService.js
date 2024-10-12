@@ -5,18 +5,39 @@ const {
   removeNullValues,
   decryptDocument,
 } = require("../Helper/Helper");
+const { decryptData } = require("../Security/DataHashing");
 
 const addProduct = async (branchId, productDetails) => {
   try {
-    const productId = uuid();
-
-    const inventoryRef = inventoryCollection;
-    const productRef = inventoryRef
-      .doc(branchId)
-      .collection("products")
-      .doc(productId);
-    productDetails = removeNullValues(productDetails);
     console.log(productDetails);
+    const inventoryRef = inventoryCollection;
+    const productsCollectionRef = inventoryRef
+      .doc(branchId)
+      .collection("products");
+
+    const querySnapshot = await productsCollectionRef.get();
+
+    let productExists = false;
+    querySnapshot.forEach((doc) => {
+      const productData = doc.data();
+
+      // Check if product_name exists and is not undefined or null
+      if (productData.product_name) {
+        const decryptedProductName = decryptData(productData.product_name);
+
+        if (decryptedProductName === productDetails.product_name) {
+          productExists = true;
+        }
+      }
+    });
+
+    if (productExists) {
+      throw { status: 400, message: "The product already exists." };
+    }
+
+    const productId = uuid();
+    const productRef = productsCollectionRef.doc(productId);
+    productDetails = removeNullValues(productDetails);
 
     const encryptedProduct = encryptDocument(productDetails, [
       "quantity",

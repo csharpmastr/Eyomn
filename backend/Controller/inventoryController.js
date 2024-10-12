@@ -9,17 +9,24 @@ const addProductHandler = async (req, res) => {
   try {
     const branchId = req.params.branchId;
     const productDetails = req.body;
+
     if (!branchId) {
       return res.status(400).json({ message: "No Branch ID provided." });
     }
 
     const productId = await addProduct(branchId, productDetails);
-    return res
-      .status(200)
-      .json({ message: "Product added successfully", productId: productId });
+    return res.status(200).json({
+      message: "Product added successfully",
+      productId: productId,
+    });
   } catch (error) {
     console.error("Error adding product: ", error);
-    res
+
+    if (error.status === 400) {
+      return res.status(409).json({ message: error.message });
+    }
+
+    return res
       .status(500)
       .json({ message: "Error adding product.", error: error.message });
   }

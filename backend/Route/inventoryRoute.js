@@ -7,8 +7,8 @@ const {
   updateProductHandler,
 } = require("../Controller/inventoryController");
 
-router.post("/add-product/:branchId", addProductHandler);
+router.post("/add/:branchId", addProductHandler);
 router.get("/get-products", getProductsHandler);
-router.delete("/delete-product", deleteProductHandler);
-router.put("/update-product/:branchId/:productId", updateProductHandler);
+router.delete("/delete", deleteProductHandler);
+router.put("/update/:branchId/:productId", updateProductHandler);
 module.exports = router;
