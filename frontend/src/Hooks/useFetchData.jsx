@@ -103,39 +103,32 @@ export const useFetchData = () => {
   const fetchData = async () => {
     try {
       const apiCalls = buildApiCalls();
-
-      const results = await Promise.allSettled(
-        apiCalls.map((apiCall) => apiCall.call())
-      );
-
-      results.forEach((result, index) => {
-        const apiCall = apiCalls[index];
-        if (result.status === "fulfilled") {
+      apiCalls.forEach(async (apiCall) => {
+        try {
+          const result = await apiCall.call();
           switch (apiCall.type) {
             case "patients":
-              reduxDispatch(setPatients(result.value));
+              reduxDispatch(setPatients(result));
               break;
             case "appointments":
-              reduxDispatch(setAppointments(result.value));
+              reduxDispatch(setAppointments(result));
               break;
             case "doctors":
-              reduxDispatch(setDoctor(result.value));
+              reduxDispatch(setDoctor(result));
               break;
             case "products":
-              reduxDispatch(setProducts(result.value));
+              reduxDispatch(setProducts(result));
               break;
             case "branches":
-              reduxDispatch(setBranch(result.value));
-              const staffs = result.value.flatMap(
-                (branch) => branch.staffs || []
-              );
+              reduxDispatch(setBranch(result));
+              const staffs = result.flatMap((branch) => branch.staffs || []);
               reduxDispatch(setStaffs(staffs));
               break;
             default:
               console.error("Unknown API call type: ", apiCall.type);
           }
-        } else {
-          console.error(`Failed to fetch ${apiCall.type}: `, result.reason);
+        } catch (error) {
+          console.error(`Failed to fetch ${apiCall.type}: `, error);
         }
       });
     } catch (error) {
