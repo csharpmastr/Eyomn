@@ -61,12 +61,12 @@ const addSchedule = async (branchId, scheduleDetails) => {
 
     const scheduleData = {
       id: scheduleId,
-      branchId: branchId,
       ...encryptedDetails,
       createdAt: new Date().toISOString(),
     };
 
     await schedRef.doc(scheduleId).set(scheduleData);
+    return scheduleId;
   } catch (error) {
     console.error("Error adding schedule: ", error.message);
     if (error.status) {
@@ -90,7 +90,7 @@ const deleteSchedule = async (branchId, appointmentId) => {
   }
 };
 
-const getAppointment = async (branchId) => {
+const getAppointments = async (branchId) => {
   try {
     let appointments = [];
 
@@ -125,5 +125,5 @@ const getAppointment = async (branchId) => {
 module.exports = {
   addSchedule,
   deleteSchedule,
-  getAppointment,
+  getAppointments,
 };

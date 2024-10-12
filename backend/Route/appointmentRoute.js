@@ -3,9 +3,10 @@ const router = express.Router();
 const {
   addScheduleHandler,
   deleteScheduleHandler,
+  getAppoitmentsHandler,
 } = require("../Controller/appointmentController");
 
 router.post("/add/:branchId", addScheduleHandler);
 router.delete("/delete/:branchId/:appointmentId", deleteScheduleHandler);
-router.put("/update/:appointmentId");
+router.get("/get-appointments", getAppoitmentsHandler);
 module.exports = router;
