@@ -15,6 +15,7 @@ import Appointment from "./Page/Main Page/Appointment";
 import Inventory from "./Page/Main Page/Inventory";
 import HelpCenter from "./Page/Main Page/HelpCenter";
 import UserProfile from "./Page/Main Page/UserProfile";
+import ProfileSetting from "./Page/Main Page/ProfileSetting";
 import { useContext } from "react";
 import { AuthContext, AuthContextProvider } from "./Context/AuthContext";
 import ScribePatient from "./Page/Main Page/Scribe/ScribePatient";
@@ -95,8 +96,10 @@ const AppRoutes = () => {
         <Route path="appointment" element={<Appointment />} />
         <Route path="inventory" element={<Inventory />} />
         <Route path="profile" element={<UserProfile />} />
-        <Route path="/help/:section" element={<HelpCenter />} />
-        <Route path="/help" element={<HelpCenter />} />
+        <Route path="manage-profile/:section" element={<ProfileSetting />} />
+        <Route path="/help" element={<HelpCenter />}>
+          <Route path=":section" element={<HelpCenter />} />
+        </Route>
       </Route>
     </Routes>
   );
