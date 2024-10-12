@@ -14,7 +14,7 @@ const {
 } = require("../Security/DataHashing");
 const { EmailAlreadyExistsError } = require("./UserService");
 const { getStaffs, getPatients, decryptDocument } = require("../Helper/Helper");
-const { getAppointment } = require("./appointmentService");
+const { getAppointments } = require("./appointmentService");
 
 const addStaff = async (organizationId, branchId, staffData) => {
   try {
@@ -211,13 +211,12 @@ const getBranchData = async (organizationId) => {
 
     const branches = [];
 
-    for (const branchId of orgBranches) {
+    const branchPromises = orgBranches.map(async (branchId) => {
       const branchRef = branchCollection.doc(branchId);
       const branchSnap = await branchRef.get();
 
       if (branchSnap.exists) {
         const branchData = branchSnap.data();
-
         const decryptedBranchData = decryptDocument(branchData, [
           "email",
           "patients",
@@ -225,19 +224,20 @@ const getBranchData = async (organizationId) => {
           "branchId",
         ]);
 
-        const staffs = await getStaffs(orgData.id, branchId);
-
-        const appointments = await getAppointment(branchId);
+        const [staffs, appointments] = await Promise.all([
+          getStaffs(orgData.id, branchId),
+          getAppointments(branchId),
+        ]);
 
         decryptedBranchData.staffs = staffs;
-
         decryptedBranchData.appointments = appointments;
 
-        branches.push(decryptedBranchData);
+        return decryptedBranchData;
       }
-    }
+    });
 
-    return branches;
+    const branchData = await Promise.all(branchPromises);
+    return branchData.filter(Boolean);
   } catch (error) {
     console.error("Error fetching branch data:", error);
     return null;

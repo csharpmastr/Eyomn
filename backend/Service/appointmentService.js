@@ -114,7 +114,7 @@ const getAppointments = async (branchId) => {
       ]);
       appointments.push(decrytedSChedule);
     });
-
+    console.log(appointments);
     return appointments;
   } catch (error) {
     console.error("Error fetching appointments:", error);
