@@ -39,7 +39,7 @@ const SideBar = () => {
     <div
       className={`h-auto w-full xl:h-screen z-50 font-Poppins ${
         isCollapsed ? "xl:w-24" : "xl:w-64"
-      } bg-c-primary xl:bg-[#EEF1F1] border-r-2  border-f-gray transition-all duration-300 ease-in-out`}
+      } bg-c-primary xl:bg-[#EEF1F1] border-r-2 border-f-gray transition-all duration-300 ease-in-out`}
     >
       <div className="flex items-center justify-between px-4 md:px-6 lg:px-8">
         {isMenuOpen ? (
@@ -65,31 +65,28 @@ const SideBar = () => {
           onClick={handleCollapseToggle}
         >
           {isCollapsed ? (
-            <GiHamburgerMenu
-              className="text-f-dark mt-5 hidden xl:block "
-              onClick={handleMenuClick}
-            />
+            <GiHamburgerMenu className="text-f-dark mt-5 hidden xl:block " />
           ) : (
-            <IoMdClose
-              className="text-f-dark hidden xl:block"
-              onClick={handleMenuClick}
-            />
+            <IoMdClose className="text-f-dark hidden xl:block" />
           )}
         </button>
       </div>
+
       <div
-        className={`xl:flex xl:flex-col px-4 xl:space-y-3 xl:px-6 xl:pt-10 xl:pb-5 transition-all duration-300 ease-in-out overflow-hidden xl:h-full ${
+        className={`xl:flex xl:flex-col px-4 xl:space-y-3 xl:px-6 xl:pt-10 xl:pb-5 transition-transform duration-300 ease-in-out overflow-hidden xl:h-full ${
           isMenuOpen
-            ? "block max-h-screen bg-[#EEF1F1] fixed xl:static w-full xl:w-auto"
+            ? "translate-x-0 max-h-screen h-full bg-[#EEF1F1] fixed xl:static w-3/4 md:w-1/3 lg:w-1/4 xl:w-auto"
             : "hidden xl:block"
         }`}
       >
         {isCollapsed ? (
           ""
         ) : (
-          <h1 className="ml-5 text-[14px] text-c-gray3 ">MAIN MENU</h1>
+          <h1 className="ml-5 text-[14px] text-c-gray3 mt-5 xl:mt-0">
+            MAIN MENU
+          </h1>
         )}
-        <div className="flex flex-col xl:gap-2 mt-2">
+        <div className="flex flex-col gap-2 xl:gap-2 mt-2">
           {(role === "0" || role === "1") && (
             <>
               <NavLink
@@ -443,7 +440,7 @@ const SideBar = () => {
             </>
           )}
         </div>
-        <div className="flex flex-col xl:gap-2 h-1/2">
+        <div className="flex flex-col xl:gap-2 h-auto">
           <hr className="my-5  border-f-gray" />
           {isCollapsed ? (
             ""
@@ -493,7 +490,7 @@ const SideBar = () => {
           </NavLink>
         </div>
         <NavLink
-          className={` flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
+          className={` flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary mt-5 ${
             isCollapsed ? "xl:px-2 py-2 justify-center" : "xl:py-3 xl:px-4 "
           }`}
           onClick={logout}
