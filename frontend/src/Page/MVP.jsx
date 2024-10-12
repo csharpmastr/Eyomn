@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import SideBar from "./Main Page/Sidebar";
+import TopbarButton from "./Main Page/TopbarButton";
 import { Outlet } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { WebSocketProvider } from "../Context/WebSocketContext";
@@ -58,8 +59,11 @@ const MVP = () => {
       <div className="flex xl:flex-row flex-col h-screen overflow-hidden">
         <SideBar />
         <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="hidden xl:h-20 w-full bg-white font-Poppins text-f-dark border-b-[1px] border-f-gray xl:flex items-center xl:px-8 text-h6 font-medium">
-            {currentTab}
+          <div className="hidden xl:h-20 w-full bg-white font-Poppins text-f-dark border-b border-f-gray xl:flex items-center xl:px-6 text-h6 font-medium justify-between">
+            <h1>{currentTab}</h1>
+            <div className="w-fit h-full flex items-center">
+              <TopbarButton />
+            </div>
           </div>
           <div className="flex-1 overflow-auto bg-bg-mc">
             <Outlet />

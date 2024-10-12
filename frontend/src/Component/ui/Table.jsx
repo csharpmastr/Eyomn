@@ -28,7 +28,7 @@ const Table = ({ data }) => {
         {data.map((patientData, index) => (
           <tr
             key={index}
-            className={`border-b-[1px] border-[#E1E1E1] h-20 text-c-secondary text-p-rg ${
+            className={`border-b border-f-gray h-20 text-c-secondary text-p-rg ${
               index % 2 === 0 ? "bg-bg-mc" : `bg-white`
             }`}
           >
