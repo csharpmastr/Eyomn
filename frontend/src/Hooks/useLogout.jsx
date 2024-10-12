@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { clearStaffs } from "../Slice/StaffSlice";
 import { removeUser } from "../Slice/UserSlice";
 import { clearBranch } from "../Slice/BranchSlice";
+import { clearAppointment } from "../Slice/AppointmentSlice";
 
 export const useLogout = () => {
   const { dispatch } = useAuthContext();
@@ -32,7 +33,7 @@ export const useLogout = () => {
       reduxDispatch(clearStaffs());
       reduxDispatch(removeUser());
       reduxDispatch(clearBranch());
-
+      reduxDispatch(clearAppointment());
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred during logout.");

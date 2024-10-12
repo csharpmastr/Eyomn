@@ -2,7 +2,7 @@ import axios from "axios";
 
 const APPOINTMENT_API_BASE_URL = "http://localhost:3000/api/v1/appointment";
 
-export const addAppointment = async (
+export const addAppointmentService = async (
   branchId,
   appointmentDetails,
   accessToken,
@@ -19,9 +19,42 @@ export const addAppointment = async (
         },
       }
     );
+    return response;
+  } catch (error) {
+    if (error.response) {
+      console.error("Server error:", error.response.data);
+    } else if (error.request) {
+      console.error("No response received:", error.request);
+    } else {
+      console.error("Error:", error.message);
+    }
+    throw error;
+  }
+};
+
+export const getAppointments = async (branchId, accessToken, refreshToken) => {
+  try {
+    const response = await axios.get(
+      `${APPOINTMENT_API_BASE_URL}/get-appointments`,
+      {
+        params: {
+          branchId,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
-    console.error("Error adding appointment: ", error);
+    if (error.response) {
+      console.error("Server error:", error.response.data);
+    } else if (error.request) {
+      console.error("No response received:", error.request);
+    } else {
+      console.error("Error:", error.message);
+    }
     throw error;
   }
 };

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Cookies from "universal-cookie";
-import { addAppointment } from "../../Service/AppointmentService";
+import { addAppointmentService } from "../../Service/AppointmentService";
 import Loader from "./Loader";
 import SuccessModal from "./SuccessModal";
 import Modal from "./Modal";
 import { IoMdCloseCircleOutline } from "react-icons/io";
+import { addAppointment } from "../../Slice/AppointmentSlice";
 
 const SetAppointment = ({ onClose }) => {
   const [errors, setErrors] = useState({});
@@ -19,6 +20,7 @@ const SetAppointment = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [doesExists, setDoesExists] = useState(false);
+  const reduxDispatch = useDispatch();
   const [formData, setFormData] = useState({
     patient_name: "",
     reason: "",
@@ -99,16 +101,22 @@ const SetAppointment = ({ onClose }) => {
       ...formData,
       scheduledTime,
     };
+    console.log(appointmentData);
 
     try {
-      const response = await addAppointment(
+      const response = await addAppointmentService(
         user.branchId,
         appointmentData,
         accessToken,
         refreshToken
       );
+
       if (response) {
         setIsSuccess(true);
+
+        console.log(response.data);
+        const scheduleId = response.data.scheduleId;
+        reduxDispatch(addAppointment({ ...appointmentData, scheduleId }));
       }
     } catch (error) {
       setIsSuccess(false);
@@ -122,13 +130,13 @@ const SetAppointment = ({ onClose }) => {
     }
   };
 
-  return ReactDOM.createPortal(
+  return (
     <>
       {isLoading ? (
         <Loader />
       ) : (
         <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-          <div className="w-[500px]">
+          <div className="w-[300px] md:w-1/2 xl:w-[500px] h-auto ">
             <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
               <h1 className="text-p-lg text-c-secondary font-semibold">
                 Set Appointment
@@ -294,8 +302,7 @@ const SetAppointment = ({ onClose }) => {
         }
         description={"The scheduled time already exists."}
       ></Modal>
-    </>,
-    document.body
+    </>
   );
 };
 

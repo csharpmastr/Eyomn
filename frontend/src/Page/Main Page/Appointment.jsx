@@ -3,24 +3,49 @@ import dayjs from "dayjs";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import SetAppointment from "../../Component/ui/SetAppointment";
 import ViewSchedule from "../../Component/ui/ViewSchedule";
+import { useSelector } from "react-redux";
 
 const Appointment = () => {
   const [isModalSetApp, setIsModalSetApp] = useState(false);
   const [isModalViewApp, setIsModalViewApp] = useState(false);
+  const [currentDate, setCurrentDate] = useState(dayjs());
+  const [selectedDayAppointments, setSelectedDayAppointments] = useState([]);
 
+  const appointments = useSelector(
+    (state) => state.reducer.appointment.appointment
+  );
+
+  const handleNextMonth = () => setCurrentDate(currentDate.add(1, "month"));
+  const handlePrevMonth = () =>
+    setCurrentDate(currentDate.subtract(1, "month"));
+
+  const handleOpenViewApp = (day) => {
+    setSelectedDayAppointments(getAppointmentsForDay(day));
+    setIsModalViewApp(true);
+  };
+  const handleCloseViewApp = () => setIsModalViewApp(false);
   const handleOpenSetApp = () => setIsModalSetApp(true);
   const handleCloseSetApp = () => setIsModalSetApp(false);
-  const handleOpenViewApp = () => setIsModalViewApp(true);
-  const handleCloseViewApp = () => setIsModalViewApp(false);
-
-  const [currentDate, setCurrentDate] = useState(dayjs());
-
   const daysInMonth = currentDate.daysInMonth();
   const firstDayOfMonth = currentDate.startOf("month").day();
 
-  const handlePrevMonth = () =>
-    setCurrentDate(currentDate.subtract(1, "month"));
-  const handleNextMonth = () => setCurrentDate(currentDate.add(1, "month"));
+  const getAppointmentsForDay = (day) => {
+    const dateToCheck = currentDate.date(day).format("YYYY-MM-DD");
+    return appointments
+      .filter(
+        (appointment) =>
+          dayjs(appointment.scheduledTime).format("YYYY-MM-DD") === dateToCheck
+      )
+      .sort((a, b) => dayjs(a.scheduledTime) - dayjs(b.scheduledTime));
+  };
+
+  // Function to generate a pastel color
+  const getPastelColor = () => {
+    const r = Math.floor(Math.random() * 128 + 127);
+    const g = Math.floor(Math.random() * 128 + 127);
+    const b = Math.floor(Math.random() * 128 + 127);
+    return `rgb(${r}, ${g}, ${b})`;
+  };
 
   const renderDays = () => {
     const days = [];
@@ -38,10 +63,26 @@ const Appointment = () => {
       days.push(
         <div
           key={i}
-          className="aspect-square border border-c-gray3 p-4 relative bg-white flex justify-end"
-          onClick={handleOpenViewApp}
+          className="aspect-square border border-c-gray3 p-4 relative bg-white flex font-Poppins cursor-pointer"
+          onClick={() => handleOpenViewApp(i)} // Pass the day number here
         >
-          <span>{i}</span>
+          <span className="absolute top-2 left-2 font-Poppins">{i}</span>
+
+          {getAppointmentsForDay(i).length > 0 && (
+            <div className="mt-2 text-sm text-gray-600 text-center w-full">
+              <div className="overflow-hidden max-h-32 mt-2">
+                {getAppointmentsForDay(i).map((appointment, index) => (
+                  <div
+                    key={index}
+                    className="gap-2"
+                    style={{ backgroundColor: getPastelColor() }}
+                  >
+                    {dayjs(appointment.scheduledTime).format("h:mm A")}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       );
     }
@@ -74,9 +115,8 @@ const Appointment = () => {
         >
           <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
           <h1 className="hidden md:block">Set Appointment</h1>
-        </div>
+        </div>{" "}
       </div>
-
       <div className="grid grid-cols-7 text-center pt-6 pb-3 font-medium bg-bg-sb border border-c-gray3 mt-8 rounded-t-md">
         <div>Sun</div>
         <div>Mon</div>
@@ -87,7 +127,12 @@ const Appointment = () => {
         <div>Sat</div>
       </div>
       <div className="grid grid-cols-7">{renderDays()}</div>
-      {isModalViewApp && <ViewSchedule onClose={handleCloseViewApp} />}
+      {isModalViewApp && (
+        <ViewSchedule
+          onClose={handleCloseViewApp}
+          appointments={selectedDayAppointments}
+        />
+      )}{" "}
       {isModalSetApp && <SetAppointment onClose={handleCloseSetApp} />}
     </div>
   );
