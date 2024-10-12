@@ -23,20 +23,38 @@ const addSchedule = async (branchId, scheduleDetails) => {
     if (!existingSchedules.empty) {
       throw { status: 400, message: "A schedule already exists at this time." };
     }
+
     const encryptedDetails = encryptDocument(scheduleDetails, [
       "scheduledTime",
     ]);
     const oneHourGap = 60 * 60 * 1000;
+    const thirtyMinuteGap = 30 * 60 * 1000;
     const newScheduleTime = new Date(scheduleDetails.scheduledTime).getTime();
 
     const schedulesSnapshot = await schedRef.get();
     schedulesSnapshot.forEach((doc) => {
       const existingScheduleTime = new Date(doc.data().scheduledTime).getTime();
+      const existingReason = decryptData(doc.data().reason);
 
-      if (Math.abs(existingScheduleTime - newScheduleTime) < oneHourGap) {
+      const requiredGap =
+        existingReason === "check up" || existingReason === "consultation"
+          ? oneHourGap
+          : thirtyMinuteGap;
+
+      if (
+        (newScheduleTime >= existingScheduleTime - requiredGap &&
+          newScheduleTime < existingScheduleTime) ||
+        (newScheduleTime + requiredGap > existingScheduleTime &&
+          newScheduleTime <= existingScheduleTime)
+      ) {
+        if (existingReason === "eyeglass") {
+          return;
+        }
         throw {
           status: 400,
-          message: "There must be a one-hour gap between schedules.",
+          message: `There must be a ${
+            requiredGap === oneHourGap ? "one-hour" : "30-minute"
+          } gap between schedules.`,
         };
       }
     });

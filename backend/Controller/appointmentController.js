@@ -5,13 +5,19 @@ const {
 
 const addScheduleHandler = async (req, res) => {
   try {
-    const { branchId } = req.query;
+    const branchId = req.params.branchId;
     const scheduleDetails = req.body;
 
     await addSchedule(branchId, scheduleDetails);
     return res.status(200).json({ message: "Schedule added successfully." });
   } catch (error) {
-    res.status(error.status || 500).json({ message: error.message });
+    if (error.status === 400) {
+      return res.status(409).json({ message: error.message });
+    }
+
+    return res
+      .status(500)
+      .json({ message: "Error adding appointment.", error: error.message });
   }
 };
 const deleteScheduleHandler = async (req, res) => {
