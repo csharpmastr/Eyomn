@@ -7,6 +7,15 @@ const {
 } = require("../Helper/Helper");
 const { decryptData } = require("../Security/DataHashing");
 
+const generateSKU = () => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let sku = "";
+  for (let i = 0; i < 8; i++) {
+    sku += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return sku;
+};
+
 const addProduct = async (branchId, productDetails) => {
   try {
     console.log(productDetails);
@@ -21,11 +30,13 @@ const addProduct = async (branchId, productDetails) => {
     querySnapshot.forEach((doc) => {
       const productData = doc.data();
 
-      // Check if product_name exists and is not undefined or null
       if (productData.product_name) {
         const decryptedProductName = decryptData(productData.product_name);
-
-        if (decryptedProductName === productDetails.product_name) {
+        const decryptedProductBrand = decryptData(productData.brand);
+        if (
+          decryptedProductName === productDetails.product_name &&
+          decryptedProductBrand === productDetails.brand
+        ) {
           productExists = true;
         }
       }
@@ -36,6 +47,7 @@ const addProduct = async (branchId, productDetails) => {
     }
 
     const productId = uuid();
+    const productSKU = generateSKU();
     const productRef = productsCollectionRef.doc(productId);
     productDetails = removeNullValues(productDetails);
 
@@ -45,7 +57,7 @@ const addProduct = async (branchId, productDetails) => {
       "expirationDate",
     ]);
 
-    await productRef.set({ ...encryptedProduct, productId });
+    await productRef.set({ ...encryptedProduct, productId, productSKU });
     return productId;
   } catch (error) {
     console.error("Error adding product:", error);
