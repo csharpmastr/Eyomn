@@ -26,40 +26,74 @@ export const useFetchData = () => {
     switch (user.role) {
       case "1":
         return [
-          getPatients(
-            organizationId,
-            branchId,
-            null,
-            accessToken,
-            refreshToken,
-            user.role
-          ),
+          {
+            call: () =>
+              getPatients(
+                organizationId,
+                branchId,
+                null,
+                accessToken,
+                refreshToken,
+                user.role
+              ),
+            type: "patients",
+          },
+          {
+            call: () => getAppointments(branchId, accessToken, refreshToken),
+            type: "appointments",
+          },
         ];
       case "3":
         return [
-          getPatients(
-            organizationId,
-            branchId,
-            null,
-            accessToken,
-            refreshToken,
-            user.role
-          ),
-          getDoctorList(organizationId, branchId, accessToken, refreshToken),
-          getProducts(branchId, accessToken, refreshToken),
-          getAppointments(branchId, accessToken, refreshToken),
+          {
+            call: () =>
+              getPatients(
+                organizationId,
+                branchId,
+                null,
+                accessToken,
+                refreshToken,
+                user.role
+              ),
+            type: "patients",
+          },
+          {
+            call: () =>
+              getDoctorList(
+                organizationId,
+                branchId,
+                accessToken,
+                refreshToken
+              ),
+            type: "doctors",
+          },
+          {
+            call: () => getProducts(branchId, accessToken, refreshToken),
+            type: "products",
+          },
+          {
+            call: () => getAppointments(branchId, accessToken, refreshToken),
+            type: "appointments",
+          },
         ];
       case "0":
         return [
-          getPatients(
-            user.userId,
-            null,
-            null,
-            accessToken,
-            refreshToken,
-            user.role
-          ),
-          getBranchData(user.userId, accessToken, refreshToken),
+          {
+            call: () =>
+              getPatients(
+                user.userId,
+                null,
+                null,
+                accessToken,
+                refreshToken,
+                user.role
+              ),
+            type: "patients",
+          },
+          {
+            call: () => getBranchData(user.userId, accessToken, refreshToken),
+            type: "branches",
+          },
         ];
       default:
         return [];
@@ -70,36 +104,40 @@ export const useFetchData = () => {
     try {
       const apiCalls = buildApiCalls();
 
-      const results = await Promise.allSettled(apiCalls);
+      const results = await Promise.allSettled(
+        apiCalls.map((apiCall) => apiCall.call())
+      );
 
-      let patients = [];
-      let doctors = [];
-      let branches = [];
-      let staffs = [];
-      let products = [];
-      let appointments = [];
-      if (user.role === "1" || user.role === "3") {
-        if (results[0].status === "fulfilled") patients = results[0].value;
-        if (user.role === "3") {
-          if (results[1]?.status === "fulfilled") doctors = results[1].value;
-          if (results[2]?.status === "fulfilled") products = results[2].value;
-          if (results[3]?.status === "fulfilled")
-            appointments = results[3].value;
+      results.forEach((result, index) => {
+        const apiCall = apiCalls[index];
+        if (result.status === "fulfilled") {
+          switch (apiCall.type) {
+            case "patients":
+              reduxDispatch(setPatients(result.value));
+              break;
+            case "appointments":
+              reduxDispatch(setAppointments(result.value));
+              break;
+            case "doctors":
+              reduxDispatch(setDoctor(result.value));
+              break;
+            case "products":
+              reduxDispatch(setProducts(result.value));
+              break;
+            case "branches":
+              reduxDispatch(setBranch(result.value));
+              const staffs = result.value.flatMap(
+                (branch) => branch.staffs || []
+              );
+              reduxDispatch(setStaffs(staffs));
+              break;
+            default:
+              console.error("Unknown API call type: ", apiCall.type);
+          }
+        } else {
+          console.error(`Failed to fetch ${apiCall.type}: `, result.reason);
         }
-      } else if (user.role === "0") {
-        if (results[0].status === "fulfilled") patients = results[0].value;
-        if (results[1].status === "fulfilled") {
-          branches = results[1].value;
-          staffs = branches.flatMap((branch) => branch.staffs || []);
-        }
-      }
-
-      reduxDispatch(setBranch(branches));
-      reduxDispatch(setPatients(patients));
-      reduxDispatch(setDoctor(doctors));
-      reduxDispatch(setStaffs(staffs));
-      reduxDispatch(setProducts(products));
-      reduxDispatch(setAppointments(appointments));
+      });
     } catch (error) {
       console.error("Error fetching data: ", error);
     }
