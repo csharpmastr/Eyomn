@@ -11,6 +11,7 @@ const Modal = ({
   className,
   overlayClassName,
   overlayDescriptionClassName,
+  icon,
 }) => {
   if (!isOpen) return null;
 
@@ -34,13 +35,16 @@ const Modal = ({
             <h2 className="text-lg font-bold font-Poppins">{title}</h2>
           </div>
         )}
-        {description && (
-          <p
-            className={`text-gray-600 mb-4 p-2 font-Poppins ${overlayDescriptionClassName}`}
-          >
-            {description}
-          </p>
-        )}
+        <div className=" flex flex-col items-center justify-center">
+          {icon}
+          {description && (
+            <p
+              className={`text-gray-600 mb-4 p-2 font-Poppins ${overlayDescriptionClassName}`}
+            >
+              {description}
+            </p>
+          )}
+        </div>
         {children}
       </div>
     </div>,

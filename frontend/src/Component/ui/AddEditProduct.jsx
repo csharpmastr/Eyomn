@@ -6,16 +6,20 @@ import Cookies from "universal-cookie";
 import Loader from "./Loader";
 import SuccessModal from "./SuccessModal";
 import { addProduct } from "../../Slice/ProductSlice";
+import { IoMdCloseCircleOutline } from "react-icons/io";
+import Modal from "./Modal";
 const AddEditProduct = ({ onClose }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const user = useSelector((state) => state.reducer.user.user);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [doesExists, setDoesExists] = useState(false);
   const reduxDispatch = useDispatch();
   const cookies = new Cookies();
   const accessToken = cookies.get("accessToken");
   const refreshToken = cookies.get("refreshToken");
   const [errors, setErrors] = useState({});
+
   const [formData, setFormData] = useState({
     category: "",
     product_name: "",
@@ -85,6 +89,33 @@ const AddEditProduct = ({ onClose }) => {
       ...prevData,
       category: selectedValue,
     }));
+  };
+  const resetForm = () => {
+    setFormData({
+      category: "",
+      product_name: "",
+      price: "",
+      quantity: "",
+      brand: "",
+      expirationDate: "",
+
+      // Eye Glasses
+      len_type: "",
+      color_material: "",
+      eyeglass_category: "",
+
+      // Medication
+      prescrip_otc: "",
+      md_form: "",
+      dosage: "",
+
+      // Contact Lens
+      ct_type: "",
+      ct_material: "",
+
+      // Other Product
+      other_description: "",
+    });
   };
 
   const validateForm = () => {
@@ -218,13 +249,20 @@ const AddEditProduct = ({ onClose }) => {
         refreshToken
       );
 
-      if (response) {
+      if (response.status === 200) {
         setIsSuccess(true);
-        const productId = response.productId;
-        reduxDispatch(addProduct({ ...cleanedData, productId: productId }));
+        resetForm();
+        const productId = response.data.productId;
+        reduxDispatch(addProduct({ ...cleanedData, productId }));
       }
     } catch (error) {
       setIsSuccess(false);
+
+      if (error.response?.status === 409) {
+        setDoesExists(true);
+      } else {
+        console.error("An unexpected error occurred:", error);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -706,11 +744,23 @@ const AddEditProduct = ({ onClose }) => {
         isOpen={isSuccess}
         onClose={() => {
           setIsSuccess(false);
-          onClose();
         }}
         title="Adding Success"
         description="The product has been added in the system."
       />
+      <Modal
+        isOpen={doesExists}
+        onClose={() => {
+          setDoesExists(false);
+        }}
+        title="Invalid request"
+        icon={<IoMdCloseCircleOutline className="w-24 h-24 text-red-700" />}
+        className="w-[600px] h-auto p-4"
+        overlayDescriptionClassName={
+          "text-center font-Poppins pt-5 text-black text-[18px]"
+        }
+        description={"The product already exists."}
+      ></Modal>
     </>,
     document.body
   );

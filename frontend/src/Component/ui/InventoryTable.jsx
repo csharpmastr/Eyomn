@@ -3,11 +3,14 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 import { useSelector } from "react-redux";
 
 const InventoryTable = () => {
-  const [isCollapsed, setIsCollapsed] = useState(true);
   const products = useSelector((state) => state.reducer.product.products);
+  const [collapsedProducts, setCollapsedProducts] = useState({});
 
-  const handleCollapseToggle = () => {
-    setIsCollapsed(!isCollapsed);
+  const handleCollapseToggle = (productId) => {
+    setCollapsedProducts((prevState) => ({
+      ...prevState,
+      [productId]: !prevState[productId],
+    }));
   };
 
   return (
@@ -22,52 +25,58 @@ const InventoryTable = () => {
         <div className="w-20"></div>
       </header>
       <main>
-        {products.map((product, index) => (
-          <section
-            key={index}
-            className={`${index % 2 === 0 ? "bg-bg-mc" : "bg-white"}`}
-          >
-            <div
-              className={`flex text-p-rg py-6 ${
-                isCollapsed ? "border border-b-f-gray" : ""
-              }`}
+        {products.map((product, index) => {
+          // Default to true (collapsed) if not already set
+          const isCollapsed = collapsedProducts[product.productId] !== false;
+
+          return (
+            <section
+              key={product.productId}
+              className={`${index % 2 === 0 ? "bg-bg-mc" : "bg-white"}`}
             >
-              <div className="flex-1 pl-4">{product.product_name}</div>
-              <div className="flex-1 pl-4">
-                {product.category || "Eyeglasses"}
-              </div>
-              <div className="flex-1 pl-4">
-                {product.eyeglass_category || ""}
-              </div>
-              <div className="flex-1 pl-4">Php {product.price || 0}</div>
-              <div className="flex-1 pl-4">{product.quantity || 0}</div>
-              <div className="flex-1 pl-4">{product.brand || "Luxottica"}</div>
-              <div className="w-20 flex">
-                <IoIosAddCircleOutline
-                  className="h-6 w-6 md:mr-2"
-                  onClick={handleCollapseToggle}
-                />
-                <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
-              </div>
-            </div>
-            {!isCollapsed && (
-              <div className={`py-5 flex border border-b-f-gray`}>
+              <div
+                className={`flex text-p-rg py-6 ${
+                  isCollapsed ? "border border-b-f-gray" : ""
+                }`}
+              >
+                <div className="flex-1 pl-4">{product.product_name}</div>
                 <div className="flex-1 pl-4">
-                  <p className="text-p-sm">Other Info:</p>
-                  <p>Sample Info</p>
+                  {product.category || "Eyeglasses"}
                 </div>
                 <div className="flex-1 pl-4">
-                  <p className="text-p-sm">Other Info:</p>
-                  <p>Sample Info</p>
+                  {product.eyeglass_category || ""}
                 </div>
+                <div className="flex-1 pl-4">Php {product.price || 0}</div>
+                <div className="flex-1 pl-4">{product.quantity || 0}</div>
                 <div className="flex-1 pl-4">
-                  <p className="text-p-sm">Other Info:</p>
-                  <p>Sample Info</p>
+                  {product.brand || "Luxottica"}
+                </div>
+                <div className="w-20 flex">
+                  <IoIosAddCircleOutline
+                    className="h-6 w-6 md:mr-2"
+                    onClick={() => handleCollapseToggle(product.productId)}
+                  />
                 </div>
               </div>
-            )}
-          </section>
-        ))}
+              {!isCollapsed && (
+                <div className={`py-5 flex border border-b-f-gray`}>
+                  <div className="flex-1 pl-4">
+                    <p className="text-p-sm">Other Info:</p>
+                    <p>Sample Info</p>
+                  </div>
+                  <div className="flex-1 pl-4">
+                    <p className="text-p-sm">Other Info:</p>
+                    <p>Sample Info</p>
+                  </div>
+                  <div className="flex-1 pl-4">
+                    <p className="text-p-sm">Other Info:</p>
+                    <p>Sample Info</p>
+                  </div>
+                </div>
+              )}
+            </section>
+          );
+        })}
       </main>
     </div>
   );

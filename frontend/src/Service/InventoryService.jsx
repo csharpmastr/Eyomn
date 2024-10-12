@@ -10,7 +10,7 @@ export const addProductService = async (
 ) => {
   try {
     const response = await axios.post(
-      `${INVENTORY_API_BASE_URL}/add-product/${branchId}`,
+      `${INVENTORY_API_BASE_URL}/add/${branchId}`,
       productDetails,
       {
         headers: {
@@ -19,10 +19,16 @@ export const addProductService = async (
         },
       }
     );
-    return response.data;
+    return response;
   } catch (error) {
-    console.error("Error adding product : ", err);
-    throw err;
+    if (error.response) {
+      console.error("Server error:", error.response.data);
+    } else if (error.request) {
+      console.error("No response received:", error.request);
+    } else {
+      console.error("Error:", error.message);
+    }
+    throw error;
   }
 };
 
