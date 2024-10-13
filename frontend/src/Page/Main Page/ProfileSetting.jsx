@@ -16,13 +16,6 @@ const ProfileSetting = () => {
   return (
     <div className="text-f-dark h-full p-3 md:p-8 font-Poppins flex gap-10">
       <nav className="w-1/5 flex flex-col gap-10">
-        <div
-          className="flex w-fit items-center rounded-md text-f-dark font-md"
-          onClick={() => navigate(`/profile`)}
-        >
-          <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
-          <h1>Go Back</h1>
-        </div>
         <div>
           <div className="flex flex-col gap-1 w-full">
             {["My Profile", "Account"].map((section) => (
