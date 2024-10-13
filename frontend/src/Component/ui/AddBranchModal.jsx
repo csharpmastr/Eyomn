@@ -15,7 +15,6 @@ const AddBranchModal = ({ onClose }) => {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const reduxDispatch = useDispatch();
-
   const [isLoading, setIsLoading] = useState(false);
   const cookies = new Cookies();
   const accessToken = cookies.get("accessToken");

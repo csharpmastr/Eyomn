@@ -23,7 +23,6 @@ export const useAddStaff = () => {
         accessToken,
         refreshToken
       );
-      reduxDispatch(addStaff(staffData));
       return response;
     } catch (err) {
       setError(err);

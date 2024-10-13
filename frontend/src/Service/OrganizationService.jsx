@@ -41,7 +41,7 @@ export const addStaffService = async (
         },
       }
     );
-    return response.data;
+    return response;
   } catch (err) {
     throw err;
   }

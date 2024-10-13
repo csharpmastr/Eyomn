@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 
 const OrgStaff = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const { branchId } = useParams();
   const navigate = useNavigate();
 
@@ -29,7 +28,7 @@ const OrgStaff = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center ">
+    <div className="w-full h-full flex flex-col items-center">
       <div className="w-full flex justify-between">
         <div
           className="flex justify-center items-center font-Poppins cursor-pointer"

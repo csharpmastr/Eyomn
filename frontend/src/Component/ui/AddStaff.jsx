@@ -46,6 +46,15 @@ const AddStaff = ({ onClose }) => {
     position: "",
     emp_type: "",
     password: "",
+    schedule: [
+      { day: "monday", in: "", out: "" },
+      { day: "tuesday", in: "", out: "" },
+      { day: "wednesday", in: "", out: "" },
+      { day: "thursday", in: "", out: "" },
+      { day: "friday", in: "", out: "" },
+      { day: "saturday", in: "", out: "" },
+      { day: "sunday", in: "", out: "" },
+    ],
   });
 
   const handleImageChange = (e) => {
@@ -69,7 +78,28 @@ const AddStaff = ({ onClose }) => {
       }));
     }
 
-    if (name === "confirmpassword") {
+    const [day, timeType] = name.split("_");
+
+    if (
+      [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+      ].includes(day)
+    ) {
+      setFormData((prevState) => ({
+        ...prevState,
+        schedule: prevState.schedule.map((scheduleDay) =>
+          scheduleDay.day === day
+            ? { ...scheduleDay, [timeType]: value }
+            : scheduleDay
+        ),
+      }));
+    } else if (name === "confirmpassword") {
       setRepeatPass(value);
     } else {
       setFormData({ ...formData, [name]: value });
@@ -119,7 +149,8 @@ const AddStaff = ({ onClose }) => {
     }));
 
   const handleNext = () => {
-    const isValid = validateForm();
+    // const isValid = validateForm();
+    const isValid = true;
     if (isValid) {
       setCurrentCardIndex(currentCardIndex + 1);
     }
@@ -185,12 +216,16 @@ const AddStaff = ({ onClose }) => {
   };
   const handleSubmitStaff = async (e) => {
     e.preventDefault();
+    console.log(formData);
+
     try {
       const response = await addStaffHook(formData, branchId);
       if (response) {
-        const { staffId } = response;
+        console.log(response);
+
+        const staffId = response.data.staffId;
         setIsSuccess(true);
-        reduxDispatch(addStaff({ staffId, branchId, ...formData }));
+        reduxDispatch(addStaff({ ...formData, staffId, branchId }));
       }
     } catch {}
   };
@@ -388,20 +423,19 @@ const AddStaff = ({ onClose }) => {
                     </div>
                     <section>
                       <label
-                        htmlFor="contact_number"
+                        htmlFor="contact"
                         className="text-p-sm text-c-gray3 font-medium"
                       >
                         Contact Number:{" "}
                         <span className="text-red-400">
-                          {(formData.contact_number === "" ||
-                            errors.contact_number) &&
-                            errors.contact_number}
+                          {(formData.contact === "" || errors.contact) &&
+                            errors.contact}
                         </span>
                       </label>
                       <input
                         type="text"
-                        name="contact_number"
-                        value={formData.contact_number}
+                        name="contact"
+                        value={formData.contact}
                         onChange={handleChange}
                         className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                         placeholder="Enter contact number"
@@ -469,10 +503,16 @@ const AddStaff = ({ onClose }) => {
                     </section>
                   </div>
                   <div>
-                    <header>
-                      <h1 className="text-p-rg font-medium text-c-secondary mb-4">
-                        | Working Hours
-                      </h1>
+                    <header className="flex justify-between ">
+                      <div>
+                        <h1 className="text-p-rg font-medium text-c-secondary mb-4">
+                          | Working Hours
+                        </h1>
+                      </div>
+                      <div className="flex mr-10 gap-10">
+                        <p className="mr-10">Time in</p>
+                        <p className="-mr-3">Time out</p>
+                      </div>
                     </header>
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex gap-4">
@@ -500,13 +540,13 @@ const AddStaff = ({ onClose }) => {
                           <>
                             <input
                               type="time"
-                              name="mon_from"
+                              name="monday_in"
                               onChange={handleChange}
                               className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                             />
                             <input
                               type="time"
-                              name="mon_to"
+                              name="monday_out"
                               onChange={handleChange}
                               className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                             />
@@ -544,13 +584,13 @@ const AddStaff = ({ onClose }) => {
                           <>
                             <input
                               type="time"
-                              name="tues_from"
+                              name="tuesday_in"
                               onChange={handleChange}
                               className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                             />
                             <input
                               type="time"
-                              name="tues_to"
+                              name="tuesday_out"
                               onChange={handleChange}
                               className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                             />
@@ -588,13 +628,13 @@ const AddStaff = ({ onClose }) => {
                           <>
                             <input
                               type="time"
-                              name="wed_from"
+                              name="wednesday_in"
                               onChange={handleChange}
                               className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                             />
                             <input
                               type="time"
-                              name="wed_to"
+                              name="wednesday_out"
                               onChange={handleChange}
                               className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                             />
@@ -632,13 +672,13 @@ const AddStaff = ({ onClose }) => {
                           <>
                             <input
                               type="time"
-                              name="thu_from"
+                              name="thursday_in"
                               onChange={handleChange}
                               className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                             />
                             <input
                               type="time"
-                              name="thu_to"
+                              name="thursday_out"
                               onChange={handleChange}
                               className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                             />
@@ -676,13 +716,13 @@ const AddStaff = ({ onClose }) => {
                           <>
                             <input
                               type="time"
-                              name="fri_from"
+                              name="friday_in"
                               onChange={handleChange}
                               className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                             />
                             <input
                               type="time"
-                              name="fri_to"
+                              name="friday_out"
                               onChange={handleChange}
                               className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                             />
@@ -720,13 +760,13 @@ const AddStaff = ({ onClose }) => {
                           <>
                             <input
                               type="time"
-                              name="sat_from"
+                              name="saturday_in"
                               onChange={handleChange}
                               className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                             />
                             <input
                               type="time"
-                              name="sat_to"
+                              name="saturday_out"
                               onChange={handleChange}
                               className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                             />
@@ -764,13 +804,13 @@ const AddStaff = ({ onClose }) => {
                           <>
                             <input
                               type="time"
-                              name="sun_from"
+                              name="sunday_in"
                               onChange={handleChange}
                               className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                             />
                             <input
                               type="time"
-                              name="sun_from"
+                              name="sunday_out"
                               onChange={handleChange}
                               className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                             />
