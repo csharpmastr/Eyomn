@@ -26,7 +26,7 @@ const addStaffHandler = async (req, res) => {
       .status(200)
       .json({ message: "Staff added successfully", staffId: staffId });
   } catch (error) {
-    if (error instanceof EmailAlreadyExistsError) {
+    if (error.status === 400) {
       return res.status(400).json({ message: error.message });
     }
 

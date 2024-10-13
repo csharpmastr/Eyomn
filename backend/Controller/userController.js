@@ -60,6 +60,7 @@ const loginUserHandler = async (req, res) => {
       email,
       password,
     });
+    console.log("hello");
 
     const accessToken = generateToken(
       userId,

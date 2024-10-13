@@ -23,7 +23,7 @@ const addStaff = async (organizationId, branchId, staffData) => {
       .get();
 
     if (!emailQuery.empty) {
-      throw new EmailAlreadyExistsError(`Email already exists.`);
+      throw { status: 400, message: "Email already exists." };
     }
     const staffId = uuidv4();
     const encryptedStaffData = {
@@ -43,6 +43,8 @@ const addStaff = async (organizationId, branchId, staffData) => {
         staffCredentials.password = await hashPassword(value);
       } else if (key === "email") {
         encryptedStaffData.email = value;
+      } else if (key === "schedule") {
+        encryptedStaffData.schedule = value;
       } else {
         encryptedStaffData[key] = encryptData(value);
       }

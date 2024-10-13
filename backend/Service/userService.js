@@ -79,6 +79,8 @@ const addUser = async (orgData) => {
 
 const loginUser = async (userData) => {
   const { email, password } = userData;
+  console.log(email, password);
+
   try {
     const userRef = userCollection.where("email", "==", email);
     const querySnapshot = await userRef.get();
@@ -163,6 +165,7 @@ const loginUser = async (userData) => {
         "organizationId",
         "staffId",
         "role",
+        "schedule",
       ]);
 
       const organization = await getOrganizationName(user.organizationId);

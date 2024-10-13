@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const ALGORITHM = "aes-256-cbc";
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 const IV_LENGTH = 16;
+
 const encryptData = (text) => {
   const iv = crypto.randomBytes(IV_LENGTH);
   const cipher = crypto.createCipheriv(

@@ -103,6 +103,7 @@ const getStaffs = async (organizationId, branchId) => {
         "branchId",
         "role",
         "email",
+        "schedule",
       ]);
     });
 
