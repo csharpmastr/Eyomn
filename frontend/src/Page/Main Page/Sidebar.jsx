@@ -36,11 +36,11 @@ const SideBar = () => {
 
   return (
     <div
-      className={`h-16 w-full xl:h-screen z-50 font-Poppins bg-c-secondary xl:bg-bg-sb border-r border-f-gray transition-all duration-300 ease-in-out ${
+      className={`h-16 w-full xl:h-screen z-50 font-Poppins bg-c-primary xl:bg-bg-sb  transition-all duration-300 ease-in-out ${
         isCollapsed ? "xl:w-24" : "xl:w-64"
       }`}
     >
-      <div className="flex items-center justify-between px-4 md:px-6 lg:px-8">
+      <div className="flex items-center justify-between px-4 md:px-6 lg:px-8 xl:border-r border-f-gray">
         {isMenuOpen ? (
           <IoMdClose
             className="text-f-light text-2xl xl:hidden"
@@ -72,14 +72,14 @@ const SideBar = () => {
       </div>
 
       <div
-        className={`flex flex-col h-full justify-between xl:space-y-3 xl:px-6 xl:pt-10 xl:pb-5 transition-transform duration-300 ease-in-out  ${
+        className={`flex flex-col h-full justify-between xl:space-y-3 xl:px-6 xl:pt-10 xl:pb-5 transition-transform duration-300 ease-in-out border-r border-f-gray  ${
           isMenuOpen
             ? "translate-x-0 max-h-screen h-full bg-bg-sb fixed xl:static w-3/4 md:w-1/3 lg:w-1/4 xl:w-auto"
             : "hidden xl:flex"
         }`}
         style={{ maxHeight: "calc(100vh - 64px)" }}
       >
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 mr-4 xl:mr-0">
           {isCollapsed ? (
             ""
           ) : (
@@ -92,7 +92,7 @@ const SideBar = () => {
               <NavLink
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "dashboard"
-                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-primary text-f-light font-semibold "
                     : "text-f-dark font-medium"
                 }${
                   isCollapsed
@@ -117,7 +117,7 @@ const SideBar = () => {
                 <NavLink
                   className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                     selected === "organization"
-                      ? "xl:bg-c-primary text-f-light font-semibold "
+                      ? "bg-c-primary text-f-light font-semibold "
                       : "text-f-dark font-medium"
                   }${
                     isCollapsed
@@ -142,7 +142,7 @@ const SideBar = () => {
               <NavLink
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "patient"
-                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-primary text-f-light font-semibold "
                     : "text-f-dark font-medium"
                 }${
                   isCollapsed
@@ -164,7 +164,7 @@ const SideBar = () => {
               <NavLink
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "appointment"
-                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-primary text-f-light font-semibold "
                     : "text-f-dark font-medium"
                 }${
                   isCollapsed
@@ -186,7 +186,7 @@ const SideBar = () => {
               <NavLink
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "inventory"
-                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-primary text-f-light font-semibold "
                     : "text-f-dark font-medium"
                 }${
                   isCollapsed
@@ -212,7 +212,7 @@ const SideBar = () => {
               <NavLink
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "dashboard"
-                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-primary text-f-light font-semibold "
                     : "text-f-dark font-medium"
                 }${
                   isCollapsed
@@ -236,7 +236,7 @@ const SideBar = () => {
               <NavLink
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "scribe"
-                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-primary text-f-light font-semibold "
                     : "text-f-dark font-medium"
                 }${
                   isCollapsed
@@ -258,7 +258,7 @@ const SideBar = () => {
               <NavLink
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "patient"
-                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-primary text-f-light font-semibold "
                     : "text-f-dark font-medium"
                 }${
                   isCollapsed
@@ -280,7 +280,7 @@ const SideBar = () => {
               <NavLink
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "appointment"
-                    ? "xl:bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-primary text-f-light font-semibold "
                     : "text-f-dark font-medium"
                 }${
                   isCollapsed
@@ -306,7 +306,7 @@ const SideBar = () => {
               <NavLink
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
                   selected === "dashboard"
-                    ? "xl:bg-c-secondary text-f-light font-semibold "
+                    ? "bg-c-secondary text-f-light font-semibold "
                     : "text-f-dark font-medium"
                 }${
                   isCollapsed
@@ -330,7 +330,7 @@ const SideBar = () => {
               <NavLink
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
                   selected === "add-patient"
-                    ? "xl:bg-c-secondary text-f-light font-semibold "
+                    ? "bg-c-secondary text-f-light font-semibold "
                     : "text-f-dark font-medium"
                 }${
                   isCollapsed
@@ -352,7 +352,7 @@ const SideBar = () => {
               <NavLink
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
                   selected === "patient"
-                    ? "xl:bg-c-secondary text-f-light font-semibold "
+                    ? "bg-c-secondary text-f-light font-semibold "
                     : "text-f-dark font-medium"
                 }${
                   isCollapsed
@@ -374,7 +374,7 @@ const SideBar = () => {
               <NavLink
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
                   selected === "appointment"
-                    ? "xl:bg-c-secondary text-f-light font-semibold "
+                    ? "bg-c-secondary text-f-light font-semibold "
                     : "text-f-dark font-medium"
                 }${
                   isCollapsed
@@ -396,7 +396,7 @@ const SideBar = () => {
               <NavLink
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
                   selected === "inventory"
-                    ? "xl:bg-c-secondary text-f-light font-semibold "
+                    ? "bg-c-secondary text-f-light font-semibold "
                     : "text-f-dark font-medium"
                 }${
                   isCollapsed
@@ -418,17 +418,18 @@ const SideBar = () => {
             </>
           )}
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 mr-4 xl:mr-0">
+          <hr class="border-0 xl:border-t border-f-gray" />
           <NavLink
             className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-              selected === "profile"
-                ? "xl:bg-c-primary text-f-light font-semibold "
+              selected === "manage-profile/:section"
+                ? "bg-c-secondary text-f-light font-semibold "
                 : "text-f-dark font-medium"
             }${
               isCollapsed ? "xl:px-2 py-2 justify-center" : "xl:py-3 xl:px-4 "
             }`}
-            onClick={() => setSelected("profile")}
-            to="profile"
+            onClick={() => setSelected("manage-profile/:section")}
+            to="manage-profile/:section"
           >
             <FaRegStickyNote
               className={`${
@@ -437,12 +438,12 @@ const SideBar = () => {
                   : " h-[26px] w-[26px] xl:mr-3"
               }`}
             />
-            {!isCollapsed && <span className="ml-2">Profile</span>}
+            {!isCollapsed && <span className="ml-2">Settings</span>}
           </NavLink>
           <NavLink
             className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
               selected === "help"
-                ? "xl:bg-c-primary text-f-light font-semibold "
+                ? "bg-c-secondary text-f-light font-semibold "
                 : "text-f-dark font-medium"
             }${
               isCollapsed ? "xl:px-2 py-2 justify-center" : "xl:py-3 xl:px-4 "
@@ -459,7 +460,7 @@ const SideBar = () => {
             />
             {!isCollapsed && <span className="ml-2">Help</span>}
           </NavLink>
-          <div className="px-4 xl:hidden w-full py-6 border-t border-f-gray flex justify-center">
+          <div className="px-4 xl:hidden w-full py-6 flex justify-center ml-2 border-t border-f-gray">
             <TopbarButton />
           </div>
         </div>

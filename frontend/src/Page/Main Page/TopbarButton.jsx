@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoChevronBackCircleOutline } from "react-icons/io5";
 import useLogout from "../../Hooks/useLogout";
+import { useNavigate } from "react-router-dom";
 
 const TopbarButton = () => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -24,6 +25,12 @@ const TopbarButton = () => {
 
   const screenSize =
     screenWidth >= 1280 ? "xl" : screenWidth >= 1024 ? "lg" : "md";
+
+  const navigate = useNavigate();
+
+  const profile = () => {
+    navigate(`profile`);
+  };
 
   return (
     <div className="relative inline-block text-left w-full">
@@ -69,18 +76,11 @@ const TopbarButton = () => {
             aria-labelledby="options-menu"
           >
             <a
-              href="#profile"
               className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100"
               role="menuitem"
+              onClick={profile}
             >
               Profile
-            </a>
-            <a
-              href="#settings"
-              className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100"
-              role="menuitem"
-            >
-              Account Settings
             </a>
             <a
               className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100"
