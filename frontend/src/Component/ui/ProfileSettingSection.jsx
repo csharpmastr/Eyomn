@@ -44,7 +44,7 @@ const ProfileSettingSection = ({ selected }) => {
     if (name === "confirmpassword") {
       setRepeatPass(value);
     } else {
-      setPasswordForm({ ...formData, [name]: value });
+      setPasswordForm({ ...passwordForm, [name]: value });
     }
   };
 

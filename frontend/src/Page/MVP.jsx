@@ -61,7 +61,7 @@ const MVP = () => {
         <div className="flex-1 flex flex-col overflow-hidden">
           <div className="hidden xl:h-20 w-full bg-white font-Poppins text-f-dark border-b border-f-gray xl:flex items-center xl:px-6 text-h6 font-medium justify-between">
             <h1>{currentTab}</h1>
-            <div className="w-fit h-full flex items-center">
+            <div className="xl:w-2/6 w-full h-full flex items-center xl:justify-end">
               <TopbarButton />
             </div>
           </div>
