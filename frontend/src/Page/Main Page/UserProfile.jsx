@@ -33,7 +33,7 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="text-f-dark p-3 md:p-8 font-Poppin h-full flex flex-col gap-8">
+    <div className="text-f-dark p-3 md:p-8 font-Poppin h-auto flex flex-col gap-8">
       <header className="w-full h-fit flex justify-between items-center">
         <h1 className="text-p-lg font-medium">Santa Cruz Branch</h1>
         <div
@@ -56,7 +56,7 @@ const UserProfile = () => {
             <h3 className="text-p-rg text-f-gray">Pila Laguna, Philippines</h3>
           </div>
         </div>
-        <div className="w-full h-full flex flex-col gap-8">
+        <div className="w-full h-full flex flex-col gap-8 pb-8">
           {sample_data.map((data, index) => (
             <UserProfileCard
               key={index}

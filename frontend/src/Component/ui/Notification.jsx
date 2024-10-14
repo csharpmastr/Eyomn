@@ -2,7 +2,7 @@ import React from "react";
 
 const Notification = ({ data }) => {
   return (
-    <div className="origin-top-right mt-2 absolute left-0 w-full rounded-md shadow-lg ring-1 ring-f-gray font-Poppins">
+    <div className="origin-top-right mt-2 absolute left-0 w-full z-50 rounded-md shadow-lg ring-1 ring-f-gray font-Poppins">
       <div>
         <header className="border-b border-f-gray bg-bg-sb p-4 flex justify-between items-center">
           <h1 className="text-p-rg font-semibold text-c-secondary">
