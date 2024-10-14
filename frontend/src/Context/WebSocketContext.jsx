@@ -8,19 +8,38 @@ const WebSocketContext = createContext();
 export const WebSocketProvider = ({ children }) => {
   const ws = useRef(null);
   const reduxDispatch = useDispatch();
+
+  // Fetch role, organizationId, branchId, doctorId from the store
   const role = useSelector((state) => state.reducer.user.user.role);
   const organizationId = useSelector(
     (state) => state.reducer.user.user.organizationId
   );
   const branchId = useSelector((state) => state.reducer.user.user.branchId);
-  const doctorId = useSelector((state) => state.reducer.user.user.staffId); // Ensure this is correct
+  const doctorId = useSelector((state) => state.reducer.user.user.staffId);
+
+  // Fetch existing patients and notifications from the store
   const patients = useSelector((state) => state.reducer.patient.patients || []);
+  const notifications = useSelector(
+    (state) => state.reducer.notification.notifications || []
+  );
+
+  // Track existing patient IDs
   const existingPatientIds = useRef(
     Array.isArray(patients)
       ? new Set(patients.map((patient) => patient.patientId))
       : new Set()
   );
 
+  // Track existing notification IDs
+  const existingNotificationIds = useRef(
+    Array.isArray(notifications)
+      ? new Set(
+          notifications.map((notification) => notification.notificationId)
+        ) // Assuming notification has an 'notificationId' field
+      : new Set()
+  );
+
+  // Update existingPatientIds when patients change
   useEffect(() => {
     existingPatientIds.current = new Set(
       Array.isArray(patients)
@@ -29,9 +48,18 @@ export const WebSocketProvider = ({ children }) => {
     );
   }, [patients]);
 
+  // Update existingNotificationIds when notifications change
+  useEffect(() => {
+    existingNotificationIds.current = new Set(
+      Array.isArray(notifications)
+        ? notifications.map((notification) => notification.notificationId)
+        : []
+    );
+  }, [notifications]);
+
   useEffect(() => {
     if (role !== "2") {
-      return; // Early return if the role is not "2"
+      return;
     }
 
     const wsUrl = `ws://localhost:8080/${organizationId}/${branchId}/${doctorId}`;
@@ -64,7 +92,20 @@ export const WebSocketProvider = ({ children }) => {
         } else if (message.type === "notification") {
           const notificationData = message.data;
           console.log("Notification data received:", notificationData);
-          reduxDispatch(addNotification(notificationData));
+
+          // Check if notification already exists before dispatching
+          if (
+            !existingNotificationIds.current.has(
+              notificationData.notificationId
+            )
+          ) {
+            console.log("Dispatching addNotification:", notificationData);
+            reduxDispatch(addNotification(notificationData));
+          } else {
+            console.log(
+              `Notification with ID ${notificationData.notificationId} already exists.`
+            );
+          }
         }
       } catch (error) {
         console.error("Error parsing message:", error);

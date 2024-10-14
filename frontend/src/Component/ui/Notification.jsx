@@ -24,6 +24,11 @@ const Notification = ({ data }) => {
 
     return timeAgo;
   }
+
+  const sortedData = [...data].sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
+
   return (
     <div className="origin-top-right mt-2 absolute left-0 w-full z-50 rounded-md shadow-lg ring-1 ring-f-gray font-Poppins">
       <div>
@@ -34,7 +39,7 @@ const Notification = ({ data }) => {
           <button className="text-p-sm">expand</button>
         </header>
         <div className="bg-white flex flex-col gap-4 p-4 h-[300px] overflow-y-scroll cursor-pointer">
-          {data.map((notifData, index) => (
+          {sortedData.map((notifData, index) => (
             <section
               className={`text-p-rg text-f-dark rounded-md p-4
                  ${index % 2 === 0 ? "bg-bg-mc" : "bg-white"}`}
