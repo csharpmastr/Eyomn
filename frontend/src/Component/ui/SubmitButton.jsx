@@ -6,7 +6,7 @@ const SubmitButton = ({ value, onClick, disabled, style }) => {
       type="submit"
       onClick={onClick}
       disabled={disabled}
-      className={`${style} h-12 text-center bg-[#1ABC9C] rounded-md text-lg font-Poppins text-white font-semibold`}
+      className={`${style} text-center bg-c-primary rounded-md text-lg font-Poppins text-f-light font-semibold`}
     >
       {value}
     </button>
