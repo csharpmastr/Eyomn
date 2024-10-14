@@ -90,10 +90,11 @@ const SetAppointment = ({ onClose }) => {
 
   const handleSubmitAppointment = async () => {
     // e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
     setIsLoading(true);
-    // if (!validateForm()) {
-    //   return;
-    // }
 
     const scheduledTime = new Date(`${date}T${time}`).toISOString();
 

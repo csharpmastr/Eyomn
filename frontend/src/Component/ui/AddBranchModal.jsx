@@ -26,7 +26,7 @@ const AddBranchModal = ({ onClose }) => {
   const [cpVisible, setCpVisible] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    name: "",
+    branch_name: "",
     province: "",
     municipality: "",
     email: "",
@@ -92,7 +92,6 @@ const AddBranchModal = ({ onClose }) => {
       label: municipalityName,
     }));
 
-  //Call validateForm before saving
   const validateForm = () => {
     let newErrors = {};
 
@@ -123,6 +122,10 @@ const AddBranchModal = ({ onClose }) => {
   };
 
   const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await addBranchService(
@@ -176,8 +179,8 @@ const AddBranchModal = ({ onClose }) => {
                   </label>
                   <input
                     type="text"
-                    name="name"
-                    value={formData.name}
+                    name="branch_name"
+                    value={formData.branch_name}
                     onChange={handleChange}
                     className="mt-1 mb-6 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="Enter branch name"
