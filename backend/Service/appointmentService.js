@@ -111,6 +111,7 @@ const getAppointments = async (branchId) => {
         "createdAt",
         "id",
         "scheduledTime",
+        "doctorId",
       ]);
       appointments.push(decrytedSChedule);
     });
