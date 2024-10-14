@@ -6,6 +6,7 @@ import userReducer from "../Slice/UserSlice";
 import branchReducer from "../Slice/BranchSlice";
 import productReducer from "../Slice/ProductSlice";
 import appointmentReducer from "../Slice/AppointmentSlice";
+import notificationReducer from "../Slice/NotificationSlice";
 import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
 import { combineReducers } from "@reduxjs/toolkit";
@@ -24,6 +25,7 @@ const reducer = combineReducers({
   branch: branchReducer,
   product: productReducer,
   appointment: appointmentReducer,
+  notification: notificationReducer,
 });
 const persistedReducer = persistReducer(persistConfig, reducer);
 export const store = configureStore({

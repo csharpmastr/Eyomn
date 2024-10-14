@@ -11,6 +11,7 @@ import { removeUser } from "../Slice/UserSlice";
 import { clearBranch } from "../Slice/BranchSlice";
 import { clearAppointment } from "../Slice/AppointmentSlice";
 import { clearProducts } from "../Slice/ProductSlice";
+import { clearNotifications } from "../Slice/NotificationSlice";
 
 export const useLogout = () => {
   const { dispatch } = useAuthContext();
@@ -36,6 +37,7 @@ export const useLogout = () => {
       reduxDispatch(clearBranch());
       reduxDispatch(clearAppointment());
       reduxDispatch(clearProducts());
+      reduxDispatch(clearNotifications());
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred during logout.");

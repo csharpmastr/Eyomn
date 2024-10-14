@@ -14,6 +14,9 @@ const TopbarButton = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const user = useSelector((state) => state.reducer.user.user);
+  const notification = useSelector(
+    (state) => state.reducer.notification.notifications
+  );
   const { logout } = useLogout();
 
   const toggleDropdown = () => setIsMenuOpen(!isMenuOpen);
@@ -39,34 +42,6 @@ const TopbarButton = () => {
   const profile = () => {
     navigate(`profile`);
   };
-
-  const sampleData = [
-    {
-      name: "John Doe",
-      reason: "liked your post",
-      timedate: "10 minutes ago",
-    },
-    {
-      name: "Jane Smith",
-      reason: "commented on your photo",
-      timedate: "1 hour ago",
-    },
-    {
-      name: "Alex Johnson",
-      reason: "sent you a friend request",
-      timedate: "2 days ago",
-    },
-    {
-      name: "Alex Johnson",
-      reason: "sent you a friend request",
-      timedate: "2 days ago",
-    },
-    {
-      name: "Alex Johnson",
-      reason: "sent you a friend request",
-      timedate: "2 days ago",
-    },
-  ];
 
   return (
     <div className="relative inline-block text-left w-full">
@@ -158,7 +133,7 @@ const TopbarButton = () => {
           </div>
         </div>
       )}
-      {notifOpen && <Notification data={sampleData} />}
+      {notifOpen && <Notification data={notification} />}
     </div>
   );
 };

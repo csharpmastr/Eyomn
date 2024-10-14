@@ -4,10 +4,12 @@ import { FaRegEyeSlash } from "react-icons/fa";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import Select from "react-select";
 import PhList from "../../assets/Data/location_list.json";
+import { useSelector } from "react-redux";
 
 const ProfileSettingSection = ({ selected }) => {
   const [image, setImage] = useState(null);
   const [selectedProvince, setSelectedProvince] = useState(null);
+  const user = useSelector((state) => state.reducer.user.user);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
   const [isEditable, setIsEditable] = useState(false);
   const [currentpassVisible, setCurrentPassVisible] = useState(false);
@@ -16,13 +18,13 @@ const ProfileSettingSection = ({ selected }) => {
   const [repeatPass, setRepeatPass] = useState("");
   const [errors, setErrors] = useState({});
   const [userForm, setUserForm] = useState({
-    first_name: "",
-    last_name: "",
-    birthdate: "",
+    first_name: user.first_name,
+    last_name: user.last_name,
+    birthdate: user.birthdate,
     province: "",
     municipality: "",
-    contact_number: "",
-    email: "",
+    contact_number: user.contact,
+    email: user.email,
   });
 
   const [passwordForm, setPasswordForm] = useState({
@@ -172,7 +174,7 @@ const ProfileSettingSection = ({ selected }) => {
   return (
     <>
       {selected === "My Profile" && (
-        <form className="flex flex-col w-full h-full gap-8 font-Poppins">
+        <form className="flex flex-col w-full h-full gap-8 font-Poppins px-2">
           <div className="w-full border border-f-gray bg-white rounded-lg p-10 h-full flex justify-between items-center">
             <label className="flex items-center gap-4">
               {image ? (
@@ -340,7 +342,7 @@ const ProfileSettingSection = ({ selected }) => {
               <input
                 type="text"
                 name="contact_number"
-                value={userForm.contact_number}
+                value={user.contact}
                 onChange={handleChange}
                 className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                 placeholder="Enter contact number"
@@ -355,7 +357,7 @@ const ProfileSettingSection = ({ selected }) => {
               <input
                 type="email"
                 name="email"
-                value={userForm.email}
+                value={user.email}
                 onChange={handleChange}
                 className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                 placeholder="Enter email"
@@ -374,7 +376,10 @@ const ProfileSettingSection = ({ selected }) => {
                     Job / Role
                   </label>
                   <h1 className="mt-1 text-f-dark font-medium text-p-rg">
-                    Doctor / Optometrist
+                    {user.position === "Optometrist" ||
+                    user.position === "Ophthalmologist"
+                      ? `Doctor/${user.position}`
+                      : `${user.position}`}
                   </h1>
                 </div>
                 <div className="flex-1">
@@ -382,7 +387,7 @@ const ProfileSettingSection = ({ selected }) => {
                     Contract
                   </label>
                   <h1 className="mt-1 text-f-dark font-medium text-p-rg">
-                    Full-Time
+                    {user.emp_type === "fulltime" ? `Full Time` : "Part Time"}
                   </h1>
                 </div>
               </div>

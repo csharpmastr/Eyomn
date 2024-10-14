@@ -57,25 +57,13 @@ export const useLogin = () => {
           })
         );
       } else {
-        const first_name = staffData.first_name;
-        const last_name = staffData.last_name;
-        const email = staffData.email;
-        const location = staffData.location;
-        const branchId = staffData.branchId;
-        const position = staffData.position;
+        const { schedule, ...restOfStaffData } = staffData;
 
         reduxDispatch(
           setUser({
+            ...restOfStaffData,
             userId,
             organization,
-            role,
-            first_name,
-            last_name,
-            email,
-            location,
-            organizationId,
-            branchId,
-            position,
           })
         );
       }
