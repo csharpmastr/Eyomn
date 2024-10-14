@@ -1,7 +1,17 @@
 const WebSocket = require("ws");
 const { decryptDocument } = require("../Helper/Helper");
-const { query, where, onSnapshot } = require("firebase/firestore");
-const { patientCol } = require("../Config/FirebaseClientSDK");
+const {
+  query,
+  where,
+  onSnapshot,
+  collection,
+  doc,
+} = require("firebase/firestore");
+const {
+  patientCol,
+  notificationCol,
+  dbClient,
+} = require("../Config/FirebaseClientSDK");
 
 const startWebSocketServer = () => {
   const wss = new WebSocket.Server({ port: 8080 });
@@ -14,18 +24,17 @@ const startWebSocketServer = () => {
     const branchId = urlParts[2];
     const staffId = urlParts[3];
 
-    let unsubscribe;
+    let unsubscribePatients, unsubscribeNotifications;
     const sentPatientIds = new Set();
 
     try {
-      // Set up a Firestore query to listen for real-time updates
-      const q = query(
+      const patientQuery = query(
         patientCol,
         where("branchId", "==", branchId),
         where("doctorId", "==", staffId)
       );
 
-      unsubscribe = onSnapshot(q, (snapshot) => {
+      unsubscribePatients = onSnapshot(patientQuery, (snapshot) => {
         snapshot.docChanges().forEach((change) => {
           const patientId = change.doc.id;
 
@@ -40,22 +49,47 @@ const startWebSocketServer = () => {
               "isDeleted",
             ]);
             if (!sentPatientIds.has(patientId)) {
-              ws.send(JSON.stringify(decryptedPatientData));
+              ws.send(
+                JSON.stringify({ type: "patient", data: decryptedPatientData })
+              );
               sentPatientIds.add(patientId);
             }
           }
         });
       });
+
+      const notificationRef = collection(dbClient, "notification");
+      const staffRef = doc(notificationRef, staffId);
+      const notifsRef = collection(staffRef, "notifs");
+      const notificationQuery = query(
+        notifsRef,
+        where("doctorId", "==", staffId)
+      );
+
+      unsubscribeNotifications = onSnapshot(notificationQuery, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            const notificationData = change.doc.data();
+            ws.send(
+              JSON.stringify({ type: "notification", data: notificationData })
+            );
+          }
+        });
+      });
     } catch (error) {
-      console.error("Error fetching real-time patient updates:", error.message);
+      console.error("Error fetching real-time updates:", error.message);
       ws.send(JSON.stringify({ error: "Failed to fetch real-time updates" }));
     }
 
     ws.on("close", () => {
       console.log("WebSocket connection closed");
-      if (unsubscribe) {
-        unsubscribe();
-        console.log("Unsubscribed from Firestore updates");
+      if (unsubscribePatients) {
+        unsubscribePatients();
+        console.log("Unsubscribed from Firestore patient updates");
+      }
+      if (unsubscribeNotifications) {
+        unsubscribeNotifications();
+        console.log("Unsubscribed from Firestore notification updates");
       }
     });
   });
