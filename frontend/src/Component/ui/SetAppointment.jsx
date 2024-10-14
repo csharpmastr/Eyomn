@@ -137,7 +137,7 @@ const SetAppointment = ({ onClose }) => {
         <Loader />
       ) : (
         <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-          <div className="w-[300px] md:w-1/2 xl:w-[500px] h-auto ">
+          <div className="w-[380px] md:w-1/2 xl:w-[500px] h-auto ">
             <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
               <h1 className="text-p-lg text-c-secondary font-semibold">
                 Set Appointment
@@ -263,10 +263,10 @@ const SetAppointment = ({ onClose }) => {
                 </select>
               </section>
             </form>
-            <div className="border border-t-f-gray bg-white rounded-b-lg flex gap-2 justify-end py-6 px-4">
+            <div className="border border-t-f-gray bg-white rounded-b-lg flex gap-2 justify-end py-4 md:py-6 px-4">
               <button
                 type="button"
-                className="w-28 h-12 text-f-dark text-p-rg font-semibold"
+                className="px-4 py-3 text-f-dark text-p-rg font-semibold"
                 onClick={onClose}
               >
                 Cancel
@@ -274,7 +274,7 @@ const SetAppointment = ({ onClose }) => {
               <button
                 onClick={handleSubmitAppointment}
                 type="submit"
-                className="w-28 h-12 bg-c-primary rounded-lg text-white text-p-lg font-semibold"
+                className="px-6 py-3 bg-c-primary rounded-lg text-f-light text-p-rg font-semibold"
               >
                 Save
               </button>

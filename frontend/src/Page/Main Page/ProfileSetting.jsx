@@ -14,8 +14,8 @@ const ProfileSetting = () => {
   };
 
   return (
-    <div className="text-f-dark h-full p-3 md:p-8 font-Poppins flex gap-10">
-      <nav className="w-1/5 flex flex-col gap-10">
+    <div className="text-f-dark h-full p-3 md:p-8 font-Poppins flex flex-col lg:flex-row gap-10 ">
+      <nav className="lg:w-1/5 w-full flex flex-col gap-10">
         <div>
           <div className="flex flex-col gap-1 w-full">
             {["My Profile", "Account"].map((section) => (
@@ -35,7 +35,7 @@ const ProfileSetting = () => {
           </div>
         </div>
       </nav>
-      <aside className="w-4/5 overflow-y-scroll">
+      <aside className="lg:w-4/5 w-full overflow-y-scroll">
         {selected && <ProfileSettingSection selected={selected} />}
       </aside>
     </div>

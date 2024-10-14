@@ -173,16 +173,16 @@ const ProfileSettingSection = ({ selected }) => {
     <>
       {selected === "My Profile" && (
         <form className="flex flex-col w-full h-full gap-8 font-Poppins">
-          <div className="w-full border border-f-gray bg-white rounded-lg p-10 h-full flex justify-between items-center">
-            <label className="flex items-center gap-4">
+          <div className="w-full border border-f-gray bg-white rounded-lg p-6 md:p-10 h-full flex flex-col-reverse md:flex-row justify-between items-center">
+            <label className="flex items-center gap-4 mt-6 md:mt-0">
               {image ? (
                 <img
                   src={image}
                   alt="Staff"
-                  className="w-[120px] h-[120px] rounded-full object-cover hover:cursor-pointer border border-c-gray3"
+                  className="w-20 h-20 md:w-[120px] md:h-[120px] rounded-full object-cover hover:cursor-pointer border border-c-gray3"
                 />
               ) : (
-                <div className="w-[120px] h-[120px] rounded-full bg-blue-200 flex justify-center items-center text-gray-500">
+                <div className="w-20 h-20 md:w-[120px] md:h-[120px] rounded-full bg-blue-200 flex justify-center items-center text-gray-500">
                   <FiUser className="w-12 h-12" />
                 </div>
               )}
@@ -232,7 +232,7 @@ const ProfileSettingSection = ({ selected }) => {
             )}
             {isEditable && (
               <div
-                className="h-fit flex justify-center items-center w-36 py-3 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+                className="h-fit flex justify-center items-center w-40 py-3 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
                 onClick={() => setIsEditable(!isEditable)} // Add Save function
               >
                 <h1>Save</h1>

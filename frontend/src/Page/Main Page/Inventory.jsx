@@ -29,7 +29,7 @@ const Inventory = () => {
             <span className="text-green-500">28</span> In Stock{" "}
           </p>
         </div>
-        <div className="flex flex-row h-14">
+        <div className="flex">
           <div className="flex flex-row border border-c-gray3 px-4 rounded-md justify-center items-center w-full">
             <IoMdSearch className="h-8 w-8 text-c-secondary" />
             <input
@@ -40,7 +40,7 @@ const Inventory = () => {
               //onChange={handleSearchChange}
             />
           </div>
-          <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
+          <div className="ml-2 flex justify-center items-center rounded-md px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
             <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
             <select className="md:block hover:cursor-pointer focus:outline-none bg-bg-mc">
               <option value="" disabled selected>
@@ -52,11 +52,11 @@ const Inventory = () => {
             </select>
           </div>
           <div
-            className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+            className="ml-2 flex flex-row px-4 items-center rounded-md py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
             onClick={handleOpenModal}
           >
             <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
-            <h1 className="hidden md:block">Add Product</h1>
+            <h1 className="hidden md:block text-nowrap">Add Product</h1>
           </div>
         </div>
       </nav>

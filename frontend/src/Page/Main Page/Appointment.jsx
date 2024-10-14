@@ -90,23 +90,23 @@ const Appointment = () => {
   };
 
   return (
-    <div className="p-8 text-c-secondary text-p-rg font-Poppins">
+    <div className="p-4 md:p-8 text-c-secondary text-p-rg font-Poppins">
       <div className="flex justify-between items-center">
         <div>
           <button
             onClick={handlePrevMonth}
-            className="p-2 w-10 bg-white border border-c-gray3 rounded"
+            className="p-2 md:py-3 md:px-4 bg-white border border-c-gray3 rounded"
           >
-            {"<"}
+            &lt;
           </button>
           <span className="mx-4 font-semibold">
             {currentDate.format("MMMM YYYY")}
           </span>
           <button
             onClick={handleNextMonth}
-            className="p-2 w-10 bg-white border border-c-gray3 rounded"
+            className="p-2 md:py-3 md:px-4 bg-white border border-c-gray3 rounded"
           >
-            {">"}
+            &gt;
           </button>
         </div>
         <div
@@ -114,7 +114,7 @@ const Appointment = () => {
           onClick={handleOpenSetApp}
         >
           <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
-          <h1 className="hidden md:block">Set Appointment</h1>
+          <h1 className="md:block hidden">Set Appointment</h1>
         </div>{" "}
       </div>
       <div className="grid grid-cols-7 text-center pt-6 pb-3 font-medium bg-bg-sb border border-c-gray3 mt-8 rounded-t-md">

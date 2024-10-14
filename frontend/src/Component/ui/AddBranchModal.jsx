@@ -26,7 +26,7 @@ const AddBranchModal = ({ onClose }) => {
   const [cpVisible, setCpVisible] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    branch_name: "",
+    name: "",
     province: "",
     municipality: "",
     email: "",
@@ -95,11 +95,8 @@ const AddBranchModal = ({ onClose }) => {
   const validateForm = () => {
     let newErrors = {};
 
-    if (
-      !formData.branch_name ||
-      !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.branch_name)
-    )
-      newErrors.branch_name = "(Branch name is required)";
+    if (!formData.name || !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.name))
+      newErrors.name = "(Branch name is required)";
 
     if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
       newErrors.email = "(Valid email is required)";
@@ -168,19 +165,18 @@ const AddBranchModal = ({ onClose }) => {
                 </header>
                 <section>
                   <label
-                    htmlFor="branch_name"
+                    htmlFor="name"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
                     Branch Name:{" "}
                     <span className="text-red-400">
-                      {(formData.branch_name === "" || errors.branch_name) &&
-                        errors.branch_name}
+                      {(formData.name === "" || errors.name) && errors.name}
                     </span>
                   </label>
                   <input
                     type="text"
-                    name="branch_name"
-                    value={formData.branch_name}
+                    name="name"
+                    value={formData.name}
                     onChange={handleChange}
                     className="mt-1 mb-6 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="Enter branch name"
