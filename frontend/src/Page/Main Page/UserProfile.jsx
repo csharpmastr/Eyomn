@@ -33,7 +33,7 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="text-f-dark p-3 md:p-8 font-Poppin h-auto flex flex-col gap-8">
+    <div className="text-f-dark p-4 md:p-8 font-Poppin h-full flex flex-col gap-4 md:gap-8">
       <header className="w-full h-fit flex justify-between items-center">
         <h1 className="text-p-lg font-medium">Santa Cruz Branch</h1>
         <div
@@ -43,7 +43,7 @@ const UserProfile = () => {
           <h1>Manage Profile</h1>
         </div>
       </header>
-      <div className="w-full h-full bg-white border border-f-gray rounded-lg px-10 pt-10 overflow-clip">
+      <div className="w-full h-full bg-white border border-f-gray rounded-lg p-4 md:p-10 overflow-clip">
         <div className="flex items-center gap-4 mb-10">
           <img
             className="w-[120px] h-[120px] rounded-full object-cover bg-gray-200"
@@ -56,7 +56,7 @@ const UserProfile = () => {
             <h3 className="text-p-rg text-f-gray">Pila Laguna, Philippines</h3>
           </div>
         </div>
-        <div className="w-full h-full flex flex-col gap-8 pb-8">
+        <div className="w-full h-full flex flex-col gap-4 md:gap-8">
           {sample_data.map((data, index) => (
             <UserProfileCard
               key={index}

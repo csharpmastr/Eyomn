@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 const ViewSchedule = ({ onClose, appointments }) => {
   return ReactDOM.createPortal(
     <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-      <div className="w-[500px] h-[600px]">
+      <div className="w-[380px] h-[480px] md:w-[500px] md:h-[600px]">
         <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
           <h1 className="text-p-lg text-c-secondary font-semibold">
             Schedules

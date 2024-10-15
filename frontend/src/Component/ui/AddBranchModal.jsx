@@ -92,15 +92,11 @@ const AddBranchModal = ({ onClose }) => {
       label: municipalityName,
     }));
 
-  //Call validateForm before saving
   const validateForm = () => {
     let newErrors = {};
 
-    if (
-      !formData.branch_name ||
-      !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.branch_name)
-    )
-      newErrors.branch_name = "(Branch name is required)";
+    if (!formData.name || !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.name))
+      newErrors.name = "(Branch name is required)";
 
     if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
       newErrors.email = "(Valid email is required)";
@@ -123,6 +119,10 @@ const AddBranchModal = ({ onClose }) => {
   };
 
   const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await addBranchService(
@@ -165,13 +165,12 @@ const AddBranchModal = ({ onClose }) => {
                 </header>
                 <section>
                   <label
-                    htmlFor="branch_name"
+                    htmlFor="name"
                     className="text-p-sm text-c-gray3 font-medium"
                   >
                     Branch Name:{" "}
                     <span className="text-red-400">
-                      {(formData.branch_name === "" || errors.branch_name) &&
-                        errors.branch_name}
+                      {(formData.name === "" || errors.name) && errors.name}
                     </span>
                   </label>
                   <input

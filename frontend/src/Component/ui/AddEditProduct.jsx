@@ -121,123 +121,85 @@ const AddEditProduct = ({ onClose }) => {
   const validateForm = () => {
     let newErrors = {};
 
-    if (!formData.category) {
-      newErrors.category = "(Please select a category)";
-    }
-    if (
-      !formData.product_name ||
-      !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.product_name)
-    )
+    if (!formData.product_name || formData.product_name.trim() === "") {
       newErrors.product_name = "(Product name is required)";
+    }
 
-    if (!formData.quantity || formData.quantity <= 0)
-      newErrors.quantity = "(Input quantity)";
+    if (!formData.price || formData.price <= 0) {
+      newErrors.price = "(Price is required)";
+    }
 
-    if (!formData.price || formData.price <= 0)
-      newErrors.price = "(Put product price)";
+    if (!formData.quantity || formData.quantity <= 0) {
+      newErrors.quantity = "(Quantity is required)";
+    }
+
+    if (!formData.brand || formData.brand.trim() === "") {
+      newErrors.brand = "(Brand is required)";
+    }
 
     if (
-      !formData.md_brand ||
-      !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.md_brand)
-    )
-      newErrors.md_brand = "(Product brand is required)";
+      (selectedCategory === "Medication" ||
+        selectedCategory === "Contact Lens") &&
+      (!formData.expirationDate || formData.expirationDate === "")
+    ) {
+      newErrors.expirationDate = "(Expiration date is required)";
+    }
 
-    if (selectedCategory === "Eye Glasses") {
-      if (!formData.eyeglass_category)
-        newErrors.eyeglass_category = "(Select eyeglass category)";
+    //================================================================================
 
-      if (
-        !formData.len_type ||
-        !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.len_type)
-      )
-        newErrors.len_type = "(Product lens type is required)";
+    if (selectedCategory === "Medication") {
+      if (!formData.prescrip_otc || formData.prescrip_otc === "") {
+        newErrors.prescrip_otc = "(Please select Prescription or OTC)";
+      }
 
-      if (
-        !formData.color_material ||
-        !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.color_material)
-      )
-        newErrors.color_material = "(Product material is required)";
+      if (!formData.md_form || formData.md_form === "") {
+        newErrors.md_form = "(Medicine form is required)";
+      }
 
-      if (!formData.quantity || formData.quantity <= 0)
-        newErrors.quantity = "(Input quantity)";
+      if (!formData.dosage || formData.dosage.trim() === "") {
+        newErrors.dosage = "(Dosage and strength are required)";
+      }
+    }
 
-      if (!formData.price || formData.price <= 0)
-        newErrors.price = "(Put product price)";
+    if (selectedCategory === "Contact Lens") {
+      if (!formData.ct_type || formData.ct_type === "") {
+        newErrors.ct_type = "(Contact lens type is required)";
+      }
 
-      if (
-        !formData.brand ||
-        !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.eye_brand)
-      )
-        newErrors.eye_brand = "(Product brand is required)";
-    } else if (selectedCategory === "Medication") {
-      if (!formData.prescrip_otc)
-        newErrors.prescrip_otc = "(Select prescription or OTC)";
+      if (!formData.ct_material || formData.ct_material.trim() === "") {
+        newErrors.ct_material = "(Lens material is required)";
+      }
+    }
 
-      if (!formData.md_form) newErrors.md_form = "(Select medication form)";
+    if (selectedCategory === "Eye Glass") {
+      if (!formData.eyeglass_category || formData.eyeglass_category === "") {
+        newErrors.eyeglass_category = "(Eye glass category is required)";
+      }
+      if (!formData.len_type || formData.len_type === "") {
+        newErrors.len_type = "(Lens type is required)";
+      }
 
-      if (!formData.dosage) newErrors.dosage = "(Input medication dosage)";
+      if (!formData.color_material || formData.color_material === "") {
+        newErrors.color_material = "(Color / Material is required)";
+      }
+    }
 
-      if (!formData.md_expdate)
-        newErrors.md_expdate = "(Input medication expiration)";
-    } else if (selectedCategory === "Contact Lens") {
-      if (
-        !formData.cl_product_name ||
-        !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.cl_product_name)
-      )
-        newErrors.cl_product_name = "(Product name is required)";
-
-      if (!formData.ct_type) newErrors.ct_type = "(Select contact lens type)";
-
-      if (
-        !formData.ct_material ||
-        !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.ct_material)
-      )
-        newErrors.ct_material = "(Product material is required)";
-
-      if (!formData.ct_expdate)
-        newErrors.ct_expdate = "(Input contact lens expiration)";
-
-      if (!formData.ct_quantity || formData.ct_quantity <= 0)
-        newErrors.ct_quantity = "(Input quantity)";
-
-      if (!formData.ct_price || formData.ct_price <= 0)
-        newErrors.ct_price = "(Put product price)";
-
-      if (
-        !formData.ct_brand ||
-        !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.ct_brand)
-      )
-        newErrors.ct_brand = "(Product brand is required)";
-    } else if (selectedCategory === "Other") {
-      if (
-        !formData.other_product_name ||
-        !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.other_product_name)
-      )
-        newErrors.other_product_name = "(Product name is required)";
-
-      if (
-        !formData.other_description ||
-        !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.other_description)
-      )
+    if (selectedCategory === "Other") {
+      if (!formData.other_description || formData.other_description === "") {
         newErrors.other_description = "(Product description is required)";
-
-      if (!formData.other_quantity || formData.other_quantity <= 0)
-        newErrors.other_quantity = "(Input quantity)";
-
-      if (!formData.other_price || formData.other_price <= 0)
-        newErrors.other_price = "(Put product price)";
-
-      if (
-        !formData.other_brand ||
-        !/^[a-zA-Z0-9À-ÿ\\s,'-]{2,}$/.test(formData.other_brand)
-      )
-        newErrors.other_brand = "(Product brand is required)";
+      }
     }
 
     setErrors(newErrors);
+
     return Object.keys(newErrors).length === 0;
   };
+
   const handleAddProduct = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
     try {
       const cleanedData = cleanFormData(formData);
@@ -274,14 +236,14 @@ const AddEditProduct = ({ onClose }) => {
         <Loader />
       ) : (
         <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-          <div className="w-[400px] md:w-[600px] md:mr-8">
+          <div className="w-[380px] md:w-[600px] md:mr-8">
             <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
               <h1 className="text-p-lg text-c-secondary font-semibold">
                 Manage Product
               </h1>
               <button onClick={onClose}>&times;</button>
             </header>
-            <div className="bg-white h-[600px] overflow-y-scroll">
+            <div className="bg-white h-[480px] md:h-[600px] overflow-y-scroll">
               <div className="p-3 md:p-8">
                 <section>
                   <header>
@@ -333,7 +295,11 @@ const AddEditProduct = ({ onClose }) => {
                           name="product_name"
                           value={formData.product_name}
                           onChange={handleChange}
-                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.product_name
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                           placeholder="Enter product name"
                         />
                       </section>
@@ -353,7 +319,11 @@ const AddEditProduct = ({ onClose }) => {
                           name="eyeglass_category"
                           value={formData.eyeglass_category}
                           onChange={handleChange}
-                          className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.eyeglass_category
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                         >
                           <option value="" disabled className="text-c-gray3">
                             Select Eye Glass Category
@@ -378,7 +348,11 @@ const AddEditProduct = ({ onClose }) => {
                           name="len_type"
                           value={formData.len_type}
                           onChange={handleChange}
-                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.len_type
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                           placeholder="Single Vision / Bifocal / Progressive / Special Coatings"
                         />
                       </section>
@@ -399,7 +373,11 @@ const AddEditProduct = ({ onClose }) => {
                           name="color_material"
                           value={formData.color_material}
                           onChange={handleChange}
-                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.color_material
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                           placeholder="Enter color eme and material"
                         />
                       </section>
@@ -429,7 +407,11 @@ const AddEditProduct = ({ onClose }) => {
                           name="product_name"
                           value={formData.product_name}
                           onChange={handleChange}
-                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.product_name
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                           placeholder="Enter medication product name"
                         />
                       </section>
@@ -449,7 +431,11 @@ const AddEditProduct = ({ onClose }) => {
                           name="prescrip_otc"
                           value={formData.prescrip_otc}
                           onChange={handleChange}
-                          className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.prescrip_otc
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                         >
                           <option value="" disabled className="text-c-gray3">
                             Select Type
@@ -473,7 +459,11 @@ const AddEditProduct = ({ onClose }) => {
                           name="md_form"
                           value={formData.md_form}
                           onChange={handleChange}
-                          className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.md_form
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                         >
                           <option value="" disabled className="text-c-gray3">
                             Select Form
@@ -498,7 +488,11 @@ const AddEditProduct = ({ onClose }) => {
                           name="dosage"
                           value={formData.dosage}
                           onChange={handleChange}
-                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.dosage
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                           placeholder="Enter dosage and strength"
                         />
                       </section>
@@ -528,7 +522,11 @@ const AddEditProduct = ({ onClose }) => {
                           name="product_name"
                           value={formData.product_name}
                           onChange={handleChange}
-                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.product_name
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                           placeholder="Enter contact lens name"
                         />
                       </section>
@@ -547,7 +545,11 @@ const AddEditProduct = ({ onClose }) => {
                           name="ct_type"
                           value={formData.ct_type}
                           onChange={handleChange}
-                          className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.ct_type
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                         >
                           <option value="" disabled className="text-c-gray3">
                             Select Type
@@ -574,7 +576,11 @@ const AddEditProduct = ({ onClose }) => {
                           name="ct_material"
                           value={formData.ct_material}
                           onChange={handleChange}
-                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.ct_material
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                           placeholder="Enter contact lens material"
                         />
                       </section>
@@ -604,7 +610,11 @@ const AddEditProduct = ({ onClose }) => {
                           name="product_name"
                           value={formData.product_name}
                           onChange={handleChange}
-                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.product_name
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                           placeholder="Enter product name"
                         />
                       </section>
@@ -625,7 +635,11 @@ const AddEditProduct = ({ onClose }) => {
                           name="other_description"
                           value={formData.other_description}
                           onChange={handleChange}
-                          className="mt-1 w-full px-4 py-3 h-24 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.other_description
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                           placeholder="Enter product description"
                         />
                       </section>
@@ -653,7 +667,11 @@ const AddEditProduct = ({ onClose }) => {
                             value={formData.expirationDate}
                             onChange={handleChange}
                             min={getMinDate()}
-                            className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                            className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                              errors.expirationDate
+                                ? "border-red-400 focus:outline-red-400"
+                                : "border-c-gray3 focus:outline-c-primary"
+                            }`}
                           />
                         </section>
                       ) : (
@@ -677,7 +695,11 @@ const AddEditProduct = ({ onClose }) => {
                             min={0}
                             value={formData.price}
                             onChange={handleChange}
-                            className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                            className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                              errors.price
+                                ? "border-red-400 focus:outline-red-400"
+                                : "border-c-gray3 focus:outline-c-primary"
+                            }`}
                             placeholder="Enter product price"
                           />
                         </div>
@@ -698,7 +720,11 @@ const AddEditProduct = ({ onClose }) => {
                             min={0}
                             value={formData.quantity}
                             onChange={handleChange}
-                            className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                            className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                              errors.quantity
+                                ? "border-red-400 focus:outline-red-400"
+                                : "border-c-gray3 focus:outline-c-primary"
+                            }`}
                             placeholder="Enter quantity"
                           />
                         </div>
@@ -719,7 +745,11 @@ const AddEditProduct = ({ onClose }) => {
                           name="brand"
                           value={formData.brand}
                           onChange={handleChange}
-                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.brand
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                           placeholder="Enter brand"
                         />
                       </section>

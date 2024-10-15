@@ -149,8 +149,7 @@ const AddStaff = ({ onClose }) => {
     }));
 
   const handleNext = () => {
-    // const isValid = validateForm();
-    const isValid = true;
+    const isValid = validateForm();
     if (isValid) {
       setCurrentCardIndex(currentCardIndex + 1);
     }
@@ -180,12 +179,8 @@ const AddStaff = ({ onClose }) => {
       if (!formData.birthdate)
         newErrors.birthdate = "(Date of birth is required)";
 
-      if (
-        !formData.contact_number ||
-        !/^09\d{9}$/.test(formData.contact_number)
-      )
-        newErrors.contact_number =
-          "(A valid 11-digit contact number is required)";
+      if (!formData.contact || !/^09\d{9}$/.test(formData.contact))
+        newErrors.contact = "(A valid 11-digit contact number is required)";
     } else if (currentCardIndex === 1) {
       if (!formData.position) newErrors.position = "(Please select a position)";
 
@@ -216,6 +211,11 @@ const AddStaff = ({ onClose }) => {
   };
   const handleSubmitStaff = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return false;
+    }
+
     console.log(formData);
 
     try {
@@ -316,7 +316,11 @@ const AddStaff = ({ onClose }) => {
                         name="first_name"
                         value={formData.first_name}
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                          errors.first_name
+                            ? "border-red-400 focus:outline-red-400"
+                            : "border-c-gray3 focus:outline-c-primary"
+                        }`}
                         placeholder="Enter first name of staff"
                       />
                     </section>
@@ -336,7 +340,11 @@ const AddStaff = ({ onClose }) => {
                         name="last_name"
                         value={formData.last_name}
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                          errors.last_name
+                            ? "border-red-400 focus:outline-red-400"
+                            : "border-c-gray3 focus:outline-c-primary"
+                        }`}
                         placeholder="Enter last name of staff"
                       />
                     </section>
@@ -345,16 +353,11 @@ const AddStaff = ({ onClose }) => {
                         htmlFor="middle_name"
                         className="text-p-sm text-c-gray3 font-medium"
                       >
-                        Middle Name (Optional):{" "}
-                        <span className="text-red-400">
-                          {(formData.middle_name === "" ||
-                            errors.middle_name) &&
-                            errors.middle_name}
-                        </span>
+                        Middle Name (Optional)
                       </label>
                       <input
                         type="text"
-                        name="last_name"
+                        name="middle_name"
                         value={formData.middle_name}
                         onChange={handleChange}
                         className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
@@ -377,7 +380,11 @@ const AddStaff = ({ onClose }) => {
                         name="birthdate"
                         value={formData.birthdate}
                         onChange={handleChange}
-                        className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                          errors.birthdate
+                            ? "border-red-400 focus:outline-red-400"
+                            : "border-c-gray3 focus:outline-c-primary"
+                        }`}
                       />
                     </section>
                   </div>
@@ -437,7 +444,11 @@ const AddStaff = ({ onClose }) => {
                         name="contact"
                         value={formData.contact}
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                          errors.contact
+                            ? "border-red-400 focus:outline-red-400"
+                            : "border-c-gray3 focus:outline-c-primary"
+                        }`}
                         placeholder="Enter contact number"
                       />
                     </section>
@@ -467,7 +478,11 @@ const AddStaff = ({ onClose }) => {
                         name="position"
                         value={formData.position}
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                          errors.position
+                            ? "border-red-400 focus:outline-red-400"
+                            : "border-c-gray3 focus:outline-c-primary"
+                        }`}
                       >
                         <option value="" disabled className="text-c-gray3">
                           Select Role
@@ -492,7 +507,11 @@ const AddStaff = ({ onClose }) => {
                         name="emp_type"
                         value={formData.emp_type}
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                          errors.emp_type
+                            ? "border-red-400 focus:outline-red-400"
+                            : "border-c-gray3 focus:outline-c-primary"
+                        }`}
                       >
                         <option value="" disabled className="text-c-gray3">
                           Select Employment Type
@@ -849,7 +868,11 @@ const AddStaff = ({ onClose }) => {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                          errors.email
+                            ? "border-red-400 focus:outline-red-400"
+                            : "border-c-gray3 focus:outline-c-primary"
+                        }`}
                         placeholder="Enter email"
                       />
                     </section>
@@ -869,7 +892,11 @@ const AddStaff = ({ onClose }) => {
                           type={passVisible ? "text" : "password"}
                           name="password"
                           onChange={handleChange}
-                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.password
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                           placeholder="Enter password"
                         />
                         <button
@@ -901,7 +928,11 @@ const AddStaff = ({ onClose }) => {
                           type={cpVisible ? "text" : "password"}
                           name="confirmpassword"
                           onChange={handleChange}
-                          className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.confirmpassword
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                           placeholder="Confirm password"
                         />
                         <button
