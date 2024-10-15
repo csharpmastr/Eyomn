@@ -4,11 +4,16 @@ import { TbLayoutDashboard } from "react-icons/tb";
 import TopbarButton from "./TopbarButton";
 import { TbScan } from "react-icons/tb";
 import { FaRegStickyNote } from "react-icons/fa";
+import { CiSettings } from "react-icons/ci";
+import { IoMdHelpCircleOutline } from "react-icons/io";
 import { FiUser } from "react-icons/fi";
+import { AiOutlineUserAdd } from "react-icons/ai";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
+import { MdOutlineInventory } from "react-icons/md";
 import { IoAddCircle, IoLogOutOutline } from "react-icons/io5";
 import { SlOrganization } from "react-icons/sl";
+import { AiOutlineSchedule } from "react-icons/ai";
 import SidebarLogo from "../../assets/Image/sidebar_logo.png";
 import Cookies from "universal-cookie";
 import { useAuthContext } from "../../Hooks/useAuthContext";
@@ -74,7 +79,7 @@ const SideBar = () => {
       <div
         className={`flex flex-col h-full justify-between xl:space-y-3 xl:px-6 xl:pt-10 xl:pb-5 transition-transform duration-300 ease-in-out border-r border-f-gray  ${
           isMenuOpen
-            ? "translate-x-0 max-h-screen h-full bg-bg-sb fixed xl:static w-3/4 md:w-1/3 lg:w-1/4 xl:w-auto"
+            ? "translate-x-0 max-h-screen h-full mt-2 md:mt-0 bg-bg-sb fixed xl:static w-3/4 md:w-1/3 lg:w-1/4 xl:w-auto"
             : "hidden xl:flex"
         }`}
         style={{ maxHeight: "calc(100vh - 64px)" }}
@@ -165,16 +170,16 @@ const SideBar = () => {
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "appointment"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : "text-f-dark font-medium"
+                    : "text-f-dark font-medium "
                 }${
                   isCollapsed
-                    ? "xl:px-2 py-2 justify-center"
-                    : "xl:py-3 xl:px-4 "
+                    ? " xl:px-2 py-2 justify-center "
+                    : " xl:py-3 xl:px-4 "
                 }`}
                 onClick={() => setSelected("appointment")}
                 to="appointment"
               >
-                <FaRegStickyNote
+                <AiOutlineSchedule
                   className={`${
                     isCollapsed
                       ? " h-[26px] w-[26px]"
@@ -199,8 +204,8 @@ const SideBar = () => {
                 <FaRegStickyNote
                   className={`${
                     isCollapsed
-                      ? " h-[26px] w-[26px]"
-                      : " h-[26px] w-[26px] xl:mr-3"
+                      ? " h-[26px] w-[26px] "
+                      : " h-[26px] w-[26px] xl:mr-3 "
                   }`}
                 />
                 {!isCollapsed && <span className="ml-2">Inventory</span>}
@@ -290,7 +295,7 @@ const SideBar = () => {
                 onClick={() => setSelected("appointment")}
                 to="appointment"
               >
-                <FaRegStickyNote
+                <AiOutlineSchedule
                   className={`${
                     isCollapsed
                       ? " h-[26px] w-[26px]"
@@ -340,7 +345,7 @@ const SideBar = () => {
                 onClick={() => setSelected("add-patient")}
                 to="add-patient"
               >
-                <FiUser
+                <AiOutlineUserAdd
                   className={`${
                     isCollapsed
                       ? " h-[26px] w-[26px]  justify-center "
@@ -375,7 +380,7 @@ const SideBar = () => {
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
                   selected === "appointment"
                     ? "bg-c-secondary text-f-light font-semibold "
-                    : "text-f-dark font-medium"
+                    : "text-f-dark font-medium "
                 }${
                   isCollapsed
                     ? "xl:px-2 py-2 justify-center"
@@ -384,29 +389,29 @@ const SideBar = () => {
                 onClick={() => setSelected("appointment")}
                 to="appointment"
               >
-                <FaRegStickyNote
+                <AiOutlineSchedule
                   className={`${
                     isCollapsed
-                      ? " h-[26px] w-[26px]"
-                      : " h-[26px] w-[26px] xl:mr-3"
+                      ? " h-[26px] w-[26px] "
+                      : " h-[26px] w-[26px] xl:mr-3 "
                   }`}
                 />
                 {!isCollapsed && <span className="ml-2">Appointment</span>}
               </NavLink>
               <NavLink
-                className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
+                className={`  ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "inventory"
                     ? "bg-c-secondary text-f-light font-semibold "
-                    : "text-f-dark font-medium"
+                    : "text-f-dark font-medium "
                 }${
                   isCollapsed
-                    ? "xl:px-2 py-2 justify-center"
-                    : "xl:py-3 xl:px-4 "
+                    ? " xl:px-2 py-2 justify-center "
+                    : " xl:py-3 xl:px-4 "
                 }`}
                 onClick={() => setSelected("inventory")}
                 to="inventory"
               >
-                <FaRegStickyNote
+                <MdOutlineInventory
                   className={`${
                     isCollapsed
                       ? " h-[26px] w-[26px]"
@@ -424,14 +429,14 @@ const SideBar = () => {
             className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
               selected === "manage-profile/:section"
                 ? "bg-c-secondary text-f-light font-semibold "
-                : "text-f-dark font-medium"
+                : "text-f-dark font-medium "
             }${
               isCollapsed ? "xl:px-2 py-2 justify-center" : "xl:py-3 xl:px-4 "
             }`}
             onClick={() => setSelected("manage-profile/:section")}
             to="manage-profile/:section"
           >
-            <FaRegStickyNote
+            <CiSettings
               className={`${
                 isCollapsed
                   ? " h-[26px] w-[26px]"
@@ -444,14 +449,14 @@ const SideBar = () => {
             className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
               selected === "help"
                 ? "bg-c-secondary text-f-light font-semibold "
-                : "text-f-dark font-medium"
+                : "text-f-dark font-medium "
             }${
               isCollapsed ? "xl:px-2 py-2 justify-center" : "xl:py-3 xl:px-4 "
             }`}
             onClick={() => setSelected("help")}
             to="help"
           >
-            <FaRegStickyNote
+            <IoMdHelpCircleOutline
               className={`${
                 isCollapsed
                   ? " h-[26px] w-[26px]"

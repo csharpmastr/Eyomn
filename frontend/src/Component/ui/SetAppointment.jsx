@@ -17,6 +17,7 @@ const SetAppointment = ({ onClose }) => {
   const accessToken = cookies.get("accessToken");
   const refreshToken = cookies.get("refreshToken");
   const user = useSelector((state) => state.reducer.user.user);
+  const doctors = useSelector((state) => state.reducer.doctor.doctor);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [doesExists, setDoesExists] = useState(false);
@@ -24,6 +25,7 @@ const SetAppointment = ({ onClose }) => {
   const [formData, setFormData] = useState({
     patient_name: "",
     reason: "",
+    doctorId: "",
     doctor: "",
   });
 
@@ -37,17 +39,24 @@ const SetAppointment = ({ onClose }) => {
       }));
     }
 
-    if (name !== "date" && name !== "time") {
+    if (name === "doctor") {
+      const selectedDoctor = doctors.find((doctor) => doctor.staffId === value);
+      if (selectedDoctor) {
+        setFormData((prevData) => ({
+          ...prevData,
+          doctor: selectedDoctor.first_name + " " + selectedDoctor.last_name,
+          doctorId: selectedDoctor.staffId,
+        }));
+      }
+    } else if (name === "date") {
+      setDate(value);
+    } else if (name === "time") {
+      setTime(value);
+    } else {
       setFormData((prevData) => ({
         ...prevData,
         [name]: value,
       }));
-    }
-
-    if (name === "date") {
-      setDate(value);
-    } else if (name === "time") {
-      setTime(value);
     }
   };
 
@@ -102,7 +111,6 @@ const SetAppointment = ({ onClose }) => {
       ...formData,
       scheduledTime,
     };
-    console.log(appointmentData);
 
     try {
       const response = await addAppointmentService(
@@ -258,8 +266,11 @@ const SetAppointment = ({ onClose }) => {
                   <option value="" disabled className="text-c-gray3">
                     Available Doctor
                   </option>
-                  <option value="doctor_1">Dr. Smith</option>
-                  <option value="doctor_2">Dr. Johnson</option>
+                  {doctors.map((doctor, key) => (
+                    <option key={key} value={doctor.staffId}>
+                      {doctor.first_name + " " + doctor.last_name}
+                    </option>
+                  ))}
                 </select>
               </section>
             </form>

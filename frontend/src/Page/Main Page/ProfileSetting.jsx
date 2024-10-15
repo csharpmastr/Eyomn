@@ -21,7 +21,7 @@ const ProfileSetting = () => {
             {["My Profile", "Account"].map((section) => (
               <div
                 key={section}
-                className={`h-auto flex items-center rounded-md px-4 py-2 ${
+                className={`h-auto flex items-center rounded-md px-4 py-2 cursor-pointer ${
                   selected === section
                     ? "bg-[#E0EAEA] text-c-primary font-semibold"
                     : "text-f-dark font-md"

@@ -193,6 +193,7 @@ const loginUser = async (userData) => {
         "organizationId",
         "staffId",
         "role",
+        "schedule",
       ]);
 
       const organization = await getOrganizationName(user.organizationId);

@@ -7,6 +7,7 @@ const {
   branchCollection,
 } = require("../Config/FirebaseConfig");
 const { encryptDocument, decryptDocument } = require("../Helper/Helper");
+const { pushNotification } = require("./notificationService");
 
 const addPatient = async (organizationId, branchId, doctorId, patientData) => {
   const currentDate = new Date();
@@ -45,6 +46,11 @@ const addPatient = async (organizationId, branchId, doctorId, patientData) => {
     await patientRef.set(encryptedPatientData);
 
     await addVisit(patientId, doctorId);
+    await pushNotification(doctorId, "newPatient", {
+      branchId,
+      doctorId,
+      patientId,
+    });
     return patientId;
   } catch (error) {
     console.error("Error adding patient: ", error);

@@ -16,6 +16,7 @@ const patientCollection = db.collection("patient");
 const userCollection = db.collection("user");
 const inventoryCollection = db.collection("inventory");
 const appointmentCollection = db.collection("apppointment");
+const notificationCollection = db.collection("notification");
 
 module.exports = {
   db,
@@ -26,4 +27,5 @@ module.exports = {
   userCollection,
   inventoryCollection,
   appointmentCollection,
+  notificationCollection,
 };

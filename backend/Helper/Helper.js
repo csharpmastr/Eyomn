@@ -127,7 +127,8 @@ const getBranchDoctors = async (organizationId, branchId) => {
       return [];
     }
     const doctors = doctorSnapShot.docs.map((doctorDoc) => {
-      const { first_name, last_name, position, staffId } = doctorDoc.data();
+      const { first_name, last_name, position, staffId, schedule } =
+        doctorDoc.data();
 
       const decryptedFirstName = decryptData(first_name);
       const decryptedLastName = decryptData(last_name);
@@ -138,6 +139,7 @@ const getBranchDoctors = async (organizationId, branchId) => {
         last_name: decryptedLastName,
         position: decryptedPosition,
         staffId,
+        schedule,
       };
     });
 
