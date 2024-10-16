@@ -25,17 +25,26 @@ const addStaff = async (organizationId, branchId, staffData) => {
     if (!emailQuery.empty) {
       throw { status: 400, message: "Email already exists." };
     }
+
+    const newUser = await admin.auth().createUser({
+      email: staffData.email,
+      password: staffData.password,
+      displayName: `${staffData.firstName} ${staffData.lastName}`,
+    });
+
     const staffId = uuidv4();
     const encryptedStaffData = {
       staffId,
       organizationId,
       branchId,
+      firebaseUid: newUser.uid,
     };
     const staffCredentials = {
       staffId,
       email: staffData.email,
       organizationId,
       branchId,
+      firebaseUid: newUser.uid,
     };
 
     for (const [key, value] of Object.entries(staffData)) {
@@ -78,14 +87,21 @@ const addStaff = async (organizationId, branchId, staffData) => {
 };
 const addBranch = async (ogrId, branchData) => {
   try {
+    const newUser = await admin.auth().createUser({
+      email: branchData.email,
+      password: branchData.password,
+      displayName: `${branchData.name}`,
+    });
     const branchId = uuidv4();
     const encryptedBranchData = {
       branchId: branchId,
+      firebaseUid: newUser.uid,
       patients: [],
       staffs: [],
     };
     const encryptedBranchCredentials = {
       email: branchData.email,
+      firebaseUid: newUser.uid,
       organizationId: ogrId,
       role: "1",
       branchId: branchId,
@@ -224,6 +240,7 @@ const getBranchData = async (organizationId) => {
           "patients",
           "staffs",
           "branchId",
+          "firebaseUid",
         ]);
 
         const [staffs, appointments] = await Promise.all([

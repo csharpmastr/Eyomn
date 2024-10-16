@@ -33,6 +33,11 @@ class EmailAlreadyExistsError extends Error {
 }
 const addUser = async (orgData) => {
   try {
+    const newUser = await admin.auth().createUser({
+      email: orgData.email,
+      password: orgData.password,
+      displayName: `${orgData.organization}`,
+    });
     const orgRef = organizationCollection;
     const userRef = userCollection;
 
@@ -53,6 +58,7 @@ const addUser = async (orgData) => {
     const userDocRef = userRef.doc(userId);
 
     await orgDocRef.set({
+      firebaseUid: newUser.uid,
       email: orgData.email,
       branch: [],
       organization: encryptedOrganization,
@@ -62,6 +68,7 @@ const addUser = async (orgData) => {
     });
 
     await userDocRef.set({
+      firebaseUid: newUser.uid,
       email: orgData.email,
       password: hashedPassword,
       id: userId,
@@ -82,6 +89,14 @@ const loginUser = async (userData) => {
   console.log(email, password);
 
   try {
+    try {
+      let firebaseUser;
+      firebaseUser = await admin.auth().getUserByEmail(email);
+      console.log("User exists in Firebase Auth:", firebaseUser.uid);
+    } catch (firebaseError) {
+      throw new Error("User not found in Firebase Authentication");
+    }
+
     const userRef = userCollection.where("email", "==", email);
     const querySnapshot = await userRef.get();
 
@@ -141,6 +156,7 @@ const loginUser = async (userData) => {
         "branchId",
         "staffs",
         "patients",
+        "firebaseUid",
       ]);
 
       data = {
@@ -166,6 +182,7 @@ const loginUser = async (userData) => {
         "staffId",
         "role",
         "schedule",
+        "firebaseUid",
       ]);
 
       const organization = await getOrganizationName(user.organizationId);
@@ -194,6 +211,7 @@ const loginUser = async (userData) => {
         "staffId",
         "role",
         "schedule",
+        "firebaseUid",
       ]);
 
       const organization = await getOrganizationName(user.organizationId);

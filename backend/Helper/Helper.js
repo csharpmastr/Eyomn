@@ -104,6 +104,7 @@ const getStaffs = async (organizationId, branchId) => {
         "role",
         "email",
         "schedule",
+        "firebaseUid",
       ]);
     });
 
