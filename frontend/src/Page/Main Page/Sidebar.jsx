@@ -9,6 +9,7 @@ import { IoMdHelpCircleOutline } from "react-icons/io";
 import { FiUser } from "react-icons/fi";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { MdPointOfSale } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import { MdOutlineInventory } from "react-icons/md";
 import { IoAddCircle, IoLogOutOutline } from "react-icons/io5";
@@ -88,7 +89,7 @@ const SideBar = () => {
           {isCollapsed ? (
             ""
           ) : (
-            <h1 className="ml-5 text-p-sm text-c-primary mt-5 xl:mt-0">
+            <h1 className="ml-5 text-p-sm font-medium text-c-primary mt-5 xl:mt-0">
               MAIN MENU
             </h1>
           )}
@@ -425,6 +426,32 @@ const SideBar = () => {
         </div>
         <div className="flex flex-col gap-2 mr-4 xl:mr-0">
           <hr class="border-0 xl:border-t border-f-gray" />
+          {role != "2" && (
+            <>
+              <NavLink
+                className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
+                  selected === "pos"
+                    ? "bg-c-secondary text-f-light font-semibold "
+                    : "text-f-dark font-medium "
+                }${
+                  isCollapsed
+                    ? "xl:px-2 py-2 justify-center"
+                    : "xl:py-3 xl:px-4 "
+                }`}
+                onClick={() => setSelected("pos")}
+                to="pos"
+              >
+                <MdPointOfSale
+                  className={`${
+                    isCollapsed
+                      ? " h-[26px] w-[26px]"
+                      : " h-[26px] w-[26px] xl:mr-3"
+                  }`}
+                />
+                {!isCollapsed && <span className="ml-2">Point of Sale</span>}
+              </NavLink>
+            </>
+          )}
           <NavLink
             className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
               selected === "manage-profile/:section"

@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import { IoIosAddCircleOutline } from "react-icons/io";
+import React, { useState, useEffect } from "react";
+import { MdKeyboardArrowDown } from "react-icons/md";
+import { FaEllipsisV } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import AddEditProduct from "../../Component/ui/AddEditProduct";
 
 const InventoryTable = () => {
   const products = useSelector((state) => state.reducer.product.products);
@@ -9,6 +11,17 @@ const InventoryTable = () => {
   const itemsPerPage = 10;
   const maxPageButtons = 4;
   const totalPages = Math.ceil(products.length / itemsPerPage);
+  const [isMenuOpen, setIsMenuOpen] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleModal = () => setIsModalOpen(!isModalOpen);
+
+  const toggleOpen = (productId) => {
+    setIsMenuOpen((prevState) => ({
+      ...prevState,
+      [productId]: !prevState[productId],
+    }));
+  };
 
   const handleCollapseToggle = (productId) => {
     setCollapsedProducts((prevState) => ({
@@ -29,6 +42,23 @@ const InventoryTable = () => {
   const startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
   const endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const menuElements = document.querySelectorAll(".menu-dropdown");
+      if (isMenuOpen) {
+        for (let i = 0; i < menuElements.length; i++) {
+          if (menuElements[i] && !menuElements[i].contains(event.target)) {
+            setIsMenuOpen({});
+          }
+        }
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMenuOpen]);
+
   return (
     <div className="w-fit md:w-full text-f-dark overflow-x-auto font-poppins">
       <header className="flex text-p-rg font-semibold py-8 border bg-white border-b-f-gray rounded-t-lg">
@@ -41,13 +71,14 @@ const InventoryTable = () => {
         <div className="w-20"></div>
       </header>
       <main>
-        {products.map((product, index) => {
+        {paginatedProducts.map((productDetail, index) => {
           // Default to true (collapsed) if not already set
-          const isCollapsed = collapsedProducts[product.productId] !== false;
+          const isCollapsed =
+            collapsedProducts[productDetail.productId] !== false;
 
           return (
             <section
-              key={product.productId}
+              key={productDetail.productId}
               className={`${index % 2 === 0 ? "bg-bg-mc" : "bg-white"}`}
             >
               <div
@@ -55,23 +86,57 @@ const InventoryTable = () => {
                   isCollapsed ? "border border-b-f-gray" : ""
                 }`}
               >
-                <div className="flex-1 pl-4">{product.product_name}</div>
+                <div className="flex-1 pl-4">{productDetail.product_name}</div>
                 <div className="flex-1 pl-4">
-                  {product.category || "Eyeglasses"}
+                  {productDetail.category || "Eyeglasses"}
                 </div>
                 <div className="flex-1 pl-4">
-                  {product.eyeglass_category || ""}
+                  {productDetail.eyeglass_category || ""}
                 </div>
-                <div className="flex-1 pl-4">Php {product.price || 0}</div>
-                <div className="flex-1 pl-4">{product.quantity || 0}</div>
                 <div className="flex-1 pl-4">
-                  {product.brand || "Luxottica"}
+                  Php {productDetail.price || 0}
                 </div>
-                <div className="w-20 flex">
-                  <IoIosAddCircleOutline
-                    className="h-6 w-6 md:mr-2"
-                    onClick={() => handleCollapseToggle(product.productId)}
+                <div className="flex-1 pl-4">{productDetail.quantity || 0}</div>
+                <div className="flex-1 pl-4">
+                  {productDetail.brand || "Luxottica"}
+                </div>
+                <div className="w-20 flex items-center gap-4">
+                  <MdKeyboardArrowDown
+                    className={`h-6 w-6 ${
+                      isCollapsed ? `rotate-0` : `rotate-180`
+                    }`}
+                    onClick={() =>
+                      handleCollapseToggle(productDetail.productId)
+                    }
                   />
+                  <FaEllipsisV
+                    className="h-4 w-2 cursor-pointer"
+                    onClick={() => toggleOpen(productDetail.productId)}
+                  />
+                  {isMenuOpen[productDetail.productId] && (
+                    <div className="menu-dropdown absolute right-0 w-fit rounded-md shadow-lg bg-white ring-1 ring-f-gray z-50 origin-top-right mr-4">
+                      <div
+                        className="p-2"
+                        role="menu"
+                        aria-orientation="vertical"
+                        aria-labelledby="options-menu"
+                      >
+                        <a
+                          className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
+                          role="menuitem"
+                          onClick={toggleModal}
+                        >
+                          Edit
+                        </a>
+                        <a
+                          className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
+                          role="menuitem"
+                        >
+                          Delete
+                        </a>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               {!isCollapsed && (
@@ -131,6 +196,7 @@ const InventoryTable = () => {
           &gt;
         </button>
       </div>
+      {isModalOpen && <AddEditProduct onClose={toggleModal} />}
     </div>
   );
 };

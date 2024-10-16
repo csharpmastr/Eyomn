@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IoMdSearch } from "react-icons/io";
-import { IoIosAddCircleOutline } from "react-icons/io";
+import { BsFilter } from "react-icons/bs";
+import { FiPlus } from "react-icons/fi";
 import InventoryTable from "../../Component/ui/InventoryTable";
 import AddEditProduct from "../../Component/ui/AddEditProduct";
 import { getProducts } from "../../Service/InventoryService";
@@ -10,16 +11,10 @@ import Cookies from "universal-cookie";
 const Inventory = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   return (
-    <div className="text-f-dark p-3 md:p-8 font-Poppins">
+    <div className="text-f-dark p-3 md:p-6 font-Poppins">
       <nav className="flex flex-col gap-3 lg:gap-0 lg:flex-row justify-between mb-8">
         <div>
           <h1 className="text-p-lg">All Product</h1>
@@ -29,8 +24,8 @@ const Inventory = () => {
             <span className="text-green-500">28</span> In Stock{" "}
           </p>
         </div>
-        <div className="flex">
-          <div className="flex flex-row border border-c-gray3 px-4 rounded-md justify-center items-center w-full">
+        <div className="flex gap-3">
+          <div className="flex flex-row border border-c-gray3 px-4 rounded-lg justify-center items-center w-full">
             <IoMdSearch className="h-8 w-8 text-c-secondary" />
             <input
               type="text"
@@ -40,22 +35,19 @@ const Inventory = () => {
               //onChange={handleSearchChange}
             />
           </div>
-          <div className="ml-2 flex justify-center items-center rounded-md px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
-            <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
+          <div className="flex justify-center items-center rounded-lg px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
+            <BsFilter className="h-6 w-6 md:mr-2" />
             <select className="md:block hover:cursor-pointer focus:outline-none bg-bg-mc">
-              <option value="" disabled selected>
-                Filter
-              </option>
-              <option value="filter1">Filter 1</option>
+              <option value="filter1">A-Z</option>
               <option value="filter2">Filter 2</option>
               <option value="filter3">Filter 3</option>
             </select>
           </div>
           <div
-            className="ml-2 flex flex-row px-4 items-center rounded-md py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
-            onClick={handleOpenModal}
+            className="flex flex-row px-4 items-center rounded-lg py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+            onClick={toggleModal}
           >
-            <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
+            <FiPlus className="h-6 w-6 md:mr-2" />
             <h1 className="hidden md:block text-nowrap">Add Product</h1>
           </div>
         </div>
@@ -63,7 +55,7 @@ const Inventory = () => {
       <main className="overflow-x-auto">
         <InventoryTable />
       </main>
-      {isModalOpen && <AddEditProduct onClose={handleCloseModal} />}
+      {isModalOpen && <AddEditProduct onClose={toggleModal} />}
     </div>
   );
 };

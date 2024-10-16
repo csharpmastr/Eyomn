@@ -15,7 +15,7 @@ const HelpCenter = () => {
   };
 
   return (
-    <div className="text-f-dark p-3 md:p-8 font-Poppin h-full flex flex-col md:flex-row gap-8">
+    <div className="text-f-dark p-3 md:p-6 font-Poppin h-full flex flex-col md:flex-row gap-6">
       <nav className="w-full md:w-1/3 flex flex-col justify-between h-full">
         <div>
           <div>

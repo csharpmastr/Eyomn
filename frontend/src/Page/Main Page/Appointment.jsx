@@ -69,12 +69,12 @@ const Appointment = () => {
           <span className="absolute top-2 left-2 font-Poppins">{i}</span>
 
           {getAppointmentsForDay(i).length > 0 && (
-            <div className="mt-2 text-sm text-gray-600 text-center w-full">
-              <div className="overflow-hidden max-h-32 mt-2">
+            <div className="mt-2 text-sm text-gray-600 text-center w-full overflow-y-scroll">
+              <div className="overflow-hidden mt-2">
                 {getAppointmentsForDay(i).map((appointment, index) => (
                   <div
                     key={index}
-                    className="gap-2"
+                    className="text-rg text-f-dark font-medium py-2 rounded-md mb-2"
                     style={{ backgroundColor: getPastelColor() }}
                   >
                     {dayjs(appointment.scheduledTime).format("h:mm A")}
@@ -90,12 +90,12 @@ const Appointment = () => {
   };
 
   return (
-    <div className="p-4 md:p-8 text-c-secondary text-p-rg font-Poppins">
+    <div className="p-4 md:p-6 text-c-secondary text-p-rg font-Poppins">
       <div className="flex justify-between items-center">
         <div>
           <button
             onClick={handlePrevMonth}
-            className="p-2 md:py-3 md:px-4 bg-white border border-c-gray3 rounded"
+            className="p-2 md:py-3 md:px-4 bg-white border border-c-gray3 rounded-lg"
           >
             &lt;
           </button>
@@ -104,18 +104,18 @@ const Appointment = () => {
           </span>
           <button
             onClick={handleNextMonth}
-            className="p-2 md:py-3 md:px-4 bg-white border border-c-gray3 rounded"
+            className="p-2 md:py-3 md:px-4 bg-white border border-c-gray3 rounded-lg"
           >
             &gt;
           </button>
         </div>
         <div
-          className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+          className="ml-2 h-auto flex justify-center items-center rounded-lg px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
           onClick={handleOpenSetApp}
         >
           <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
           <h1 className="md:block hidden">Set Appointment</h1>
-        </div>{" "}
+        </div>
       </div>
       <div className="grid grid-cols-7 text-center pt-6 pb-3 font-medium bg-bg-sb border border-c-gray3 mt-8 rounded-t-md">
         <div>Sun</div>
@@ -132,7 +132,7 @@ const Appointment = () => {
           onClose={handleCloseViewApp}
           appointments={selectedDayAppointments}
         />
-      )}{" "}
+      )}
       {isModalSetApp && <SetAppointment onClose={handleCloseSetApp} />}
     </div>
   );

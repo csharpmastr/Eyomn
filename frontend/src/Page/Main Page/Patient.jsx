@@ -40,7 +40,7 @@ const Patient = () => {
   return (
     <div className="h-full w-full font-Poppins">
       {isLoading && <Loader />}
-      <div className="p-4 md:p-8">
+      <div className="p-4 md:p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between">
           <p className="text-p-lg font-semibold text-f-dark">
             {totalPatient} <span className="text-f-gray2">Total patient</span>
@@ -86,7 +86,7 @@ const Patient = () => {
             )}
           </div>
         </div>
-        <div className="mt-8">
+        <div className="mt-6">
           <Table data={filteredPatients} />
         </div>
       </div>
