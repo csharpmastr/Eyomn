@@ -42,7 +42,7 @@ const AddStaff = ({ onClose }) => {
     province: "",
     municipality: "",
     email: "",
-    contact: "",
+    contact_number: "",
     position: "",
     emp_type: "",
     password: "",
@@ -179,8 +179,12 @@ const AddStaff = ({ onClose }) => {
       if (!formData.birthdate)
         newErrors.birthdate = "(Date of birth is required)";
 
-      if (!formData.contact || !/^09\d{9}$/.test(formData.contact))
-        newErrors.contact = "(A valid 11-digit contact number is required)";
+      if (
+        !formData.contact_number ||
+        !/^09\d{9}$/.test(formData.contact_number)
+      )
+        newErrors.contact_number =
+          "(A valid 11-digit contact number is required)";
     } else if (currentCardIndex === 1) {
       if (!formData.position) newErrors.position = "(Please select a position)";
 
@@ -435,17 +439,18 @@ const AddStaff = ({ onClose }) => {
                       >
                         Contact Number:{" "}
                         <span className="text-red-400">
-                          {(formData.contact === "" || errors.contact) &&
-                            errors.contact}
+                          {(formData.contact_number === "" ||
+                            errors.contact_number) &&
+                            errors.contact_number}
                         </span>
                       </label>
                       <input
                         type="text"
                         name="contact"
-                        value={formData.contact}
+                        value={formData.contact_number}
                         onChange={handleChange}
                         className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                          errors.contact
+                          errors.contact_number
                             ? "border-red-400 focus:outline-red-400"
                             : "border-c-gray3 focus:outline-c-primary"
                         }`}

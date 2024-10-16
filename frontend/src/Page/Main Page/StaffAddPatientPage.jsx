@@ -77,6 +77,7 @@ const StaffAddPatientPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
 
     if (!validateForm()) {
       return;
@@ -86,6 +87,7 @@ const StaffAddPatientPage = () => {
       const res = await addPatientHook(formData, selectedDoctor.staffId);
       if (res) {
         setIsSuccess(true);
+        console.log(res);
 
         handleClear();
         setSelectedDoctor(null);
@@ -495,9 +497,9 @@ const StaffAddPatientPage = () => {
                   <option value="" disabled className="text-c-gray3">
                     Select Reason
                   </option>
-                  <option value="Male">Check Up</option>
-                  <option value="Male">Consultation</option>
-                  <option value="Female">Eye Glass</option>
+                  <option value="check up">Check Up</option>
+                  <option value="consulation">Consultation</option>
+                  <option value="eye glass">Eye Glass</option>
                 </select>
               </div>
             </div>

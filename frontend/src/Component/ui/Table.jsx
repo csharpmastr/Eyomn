@@ -1,19 +1,17 @@
 import React, { useState } from "react";
 
-// Helper function to capitalize the first letter of a string
 const capitalizeFirstLetter = (string) => {
   if (!string) return "";
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };
 
-// Helper function to format date as "Month Day, Year"
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const options = { year: "numeric", month: "long", day: "numeric" };
   return date.toLocaleDateString(undefined, options);
 };
 
-const Table = ({ data }) => {
+const Table = ({ data, handlePatientClick }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const maxPageButtons = 4;
@@ -47,9 +45,10 @@ const Table = ({ data }) => {
           {currentData.map((patientData, index) => (
             <tr
               key={index}
-              className={`border-b border-f-gray h-20 text-c-secondary text-p-rg ${
+              className={`border-b border-f-gray h-20 text-c-secondary text-p-rg cursor-pointer ${
                 index % 2 === 0 ? "bg-bg-mc" : `bg-white`
               }`}
+              onClick={() => handlePatientClick(patientData.patientId)}
             >
               <td className="pl-8">
                 {patientData.first_name + " " + patientData.last_name}

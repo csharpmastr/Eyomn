@@ -29,6 +29,7 @@ import { useAuthContext } from "./Hooks/useAuthContext";
 import OrgStaff from "./Page/Main Page/OrgStaff";
 import ScribeRecord from "./Page/Main Page/Scribe/ScribeRecord";
 import MedForm from "./Page/Main Page/MedForm";
+import PatientProfile from "./Page/Main Page/PatientProfile";
 let persistor = persistStore(store);
 
 const ProtectedRoute = ({ children }) => {
@@ -88,7 +89,9 @@ const AppRoutes = () => {
           <Route path=":patientId" element={<ScribeRecord />} />
           <Route path="new-record/:patientId" element={<MedForm />} />
         </Route>
-        <Route path="patient" element={<Patient />} />
+        <Route path="patient" element={<Patient />}>
+          <Route path=":patientId" element={<PatientProfile />} />
+        </Route>
         <Route path="organization" element={<Organization />}>
           <Route path=":branchId" element={<OrgStaff />} />
         </Route>
