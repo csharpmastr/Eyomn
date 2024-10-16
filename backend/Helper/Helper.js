@@ -172,36 +172,10 @@ function encryptDocument(data, excludedKeys) {
   }
   return encryptedData;
 }
-const addVisit = async (patientId, doctorId) => {
-  try {
-    const currentDate = new Date();
-    const visitId = uuidv4();
 
-    const patientRef = patientCollection.doc(patientId);
-    const visitSubColRef = patientRef.collection("visit").doc(visitId);
-
-    const visitData = {
-      visitId,
-      date: currentDate.toISOString(),
-      doctorId,
-    };
-
-    await visitSubColRef.set(visitData);
-    console.log(
-      `Visit added for patient ${patientId} with visit ID: ${visitId}`
-    );
-  } catch (error) {
-    console.error("Error adding visit:", error.message);
-    throw new Error("Error adding visit: " + error.message);
-  }
-};
-const getVisit = async (patientId, doctorId) => {
+const getVisits = async (patientId, doctorId) => {
   try {
     let visitQuery = patientCollection.doc(patientId).collection("visit");
-
-    if (doctorId) {
-      visitQuery = visitQuery.where("doctorId", "==", doctorId);
-    }
 
     const visitSnapshot = await visitQuery.get();
 
@@ -232,7 +206,6 @@ module.exports = {
   encryptDocument,
   getStaffs,
   getBranchDoctors,
-  addVisit,
-  getVisit,
+  getVisits,
   removeNullValues,
 };

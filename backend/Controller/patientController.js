@@ -1,3 +1,4 @@
+const { getVisits } = require("../Helper/Helper");
 const {
   addPatient,
   getPatientsByDoctor,
@@ -32,13 +33,11 @@ const addPatientHandler = async (req, res) => {
       doctorId,
       patientData
     );
-    return res
-      .status(200)
-      .json({
-        message: "Patient added successfully",
-        id: id,
-        createdAt: createdAt,
-      });
+    return res.status(200).json({
+      message: "Patient added successfully",
+      id: id,
+      createdAt: createdAt,
+    });
   } catch (error) {
     console.error("Error adding patient: ", error);
     res
@@ -170,6 +169,23 @@ const getPatientNoteHandler = async (req, res) => {
       .json({ message: "Error getting patient's note.", error: error.message });
   }
 };
+
+const getPatientVisitsHandler = async (req, res) => {
+  try {
+    const { patientId } = req.query;
+    if (!patientId) {
+      return res.status(401).json({ message: "Please provide Patient ID" });
+    }
+    const visits = await getVisits(patientId);
+    if (visits) {
+      return res.status(200).json(visits);
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error getting patient's note.", error: error.message });
+  }
+};
 module.exports = {
   addPatientHandler,
   getPatientsByDoctorHandler,
@@ -179,4 +195,5 @@ module.exports = {
   retrievePatientHandler,
   addNoteHandler,
   getPatientNoteHandler,
+  getPatientVisitsHandler,
 };

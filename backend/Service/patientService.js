@@ -25,8 +25,10 @@ const addPatient = async (organizationId, branchId, doctorId, patientData) => {
       isDeleted: false,
     };
 
+    const { reason_visit, ...filteredPatientData } = patientData;
+
     const encryptedPatientData = encryptDocument(
-      { ...basePatientData, ...patientData },
+      { ...basePatientData, ...filteredPatientData },
       [
         "doctorId",
         "patientId",
@@ -45,7 +47,7 @@ const addPatient = async (organizationId, branchId, doctorId, patientData) => {
     const patientRef = patientCollection.doc(patientId);
     await patientRef.set(encryptedPatientData);
 
-    await addVisit(patientId, doctorId);
+    await addVisit(patientId, doctorId, reason_visit);
     await pushNotification(doctorId, "newPatient", {
       branchId,
       doctorId,
@@ -57,6 +59,7 @@ const addPatient = async (organizationId, branchId, doctorId, patientData) => {
     throw error;
   }
 };
+
 const getPatients = async (organizationId, branchId, doctorId, role) => {
   try {
     let patientQuery;
@@ -108,17 +111,18 @@ const getPatients = async (organizationId, branchId, doctorId, role) => {
   }
 };
 
-const addVisit = async (patientId, doctorId) => {
+const addVisit = async (patientId, doctorId, reason_visit) => {
   const currentDate = new Date();
   const visitId = uuidv4();
 
   const patientRef = patientCollection.doc(patientId);
   const visitSubColRef = patientRef.collection("visit").doc(visitId);
-
   const visitData = {
     visitId,
     date: currentDate.toISOString(),
     doctorId,
+    reason_visit,
+    patientId: patientId,
   };
 
   await visitSubColRef.set(visitData);
