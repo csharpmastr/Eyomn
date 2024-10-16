@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import ReasonVisitCard from "./ReasonVisitCard";
+import { getPatientVisit } from "../../Service/PatientService";
+import Cookies from "universal-cookie";
 
-const DocViewPatientProfile = ({ patient }) => {
+const DocViewPatientProfile = ({ patient, visits }) => {
   const formattedDate = patient.createdAt
     ? new Date(patient.createdAt).toLocaleDateString("en-US", {
         year: "numeric",
@@ -10,6 +12,7 @@ const DocViewPatientProfile = ({ patient }) => {
         day: "numeric",
       })
     : "N/A";
+
   return (
     <div className="w-full h-auto font-poppins">
       <header className="flex flex-wrap gap-3 justify-between items-center p-5 rounded-lg bg-bg-sb border border-c-primary mb-8 md:flex-row md:gap-0">
@@ -53,7 +56,7 @@ const DocViewPatientProfile = ({ patient }) => {
       </header>
       <div className="flex flex-col gap-8 justify-between lg:flex-row">
         <div className="w-full h-auto flex flex-col gap-8">
-          <div className="w-full bg-white p-5 rounded-lg border border-f-gray">
+          <div className="w-full bg-white p-5 rounded-lg border border-f-gray overflow-x-hidden">
             <h1 className="text-p-rg font-medium text-c-secondary mb-5">
               | Contact Information
             </h1>
@@ -140,8 +143,24 @@ const DocViewPatientProfile = ({ patient }) => {
             </section>
           </div>
         </div>
-        <div className="w-full h-full mb-8 lg:w-[800px]">
-          <ReasonVisitCard />
+        <div className="w-full h-auto mb-8 lg:w-[600px]">
+          <div className="w-full h-full bg-white rounded-lg font-poppins p-4">
+            <header className="flex w-full h-auto justify-between pt-4 mb-4">
+              <h1 className="text-p-rg font-medium text-c-gray3">
+                Recent Visit
+              </h1>
+              <button>
+                <IoIosAddCircleOutline className="h-6 w-6 md:mr-2 text-c-gray3]" />
+              </button>
+            </header>
+            {visits.length > 0 ? (
+              visits.map((visit, index) => (
+                <ReasonVisitCard key={index} reasonData={visit} />
+              ))
+            ) : (
+              <p>No visit records found.</p>
+            )}{" "}
+          </div>
         </div>
       </div>
     </div>

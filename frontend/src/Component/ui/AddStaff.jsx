@@ -216,9 +216,9 @@ const AddStaff = ({ onClose }) => {
   const handleSubmitStaff = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      return false;
-    }
+    // if (!validateForm()) {
+    //   return false;
+    // }
 
     console.log(formData);
 
@@ -446,7 +446,7 @@ const AddStaff = ({ onClose }) => {
                       </label>
                       <input
                         type="text"
-                        name="contact"
+                        name="contact_number"
                         value={formData.contact_number}
                         onChange={handleChange}
                         className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${

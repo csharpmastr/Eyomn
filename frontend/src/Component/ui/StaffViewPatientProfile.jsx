@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import ReasonVisitCard from "./ReasonVisitCard";
+import { getPatientVisit } from "../../Service/PatientService";
+import Cookies from "universal-cookie";
+import { useDispatch } from "react-redux";
+import { addVisit } from "../../Slice/VisitSlice";
 
-const StaffViewPatientProfile = ({ patient }) => {
+const StaffViewPatientProfile = ({ patient, visits }) => {
+  const reduxDispatch = useDispatch();
   const formattedDate = patient.createdAt
     ? new Date(patient.createdAt).toLocaleDateString("en-US", {
         year: "numeric",
@@ -114,7 +119,23 @@ const StaffViewPatientProfile = ({ patient }) => {
           </div>
         </div>
         <div className="md:w-[600px] h-auto">
-          <ReasonVisitCard />
+          <div className="w-full h-full bg-white rounded-lg font-poppins p-4">
+            <header className="flex w-full h-auto justify-between pt-4 mb-5">
+              <h1 className="text-p-rg font-medium text-c-gray3">
+                | Recent Visit
+              </h1>
+              <button>
+                <IoIosAddCircleOutline className="h-6 w-6 md:mr-2 text-c-gray3]" />
+              </button>
+            </header>
+            {visits.length > 0 ? (
+              visits.map((visit, index) => (
+                <ReasonVisitCard key={index} reasonData={visit} />
+              ))
+            ) : (
+              <p>No visit records found.</p>
+            )}{" "}
+          </div>
         </div>
       </div>
     </div>

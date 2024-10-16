@@ -119,10 +119,6 @@ const AddBranchModal = ({ onClose }) => {
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) {
-      return;
-    }
-
     setIsLoading(true);
     try {
       const response = await addBranchService(
