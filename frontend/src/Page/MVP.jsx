@@ -43,6 +43,10 @@ const MVP = () => {
     sessionStorage.removeItem("currentPatientId");
     sessionStorage.removeItem("currentPath");
   }
+  if (!currentPath.startsWith("/patient")) {
+    sessionStorage.removeItem("currentPatient");
+    sessionStorage.removeItem("currentPath");
+  }
 
   useEffect(() => {
     if (!isFetched) {

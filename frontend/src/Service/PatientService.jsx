@@ -85,3 +85,21 @@ export const getPatients = async (
 };
 
 export const addPatientNote = async (note) => {};
+
+export const getPatientVisit = async (patientId, accessToken, refreshToken) => {
+  try {
+    const response = await axios.get(`${PATIENT_API_BASE_URL}/get-visits`, {
+      params: {
+        patientId,
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching patients: ", err);
+    throw err;
+  }
+};

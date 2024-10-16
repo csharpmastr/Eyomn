@@ -25,7 +25,13 @@ export const useAddPatient = () => {
         doctorId
       );
 
-      reduxDispatch(addPatient({ ...data, id: response.data.id }));
+      reduxDispatch(
+        addPatient({
+          ...data,
+          patientId: response.data.id,
+          createdAt: response.data.createdAt,
+        })
+      );
       return response;
     } catch (err) {
       setError(err);
