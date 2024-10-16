@@ -51,7 +51,7 @@ const addPatient = async (organizationId, branchId, doctorId, patientData) => {
       doctorId,
       patientId,
     });
-    return patientId;
+    return { id: patientId, createdAt: basePatientData.createdAt };
   } catch (error) {
     console.error("Error adding patient: ", error);
     throw error;

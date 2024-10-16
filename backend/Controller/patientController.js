@@ -26,7 +26,7 @@ const addPatientHandler = async (req, res) => {
           "Organization ID, branch ID, doctor ID, and patient data are required.",
       });
     }
-    const id = await addPatient(
+    const { id, createdAt } = await addPatient(
       organizationId,
       branchId,
       doctorId,
@@ -34,7 +34,11 @@ const addPatientHandler = async (req, res) => {
     );
     return res
       .status(200)
-      .json({ message: "Patient added successfully", id: id });
+      .json({
+        message: "Patient added successfully",
+        id: id,
+        createdAt: createdAt,
+      });
   } catch (error) {
     console.error("Error adding patient: ", error);
     res
