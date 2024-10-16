@@ -13,6 +13,7 @@ import Patient from "./Page/Main Page/Patient";
 import ScanFundus from "./Page/Main Page/Scan/ScanFundus";
 import Appointment from "./Page/Main Page/Appointment";
 import Inventory from "./Page/Main Page/Inventory";
+import PointOfSale from "./Page/Main Page/PointOfSale";
 import HelpCenter from "./Page/Main Page/HelpCenter";
 import UserProfile from "./Page/Main Page/UserProfile";
 import ProfileSetting from "./Page/Main Page/ProfileSetting";
@@ -99,6 +100,7 @@ const AppRoutes = () => {
         <Route path="appointment" element={<Appointment />} />
         <Route path="inventory" element={<Inventory />} />
         <Route path="profile" element={<UserProfile />} />
+        <Route path="pos" element={<PointOfSale />} />
         <Route path="manage-profile/:section" element={<ProfileSetting />} />
         <Route path="/help" element={<HelpCenter />}>
           <Route path=":section" element={<HelpCenter />} />

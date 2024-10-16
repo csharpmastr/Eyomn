@@ -34,6 +34,21 @@ const TopbarButton = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const dropdown = document.querySelector(".absolute");
+      if (dropdown && !dropdown.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMenuOpen]);
+
   const screenSize =
     screenWidth >= 1280 ? "xl" : screenWidth >= 1024 ? "lg" : "md";
 
@@ -76,7 +91,7 @@ const TopbarButton = () => {
                 <h1 className="text-p-rg font-medium">
                   {user.first_name + " " + user.last_name}
                 </h1>
-                <p className="text-p-sm">{user.position}</p>
+                <p className="text-p-sm font-normal">{user.position}</p>
               </div>
             </section>
             <button
