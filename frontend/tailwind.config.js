@@ -44,7 +44,8 @@ export default {
         "p-sm": "13.33px",
         "p-rg": "16px",
         "p-lg": "19.2px",
-        h6: "23.04px",
+        "h-h6": "23.04px",
+        "h-h4": "33.18px",
       },
       animation: {
         soundwave: "soundwave 1.3s infinite",
