@@ -64,6 +64,15 @@ const Scribe = () => {
     }
   };
 
+  useEffect(() => {
+    if (location.pathname === "/scribe") {
+      setHasSelected(false);
+    }
+    if (location.state && location.state.resetSelected) {
+      setHasSelected(false);
+    }
+  }, [location]);
+
   const groupedPatients = groupPatientsByInitial(patients);
   const sortedInitials = Object.keys(groupedPatients).sort();
 
