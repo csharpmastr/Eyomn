@@ -28,11 +28,10 @@ const ScribeRecord = () => {
   };
 
   const handleBack = () => {
-    navigate("/scribe", { state: { resetSelected: true } });
-    sessionStorage.removeItem("currentPath");
-    sessionStorage.removeItem("currentPatientId");
+    if (currentCardIndex > 0) {
+      setCurrentCardIndex(currentCardIndex - 1);
+    }
   };
-
   const handleNewRecord = () => {
     navigate(`/scribe/new-record/${patientId}`);
   };
@@ -125,7 +124,6 @@ const ScribeRecord = () => {
             </div>
           )}
         </div>
-        <button onClick={handleBack}>Back</button>
       </div>
     </>
   );

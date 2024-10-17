@@ -33,7 +33,7 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="text-f-dark p-4 md:p-8 font-Poppin h-full flex flex-col gap-4 md:gap-8">
+    <div className="text-f-dark p-4 md:p-8 font-Poppin h-auto flex flex-col gap-4 md:gap-8">
       <header className="w-full h-fit flex justify-between items-center">
         <h1 className="text-p-lg font-medium">Santa Cruz Branch</h1>
         <div

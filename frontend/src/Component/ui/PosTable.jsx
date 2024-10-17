@@ -30,10 +30,11 @@ const PosTable = ({ onProductSelect }) => {
           key={productDetail.productId}
           onClick={() => onProductSelect(productDetail)}
         >
-          <div className="w-1/6 pl-4">{productDetail.product_name}</div>
+          <div className="w-1/6 pl-4">{productDetail.productSKU}</div>
           <div className="flex-1 pl-4">{productDetail.product_name}</div>
           <div className="flex-1 pl-4">{productDetail.category}</div>
           <div className="w-1/6 pl-4">Php {productDetail.price || 0}</div>
+          <div className="w-1/6 pl-4">{productDetail.quantity || 0}</div>
         </section>
       ))}
       <div className="flex justify-end mt-6 mb-4">

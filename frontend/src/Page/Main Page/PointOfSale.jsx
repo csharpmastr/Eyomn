@@ -71,6 +71,7 @@ const PointOfSale = () => {
           <div className="flex-1 pl-4">Product Name</div>
           <div className="flex-1 pl-4">Category</div>
           <div className="w-1/6 pl-4">Price</div>
+          <div className="w-1/6 pl-4">Quantity</div>
         </header>
         <div className="overflow-y-scroll">
           <div className="rounded-lg">

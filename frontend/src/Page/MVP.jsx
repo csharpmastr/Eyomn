@@ -45,7 +45,6 @@ const MVP = () => {
   }
   if (!currentPath.startsWith("/patient")) {
     sessionStorage.removeItem("currentPatient");
-    sessionStorage.removeItem("currentPath");
   }
 
   useEffect(() => {
@@ -64,7 +63,7 @@ const MVP = () => {
       <div className="flex xl:flex-row flex-col h-screen overflow-hidden">
         <SideBar />
         <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="hidden xl:h-20 w-full bg-white font-Poppins text-f-dark border-b border-f-gray xl:flex items-center xl:px-6 text-h6 font-bold justify-between">
+          <div className="hidden xl:h-20 w-full bg-white font-Poppins text-f-dark border-b border-f-gray xl:flex items-center xl:px-6 text-h-h6 font-bold justify-between">
             <h1>{currentTab}</h1>
             <div className="xl:w-2/6 w-full h-full flex items-center xl:justify-end">
               <TopbarButton />

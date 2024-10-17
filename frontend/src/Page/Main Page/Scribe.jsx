@@ -42,23 +42,24 @@ const Scribe = () => {
   useEffect(() => {
     const storedPatientId = sessionStorage.getItem("currentPatientId");
     const storedLocation = sessionStorage.getItem("currentPath");
-    if (storedPatientId) {
+
+    if (storedPatientId && storedLocation) {
       setHasSelected(true);
-      if (storedLocation.includes("new-record")) {
-        navigate(`/scribe/new-record/${storedPatientId}`);
-      } else {
-        navigate(`/scribe/${storedPatientId}`);
-      }
+
+      navigate(storedLocation);
     }
-  }, []);
+  }, [navigate]);
 
   const handleClickPatient = (id) => {
     const clickedPatient = patients.find((patient) => patient.patientId === id);
     setHasSelected(true);
-    if (clickedPatient) {
-      sessionStorage.setItem("currentPatientId", id);
 
-      navigate(`/scribe/${id}`);
+    if (clickedPatient) {
+      const newPath = `/scribe/${id}`;
+      sessionStorage.setItem("currentPatientId", id);
+      sessionStorage.setItem("currentPath", newPath);
+
+      navigate(newPath);
     } else {
       console.error("Patient not found");
     }
