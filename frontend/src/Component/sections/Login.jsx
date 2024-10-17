@@ -4,6 +4,7 @@ import SubmitButton from "../ui/SubmitButton";
 import { useLogin } from "../../Hooks/useLogin";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
+import { MdOutlineEmail, MdOutlineLock } from "react-icons/md";
 
 const Login = () => {
   const { login, isLoading, error } = useLogin();
@@ -64,30 +65,34 @@ const Login = () => {
           </div>
           <div className="flex flex-col gap-6">
             <section>
-              <label className="text-p-rg font-medium">Email Address:</label>
-              <input
-                type="email"
-                name="email"
-                className="mt-1 w-full px-4 py-4 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                placeholder="Enter your email"
-                value={userData.email}
-                onChange={handleChange}
-              />
+              <label className="text-p-rg font-medium">Email Address</label>
+              <div className="relative">
+                <MdOutlineEmail className="w-6 h-6 absolute top-5 left-4 text-c-gray3" />
+                <input
+                  type="email"
+                  name="email"
+                  className="mt-1 w-full pl-12 py-4 border border-c-gray3 font-medium rounded-md text-f-dark focus:outline-c-primary font-Poppins"
+                  placeholder="Enter your email"
+                  value={userData.email}
+                  onChange={handleChange}
+                />
+              </div>
             </section>
             <section>
-              <label className="text-p-rg font-medium">Password:</label>
+              <label className="text-p-rg font-medium">Password</label>
               <div className="relative">
+                <MdOutlineLock className="w-6 h-6 absolute top-5 left-4 text-c-gray3" />
                 <input
                   type={isPassVisible ? "text" : "password"}
                   name="password"
-                  className="mt-1 w-full px-4 py-4 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                  className="mt-1 w-full pl-12 py-4 border border-c-gray3 font-medium rounded-md text-f-dark focus:outline-c-primary font-Poppins"
                   placeholder="Enter your password"
                   value={userData.password}
                   onChange={handleChange}
                 />
                 <button
                   type="button"
-                  className="absolute top-6 right-2 text-f-gray2"
+                  className="absolute top-6 right-4 text-f-gray2"
                   onClick={() => setIsPassVisible(!isPassVisible)}
                 >
                   {isPassVisible ? (
@@ -96,6 +101,14 @@ const Login = () => {
                     <FaRegEyeSlash className="w-6 h-6" />
                   )}
                 </button>
+              </div>
+              <div className="flex flex-row-reverse mt-1">
+                <a
+                  onClick={() => navigate("/forgot-password")}
+                  className="text-p-rg font-bold text-c-secondary"
+                >
+                  Forgot password?
+                </a>
               </div>
             </section>
           </div>
