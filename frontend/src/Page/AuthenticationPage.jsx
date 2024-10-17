@@ -12,7 +12,7 @@ const AuthenticationPage = ({ type }) => {
       <div
         className="w-full h-full p-5 rounded-xl flex flex-col justify-between bg-black"
         style={{
-          background: "linear-gradient(to top, #2C3E50, #ABF2FF, #2C3E50)",
+          background: "linear-gradient(to top, #2C3E50, #ABF2FF, #1E8282)",
           clipPath: "polygon(0 0, 100% 0, 90% 100%, 00% 100%)",
         }}
       >
@@ -22,13 +22,14 @@ const AuthenticationPage = ({ type }) => {
             <h1 className="text-p-rg font-bold mr-3">Go Back</h1>
           </div>
         </div>
+        <h1 className="text-[150px] w-full text-center">Image to hahaha</h1>
         <section className="flex w-full justify-between text-p-sm text-f-light pr-20">
           <p>© 2024 Eyomn AI. All rights reserved.</p>
           <p>Privacy Policy and Terms of Service.</p>
         </section>
       </div>
 
-      <div className="h-full w-fit flex flex-col justify-between pr-4">
+      <div className="h-full w-fit flex flex-col justify-between">
         <div className="text-f-dark text-p-rg w-full flex flex-col items-end">
           <img src={Logo} alt="" className="object-fill" />
           <p>Smart Solutions for Better Healthcare</p>

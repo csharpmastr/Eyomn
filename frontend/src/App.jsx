@@ -5,6 +5,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import AuthenticationPage from "./Page/AuthenticationPage";
+import ForgotPassword from "./Page/ForgotPassword";
 import MVP from "./Page/MVP";
 import Dashboard from "./Page/Main Page/Dashboard";
 import Scribe from "./Page/Main Page/Scribe";
@@ -72,7 +73,7 @@ const AppRoutes = () => {
           )
         }
       />
-
+      <Route path="/forgot-password" element={<ForgotPassword />} />
       {/* Protected routes */}
       <Route
         path="/"
