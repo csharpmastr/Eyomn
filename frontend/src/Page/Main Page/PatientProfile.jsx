@@ -16,6 +16,7 @@ const PatientProfile = () => {
   const role = useSelector((state) => state.reducer.user.user.role);
   const patients = useSelector((state) => state.reducer.patient.patients);
   const visitsStore = useSelector((state) => state.reducer.visit.visits);
+  const user = useSelector((state) => state.reducer.user.user);
   const { patientId } = useParams();
   const [currentPatient, setCurrentPatient] = useState(null);
   const navigate = useNavigate();
@@ -39,7 +40,8 @@ const PatientProfile = () => {
         const visitsRes = await getPatientVisit(
           currentPatient.patientId,
           accessToken,
-          refreshToken
+          refreshToken,
+          user.firebaseUid
         );
 
         visitsRes.forEach((visit) => {

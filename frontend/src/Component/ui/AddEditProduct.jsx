@@ -208,7 +208,8 @@ const AddEditProduct = ({ onClose }) => {
         user.branchId,
         cleanedData,
         accessToken,
-        refreshToken
+        refreshToken,
+        user.firebaseUid
       );
 
       if (response.status === 200) {

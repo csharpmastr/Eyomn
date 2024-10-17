@@ -125,7 +125,8 @@ const AddBranchModal = ({ onClose }) => {
         formData,
         user.userId,
         accessToken,
-        refreshToken
+        refreshToken,
+        user.firebaseUid
       );
 
       if (response) {

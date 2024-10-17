@@ -1,13 +1,20 @@
+const admin = require("firebase-admin");
 const { v4: uuid } = require("uuid");
 const {
   appointmentCollection,
   organizationCollection,
 } = require("../Config/FirebaseConfig");
+
 const { decryptData, encryptData } = require("../Security/DataHashing");
 const { decryptDocument, encryptDocument } = require("../Helper/Helper");
 
-const addSchedule = async (branchId, scheduleDetails) => {
+const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
+
     console.log(branchId);
     console.log(scheduleDetails);
 
@@ -77,8 +84,12 @@ const addSchedule = async (branchId, scheduleDetails) => {
   }
 };
 
-const deleteSchedule = async (branchId, appointmentId) => {
+const deleteSchedule = async (branchId, appointmentId, firebaseUid) => {
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
     const scheduleRef = appointmentCollection
       .doc(branchId)
       .collection("schedules")
@@ -90,8 +101,12 @@ const deleteSchedule = async (branchId, appointmentId) => {
   }
 };
 
-const getAppointments = async (branchId) => {
+const getAppointments = async (branchId, firebaseUid) => {
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
     let appointments = [];
 
     const branchDocRef = appointmentCollection.doc(branchId);

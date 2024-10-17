@@ -23,7 +23,6 @@ const {
   comparePassword,
   decryptData,
 } = require("../Security/DataHashing");
-const { getAppointment } = require("./appointmentService");
 
 class EmailAlreadyExistsError extends Error {
   constructor(message) {
@@ -218,7 +217,8 @@ const loginUser = async (userData) => {
 
       const doctors = await getBranchDoctors(
         user.organizationId,
-        user.branchId
+        user.branchId,
+        user.firebaseUid
       );
       console.log(doctors);
 

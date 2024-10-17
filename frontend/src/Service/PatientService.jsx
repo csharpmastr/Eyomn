@@ -9,7 +9,8 @@ export const addPatientService = async (
   refreshToken,
   organizationID,
   branchId,
-  doctorId
+  doctorId,
+  firebaseUid
 ) => {
   try {
     const response = await axios.post(
@@ -19,6 +20,9 @@ export const addPatientService = async (
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "x-refresh-token": refreshToken,
+        },
+        params: {
+          firebaseUid,
         },
       }
     );
@@ -62,7 +66,8 @@ export const getPatients = async (
   doctorId = null,
   accessToken,
   refreshToken,
-  role
+  role,
+  firebaseUid
 ) => {
   try {
     const response = await axios.get(`${PATIENT_API_BASE_URL}/get-patients`, {
@@ -71,6 +76,7 @@ export const getPatients = async (
         branchId,
         doctorId,
         role,
+        firebaseUid,
       },
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -86,11 +92,17 @@ export const getPatients = async (
 
 export const addPatientNote = async (note) => {};
 
-export const getPatientVisit = async (patientId, accessToken, refreshToken) => {
+export const getPatientVisit = async (
+  patientId,
+  accessToken,
+  refreshToken,
+  firebaseUid
+) => {
   try {
     const response = await axios.get(`${PATIENT_API_BASE_URL}/get-visits`, {
       params: {
         patientId,
+        firebaseUid,
       },
       headers: {
         Authorization: `Bearer ${accessToken}`,

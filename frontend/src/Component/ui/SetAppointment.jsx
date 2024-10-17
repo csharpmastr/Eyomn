@@ -117,7 +117,8 @@ const SetAppointment = ({ onClose }) => {
         user.branchId,
         appointmentData,
         accessToken,
-        refreshToken
+        refreshToken,
+        user.firebaseUid
       );
 
       if (response) {

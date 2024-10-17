@@ -16,8 +16,12 @@ const { EmailAlreadyExistsError } = require("./UserService");
 const { getStaffs, getPatients, decryptDocument } = require("../Helper/Helper");
 const { getAppointments } = require("./appointmentService");
 
-const addStaff = async (organizationId, branchId, staffData) => {
+const addStaff = async (organizationId, branchId, staffData, firebaseUid) => {
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
     const emailQuery = await userCollection
       .where("email", "==", staffData.email)
       .get();
@@ -85,8 +89,13 @@ const addStaff = async (organizationId, branchId, staffData) => {
     throw err;
   }
 };
-const addBranch = async (ogrId, branchData) => {
+const addBranch = async (ogrId, branchData, firebaseUid) => {
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
+
     const newUser = await admin.auth().createUser({
       email: branchData.email,
       password: branchData.password,
@@ -214,8 +223,13 @@ const addBranch = async (ogrId, branchData) => {
 //     throw error;
 //   }
 // };
-const getBranchData = async (organizationId) => {
+const getBranchData = async (organizationId, firebaseUid) => {
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
+
     const orgRef = await organizationCollection.doc(organizationId).get();
 
     if (!orgRef.exists) {
@@ -245,7 +259,7 @@ const getBranchData = async (organizationId) => {
 
         const [staffs, appointments] = await Promise.all([
           getStaffs(orgData.id, branchId),
-          getAppointments(branchId),
+          getAppointments(branchId, orgData.firebaseUid),
         ]);
 
         decryptedBranchData.staffs = staffs;

@@ -8,13 +8,14 @@ const {
 const addProductHandler = async (req, res) => {
   try {
     const branchId = req.params.branchId;
+    const { firebaseUid } = req.query;
     const productDetails = req.body;
 
     if (!branchId) {
       return res.status(400).json({ message: "No Branch ID provided." });
     }
 
-    const productId = await addProduct(branchId, productDetails);
+    const productId = await addProduct(branchId, productDetails, firebaseUid);
     return res.status(200).json({
       message: "Product added successfully",
       productId: productId,
@@ -34,12 +35,12 @@ const addProductHandler = async (req, res) => {
 
 const getProductsHandler = async (req, res) => {
   try {
-    const { branchId } = req.query;
+    const { branchId, firebaseUid } = req.query;
     if (!branchId) {
       return res.status(400).json({ message: "No Branch ID provided" });
     }
 
-    const products = await getProducts(branchId);
+    const products = await getProducts(branchId, firebaseUid);
 
     return res.status(200).json(products);
   } catch (error) {

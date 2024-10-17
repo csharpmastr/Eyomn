@@ -6,7 +6,8 @@ export const addAppointmentService = async (
   branchId,
   appointmentDetails,
   accessToken,
-  refreshToken
+  refreshToken,
+  firebaseUid
 ) => {
   try {
     const response = await axios.post(
@@ -16,6 +17,9 @@ export const addAppointmentService = async (
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "x-refresh-token": refreshToken,
+        },
+        params: {
+          firebaseUid,
         },
       }
     );
@@ -32,13 +36,19 @@ export const addAppointmentService = async (
   }
 };
 
-export const getAppointments = async (branchId, accessToken, refreshToken) => {
+export const getAppointments = async (
+  branchId,
+  accessToken,
+  refreshToken,
+  firebaseUid
+) => {
   try {
     const response = await axios.get(
       `${APPOINTMENT_API_BASE_URL}/get-appointments`,
       {
         params: {
           branchId,
+          firebaseUid,
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,

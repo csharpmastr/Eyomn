@@ -9,12 +9,25 @@ const {
 const { encryptDocument, decryptDocument } = require("../Helper/Helper");
 const { pushNotification } = require("./notificationService");
 
-const addPatient = async (organizationId, branchId, doctorId, patientData) => {
+const addPatient = async (
+  organizationId,
+  branchId,
+  doctorId,
+  patientData,
+  firebaseUid
+) => {
   const currentDate = new Date();
-  if ((!organizationId || !branchId, !doctorId)) {
-    throw new Error("Organization ID, Branch ID, and Doctor ID are required.");
-  }
+
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
+    if ((!organizationId || !branchId, !doctorId)) {
+      throw new Error(
+        "Organization ID, Branch ID, and Doctor ID are required."
+      );
+    }
     const patientId = uuidv4();
     const basePatientData = {
       doctorId,
@@ -60,8 +73,19 @@ const addPatient = async (organizationId, branchId, doctorId, patientData) => {
   }
 };
 
-const getPatients = async (organizationId, branchId, doctorId, role) => {
+const getPatients = async (
+  organizationId,
+  branchId,
+  doctorId,
+  role,
+  firebaseUid
+) => {
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
+
     let patientQuery;
 
     if (role === "0") {
@@ -172,8 +196,12 @@ const addNote = async (patientId, visitId, noteDetails) => {
   }
 };
 
-const getNote = async (patientId, visitId) => {
+const getNote = async (patientId, visitId, firebaseUid) => {
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
     const noteRef = patientCollection
       .doc(patientId)
       .collection("notes")
@@ -217,7 +245,16 @@ const getNote = async (patientId, visitId) => {
 
     return finalDecryptedData;
   } catch (error) {
-    console.error("Error getting note:", error);
+    if (error.code === "auth/user-not-found") {
+      console.error("User not found:", error);
+      throw {
+        status: 404,
+        message:
+          "There is no user record corresponding to the provided identifier.",
+      };
+    }
+
+    console.error("Error fetching note:", error);
     throw error;
   }
 };

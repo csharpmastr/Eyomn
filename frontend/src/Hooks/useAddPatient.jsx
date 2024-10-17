@@ -22,7 +22,8 @@ export const useAddPatient = () => {
         refreshToken,
         user.organizationId,
         user.branchId,
-        doctorId
+        doctorId,
+        user.firebaseUid
       );
 
       reduxDispatch(

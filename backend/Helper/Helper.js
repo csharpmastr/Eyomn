@@ -1,3 +1,4 @@
+const admin = require("firebase-admin");
 const { v4: uuidv4 } = require("uuid");
 const {
   organizationCollection,
@@ -24,8 +25,18 @@ const getOrganizationName = async (organizationId) => {
   }
 };
 
-const getPatients = async (organizationId, staffId, branchId, role) => {
+const getPatients = async (
+  organizationId,
+  staffId,
+  branchId,
+  role,
+  firebaseUid
+) => {
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
     if (!branchId || !role) {
       throw new Error("Branch ID and Role must be provided.");
     }
@@ -68,13 +79,26 @@ const getPatients = async (organizationId, staffId, branchId, role) => {
 
     return patients;
   } catch (error) {
-    console.error("Error fetching patients:", error.message);
-    throw new Error("Error fetching patients: " + error.message);
+    if (error.code === "auth/user-not-found") {
+      console.error("User not found:", error);
+      throw {
+        status: 404,
+        message:
+          "There is no user record corresponding to the provided identifier.",
+      };
+    }
+
+    console.error("Error fetching patients:", error);
+    throw error;
   }
 };
 
-const getStaffs = async (organizationId, branchId) => {
+const getStaffs = async (organizationId, branchId, firebaseUid) => {
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
     let staffQuery;
 
     if (branchId) {
@@ -115,8 +139,12 @@ const getStaffs = async (organizationId, branchId) => {
   }
 };
 
-const getBranchDoctors = async (organizationId, branchId) => {
+const getBranchDoctors = async (organizationId, branchId, firebaseUid) => {
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
     const doctorQuery = staffCollection
       .where("organizationId", "==", organizationId)
       .where("branchId", "==", branchId)
@@ -174,8 +202,12 @@ function encryptDocument(data, excludedKeys) {
   return encryptedData;
 }
 
-const getVisits = async (patientId, doctorId) => {
+const getVisits = async (patientId, firebaseUid) => {
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
     let visitQuery = patientCollection.doc(patientId).collection("visit");
 
     const visitSnapshot = await visitQuery.get();

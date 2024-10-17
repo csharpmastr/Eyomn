@@ -12,6 +12,7 @@ const addStaffHandler = async (req, res) => {
   try {
     const organizationId = req.params.organizationId;
     const branchId = req.params.branchId;
+    const { firebaseUid } = req.query;
     const staffData = req.body;
 
     if (!branchId || !organizationId || Object.keys(staffData).length === 0) {
@@ -20,7 +21,12 @@ const addStaffHandler = async (req, res) => {
       });
     }
 
-    const staffId = await addStaff(organizationId, branchId, staffData);
+    const staffId = await addStaff(
+      organizationId,
+      branchId,
+      staffData,
+      firebaseUid
+    );
 
     return res
       .status(200)
@@ -58,14 +64,18 @@ const getStaffsHandler = async (req, res) => {
 
 const getDoctorsListHandler = async (req, res) => {
   try {
-    const { organizationId, branchId } = req.query;
+    const { organizationId, branchId, firebaseUid } = req.query;
 
     if (!organizationId || !branchId) {
       return res
         .status(400)
         .json({ message: "Clinic ID and Branch ID are required." });
     }
-    const doctors = await getBranchDoctors(organizationId, branchId);
+    const doctors = await getBranchDoctors(
+      organizationId,
+      branchId,
+      firebaseUid
+    );
     if (!doctors || doctors.length === 0) {
       return res
         .status(404)
@@ -83,6 +93,7 @@ const getDoctorsListHandler = async (req, res) => {
 const addBranchHandler = async (req, res) => {
   try {
     const organizationId = req.params.organizationId;
+    const { firebaseUid } = req.query;
     const branchData = req.body;
 
     if (!organizationId) {
@@ -91,7 +102,7 @@ const addBranchHandler = async (req, res) => {
         .json({ message: "Organization ID and branch data are required." });
     }
 
-    const branchId = await addBranch(organizationId, branchData);
+    const branchId = await addBranch(organizationId, branchData, firebaseUid);
 
     return res.status(201).json({
       message: "Branch added successfully.",
@@ -112,12 +123,13 @@ const addBranchHandler = async (req, res) => {
 const getBranchDataHandler = async (req, res) => {
   try {
     const organizationId = req.params.organizationId;
+    const { firebaseUid } = req.query;
     if (!organizationId) {
       return res
         .status(400)
         .json({ message: "Organization ID and branch data are required." });
     }
-    const branchData = await getBranchData(organizationId);
+    const branchData = await getBranchData(organizationId, firebaseUid);
 
     return res.status(200).json(branchData);
   } catch (err) {

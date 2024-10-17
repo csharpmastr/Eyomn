@@ -6,7 +6,8 @@ export const addProductService = async (
   branchId,
   productDetails,
   accessToken,
-  refreshToken
+  refreshToken,
+  firebaseUid
 ) => {
   try {
     const response = await axios.post(
@@ -16,6 +17,9 @@ export const addProductService = async (
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "x-refresh-token": refreshToken,
+        },
+        params: {
+          firebaseUid,
         },
       }
     );
@@ -32,11 +36,17 @@ export const addProductService = async (
   }
 };
 
-export const getProducts = async (branchId, accessToken, refreshToken) => {
+export const getProducts = async (
+  branchId,
+  accessToken,
+  refreshToken,
+  firebaseUid
+) => {
   try {
     const response = await axios.get(`${INVENTORY_API_BASE_URL}/get-products`, {
       params: {
         branchId,
+        firebaseUid,
       },
       headers: {},
     });

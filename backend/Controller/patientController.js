@@ -15,6 +15,7 @@ const addPatientHandler = async (req, res) => {
     const organizationId = req.params.organizationId;
     const branchId = req.params.branchId;
     const doctorId = req.params.doctorId;
+    const { firebaseUid } = req.query;
     const patientData = req.body;
     if (
       !branchId ||
@@ -31,7 +32,8 @@ const addPatientHandler = async (req, res) => {
       organizationId,
       branchId,
       doctorId,
-      patientData
+      patientData,
+      firebaseUid
     );
     return res.status(200).json({
       message: "Patient added successfully",
@@ -63,7 +65,7 @@ const getPatientsByDoctorHandler = async (req, res) => {
 
 const getPatientsHandler = async (req, res) => {
   try {
-    const { organizationId, branchId, doctorId, role } = req.query;
+    const { organizationId, branchId, doctorId, role, firebaseUid } = req.query;
     if (!organizationId) {
       return res.status(400).json({ message: "Organization ID is required." });
     }
@@ -71,7 +73,8 @@ const getPatientsHandler = async (req, res) => {
       organizationId,
       branchId,
       doctorId,
-      role
+      role,
+      firebaseUid
     );
     return res.status(200).json(patients);
   } catch (error) {
@@ -154,6 +157,7 @@ const addNoteHandler = async (req, res) => {
 const getPatientNoteHandler = async (req, res) => {
   try {
     const patientId = req.params.patientId;
+    const { firebaseUid } = req.query;
     const visitId = req.params.visitId;
 
     if (!patientId || !visitId) {
@@ -161,7 +165,7 @@ const getPatientNoteHandler = async (req, res) => {
         message: "Invalid request. Missing Patient ID or Visit ID.",
       });
     }
-    const note = await getNote(patientId, visitId);
+    const note = await getNote(patientId, visitId, firebaseUid);
     return res.status(200).json(note);
   } catch (error) {
     return res
@@ -172,11 +176,11 @@ const getPatientNoteHandler = async (req, res) => {
 
 const getPatientVisitsHandler = async (req, res) => {
   try {
-    const { patientId } = req.query;
+    const { patientId, firebaseUid } = req.query;
     if (!patientId) {
       return res.status(401).json({ message: "Please provide Patient ID" });
     }
-    const visits = await getVisits(patientId);
+    const visits = await getVisits(patientId, firebaseUid);
     if (visits) {
       return res.status(200).json(visits);
     }

@@ -1,7 +1,12 @@
 import axios from "axios";
 
 const ORGANIZATION_API_BASE_URL = "http://localhost:3000/api/v1/organization";
-export const getStaffs = async (clinicId, accessToken, refreshToken) => {
+export const getStaffs = async (
+  clinicId,
+  accessToken,
+  refreshToken,
+  firebaseUid
+) => {
   try {
     const response = await axios.post(
       `${ORGANIZATION_API_BASE_URL}/get-staffs`,
@@ -12,6 +17,9 @@ export const getStaffs = async (clinicId, accessToken, refreshToken) => {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "x-refresh-token": refreshToken,
+        },
+        params: {
+          firebaseUid,
         },
       }
     );
@@ -27,7 +35,8 @@ export const addStaffService = async (
   organizationId,
   branchId,
   accessToken,
-  refreshToken
+  refreshToken,
+  firebaseUid
 ) => {
   try {
     const response = await axios.post(
@@ -38,6 +47,9 @@ export const addStaffService = async (
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "x-refresh-token": refreshToken,
+        },
+        params: {
+          firebaseUid,
         },
       }
     );
@@ -51,7 +63,8 @@ export const getDoctorList = async (
   organizationId,
   branchId,
   accessToken,
-  refreshToken
+  refreshToken,
+  firebaseUid
 ) => {
   try {
     const response = await axios.get(
@@ -60,6 +73,7 @@ export const getDoctorList = async (
         params: {
           organizationId,
           branchId,
+          firebaseUid,
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -79,7 +93,8 @@ export const addBranchService = async (
   branchDetails,
   organizationId,
   accessToken,
-  refreshToken
+  refreshToken,
+  firebaseUid
 ) => {
   try {
     const response = await axios.post(
@@ -89,6 +104,9 @@ export const addBranchService = async (
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "x-refresh-token": refreshToken,
+        },
+        params: {
+          firebaseUid,
         },
       }
     );
@@ -103,7 +121,8 @@ export const addBranchService = async (
 export const getBranchData = async (
   organizationId,
   accessToken,
-  refreshToken
+  refreshToken,
+  firebaseUid
 ) => {
   try {
     const response = await axios.get(
@@ -112,6 +131,9 @@ export const getBranchData = async (
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "X-Refresh-Token": refreshToken,
+        },
+        params: {
+          firebaseUid,
         },
       }
     );

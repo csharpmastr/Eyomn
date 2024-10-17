@@ -21,7 +21,8 @@ export const useAddStaff = () => {
         user.userId,
         branchId,
         accessToken,
-        refreshToken
+        refreshToken,
+        user.firebaseUid
       );
       return response;
     } catch (err) {

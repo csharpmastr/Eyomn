@@ -22,7 +22,7 @@ export const useFetchData = () => {
   const buildApiCalls = () => {
     let organizationId = user.organizationId || null;
     let branchId = user.branchId || user.userId || null;
-
+    let firebaseUid = user.firebaseUid;
     switch (user.role) {
       case "1":
         return [
@@ -39,7 +39,8 @@ export const useFetchData = () => {
             type: "patients",
           },
           {
-            call: () => getAppointments(branchId, accessToken, refreshToken),
+            call: () =>
+              getAppointments(branchId, accessToken, refreshToken, firebaseUid),
             type: "appointments",
           },
         ];
@@ -53,7 +54,8 @@ export const useFetchData = () => {
                 null,
                 accessToken,
                 refreshToken,
-                user.role
+                user.role,
+                firebaseUid
               ),
             type: "patients",
           },
@@ -63,16 +65,19 @@ export const useFetchData = () => {
                 organizationId,
                 branchId,
                 accessToken,
-                refreshToken
+                refreshToken,
+                firebaseUid
               ),
             type: "doctors",
           },
           {
-            call: () => getProducts(branchId, accessToken, refreshToken),
+            call: () =>
+              getProducts(branchId, accessToken, refreshToken, firebaseUid),
             type: "products",
           },
           {
-            call: () => getAppointments(branchId, accessToken, refreshToken),
+            call: () =>
+              getAppointments(branchId, accessToken, refreshToken, firebaseUid),
             type: "appointments",
           },
         ];
@@ -86,12 +91,19 @@ export const useFetchData = () => {
                 null,
                 accessToken,
                 refreshToken,
-                user.role
+                user.role,
+                firebaseUid
               ),
             type: "patients",
           },
           {
-            call: () => getBranchData(user.userId, accessToken, refreshToken),
+            call: () =>
+              getBranchData(
+                user.userId,
+                accessToken,
+                refreshToken,
+                firebaseUid
+              ),
             type: "branches",
           },
         ];

@@ -1,3 +1,4 @@
+const admin = require("firebase-admin");
 const { v4: uuid } = require("uuid");
 const { inventoryCollection } = require("../Config/FirebaseConfig");
 const {
@@ -16,8 +17,13 @@ const generateSKU = () => {
   return sku;
 };
 
-const addProduct = async (branchId, productDetails) => {
+const addProduct = async (branchId, productDetails, firebaseUid) => {
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
+
     console.log(productDetails);
     const inventoryRef = inventoryCollection;
     const productsCollectionRef = inventoryRef
@@ -65,8 +71,12 @@ const addProduct = async (branchId, productDetails) => {
   }
 };
 
-const getProducts = async (branchId) => {
+const getProducts = async (branchId, firebaseUid) => {
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
     const productRef = inventoryCollection.doc(branchId).collection("products");
     const snapshot = await productRef.get();
 
