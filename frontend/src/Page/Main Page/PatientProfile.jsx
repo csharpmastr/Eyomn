@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import StaffViewPatientProfile from "../../Component/ui/StaffViewPatientProfile";
 import DocViewPatientProfile from "../../Component/ui/DocViewPatientProfile";
+import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Cookies from "universal-cookie";
@@ -63,7 +64,13 @@ const PatientProfile = () => {
   }, [currentPatient, accessToken, refreshToken, reduxDispatch]);
 
   return (
-    <div className="w-full h-auto p-8">
+    <div className="w-full h-auto p-6">
+      <div className="flex gap-2 items-center mb-6">
+        <AiOutlineArrowLeft />
+        <button className="text-p-rg font-medium" onClick={handleBack}>
+          Back
+        </button>
+      </div>
       {currentPatient ? (
         role === "2" ? (
           <DocViewPatientProfile patient={currentPatient} visits={visits} />
@@ -73,7 +80,6 @@ const PatientProfile = () => {
       ) : (
         <p>Loading...</p>
       )}
-      <button onClick={handleBack}>Back</button>
     </div>
   );
 };
