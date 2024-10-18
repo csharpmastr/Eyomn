@@ -56,6 +56,7 @@ const loginUserHandler = async (req, res) => {
       staffs,
       doctors,
       appointments,
+      firebaseUid,
     } = await loginUser({
       email,
       password,
@@ -84,6 +85,7 @@ const loginUserHandler = async (req, res) => {
           refreshToken,
         },
         branch: branches,
+        firebaseUid: firebaseUid,
       });
     } else if (role === "1") {
       res.status(200).json({

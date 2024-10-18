@@ -25,6 +25,7 @@ const MVP = () => {
     "/add-patient": "Add Patient",
     "/appointment": "Appointment",
     "/inventory": "Inventory",
+    "/report": "Reports",
     "/pos": "Point of Sale",
     "/help": "Help Center",
     "/profile": "Profile",

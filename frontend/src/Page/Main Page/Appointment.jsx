@@ -69,7 +69,7 @@ const Appointment = () => {
           <span className="absolute top-2 left-2 font-Poppins">{i}</span>
 
           {getAppointmentsForDay(i).length > 0 && (
-            <div className="mt-2 text-sm text-gray-600 text-center w-full overflow-y-scroll">
+            <div className="mt-2 text-sm text-gray-600 text-center w-full overflow-y-auto">
               <div className="overflow-hidden mt-2">
                 {getAppointmentsForDay(i).map((appointment, index) => (
                   <div

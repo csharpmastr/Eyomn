@@ -69,6 +69,8 @@ const getPatientsHandler = async (req, res) => {
     if (!organizationId) {
       return res.status(400).json({ message: "Organization ID is required." });
     }
+    console.log(firebaseUid);
+
     const patients = await getPatients(
       organizationId,
       branchId,

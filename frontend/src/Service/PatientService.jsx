@@ -83,6 +83,8 @@ export const getPatients = async (
         "x-refresh-token": refreshToken,
       },
     });
+    console.log(firebaseUid);
+
     return response.data;
   } catch (err) {
     console.error("Error fetching patients: ", err);

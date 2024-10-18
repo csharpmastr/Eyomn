@@ -31,6 +31,7 @@ export const useLogin = () => {
         organization,
         staffData,
         branchData,
+        firebaseUid,
       } = response;
       const { accessToken, refreshToken } = tokens;
 
@@ -39,7 +40,7 @@ export const useLogin = () => {
       cookies.set("refreshToken", refreshToken, { path: "/" });
 
       if (role === "0") {
-        reduxDispatch(setUser({ userId, organization, role }));
+        reduxDispatch(setUser({ userId, organization, role, firebaseUid }));
       } else if (role === "1") {
         const name = branchData.name;
         const email = branchData.email;

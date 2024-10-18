@@ -31,35 +31,37 @@ const Table = ({ data, handlePatientClick }) => {
   const endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
 
   return (
-    <div>
-      <table className="w-full font-Poppins rounded-t-lg table-fixed bg-white">
-        <thead className="w-full h-20">
-          <tr className="text-left font-semibold text-c-secondary">
-            <th className="pl-8 w-1/4">Patient Name</th>
-            <th className="w-1/4">Contact</th>
-            <th className="w-1/4">Email</th>
-            <th className="w-1/4">Last Visit</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentData.map((patientData, index) => (
-            <tr
-              key={index}
-              className={`border-b border-f-gray h-20 text-c-secondary text-p-rg cursor-pointer ${
-                index % 2 === 0 ? "bg-bg-mc" : `bg-white`
-              }`}
-              onClick={() => handlePatientClick(patientData.patientId)}
-            >
-              <td className="pl-8">
-                {patientData.first_name + " " + patientData.last_name}
-              </td>
-              <td>{patientData.contact_number}</td>
-              <td className="max-w-[15vw] truncate">{patientData.email}</td>
-              <td>{formatDate(patientData.createdAt)}</td>
+    <>
+      <div>
+        <table className="w-full font-Poppins rounded-t-lg table-fixed bg-white">
+          <thead className="w-full h-20">
+            <tr className="text-left font-semibold text-c-secondary">
+              <th className="pl-8 w-1/4">Patient Name</th>
+              <th className="w-1/4">Contact</th>
+              <th className="w-1/4">Email</th>
+              <th className="w-1/4">Last Visit</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {currentData.map((patientData, index) => (
+              <tr
+                key={index}
+                className={`border-b border-f-gray h-20 text-c-secondary text-p-rg cursor-pointer ${
+                  index % 2 === 0 ? "bg-bg-mc" : `bg-white`
+                }`}
+                onClick={() => handlePatientClick(patientData.patientId)}
+              >
+                <td className="pl-8">
+                  {patientData.first_name + " " + patientData.last_name}
+                </td>
+                <td>{patientData.contact_number}</td>
+                <td className="max-w-[15vw] truncate">{patientData.email}</td>
+                <td>{formatDate(patientData.createdAt)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <div className="flex justify-end mt-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
@@ -97,7 +99,7 @@ const Table = ({ data, handlePatientClick }) => {
           &gt;
         </button>
       </div>
-    </div>
+    </>
   );
 };
 

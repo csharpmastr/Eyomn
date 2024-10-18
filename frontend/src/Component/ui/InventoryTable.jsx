@@ -60,105 +60,113 @@ const InventoryTable = () => {
   }, [isMenuOpen]);
 
   return (
-    <div className="w-fit md:w-full text-f-dark overflow-x-auto font-poppins">
-      <header className="flex text-p-rg font-semibold py-8 border bg-white border-b-f-gray rounded-t-lg">
-        <div className="flex-1 pl-4">Product Name</div>
-        <div className="flex-1 pl-4">Category</div>
-        <div className="flex-1 pl-4">Prescription/Type</div>
-        <div className="flex-1 pl-4">Price</div>
-        <div className="flex-1 pl-4">Quantity</div>
-        <div className="flex-1 pl-4">Brand</div>
-        <div className="w-20"></div>
-      </header>
-      <main>
-        {paginatedProducts.map((productDetail, index) => {
-          // Default to true (collapsed) if not already set
-          const isCollapsed =
-            collapsedProducts[productDetail.productId] !== false;
+    <>
+      <div className="w-fit md:w-full text-f-dark overflow-x-auto font-poppins">
+        <header className="flex text-p-rg font-semibold py-8 border bg-white border-b-f-gray rounded-t-lg">
+          <div className="flex-1 pl-4">Product Name</div>
+          <div className="flex-1 pl-4">Category</div>
+          <div className="flex-1 pl-4">Prescription/Type</div>
+          <div className="flex-1 pl-4">Price</div>
+          <div className="flex-1 pl-4">Quantity</div>
+          <div className="flex-1 pl-4">Brand</div>
+          <div className="w-20"></div>
+        </header>
+        <main>
+          {paginatedProducts.map((productDetail, index) => {
+            // Default to true (collapsed) if not already set
+            const isCollapsed =
+              collapsedProducts[productDetail.productId] !== false;
 
-          return (
-            <section
-              key={productDetail.productId}
-              className={`${index % 2 === 0 ? "bg-bg-mc" : "bg-white"}`}
-            >
-              <div
-                className={`flex text-p-rg py-6 ${
-                  isCollapsed ? "border border-b-f-gray" : ""
-                }`}
+            return (
+              <section
+                key={productDetail.productId}
+                className={`${index % 2 === 0 ? "bg-bg-mc" : "bg-white"}`}
               >
-                <div className="flex-1 pl-4">{productDetail.product_name}</div>
-                <div className="flex-1 pl-4">
-                  {productDetail.category || "Eyeglasses"}
-                </div>
-                <div className="flex-1 pl-4">
-                  {productDetail.eyeglass_category || ""}
-                </div>
-                <div className="flex-1 pl-4">
-                  Php {productDetail.price || 0}
-                </div>
-                <div className="flex-1 pl-4">{productDetail.quantity || 0}</div>
-                <div className="flex-1 pl-4">
-                  {productDetail.brand || "Luxottica"}
-                </div>
-                <div className="w-20 flex items-center gap-4">
-                  <MdKeyboardArrowDown
-                    className={`h-6 w-6 ${
-                      isCollapsed ? `rotate-0` : `rotate-180`
-                    }`}
-                    onClick={() =>
-                      handleCollapseToggle(productDetail.productId)
-                    }
-                  />
-                  <FaEllipsisV
-                    className="h-4 w-2 cursor-pointer"
-                    onClick={() => toggleOpen(productDetail.productId)}
-                  />
-                  {isMenuOpen[productDetail.productId] && (
-                    <div className="menu-dropdown absolute right-0 w-fit rounded-md shadow-lg bg-white ring-1 ring-f-gray z-50 origin-top-right mr-4">
-                      <div
-                        className="p-2"
-                        role="menu"
-                        aria-orientation="vertical"
-                        aria-labelledby="options-menu"
-                      >
-                        <a
-                          className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
-                          role="menuitem"
-                          onClick={toggleModal}
+                <div
+                  className={`flex text-p-rg py-6 ${
+                    isCollapsed ? "border border-b-f-gray" : ""
+                  }`}
+                >
+                  <div className="flex-1 pl-4">
+                    {productDetail.product_name}
+                  </div>
+                  <div className="flex-1 pl-4">
+                    {productDetail.category || "Eyeglasses"}
+                  </div>
+                  <div className="flex-1 pl-4">
+                    {productDetail.eyeglass_category || ""}
+                  </div>
+                  <div className="flex-1 pl-4">
+                    Php {productDetail.price || 0}
+                  </div>
+                  <div className="flex-1 pl-4">
+                    {productDetail.quantity || 0}
+                  </div>
+                  <div className="flex-1 pl-4">
+                    {productDetail.brand || "Luxottica"}
+                  </div>
+                  <div className="w-20 flex items-center gap-4">
+                    <MdKeyboardArrowDown
+                      className={`h-6 w-6 ${
+                        isCollapsed ? `rotate-0` : `rotate-180`
+                      }`}
+                      onClick={() =>
+                        handleCollapseToggle(productDetail.productId)
+                      }
+                    />
+                    <FaEllipsisV
+                      className="h-4 w-2 cursor-pointer"
+                      onClick={() => toggleOpen(productDetail.productId)}
+                    />
+                    {isMenuOpen[productDetail.productId] && (
+                      <div className="menu-dropdown absolute right-0 w-fit rounded-md shadow-lg bg-white ring-1 ring-f-gray z-50 origin-top-right mr-4">
+                        <div
+                          className="p-2"
+                          role="menu"
+                          aria-orientation="vertical"
+                          aria-labelledby="options-menu"
                         >
-                          Edit
-                        </a>
-                        <a
-                          className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
-                          role="menuitem"
-                        >
-                          Delete
-                        </a>
+                          <a
+                            className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
+                            role="menuitem"
+                            onClick={toggleModal}
+                          >
+                            Edit
+                          </a>
+                          <a
+                            className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
+                            role="menuitem"
+                          >
+                            Delete
+                          </a>
+                        </div>
                       </div>
+                    )}
+                  </div>
+                </div>
+                {!isCollapsed && (
+                  <div className={`py-5 flex border border-b-f-gray`}>
+                    <div className="flex-1 pl-4">
+                      <p className="text-p-sm">Other Info:</p>
+                      <p>Sample Info</p>
                     </div>
-                  )}
-                </div>
-              </div>
-              {!isCollapsed && (
-                <div className={`py-5 flex border border-b-f-gray`}>
-                  <div className="flex-1 pl-4">
-                    <p className="text-p-sm">Other Info:</p>
-                    <p>Sample Info</p>
+                    <div className="flex-1 pl-4">
+                      <p className="text-p-sm">Other Info:</p>
+                      <p>Sample Info</p>
+                    </div>
+                    <div className="flex-1 pl-4">
+                      <p className="text-p-sm">Other Info:</p>
+                      <p>Sample Info</p>
+                    </div>
                   </div>
-                  <div className="flex-1 pl-4">
-                    <p className="text-p-sm">Other Info:</p>
-                    <p>Sample Info</p>
-                  </div>
-                  <div className="flex-1 pl-4">
-                    <p className="text-p-sm">Other Info:</p>
-                    <p>Sample Info</p>
-                  </div>
-                </div>
-              )}
-            </section>
-          );
-        })}
-      </main>
+                )}
+              </section>
+            );
+          })}
+        </main>
+
+        {isModalOpen && <AddEditProduct onClose={toggleModal} />}
+      </div>
       <div className="flex justify-end mt-8">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
@@ -196,8 +204,7 @@ const InventoryTable = () => {
           &gt;
         </button>
       </div>
-      {isModalOpen && <AddEditProduct onClose={toggleModal} />}
-    </div>
+    </>
   );
 };
 

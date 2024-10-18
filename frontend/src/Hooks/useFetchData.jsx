@@ -34,7 +34,8 @@ export const useFetchData = () => {
                 null,
                 accessToken,
                 refreshToken,
-                user.role
+                user.role,
+                firebaseUid
               ),
             type: "patients",
           },
