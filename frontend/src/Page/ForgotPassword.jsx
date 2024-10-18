@@ -22,7 +22,6 @@ const ForgotPassword = () => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const inputsRef = useRef([]);
 
-  // Handle input change
   const handleChange = (element, index) => {
     if (isNaN(element.value)) return;
 
@@ -30,24 +29,19 @@ const ForgotPassword = () => {
     newOtp[index] = element.value;
     setOtp(newOtp);
 
-    // Focus on the next input
     if (element.value !== "" && index < 5) {
       inputsRef.current[index + 1].focus();
     }
   };
 
-  // Handle backspace and focus
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace" && otp[index] === "" && index > 0) {
       inputsRef.current[index - 1].focus();
     }
   };
 
-  // Combine OTP values
   const handleSubmit = () => {
     const otpValue = otp.join("");
-    console.log("OTP entered:", otpValue);
-    // Submit or process OTP here
   };
 
   return (
@@ -178,6 +172,7 @@ const ForgotPassword = () => {
                     <MdOutlineLock className="w-6 h-6 absolute top-5 left-4 text-c-gray3" />
                     <input
                       type={isCPassVisible ? "text" : "password"}
+                      name="confirmpassword"
                       className="mt-1 w-full pl-12 py-4 border border-c-gray3 font-medium rounded-md text-f-dark focus:outline-c-primary font-Poppins"
                       placeholder="Confirm your password"
                       //   value={userData.password}

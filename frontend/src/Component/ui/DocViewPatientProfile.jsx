@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
+import { FiPhone } from "react-icons/fi";
+import { FiMapPin } from "react-icons/fi";
+import { MdOutlineEmail } from "react-icons/md";
+import { FiEdit } from "react-icons/fi";
 import ReasonVisitCard from "./ReasonVisitCard";
 import { getPatientVisit } from "../../Service/PatientService";
 import Cookies from "universal-cookie";
@@ -50,7 +54,7 @@ const DocViewPatientProfile = ({ patient, visits }) => {
           <p className="text-f-dark font-medium text-p-rg">{formattedDate}</p>
         </section>
         <button className="flex w-1/6 justify-end">
-          <IoIosAddCircleOutline className="h-6 w-6 md:mr-2 text-c-secondary" />
+          <FiEdit className="h-6 w-6 md:mr-2 text-c-secondary" />
           <p className="text-c-secondary font-medium text-p-rg">Edit</p>
         </button>
       </header>
@@ -61,18 +65,18 @@ const DocViewPatientProfile = ({ patient, visits }) => {
               | Contact Information
             </h1>
             <section>
-              <div className="flex gap-1 mb-2">
-                <IoIosAddCircleOutline className="h-6 w-6 md:mr-2 text-[#696969]" />
+              <div className="flex gap-1 mb-3">
+                <MdOutlineEmail className="h-6 w-6 md:mr-2 text-c-gray3" />
                 <p className="text-f-dark text-p-rg">{patient.email}</p>
               </div>
-              <div className="flex gap-1 mb-2">
-                <IoIosAddCircleOutline className="h-6 w-6 md:mr-2 text-[#696969]" />
+              <div className="flex gap-1 mb-3">
+                <FiPhone className="h-6 w-6 md:mr-2 text-c-gray3" />
                 <p className="text-f-dark text-p-rg">
                   {patient.contact_number}
                 </p>
               </div>
-              <div className="flex gap-1 mb-2">
-                <IoIosAddCircleOutline className="h-6 w-6 md:mr-2 text-[#696969]" />
+              <div className="flex gap-1">
+                <FiMapPin className="h-6 w-6 md:mr-2 text-c-gray3" />
                 <p className="text-f-dark text-p-rg">
                   {patient.municipality + ", " + patient.province}
                 </p>

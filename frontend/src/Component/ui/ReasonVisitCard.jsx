@@ -1,6 +1,7 @@
 import React from "react";
-import { IoIosAddCircleOutline } from "react-icons/io";
 import { useSelector } from "react-redux";
+import { FiClock } from "react-icons/fi";
+import { FiCalendar } from "react-icons/fi";
 
 const ReasonVisitCard = ({ reasonData }) => {
   const doctors = useSelector((state) => state.reducer.doctor.doctor);
@@ -22,32 +23,22 @@ const ReasonVisitCard = ({ reasonData }) => {
   return (
     <div className="">
       <div>
-        <article className="w-full p-3 bg-bg-mc rounded-md">
-          <header className="flex justify-between mb-5">
-            <section>
-              <p className="text-p-rg text-f-dark">
-                {doctor ? doctor.first_name + " " + doctor.last_name : ""}
-              </p>
-              {doctor ? (
-                <p className="text-p-rg text-c-gray3">{doctor.position}</p>
-              ) : (
-                ""
-              )}
-            </section>
-            <div className="px-2 py-1 h-fit bg-bg-sb rounded-md border border-c-primary text-p-sm text-c-primary">
+        <article className="w-full py-4 px-4  bg-bg-sb rounded-md">
+          <div className="flex justify-between">
+            <div className="ml-2 px-4 py-4 h-full bg-white rounded-full border border-c-primary text-p-rg text-c-primary">
               {reasonData.reason_visit}
             </div>
-          </header>
-          <section className="flex">
-            <div className="flex items-center gap-1 mr-8">
-              <IoIosAddCircleOutline className="h-6 w-6 md:mr-2 text-[#696969]" />
-              <p className="text-p-sm text-f-dark">{date}</p>
-            </div>
-            <div className="flex items-center gap-1">
-              <IoIosAddCircleOutline className="h-6 w-6 md:mr-2 text-[#696969]" />
-              <p className="text-p-sm text-f-dark">{time}</p>
-            </div>
-          </section>
+            <section className="flex flex-col gap-2">
+              <div className="flex items-center gap-1">
+                <FiCalendar className="h-6 w-6 md:mr-2 text-c-gray3" />
+                <p className="text-p-sm text-f-dark">{date}</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <FiClock className="h-6 w-6 md:mr-2 text-c-gray3" />
+                <p className="text-p-sm text-f-dark">{time}</p>
+              </div>
+            </section>
+          </div>
         </article>
       </div>
     </div>
