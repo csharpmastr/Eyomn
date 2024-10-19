@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddBranchModel from "../../Component/ui/AddBranchModal";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { useSelector } from "react-redux";
 import StaffCard from "../../Component/ui/StaffCard";
 import BranchCard from "../../Component/ui/BranchCard";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 const Organization = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const branch = useSelector((state) => state.reducer.branch.branch);
-
+  const location = useLocation();
   const [hasSelectedBranch, setHasSelectedBranch] = useState(false);
 
   const navigate = useNavigate();
@@ -27,6 +27,11 @@ const Organization = () => {
 
     navigate(`/organization/${branchId}`);
   };
+  useEffect(() => {
+    if (location.state && location.state.resetSelected) {
+      setHasSelectedBranch(false);
+    }
+  }, [location.state]);
 
   return (
     <div className="w-full h-full flex flex-col items-center p-4 md:p-8">

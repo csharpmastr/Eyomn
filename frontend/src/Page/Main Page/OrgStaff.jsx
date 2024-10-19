@@ -24,9 +24,8 @@ const OrgStaff = () => {
   };
 
   const handleBackBranch = () => {
-    navigate("/organization");
+    navigate("/organization", { state: { resetSelected: true } });
   };
-
   return (
     <div className="w-full h-full flex flex-col items-center">
       <div className="w-full flex justify-between">
