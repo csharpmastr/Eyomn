@@ -80,3 +80,28 @@ export const deleteProduct = async (
     throw err;
   }
 };
+
+export const updateProductService = async (
+  branchId,
+  productId,
+  productDetails,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.put(
+      `${INVENTORY_API_BASE_URL}/update/${branchId}/${productId}`,
+      productDetails,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error updating product : ", error);
+    throw error;
+  }
+};

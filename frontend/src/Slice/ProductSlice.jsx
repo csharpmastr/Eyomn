@@ -21,14 +21,17 @@ const productSlice = createSlice({
       );
     },
     updateProduct: (state, action) => {
-      const index = state.products.findIndex((p) => p.id === action.payload.id);
+      const index = state.products.findIndex(
+        (p) => p.productId === action.payload.productId
+      ); // Ensure you're matching the correct identifier
       if (index !== -1) {
         state.products[index] = {
           ...state.products[index],
-          ...action.payload.data,
+          ...action.payload, // Spread the entire payload to update the product details
         };
       }
     },
+
     setProducts: (state, action) => {
       state.products = action.payload;
     },

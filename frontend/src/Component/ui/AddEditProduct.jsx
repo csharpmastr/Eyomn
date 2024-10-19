@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { addProductService } from "../../Service/InventoryService";
+import {
+  addProductService,
+  updateProductService,
+} from "../../Service/InventoryService";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "universal-cookie";
 import Loader from "./Loader";
 import SuccessModal from "./SuccessModal";
-import { addProduct } from "../../Slice/ProductSlice";
+import { addProduct, updateProduct } from "../../Slice/ProductSlice";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import Modal from "./Modal";
-const AddEditProduct = ({ onClose }) => {
+const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const user = useSelector((state) => state.reducer.user.user);
   const [isLoading, setIsLoading] = useState(false);
@@ -19,8 +22,10 @@ const AddEditProduct = ({ onClose }) => {
   const accessToken = cookies.get("accessToken");
   const refreshToken = cookies.get("refreshToken");
   const [errors, setErrors] = useState({});
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalDescription, setModalDescription] = useState("");
 
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     category: "",
     product_name: "",
     price: "",
@@ -28,23 +33,21 @@ const AddEditProduct = ({ onClose }) => {
     brand: "",
     expirationDate: "",
 
-    // Eye Glasses
     len_type: "",
     color_material: "",
     eyeglass_category: "",
-
     // Medication
     prescrip_otc: "",
     md_form: "",
     dosage: "",
-
     // Contact Lens
     ct_type: "",
     ct_material: "",
-
     // Other Product
     other_description: "",
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
   const cleanFormData = (data) => {
     return Object.fromEntries(
       Object.entries(data).filter(
@@ -52,6 +55,19 @@ const AddEditProduct = ({ onClose }) => {
       )
     );
   };
+  console.log(productId);
+
+  useEffect(() => {
+    if (productDetails) {
+      setFormData({
+        ...initialFormData,
+        ...productDetails,
+      });
+      setSelectedCategory(productDetails.category);
+    } else {
+      setFormData(initialFormData);
+    }
+  }, [productDetails]);
 
   const getMinDate = () => {
     const today = new Date();
@@ -59,6 +75,7 @@ const AddEditProduct = ({ onClose }) => {
     nextYear.setFullYear(today.getFullYear() + 1);
     return nextYear.toISOString().split("T")[0];
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -195,7 +212,7 @@ const AddEditProduct = ({ onClose }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleAddProduct = async () => {
+  const handleAddEditProduct = async () => {
     if (!validateForm()) {
       return;
     }
@@ -204,28 +221,52 @@ const AddEditProduct = ({ onClose }) => {
     try {
       const cleanedData = cleanFormData(formData);
 
-      const response = await addProductService(
-        user.branchId,
-        cleanedData,
-        accessToken,
-        refreshToken,
-        user.firebaseUid
-      );
+      if (!productDetails) {
+        const response = await addProductService(
+          user.branchId,
+          cleanedData,
+          accessToken,
+          refreshToken,
+          user.firebaseUid
+        );
 
-      if (response.status === 200) {
-        setIsSuccess(true);
-        resetForm();
-        const productId = response.data.productId;
-        reduxDispatch(addProduct({ ...cleanedData, productId }));
+        if (response.status === 200) {
+          setModalTitle("Product Added");
+          setModalDescription(
+            "The product has been successfully added to the system."
+          );
+          setIsSuccess(true);
+          resetForm();
+          console.log(response);
+
+          const productId = response.data.productId;
+          const productSKU = response.data.productSKU;
+          reduxDispatch(addProduct({ ...cleanedData, productId, productSKU }));
+        }
+      } else {
+        console.log(cleanedData);
+
+        const response = await updateProductService(
+          user.branchId,
+          productId,
+          cleanedData,
+          accessToken,
+          refreshToken
+        );
+
+        if (response) {
+          setModalTitle("Product Updated");
+          setModalDescription(
+            "The product has been successfully updated in the system."
+          );
+          setIsSuccess(true);
+
+          console.log("Product updated successfully.");
+          reduxDispatch(updateProduct({ ...cleanedData, productId }));
+        }
       }
     } catch (error) {
-      setIsSuccess(false);
-
-      if (error.response?.status === 409) {
-        setDoesExists(true);
-      } else {
-        console.error("An unexpected error occurred:", error);
-      }
+      console.error("Error in handleAddEditProduct:", error);
     } finally {
       setIsLoading(false);
     }
@@ -240,7 +281,7 @@ const AddEditProduct = ({ onClose }) => {
           <div className="w-[380px] md:w-[600px] md:mr-8">
             <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
               <h1 className="text-p-lg text-c-secondary font-semibold">
-                Manage Product
+                {title}
               </h1>
               <button onClick={onClose}>&times;</button>
             </header>
@@ -259,6 +300,7 @@ const AddEditProduct = ({ onClose }) => {
                   <select
                     name="category"
                     value={selectedCategory}
+                    disabled={productDetails}
                     onChange={handleCategoryChange}
                     className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
                   >
@@ -763,7 +805,7 @@ const AddEditProduct = ({ onClose }) => {
               <button
                 className="ml-2 px-8 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
                 type="submit"
-                onClick={handleAddProduct}
+                onClick={handleAddEditProduct}
               >
                 Save
               </button>
@@ -776,8 +818,8 @@ const AddEditProduct = ({ onClose }) => {
         onClose={() => {
           setIsSuccess(false);
         }}
-        title="Adding Success"
-        description="The product has been added in the system."
+        title={modalTitle}
+        description={modalDescription}
       />
       <Modal
         isOpen={doesExists}

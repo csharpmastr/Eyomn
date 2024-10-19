@@ -13,7 +13,8 @@ const InventoryTable = () => {
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const [isMenuOpen, setIsMenuOpen] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [productId, setProductId] = useState("");
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   const toggleOpen = (productId) => {
@@ -41,6 +42,17 @@ const InventoryTable = () => {
 
   const startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
   const endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+
+  const handleEditProduct = (productId) => {
+    const productToEdit = products.find(
+      (product) => product.productId === productId
+    );
+    const { productSKU, productId: id, ...productWithoutSKUId } = productToEdit;
+
+    setSelectedProduct(productWithoutSKUId);
+    setProductId(productId);
+    toggleModal();
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -73,7 +85,6 @@ const InventoryTable = () => {
         </header>
         <main>
           {paginatedProducts.map((productDetail, index) => {
-            // Default to true (collapsed) if not already set
             const isCollapsed =
               collapsedProducts[productDetail.productId] !== false;
 
@@ -129,7 +140,9 @@ const InventoryTable = () => {
                           <a
                             className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
                             role="menuitem"
-                            onClick={toggleModal}
+                            onClick={() =>
+                              handleEditProduct(productDetail.productId)
+                            } // Update this line
                           >
                             Edit
                           </a>
@@ -165,7 +178,14 @@ const InventoryTable = () => {
           })}
         </main>
 
-        {isModalOpen && <AddEditProduct onClose={toggleModal} />}
+        {isModalOpen && (
+          <AddEditProduct
+            onClose={toggleModal}
+            productDetails={selectedProduct}
+            title={"Edit Product"}
+            productId={productId}
+          />
+        )}
       </div>
       <div className="flex justify-end mt-8">
         <button

@@ -41,6 +41,22 @@ export const useFetchData = () => {
           },
           {
             call: () =>
+              getDoctorList(
+                organizationId,
+                branchId,
+                accessToken,
+                refreshToken,
+                firebaseUid
+              ),
+            type: "doctors",
+          },
+          {
+            call: () =>
+              getProducts(branchId, accessToken, refreshToken, firebaseUid),
+            type: "products",
+          },
+          {
+            call: () =>
               getAppointments(branchId, accessToken, refreshToken, firebaseUid),
             type: "appointments",
           },

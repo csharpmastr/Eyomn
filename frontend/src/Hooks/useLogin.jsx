@@ -55,6 +55,7 @@ export const useLogin = () => {
             email,
             location,
             organizationId,
+            firebaseUid,
           })
         );
       } else {

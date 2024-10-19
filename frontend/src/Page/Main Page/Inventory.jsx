@@ -55,7 +55,9 @@ const Inventory = () => {
       <main className="overflow-x-auto">
         <InventoryTable />
       </main>
-      {isModalOpen && <AddEditProduct onClose={toggleModal} />}
+      {isModalOpen && (
+        <AddEditProduct onClose={toggleModal} title={"Add Product"} />
+      )}
     </div>
   );
 };
