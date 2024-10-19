@@ -5,6 +5,7 @@ const {
   encryptDocument,
   removeNullValues,
   decryptDocument,
+  generateUniqueId,
 } = require("../Helper/Helper");
 const { decryptData } = require("../Security/DataHashing");
 
@@ -24,7 +25,6 @@ const addProduct = async (branchId, productDetails, firebaseUid) => {
       throw { status: 404, message: "User not found." };
     }
 
-    console.log(productDetails);
     const inventoryRef = inventoryCollection;
     const productsCollectionRef = inventoryRef
       .doc(branchId)
@@ -52,7 +52,7 @@ const addProduct = async (branchId, productDetails, firebaseUid) => {
       throw { status: 400, message: "The product already exists." };
     }
 
-    const productId = uuid();
+    const productId = generateUniqueId(productsCollectionRef);
     const productSKU = generateSKU();
     const productRef = productsCollectionRef.doc(productId);
     productDetails = removeNullValues(productDetails);

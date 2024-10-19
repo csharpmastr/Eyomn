@@ -6,7 +6,11 @@ const {
 } = require("../Config/FirebaseConfig");
 
 const { decryptData, encryptData } = require("../Security/DataHashing");
-const { decryptDocument, encryptDocument } = require("../Helper/Helper");
+const {
+  decryptDocument,
+  encryptDocument,
+  generateUniqueId,
+} = require("../Helper/Helper");
 
 const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
   try {
@@ -15,14 +19,11 @@ const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
       throw { status: 404, message: "User not found." };
     }
 
-    console.log(branchId);
-    console.log(scheduleDetails);
-
-    const scheduleId = uuid();
     const schedRef = appointmentCollection
       .doc(branchId)
       .collection("schedules");
 
+    const scheduleId = await generateUniqueId(schedRef);
     const existingSchedules = await schedRef
       .where("scheduledTime", "==", scheduleDetails.scheduledTime)
       .get();

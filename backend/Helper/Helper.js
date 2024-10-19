@@ -1,5 +1,5 @@
 const admin = require("firebase-admin");
-const { v4: uuidv4 } = require("uuid");
+const { v4: uuid } = require("uuid");
 const {
   organizationCollection,
   patientCollection,
@@ -232,6 +232,30 @@ const removeNullValues = (obj) => {
   );
 };
 
+const checkIfDocExists = async (collectionRef, docId) => {
+  const docRef = collectionRef.doc(docId);
+  const docSnapshot = await docRef.get();
+
+  if (docSnapshot.exists) {
+    console.log(`Document with ID ${docId} already exists.`);
+    return true;
+  } else {
+    console.log(`Document with ID ${docId} does not exist.`);
+    return false;
+  }
+};
+
+const generateUniqueId = async (ref) => {
+  let id;
+  let idExists = true;
+
+  while (idExists) {
+    id = uuid();
+    idExists = await checkIfDocExists(ref, id);
+  }
+  return id;
+};
+
 module.exports = {
   getOrganizationName,
   getPatients,
@@ -241,4 +265,6 @@ module.exports = {
   getBranchDoctors,
   getVisits,
   removeNullValues,
+  checkIfDocExists,
+  generateUniqueId,
 };

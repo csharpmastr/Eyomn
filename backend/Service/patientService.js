@@ -6,7 +6,11 @@ const {
   patientCollection,
   branchCollection,
 } = require("../Config/FirebaseConfig");
-const { encryptDocument, decryptDocument } = require("../Helper/Helper");
+const {
+  encryptDocument,
+  decryptDocument,
+  generateUniqueId,
+} = require("../Helper/Helper");
 const { pushNotification } = require("./notificationService");
 
 const addPatient = async (
@@ -23,15 +27,18 @@ const addPatient = async (
     if (!userRecord) {
       throw { status: 404, message: "User not found." };
     }
-    if ((!organizationId || !branchId, !doctorId)) {
+
+    if (!organizationId || !branchId || !doctorId) {
       throw new Error(
         "Organization ID, Branch ID, and Doctor ID are required."
       );
     }
-    const patientId = uuidv4();
+
+    const patientId = await generateUniqueId(patientCollection);
+
     const basePatientData = {
+      patientId: patientId,
       doctorId,
-      patientId,
       organizationId,
       branchId,
       createdAt: currentDate.toISOString(),
@@ -43,6 +50,7 @@ const addPatient = async (
     const encryptedPatientData = encryptDocument(
       { ...basePatientData, ...filteredPatientData },
       [
+        "patientId",
         "doctorId",
         "patientId",
         "organizationId",
@@ -66,6 +74,7 @@ const addPatient = async (
       doctorId,
       patientId,
     });
+
     return { id: patientId, createdAt: basePatientData.createdAt };
   } catch (error) {
     console.error("Error adding patient: ", error);
@@ -137,24 +146,41 @@ const getPatients = async (
 
 const addVisit = async (patientId, doctorId, reason_visit) => {
   const currentDate = new Date();
-  const visitId = uuidv4();
+  try {
+    const visitId = await generateUniqueId(
+      patientCollection.doc(patientId).collection("visit")
+    );
 
-  const patientRef = patientCollection.doc(patientId);
-  const visitSubColRef = patientRef.collection("visit").doc(visitId);
-  const visitData = {
-    visitId,
-    date: currentDate.toISOString(),
-    doctorId,
-    reason_visit,
-    patientId: patientId,
-  };
+    const visitData = {
+      visitId,
+      date: currentDate.toISOString(),
+      doctorId,
+      reason_visit,
+      patientId,
+    };
 
-  await visitSubColRef.set(visitData);
-  console.log(`Visit added for patient ${patientId} with visit ID: ${visitId}`);
+    const visitSubColRef = patientCollection
+      .doc(patientId)
+      .collection("visit")
+      .doc(visitId);
+
+    await visitSubColRef.set(visitData);
+    console.log(
+      `Visit added for patient ${patientId} with visit ID: ${visitId}`
+    );
+
+    return visitId;
+  } catch (error) {
+    console.error("Error adding visit: ", error);
+    throw new Error("Failed to add visit: " + error.message);
+  }
 };
+
 const addNote = async (patientId, visitId, noteDetails) => {
   try {
-    const noteId = uuidv4();
+    const noteId = await generateUniqueId(
+      patientCollection.doc(patientId).collection("notes")
+    );
     const noteRef = patientCollection
       .doc(patientId)
       .collection("notes")
