@@ -87,7 +87,13 @@ const updateProductHandler = async (req, res) => {
     await updateProduct(branchId, productId, productDetails);
     return res.status(201).json({ message: "Product update successfully." });
   } catch (error) {
-    res
+    console.error("Error updating product: ", error);
+
+    if (error.status === 400) {
+      return res.status(409).json({ message: error.message });
+    }
+
+    return res
       .status(500)
       .json({ message: "Error updating product.", error: error.message });
   }

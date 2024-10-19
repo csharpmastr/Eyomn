@@ -24,20 +24,20 @@ const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
       .collection("schedules");
 
     const scheduleId = await generateUniqueId(schedRef);
-    const existingSchedules = await schedRef
-      .where("scheduledTime", "==", scheduleDetails.scheduledTime)
-      .get();
-
-    if (!existingSchedules.empty) {
-      throw { status: 409, message: "A schedule already exists at this time." };
-    }
 
     const encryptedDetails = encryptDocument(scheduleDetails, [
       "scheduledTime",
     ]);
+
     const oneHourGap = 60 * 60 * 1000;
     const thirtyMinuteGap = 30 * 60 * 1000;
-    const newScheduleTime = new Date(scheduleDetails.scheduledTime).getTime();
+
+    const newStartTime = new Date(scheduleDetails.scheduledTime).getTime();
+    const newEndTime =
+      newStartTime +
+      (scheduleDetails.duration
+        ? scheduleDetails.duration * 60 * 1000
+        : oneHourGap);
 
     const schedulesSnapshot = await schedRef.get();
     schedulesSnapshot.forEach((doc) => {
@@ -49,13 +49,10 @@ const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
           ? oneHourGap
           : thirtyMinuteGap;
 
-      const existingStartTime = existingScheduleTime - requiredGap;
-      const existingEndTime = existingScheduleTime + requiredGap;
+      const existingStartTime = existingScheduleTime;
+      const existingEndTime = existingStartTime + requiredGap;
 
-      if (
-        newScheduleTime >= existingStartTime &&
-        newScheduleTime <= existingEndTime
-      ) {
+      if (newStartTime < existingEndTime && newEndTime > existingStartTime) {
         if (existingReason === "eyeglass") {
           return;
         }

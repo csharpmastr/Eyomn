@@ -128,15 +128,44 @@ const deleteProduct = async (branchId, productId) => {
 };
 const updateProduct = async (branchId, productId, productDetails) => {
   try {
-    const productRef = inventoryCollection
+    const productsCollectionRef = inventoryCollection
       .doc(branchId)
-      .collection("products")
-      .doc(productId);
+      .collection("products");
+
+    const querySnapshot = await productsCollectionRef.get();
+    let productExists = false;
+
+    querySnapshot.forEach((doc) => {
+      const productData = doc.data();
+
+      if (doc.id !== productId && productData.product_name) {
+        const decryptedProductName = decryptData(productData.product_name);
+        const decryptedProductBrand = decryptData(productData.brand);
+        console.log(decryptedProductName, decryptedProductBrand);
+
+        if (
+          decryptedProductName === productDetails.product_name &&
+          decryptedProductBrand === productDetails.brand
+        ) {
+          productExists = true;
+        }
+      }
+    });
+
+    if (productExists) {
+      throw {
+        status: 400,
+        message: "Another product with the same name and brand already exists.",
+      };
+    }
+
+    const productRef = productsCollectionRef.doc(productId);
 
     const docSnapshot = await productRef.get();
     if (!docSnapshot.exists) {
       throw new Error("Document does not exist");
     }
+
     const encryptedProductDetails = encryptDocument(productDetails, [
       "price",
       "quantity",
@@ -144,8 +173,9 @@ const updateProduct = async (branchId, productId, productDetails) => {
     ]);
 
     await productRef.update(encryptedProductDetails);
+    console.log("Product updated successfully");
   } catch (error) {
-    console.error("Error deleting product: ", error);
+    console.error("Error updating product: ", error);
     throw error;
   }
 };
