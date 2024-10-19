@@ -82,7 +82,7 @@ const Scribe = () => {
       {hasSelected ? (
         <Outlet />
       ) : (
-        <div className="px-4 md:p-8 font-Poppins">
+        <div className="px-4 md:p-6 font-Poppins">
           <div className="flex flex-col md:flex-row md:items-center justify-between">
             <p className="text-p-lg font-semibold text-f-dark">
               {patients.length || 0}{" "}

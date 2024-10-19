@@ -4,7 +4,7 @@ import SoapCard from "../../Component/ui/SoapCard";
 
 const Soap = () => {
   return (
-    <div className="flex p-8 gap-8 font-Poppins bg-bg-mc">
+    <div className="flex p-6 gap-8 font-Poppins bg-bg-mc">
       <div className="w-3/4 gap-8 flex flex-col">
         <div className="flex px-5 py-6 rounded-lg bg-white border border-f-gray justify-between">
           <div className="ml-2 h-auto flex justify-center items-center rounded-md text-c-secondary font-md">

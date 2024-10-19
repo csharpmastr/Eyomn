@@ -149,16 +149,13 @@ const SetAppointment = ({ onClose }) => {
       ) : (
         <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
           <div className="w-[380px] md:w-1/2 xl:w-[500px] h-auto ">
-            <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
+            <header className="p-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
               <h1 className="text-p-lg text-c-secondary font-semibold">
                 Set Appointment
               </h1>
               <button onClick={onClose}> &times; </button>
             </header>
-            <form
-              className="py-6 px-6 bg-white"
-              onSubmit={handleSubmitAppointment}
-            >
+            <form className="p-6 bg-white" onSubmit={handleSubmitAppointment}>
               <section>
                 <label
                   htmlFor="patient_name"
@@ -264,7 +261,7 @@ const SetAppointment = ({ onClose }) => {
                   name="doctor"
                   value={formData.doctor}
                   onChange={handleChange}
-                  className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
+                  className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                 >
                   <option value="" disabled className="text-c-gray3">
                     Available Doctor
@@ -277,10 +274,10 @@ const SetAppointment = ({ onClose }) => {
                 </select>
               </section>
             </form>
-            <div className="border border-t-f-gray bg-white rounded-b-lg flex gap-2 justify-end py-4 md:py-6 px-4">
+            <div className="border border-t-f-gray bg-white rounded-b-lg flex gap-4 justify-end p-4">
               <button
                 type="button"
-                className="px-4 py-3 text-f-dark text-p-rg font-semibold"
+                className="px-4 py-2 text-f-dark text-p-rg font-medium border border-c-gray3 rounded-md"
                 onClick={onClose}
               >
                 Cancel
@@ -288,9 +285,9 @@ const SetAppointment = ({ onClose }) => {
               <button
                 onClick={handleSubmitAppointment}
                 type="submit"
-                className="px-6 py-3 bg-c-primary rounded-lg text-f-light text-p-rg font-semibold"
+                className="px-4 py-2 bg-c-primary rounded-md text-f-light text-p-rg font-medium"
               >
-                Save
+                Schedule
               </button>
             </div>
           </div>

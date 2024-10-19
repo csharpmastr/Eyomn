@@ -505,8 +505,8 @@ const StaffAddPatientPage = () => {
             </div>
             <div className="flex justify-end mb-10">
               <SubmitButton
-                style={`px-4 py-3 hover:bg-hover-c-primary active:bg-pressed-c-primary`}
-                value={"Save Infomation"}
+                style={`px-4 py-3 bg-c-primary hover:bg-hover-c-primary active:bg-pressed-c-primary`}
+                value={"Add Patient"}
               />
             </div>
           </form>
