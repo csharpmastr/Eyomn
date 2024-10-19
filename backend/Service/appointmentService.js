@@ -29,7 +29,7 @@ const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
       .get();
 
     if (!existingSchedules.empty) {
-      throw { status: 400, message: "A schedule already exists at this time." };
+      throw { status: 409, message: "A schedule already exists at this time." };
     }
 
     const encryptedDetails = encryptDocument(scheduleDetails, [
@@ -49,17 +49,18 @@ const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
           ? oneHourGap
           : thirtyMinuteGap;
 
+      const existingStartTime = existingScheduleTime - requiredGap;
+      const existingEndTime = existingScheduleTime + requiredGap;
+
       if (
-        (newScheduleTime >= existingScheduleTime - requiredGap &&
-          newScheduleTime < existingScheduleTime) ||
-        (newScheduleTime + requiredGap > existingScheduleTime &&
-          newScheduleTime <= existingScheduleTime)
+        newScheduleTime >= existingStartTime &&
+        newScheduleTime <= existingEndTime
       ) {
         if (existingReason === "eyeglass") {
           return;
         }
         throw {
-          status: 400,
+          status: 422,
           message: `There must be a ${
             requiredGap === oneHourGap ? "one-hour" : "30-minute"
           } gap between schedules.`,

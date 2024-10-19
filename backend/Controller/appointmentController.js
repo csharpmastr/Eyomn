@@ -20,8 +20,10 @@ const addScheduleHandler = async (req, res) => {
       scheduleId: scheduleId,
     });
   } catch (error) {
-    if (error.status === 400) {
+    if (error.status === 409) {
       return res.status(409).json({ message: error.message });
+    } else if (error.status === 422) {
+      return res.status(422).json({ message: error.message });
     }
     return res
       .status(500)

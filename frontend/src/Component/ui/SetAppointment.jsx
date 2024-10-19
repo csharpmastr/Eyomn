@@ -131,7 +131,9 @@ const SetAppointment = ({ onClose }) => {
     } catch (error) {
       setIsSuccess(false);
       if (error.response?.status === 409) {
-        setDoesExists(true);
+        setDoesExists({ type: "same_time" });
+      } else if (error.response?.status === 422) {
+        setDoesExists({ type: "overlap" });
       } else {
         console.error("An unexpected error occurred:", error);
       }
@@ -313,7 +315,11 @@ const SetAppointment = ({ onClose }) => {
         overlayDescriptionClassName={
           "text-center font-Poppins pt-5 text-black text-[18px]"
         }
-        description={"The scheduled time already exists."}
+        description={
+          doesExists.type === "overlap"
+            ? "The scheduled time overlaps with an existing appointment."
+            : "The scheduled time already exists."
+        }
       ></Modal>
     </>
   );
