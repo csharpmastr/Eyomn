@@ -102,6 +102,7 @@ const loginUserHandler = async (req, res) => {
         patients,
         staffs,
         appointments,
+        firebaseUid,
       });
     } else {
       res.status(200).json({

@@ -51,6 +51,7 @@ const deleteScheduleHandler = async (req, res) => {
 const getAppoitmentsHandler = async (req, res) => {
   try {
     const { branchId, firebaseUid } = req.query;
+
     if (!branchId) {
       return res.status(401).json({ message: "Branch ID are required" });
     }

@@ -227,33 +227,28 @@ const getVisits = async (patientId, firebaseUid) => {
 };
 
 const removeNullValues = (obj) => {
-  // Check if the input is an object and not null
   if (typeof obj !== "object" || obj === null) {
-    return obj; // Return the value if it's not an object or is null
+    return obj;
   }
 
-  // Use Object.fromEntries to create a new object with filtered entries
   return Object.fromEntries(
     Object.entries(obj)
-      .map(([key, value]) => [key, removeNullValues(value)]) // Recursively clean nested objects
+      .map(([key, value]) => [key, removeNullValues(value)])
       .filter(
         ([key, value]) =>
-          value !== null && // Exclude null values
-          value !== "" && // Exclude empty strings
-          !(typeof value === "object" && Object.keys(value).length === 0) // Exclude empty objects
+          value !== null &&
+          value !== "" &&
+          !(typeof value === "object" && Object.keys(value).length === 0)
       )
   );
 };
-
 const checkIfDocExists = async (collectionRef, docId) => {
   const docRef = collectionRef.doc(docId);
   const docSnapshot = await docRef.get();
 
   if (docSnapshot.exists) {
-    console.log(`Document with ID ${docId} already exists.`);
     return true;
   } else {
-    console.log(`Document with ID ${docId} does not exist.`);
     return false;
   }
 };

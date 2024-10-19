@@ -52,10 +52,11 @@ const addProduct = async (branchId, productDetails, firebaseUid) => {
       throw { status: 400, message: "The product already exists." };
     }
 
-    const productId = generateUniqueId(productsCollectionRef);
+    const productId = await generateUniqueId(productsCollectionRef);
     const productSKU = generateSKU();
     const productRef = productsCollectionRef.doc(productId);
     productDetails = removeNullValues(productDetails);
+    console.log(productDetails);
 
     const encryptedProduct = encryptDocument(productDetails, [
       "quantity",
@@ -64,7 +65,7 @@ const addProduct = async (branchId, productDetails, firebaseUid) => {
     ]);
 
     await productRef.set({ ...encryptedProduct, productId, productSKU });
-    return productId;
+    return { productId, productSKU };
   } catch (error) {
     console.error("Error adding product:", error);
     throw error;

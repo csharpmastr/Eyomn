@@ -166,7 +166,9 @@ const loginUser = async (userData) => {
         organizationId: user.organizationId,
         branchData,
         organization,
+        firebaseUid: user.firebaseUid,
       };
+      console.log("branch firebase Uid: ", user.firebaseUid);
     } else if (user.role === "2") {
       const staffQuery = staffCollection.where("staffId", "==", user.staffId);
       const staffSnapShot = await staffQuery.get();

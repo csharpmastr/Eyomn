@@ -15,10 +15,16 @@ const addProductHandler = async (req, res) => {
       return res.status(400).json({ message: "No Branch ID provided." });
     }
 
-    const productId = await addProduct(branchId, productDetails, firebaseUid);
+    const { productId, productSKU } = await addProduct(
+      branchId,
+      productDetails,
+      firebaseUid
+    );
+
     return res.status(200).json({
       message: "Product added successfully",
       productId: productId,
+      productSKU: productSKU,
     });
   } catch (error) {
     console.error("Error adding product: ", error);
