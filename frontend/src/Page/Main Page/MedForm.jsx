@@ -183,13 +183,13 @@ const MedForm = () => {
     },
     additional_note: "",
   });
-  
+
   const { patiendId } = useParams();
-  
+
   useEffect(() => {
     sessionStorage.setItem("currentPath", location.pathname);
   }, []);
-  
+
   const handleChange = (e, nestedPath) => {
     const { type, checked, value } = e.target;
 
@@ -236,7 +236,17 @@ const MedForm = () => {
       setCurrentCardIndex(currentCardIndex - 1);
     }
   };
+  const removeNullValues = (obj) => {
+    if (typeof obj !== "object" || obj === null) {
+      return obj;
+    }
 
+    return Object.fromEntries(
+      Object.entries(obj)
+        .filter(([key, value]) => value !== null && value !== "")
+        .map(([key, value]) => [key, removeNullValues(value)])
+    );
+  };
   return (
     <div className="w-full p-2 md:p-8 flex flex-col-reverse lg:flex-row bg-bg-mc gap-8">
       <div className="w-full lg:w-[calc(100%-288px)]">

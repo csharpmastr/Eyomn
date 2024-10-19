@@ -10,6 +10,7 @@ const {
   encryptDocument,
   decryptDocument,
   generateUniqueId,
+  removeNullValues,
 } = require("../Helper/Helper");
 const { pushNotification } = require("./notificationService");
 
@@ -185,6 +186,7 @@ const addNote = async (patientId, visitId, noteDetails) => {
       .doc(patientId)
       .collection("notes")
       .doc(visitId);
+    const cleanedNote = removeNullValues(noteDetails);
 
     const encryptValue = (value) => {
       if (typeof value === "string") {
@@ -209,7 +211,7 @@ const addNote = async (patientId, visitId, noteDetails) => {
       return encryptedData;
     };
 
-    const finalEncryptedData = deepEncrypt(noteDetails);
+    const finalEncryptedData = deepEncrypt(cleanedNote);
 
     await noteRef.set({
       noteId,
@@ -320,73 +322,6 @@ const retrievePatient = async (patientId) => {
     throw new Error("Failed to retrieve patient");
   }
 };
-// const getPatients = async (clinicId) => {
-//   try {
-//     const patientsCollectionRef = db.collection("clinicPatients").doc(clinicId).collection("Patients");
-
-//     const querySnapshot = await patientsCollectionRef.get();
-
-//     if (querySnapshot.empty) {
-//       return [];
-//     }
-
-//     const patientsData = querySnapshot.docs.map((doc) => {
-//       const data = doc.data();
-//       const decryptedData = {};
-
-//       for (const [key, value] of Object.entries(data)) {
-//         if (key === "createdAt" || key === "patientId" || key === "doctorId") {
-//           decryptedData[key] = value;
-//         } else {
-//           decryptedData[key] = decryptData(value);
-//         }
-//       }
-
-//       return decryptedData;
-//     });
-
-//     return patientsData;
-//   } catch (err) {
-//     console.error("Error getting patients:", err);
-//     throw new Error("Failed to retrieve patients");
-//   }
-// };
-
-// const getPatientsByDoctor = async (clinicId, doctorId) => {
-//   try {
-//     const patientsCollectionRef = db.collection("clinicPatients").doc(clinicId).collection("Patients");
-
-//     const querySnapshot = await patientsCollectionRef.where("doctorId", "==", doctorId).get();
-
-//     if (querySnapshot.empty) {
-//       console.log("No patients found for the given clinic and doctor.");
-//       return [];
-//     }
-
-//     const patientsData = querySnapshot.docs.map((doc) => {
-//       const data = doc.data();
-//       const decryptedData = {};
-
-//       for (const [key, value] of Object.entries(data)) {
-//         if (key === "createdAt" || key === "patientId" || key === "doctorId") {
-//           decryptedData[key] = value;
-//         } else {
-//           decryptedData[key] = decryptData(value);
-//         }
-//       }
-
-//       return {
-//         id: doc.id,
-//         ...decryptedData,
-//       };
-//     });
-
-//     return patientsData;
-//   } catch (error) {
-//     console.error("Error fetching patients: ", error);
-//     throw error;
-//   }
-// };
 
 module.exports = {
   addPatient,
@@ -396,6 +331,7 @@ module.exports = {
   retrievePatient,
   addNote,
   getNote,
+
   // getPatientsByDoctor,
   // getPatients,
 };

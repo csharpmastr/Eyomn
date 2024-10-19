@@ -8,6 +8,7 @@ const {
   retrievePatient,
   addNote,
   getNote,
+  testingNote,
 } = require("../Service/patientService");
 
 const addPatientHandler = async (req, res) => {
@@ -192,6 +193,7 @@ const getPatientVisitsHandler = async (req, res) => {
       .json({ message: "Error getting patient's note.", error: error.message });
   }
 };
+
 module.exports = {
   addPatientHandler,
   getPatientsByDoctorHandler,
