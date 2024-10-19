@@ -266,7 +266,11 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
         }
       }
     } catch (error) {
-      console.error("Error in handleAddEditProduct:", error);
+      if (error.status === 409) {
+        console.log("error");
+
+        setDoesExists(true);
+      }
     } finally {
       setIsLoading(false);
     }
