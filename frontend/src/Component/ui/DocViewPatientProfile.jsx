@@ -5,10 +5,13 @@ import { FiMapPin } from "react-icons/fi";
 import { MdOutlineEmail } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import ReasonVisitCard from "./ReasonVisitCard";
+import VisitReasonModal from "./VisitReasonModal";
 import { getPatientVisit } from "../../Service/PatientService";
 import Cookies from "universal-cookie";
 
 const DocViewPatientProfile = ({ patient, visits }) => {
+  const [isVisitOpen, setIsVisitOpen] = useState(false);
+
   const formattedDate = patient.createdAt
     ? new Date(patient.createdAt).toLocaleDateString("en-US", {
         year: "numeric",
@@ -16,6 +19,8 @@ const DocViewPatientProfile = ({ patient, visits }) => {
         day: "numeric",
       })
     : "N/A";
+
+  const toggleModal = () => setIsVisitOpen(!isVisitOpen);
 
   return (
     <div className="w-full h-auto font-poppins">
@@ -154,7 +159,10 @@ const DocViewPatientProfile = ({ patient, visits }) => {
                 Recent Visit
               </h1>
               <button>
-                <IoIosAddCircleOutline className="h-6 w-6 md:mr-2 text-c-gray3]" />
+                <IoIosAddCircleOutline
+                  className="h-6 w-6 md:mr-2 text-c-gray3]"
+                  onClick={toggleModal}
+                />
               </button>
             </header>
             {visits.length > 0 ? (
@@ -163,10 +171,11 @@ const DocViewPatientProfile = ({ patient, visits }) => {
               ))
             ) : (
               <p>No visit records found.</p>
-            )}{" "}
+            )}
           </div>
         </div>
       </div>
+      {isVisitOpen && <VisitReasonModal onClose={toggleModal} />}
     </div>
   );
 };

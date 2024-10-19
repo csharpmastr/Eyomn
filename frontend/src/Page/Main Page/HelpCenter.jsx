@@ -43,7 +43,6 @@ const HelpCenter = () => {
                 "FAQ's",
                 "Features",
                 "Changelog",
-                "Submit a Ticket",
               ].map((section) => (
                 <div
                   key={section}
