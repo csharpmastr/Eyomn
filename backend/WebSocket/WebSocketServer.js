@@ -27,11 +27,7 @@ const startWebSocketServer = () => {
     let unsubscribePatients, unsubscribeNotifications;
     const sentPatientIds = new Set();
     try {
-      const patientQuery = query(
-        patientCol,
-
-        where("doctorId", "==", staffId)
-      );
+      const patientQuery = query(patientCol, where("doctorId", "==", staffId));
 
       unsubscribePatients = onSnapshot(patientQuery, (snapshot) => {
         snapshot.docChanges().forEach((change) => {

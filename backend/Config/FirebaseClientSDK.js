@@ -17,5 +17,6 @@ const dbClient = getFirestore(app);
 
 const patientCol = collection(dbClient, "patient");
 const notificationCol = collection(dbClient, "notification");
+const visitCol = collection(dbClient, "visit");
 
-module.exports = { dbClient, patientCol, notificationCol };
+module.exports = { dbClient, patientCol, notificationCol, visitCol };

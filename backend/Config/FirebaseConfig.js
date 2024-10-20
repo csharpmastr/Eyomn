@@ -17,7 +17,8 @@ const userCollection = db.collection("user");
 const inventoryCollection = db.collection("inventory");
 const appointmentCollection = db.collection("apppointment");
 const notificationCollection = db.collection("notification");
-
+const visitCollection = db.collection("visit");
+const noteCollection = db.collection("note");
 module.exports = {
   db,
   organizationCollection,
@@ -28,4 +29,6 @@ module.exports = {
   inventoryCollection,
   appointmentCollection,
   notificationCollection,
+  visitCollection,
+  noteCollection,
 };

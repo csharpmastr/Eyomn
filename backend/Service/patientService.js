@@ -5,6 +5,7 @@ const {
   db,
   patientCollection,
   branchCollection,
+  visitCollection,
 } = require("../Config/FirebaseConfig");
 const {
   encryptDocument,
@@ -47,7 +48,8 @@ const addPatient = async (
     };
 
     const { reason_visit, ...filteredPatientData } = patientData;
-
+    const patientName = patientData.first_name + " " + patientData.last_name;
+    const encryptedName = encryptData(patientName);
     const encryptedPatientData = encryptDocument(
       { ...basePatientData, ...filteredPatientData },
       [
@@ -69,14 +71,12 @@ const addPatient = async (
     const patientRef = patientCollection.doc(patientId);
     await patientRef.set(encryptedPatientData);
 
-    await addVisit(patientId, doctorId, reason_visit);
-    await pushNotification(doctorId, "newPatient", {
-      branchId,
-      doctorId,
-      patientId,
-    });
+    await addVisit(patientId, doctorId, reason_visit, branchId, encryptedName);
 
-    return { id: patientId, createdAt: basePatientData.createdAt };
+    return {
+      id: patientId,
+      createdAt: basePatientData.createdAt,
+    };
   } catch (error) {
     console.error("Error adding patient: ", error);
     throw error;
@@ -145,12 +145,16 @@ const getPatients = async (
   }
 };
 
-const addVisit = async (patientId, doctorId, reason_visit) => {
+const addVisit = async (
+  patientId,
+  doctorId,
+  reason_visit,
+  branchId,
+  patientName
+) => {
   const currentDate = new Date();
   try {
-    const visitId = await generateUniqueId(
-      patientCollection.doc(patientId).collection("visit")
-    );
+    const visitId = await generateUniqueId(visitCollection);
 
     const visitData = {
       visitId,
@@ -158,17 +162,49 @@ const addVisit = async (patientId, doctorId, reason_visit) => {
       doctorId,
       reason_visit,
       patientId,
+      branchId: branchId,
     };
 
-    const visitSubColRef = patientCollection
-      .doc(patientId)
-      .collection("visit")
-      .doc(visitId);
+    const previousVisitsSnapshot = await visitCollection
+      .where("patientId", "==", patientId)
+      .get();
 
+    let isReturningPatient = !previousVisitsSnapshot.empty;
+
+    if (!patientName) {
+      const patientProfile = await patientCollection.doc(patientId).get();
+      const patientData = patientProfile.data();
+
+      if (patientData) {
+        const firstName = decryptData(patientData.first_name);
+        const lastName = decryptData(patientData.last_name);
+        patientName = `${firstName} ${lastName}`;
+        patientName = encryptData(patientName);
+      }
+    }
+
+    const visitSubColRef = visitCollection.doc(visitId);
     await visitSubColRef.set(visitData);
+
     console.log(
       `Visit added for patient ${patientId} with visit ID: ${visitId}`
     );
+
+    const notificationType = isReturningPatient
+      ? "returnPatient"
+      : "newPatient";
+
+    const notificationMessage = isReturningPatient
+      ? `${decryptData(patientName)} has returned for another visit.`
+      : `${decryptData(patientName)} has been added as a new patient.`;
+
+    await pushNotification(doctorId, notificationType, {
+      branchId,
+      doctorId,
+      patientId,
+      patientName,
+      message: notificationMessage,
+    });
 
     return visitId;
   } catch (error) {

@@ -25,6 +25,15 @@ const pushNotification = async (userId, type, data) => {
         doctorId: data.doctorId,
       };
     }
+    if (type === "returnPatient") {
+      notificationData = {
+        ...notificationData,
+        type: "returnPatient",
+        message: `Patient ${data.patientName} has returned for a follow-up visit.`,
+        branchId: data.branchId,
+        doctorId: data.doctorId,
+      };
+    }
     await notificationCol.doc(notificationId).set(notificationData);
     console.log(`Notification of type "${type}" added for user ${userId}`);
   } catch (error) {
