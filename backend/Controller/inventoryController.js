@@ -10,6 +10,7 @@ const addProductHandler = async (req, res) => {
     const branchId = req.params.branchId;
     const { firebaseUid } = req.query;
     const productDetails = req.body;
+    console.log(branchId);
 
     if (!branchId) {
       return res.status(400).json({ message: "No Branch ID provided." });
