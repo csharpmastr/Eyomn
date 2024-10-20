@@ -4,6 +4,8 @@ import { TiUpload } from "react-icons/ti";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FileUploader } from "react-drag-drop-files";
+import EnlargeImg from "../../../Component/ui/EnlargeImg";
+import SampleImage from "../../../assets/Image/eyomn_logoS1-2-06.jpg";
 
 const ScribeRecord = () => {
   const { patientId } = useParams();
@@ -49,6 +51,17 @@ const ScribeRecord = () => {
 
   const handleRemoveImage = () => {
     setImage(null);
+  };
+
+  const [selectImgOpen, setSelectImgOpen] = useState(null);
+  const images = Array.from({ length: 13 }).map(() => SampleImage);
+
+  const handleOpenImg = (imageUrl) => {
+    setSelectImgOpen(imageUrl);
+  };
+
+  const handleCloseImg = () => {
+    setSelectImgOpen(null);
   };
 
   return (
@@ -179,14 +192,22 @@ const ScribeRecord = () => {
                 )}
               </div>
               <div className="grid grid-cols-4 gap-8 w-full h-full overflow-y-auto">
-                {Array.from({ length: 14 }).map((_, index) => (
-                  <div
+                {images.map((image, index) => (
+                  <img
                     key={index}
-                    className="bg-red-300 aspect-square rounded-lg flex items-center justify-center"
-                  >
-                    Image Sample {index + 1}
-                  </div>
+                    src={image}
+                    alt={`Image ${index + 1}`}
+                    className="cursor-pointer rounded-lg"
+                    onClick={() => handleOpenImg(image)}
+                  />
                 ))}
+                {selectImgOpen !== null && (
+                  <EnlargeImg
+                    imageUrl={selectImgOpen}
+                    onClose={handleCloseImg}
+                    fileName={images}
+                  />
+                )}
               </div>
             </div>
           )}
