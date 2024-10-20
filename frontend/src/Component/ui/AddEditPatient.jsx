@@ -146,8 +146,8 @@ const AddEditPatient = ({ onClose }) => {
 
   return ReactDOM.createPortal(
     <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-      <div className="w-[400px] md:w-[600px] md:mr-8">
-        <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
+      <div className="w-[400px] md:w-[600px]">
+        <header className="p-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
           <h1 className="text-p-lg text-c-secondary font-semibold">
             Patient Information
           </h1>
@@ -155,7 +155,7 @@ const AddEditPatient = ({ onClose }) => {
         </header>
         <div className="bg-white h-[600px] overflow-y-scroll">
           {currentCardIndex == 0 ? (
-            <div className="p-3 md:p-8">
+            <div className="p-3 md:p-6">
               <header>
                 <h1 className="text-p-rg font-medium text-c-secondary mb-5">
                   | Personal Information
@@ -295,7 +295,7 @@ const AddEditPatient = ({ onClose }) => {
                   name="birthdate"
                   value={formData.birthdate}
                   onChange={handleChange}
-                  className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                  className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
                     errors.birthdate
                       ? "border-red-400 focus:outline-red-400"
                       : "border-c-gray3 focus:outline-c-primary"
@@ -304,7 +304,7 @@ const AddEditPatient = ({ onClose }) => {
               </section>
             </div>
           ) : (
-            <div className="p-3 md:p-8">
+            <div className="p-3 md:p-6">
               <div className="mb-4">
                 <header>
                   <h1 className="text-p-rg font-medium text-c-secondary mb-4">
@@ -437,7 +437,7 @@ const AddEditPatient = ({ onClose }) => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                    className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
                       errors.email
                         ? "border-red-400 focus:outline-red-400"
                         : "border-c-gray3 focus:outline-c-primary"
@@ -449,33 +449,33 @@ const AddEditPatient = ({ onClose }) => {
             </div>
           )}
         </div>
-        <footer className="flex justify-end px-3 py-6 bg-white border border-t-f-gray rounded-b-lg">
+        <footer className="flex justify-end p-4 gap-4 bg-white border border-t-f-gray rounded-b-lg">
           {currentCardIndex == 0 ? (
             ""
           ) : (
             <button
-              className="px-8 py-2 text-c-secondary text-p-rg font-semibold rounded-md"
+              className="px-4 py-2 text-f-dark text-p-rg font-medium rounded-md border border-c-gray3"
               onClick={handleBack}
               disabled={currentCardIndex === 0}
             >
-              Back
+              Go Back
             </button>
           )}
           {currentCardIndex == 0 ? (
             <button
-              className="ml-2 px-8 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+              className="px-4 py-2 bg-c-secondary  text-f-light text-p-rg font-medium rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
               onClick={handleNext}
               disabled={currentCardIndex === 1}
             >
-              Next
+              Continue
             </button>
           ) : (
             <button
-              className="ml-2 px-8 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+              className="px-4 py-2 bg-c-secondary text-f-light text-p-rg font-medium rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
               onClick={handleNext}
               disabled={currentCardIndex === 1}
             >
-              Save
+              Add Patient
             </button>
           )}
         </footer>

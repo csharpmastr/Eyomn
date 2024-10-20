@@ -34,12 +34,12 @@ const Organization = () => {
   }, [location.state]);
 
   return (
-    <div className="w-full h-full flex flex-col items-center p-4 md:p-8">
+    <div className="w-full h-full flex flex-col items-center p-4 md:p-6">
       {!hasSelectedBranch ? (
         <>
           <div className="w-full flex flex-row-reverse">
             <div
-              className="h-12 px-2 w-fit flex justify-center items-center border-2 border-[#222222] rounded-md py-2 md:px-4 font-Poppins cursor-pointer"
+              className="px-4 py-2 flex justify-center items-center border border-c-gray3 rounded-md font-Poppins cursor-pointer"
               onClick={handleOpenStaffModal}
             >
               <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />

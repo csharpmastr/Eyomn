@@ -282,16 +282,16 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
         <Loader />
       ) : (
         <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-          <div className="w-[380px] md:w-[600px] md:mr-8">
-            <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
+          <div className="w-[380px] md:w-[600px]">
+            <header className="p-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
               <h1 className="text-p-lg text-c-secondary font-semibold">
                 {title}
               </h1>
               <button onClick={onClose}>&times;</button>
             </header>
             <div className="bg-white h-[480px] md:h-[600px] overflow-y-scroll">
-              <div className="p-3 md:p-8">
-                <section>
+              <div className="p-3 md:p-6">
+                <section className="mb-8">
                   <header>
                     <h1 className="text-p-rg font-semibold text-c-secondary">
                       | Product Category
@@ -306,7 +306,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                     value={selectedCategory}
                     disabled={productDetails}
                     onChange={handleCategoryChange}
-                    className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
+                    className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                   >
                     <option value="" disabled className="text-c-gray3">
                       Select Category
@@ -321,7 +321,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                   {selectedCategory === "Eye Glass" && (
                     <div>
                       <header>
-                        <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
+                        <h1 className="text-p-rg font-semibold text-c-secondary mb-4">
                           | Eye Glass Details
                         </h1>
                       </header>
@@ -535,7 +535,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                           name="dosage"
                           value={formData.dosage}
                           onChange={handleChange}
-                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
                             errors.dosage
                               ? "border-red-400 focus:outline-red-400"
                               : "border-c-gray3 focus:outline-c-primary"
@@ -548,7 +548,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                   {selectedCategory === "Contact Lens" && (
                     <div>
                       <header>
-                        <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
+                        <h1 className="text-p-rg font-semibold text-c-secondary mb-4">
                           | Contact Lens Details
                         </h1>
                       </header>
@@ -623,7 +623,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                           name="ct_material"
                           value={formData.ct_material}
                           onChange={handleChange}
-                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
                             errors.ct_material
                               ? "border-red-400 focus:outline-red-400"
                               : "border-c-gray3 focus:outline-c-primary"
@@ -636,7 +636,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                   {selectedCategory === "Other" && (
                     <div>
                       <header>
-                        <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
+                        <h1 className="text-p-rg font-semibold text-c-secondary mb-4">
                           | Product Details
                         </h1>
                       </header>
@@ -792,7 +792,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                           name="brand"
                           value={formData.brand}
                           onChange={handleChange}
-                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
                             errors.brand
                               ? "border-red-400 focus:outline-red-400"
                               : "border-c-gray3 focus:outline-c-primary"
@@ -805,13 +805,13 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                 </div>
               </div>
             </div>
-            <footer className="flex justify-end px-3 py-6 bg-white border border-t-f-gray rounded-b-lg">
+            <footer className="flex justify-end p-4 bg-white border border-t-f-gray rounded-b-lg">
               <button
-                className="ml-2 px-8 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+                className="px-4 py-2 bg-c-secondary text-f-light text-p-rg font-medium rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
                 type="submit"
                 onClick={handleAddEditProduct}
               >
-                Save
+                Add Product
               </button>
             </footer>
           </div>

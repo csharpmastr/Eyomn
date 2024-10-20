@@ -8,7 +8,7 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 
 const Dashboard = () => {
   return (
-    <div className="w-full h-full flex flex-col items-center p-8 font-Poppins gap-6">
+    <div className="w-full h-full flex flex-col items-center p-6 font-Poppins gap-6">
       <div className="flex items-center w-full justify-between">
         <div className="flex gap-8">
           <DbCard />

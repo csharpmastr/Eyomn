@@ -33,17 +33,17 @@ const OrgStaff = () => {
     <div className="w-full h-full flex flex-col items-center">
       <div className="w-full flex justify-between">
         <div
-          className="flex justify-center items-center font-Poppins cursor-pointer"
+          className="flex justify-center items-center font-Poppins cursor-pointer gap-2"
           onClick={handleBackBranch}
         >
-          <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
+          <IoIosAddCircleOutline className="h-6 w-6" />
           <h1 className="hidden md:block">Go back</h1>
         </div>
         <div
-          className="h-12 w-40 flex justify-center items-center border-2 border-[#222222] rounded-md py-2 px-2 md:px-4 font-Poppins cursor-pointer"
+          className="px-4 py-2 flex gap-2 justify-center items-center border border-c-gray3 rounded-md font-Poppins cursor-pointer"
           onClick={handleOpenStaffModal}
         >
-          <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
+          <IoIosAddCircleOutline className="h-6 w-6" />
           <h1 className="hidden md:block">Add Staff</h1>
         </div>
       </div>
