@@ -227,17 +227,17 @@ const AddStaff = ({ onClose }) => {
 
   const handleNext = () => {
     setCurrentCardIndex(currentCardIndex + 1);
-    // const isValid = validateForm();
-    // if (isValid) {
-    //   setCurrentCardIndex(currentCardIndex + 1);
-    // }
+    const isValid = validateForm();
+    if (isValid) {
+      setCurrentCardIndex(currentCardIndex + 1);
+    }
   };
 
   const handleBack = () => {
     setCurrentCardIndex(currentCardIndex - 1);
-    // if (currentCardIndex > 0) {
-    //   setCurrentCardIndex(currentCardIndex - 1);
-    // }
+    if (currentCardIndex > 0) {
+      setCurrentCardIndex(currentCardIndex - 1);
+    }
   };
 
   const handleBranchAssignemnt = (e) => {
@@ -296,9 +296,9 @@ const AddStaff = ({ onClose }) => {
   const handleSubmitStaff = async (e) => {
     e.preventDefault();
 
-    // if (!validateForm()) {
-    //   return false;
-    // }
+    if (!validateForm()) {
+      return false;
+    }
 
     console.log(formData);
 
@@ -316,7 +316,7 @@ const AddStaff = ({ onClose }) => {
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
+        <div className="fixed p-4 top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
           <div className="w-[500px] md:w-[600px] md:mr-8">
             <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
               <h1 className="text-p-lg text-c-secondary font-semibold">
@@ -328,7 +328,7 @@ const AddStaff = ({ onClose }) => {
             </header>
             <form onSubmit={handleSubmitStaff}>
               {currentCardIndex === 0 && (
-                <div className="p-6 bg-white h-[600px] overflow-y-scroll">
+                <div className="p-6 bg-white h-[500px] md:h-[600px] overflow-y-scroll">
                   <label className="flex items-center mb-8 gap-4">
                     {image ? (
                       <img
@@ -539,7 +539,7 @@ const AddStaff = ({ onClose }) => {
                 </div>
               )}
               {currentCardIndex === 1 && (
-                <div className="p-6 bg-white h-[600px] overflow-y-scroll">
+                <div className="p-6 bg-white h-[500px] md:h-[600px] overflow-y-scroll">
                   <div className="mb-5">
                     <header>
                       <h1 className="text-p-rg font-medium text-c-secondary mb-4">
@@ -1075,7 +1075,7 @@ const AddStaff = ({ onClose }) => {
                 </div>
               )}
               {currentCardIndex === 2 && (
-                <div className="p-6 bg-white h-[600px] overflow-y-scroll">
+                <div className="p-6 bg-white h-[500px] md:h-[600px] overflow-y-scroll">
                   <div className="mb-5">
                     <header>
                       <h1 className="text-p-rg font-medium text-c-secondary mb-4">
@@ -1182,31 +1182,31 @@ const AddStaff = ({ onClose }) => {
                 </div>
               )}
             </form>
-            <footer className="flex justify-end px-3 py-6 bg-white border-2 border-t-f-gray rounded-b-lg">
+            <footer className="flex justify-end px-4 py-3 gap-4 bg-white border-2 border-t-f-gray rounded-b-lg">
               {currentCardIndex > 0 && (
                 <button
-                  className="px-8 py-2 text-c-secondary text-p-rg font-semibold rounded-md"
+                  className="px-4 py-2 text-f-dark text-p-rg font-medium rounded-md border border-c-gray3"
                   onClick={handleBack}
                 >
-                  Back
+                  Go Back
                 </button>
               )}
 
               {currentCardIndex < 2 && (
                 <button
-                  className="ml-2 px-8 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+                  className="px-4 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
                   onClick={handleNext}
                 >
-                  Next
+                  Continue
                 </button>
               )}
 
               {currentCardIndex === 2 && (
                 <button
-                  className="ml-2 px-8 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+                  className="px-4 py-2 bg-c-primary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
                   onClick={handleSubmitStaff}
                 >
-                  Save
+                  Add Staff
                 </button>
               )}
             </footer>

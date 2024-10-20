@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import SideBar from "./Main Page/Sidebar";
 import TopbarButton from "./Main Page/TopbarButton";
-import LLMChat from "../Component/ui/LLMChat";
+import LLMChatbot from "../Component/ui/LLMChatbot";
 import { Outlet } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { WebSocketProvider } from "../Context/WebSocketContext";
@@ -31,10 +31,6 @@ const MVP = () => {
     "/help": "Help Center",
     "/profile": "Profile",
   };
-
-  const [openLLM, setOpenLLM] = useState(false);
-
-  const toggle = () => setOpenLLM(!openLLM);
 
   const getCurrentTab = () => {
     for (const [path, name] of Object.entries(tabMapping)) {
@@ -77,13 +73,9 @@ const MVP = () => {
           </div>
           <div className="flex-1 overflow-auto bg-bg-mc">
             <Outlet />
-            <button
-              className="bg-red-400 w-10 h-10 rounded-full absolute bottom-5 right-5"
-              onClick={toggle}
-            ></button>
+            {currentTab != "Dashboard" && <LLMChatbot />}
           </div>
         </div>
-        {openLLM && <LLMChat onClose={toggle} />}
       </div>
     </WebSocketProvider>
   );

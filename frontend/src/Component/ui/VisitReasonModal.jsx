@@ -2,11 +2,11 @@ import React from "react";
 
 const VisitReasonModal = ({ onClose }) => {
   return (
-    <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
+    <div className="fixed px-5 top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
       <div className="w-[600px]">
         <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
           <h1 className="text-p-lg text-c-secondary font-semibold">
-            Add Branch
+            Visitation Reason
           </h1>
           <button onClick={onClose}> &times; </button>
         </header>
@@ -51,14 +51,14 @@ const VisitReasonModal = ({ onClose }) => {
             </select>
           </div>
         </div>
-        <footer className="border border-t-f-gray bg-white rounded-b-lg flex gap-2 justify-end py-5 px-4">
+        <footer className="border border-t-f-gray bg-white rounded-b-lg flex gap-4 justify-end p-4">
           <button
-            className="w-28 py-3 text-f-dark text-p-rg font-semibold"
+            className="px-4 py-2 text-f-dark text-p-rg font-medium rounded-md border border-c-gray3"
             onClick={onClose}
           >
             Cancel
           </button>
-          <button className="w-28 py-3 bg-[#3B7CF9] text-f-light text-p-rg font-semibold rounded-md hover:bg-[#77a0ec] active:bg-bg-[#2c4c86]">
+          <button className="px-7 py-2 bg-[#3B7CF9] text-f-light text-p-rg font-semibold rounded-md hover:bg-[#77a0ec] active:bg-bg-[#2c4c86]">
             Save
           </button>
         </footer>

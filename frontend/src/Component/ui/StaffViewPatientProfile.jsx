@@ -20,9 +20,9 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
     : "N/A";
 
   return (
-    <div className="w-full flex flex-col gap-8 flex-1 md:flex-row font-poppins">
+    <div className="w-full flex flex-col gap-4 md:gap-8 md:flex-row font-poppins">
       <div className="w-full h-auto">
-        <header className="w-full h-fit flex justify-between items-center p-5 rounded-lg bg-bg-sb border border-c-primary mb-8 md:flex-row md:gap-0">
+        <header className="w-full h-fit flex justify-between items-center p-4 rounded-lg bg-bg-sb border border-c-primary mb-4 md:mb-8 md:flex-row md:gap-0">
           <section>
             <p className="text-f-dark font-medium text-p-lg">
               {patient.first_name + " " + patient.last_name}
@@ -39,9 +39,9 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
             <p className="text-c-secondary font-regular text-p-rg">Edit</p>
           </button>
         </header>
-        <div className="w-full flex flex-col gap-8 mb-8">
+        <div className="w-full flex flex-col mb-4 md:mb-8">
           <div className="w-full bg-white p-5 rounded-lg border border-f-gray">
-            <h1 className="text-p-rg font-medium text-c-primary mb-5">
+            <h1 className="text-p-rg font-medium text-c-primary mb-4">
               | Personal Information
             </h1>
             <div className="flex justify-between pr-10">
@@ -66,9 +66,9 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
             </div>
           </div>
         </div>
-        <div className="w-full flex flex-col gap-8 mb-8">
-          <div className="w-full bg-white p-5 rounded-lg border border-f-gray">
-            <h1 className="text-p-rg font-medium text-c-primary mb-5">
+        <div className="w-full flex flex-col mb-4 md:mb-8">
+          <div className="w-full bg-white p-4 rounded-lg border border-f-gray">
+            <h1 className="text-p-rg font-medium text-c-primary mb-4">
               | Status Information
             </h1>
             <div className="flex justify-between">
@@ -92,7 +92,7 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
         </div>
         <div className="w-full flex flex-col gap-8">
           <div className="w-full bg-white p-5 rounded-lg border border-f-gray">
-            <h1 className="text-p-rg font-medium text-c-primary mb-5">
+            <h1 className="text-p-rg font-medium text-c-primary mb-4">
               | Contact Information
             </h1>
             <section>
@@ -118,7 +118,7 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
       </div>
       <div className="md:w-[600px] h-auto">
         <div className="w-full h-full bg-white rounded-lg font-poppins p-4">
-          <header className="flex w-full h-auto justify-between pt-4 mb-5">
+          <header className="flex w-full h-auto justify-between pt-4 mb-4">
             <h1 className="text-p-rg font-medium text-c-gray3">
               | Recent Visit
             </h1>
