@@ -27,6 +27,7 @@ const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
 
     const encryptedDetails = encryptDocument(scheduleDetails, [
       "scheduledTime",
+      "doctorId",
     ]);
 
     const oneHourGap = 60 * 60 * 1000;
@@ -53,6 +54,12 @@ const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
       const existingEndTime = existingStartTime + requiredGap;
 
       if (newStartTime < existingEndTime && newEndTime > existingStartTime) {
+        if (newStartTime === existingStartTime) {
+          throw {
+            status: 409,
+            message: "A schedule already exists at this time.",
+          };
+        }
         if (scheduleDetails.reason === "eyeglass") {
           return;
         }
