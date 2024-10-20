@@ -184,7 +184,7 @@ const loginUser = async (userData) => {
         "organizationId",
         "staffId",
         "role",
-        "schedule",
+        "branches",
         "firebaseUid",
       ]);
 
@@ -213,18 +213,11 @@ const loginUser = async (userData) => {
         "organizationId",
         "staffId",
         "role",
-        "schedule",
+        "branches",
         "firebaseUid",
       ]);
 
       const organization = await getOrganizationName(user.organizationId);
-
-      const doctors = await getBranchDoctors(
-        user.organizationId,
-        user.branchId,
-        user.firebaseUid
-      );
-      console.log(doctors);
 
       data = {
         role: user.role,

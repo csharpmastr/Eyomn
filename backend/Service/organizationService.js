@@ -16,7 +16,7 @@ const { EmailAlreadyExistsError } = require("./UserService");
 const { getStaffs, getPatients, decryptDocument } = require("../Helper/Helper");
 const { getAppointments } = require("./appointmentService");
 
-const addStaff = async (organizationId, branchId, staffData, firebaseUid) => {
+const addStaff = async (organizationId, staffData, firebaseUid) => {
   try {
     const userRecord = await admin.auth().getUser(firebaseUid);
     if (!userRecord) {
@@ -40,14 +40,13 @@ const addStaff = async (organizationId, branchId, staffData, firebaseUid) => {
     const encryptedStaffData = {
       staffId,
       organizationId,
-      branchId,
       firebaseUid: newUser.uid,
+      branches: staffData.branches,
     };
     const staffCredentials = {
       staffId,
       email: staffData.email,
       organizationId,
-      branchId,
       firebaseUid: newUser.uid,
     };
 
@@ -56,8 +55,8 @@ const addStaff = async (organizationId, branchId, staffData, firebaseUid) => {
         staffCredentials.password = await hashPassword(value);
       } else if (key === "email") {
         encryptedStaffData.email = value;
-      } else if (key === "schedule") {
-        encryptedStaffData.schedule = value;
+      } else if (key === "branches") {
+        encryptedStaffData.branches = value;
       } else {
         encryptedStaffData[key] = encryptData(value);
       }
@@ -76,19 +75,24 @@ const addStaff = async (organizationId, branchId, staffData, firebaseUid) => {
 
     const userRef = userCollection.doc(staffId);
     const staffRef = staffCollection.doc(staffId);
-    const branchRef = branchCollection.doc(branchId);
 
     await userRef.set(staffCredentials);
     await staffRef.set(encryptedStaffData);
-    await branchRef.update({
-      staffs: admin.firestore.FieldValue.arrayUnion(staffId),
-    });
+
+    for (const branch of staffData.branches) {
+      const branchRef = branchCollection.doc(branch.branchId);
+      await branchRef.update({
+        staffs: admin.firestore.FieldValue.arrayUnion(staffId),
+      });
+    }
+
     return staffId;
   } catch (err) {
     console.error("Error adding staff: ", err);
     throw err;
   }
 };
+
 const addBranch = async (ogrId, branchData, firebaseUid) => {
   try {
     const userRecord = await admin.auth().getUser(firebaseUid);
@@ -259,8 +263,9 @@ const getBranchData = async (organizationId, firebaseUid) => {
 
         const [staffs, appointments] = await Promise.all([
           getStaffs(orgData.id, branchId, firebaseUid),
-          getAppointments(branchId, orgData.firebaseUid),
+          getAppointments(branchId, firebaseUid),
         ]);
+        console.log(staffs);
 
         decryptedBranchData.staffs = staffs;
         decryptedBranchData.appointments = appointments;

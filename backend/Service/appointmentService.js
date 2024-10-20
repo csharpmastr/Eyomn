@@ -53,7 +53,7 @@ const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
       const existingEndTime = existingStartTime + requiredGap;
 
       if (newStartTime < existingEndTime && newEndTime > existingStartTime) {
-        if (existingReason === "eyeglass") {
+        if (scheduleDetails.reason === "eyeglass") {
           return;
         }
         throw {
@@ -129,7 +129,7 @@ const getAppointments = async (branchId, firebaseUid) => {
       ]);
       appointments.push(decrytedSChedule);
     });
-    console.log(appointments);
+
     return appointments;
   } catch (error) {
     console.error("Error fetching appointments:", error);

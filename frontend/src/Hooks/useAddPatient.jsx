@@ -21,7 +21,7 @@ export const useAddPatient = () => {
         accessToken,
         refreshToken,
         user.organizationId,
-        user.branchId,
+        user.branches[0].branchId,
         doctorId,
         user.firebaseUid
       );

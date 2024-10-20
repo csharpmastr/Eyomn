@@ -3,7 +3,6 @@ import Cookies from "universal-cookie";
 import { getPatients } from "../Service/PatientService";
 import { useDispatch, useSelector } from "react-redux";
 import { setPatients } from "../Slice/PatientSlice";
-import { getBranchData, getDoctorList } from "../Service/OrganizationService";
 import { setDoctor } from "../Slice/doctorSlice";
 import { setBranch } from "../Slice/BranchSlice";
 import { setStaffs } from "../Slice/StaffSlice";
@@ -11,6 +10,7 @@ import { getProducts } from "../Service/InventoryService";
 import { setProducts } from "../Slice/ProductSlice";
 import { getAppointments } from "../Service/AppointmentService";
 import { setAppointments } from "../Slice/AppointmentSlice";
+import { getBranchData, getDoctorList } from "../Service/organizationService";
 
 export const useFetchData = () => {
   const user = useSelector((state) => state.reducer.user.user);
@@ -21,8 +21,14 @@ export const useFetchData = () => {
 
   const buildApiCalls = () => {
     let organizationId = user.organizationId || null;
-    let branchId = user.branchId || user.userId || null;
+    let branchId =
+      (user.branches &&
+        user.branches.length > 0 &&
+        user.branches[0].branchId) ||
+      user.userId ||
+      null;
     let firebaseUid = user.firebaseUid;
+
     switch (user.role) {
       case "1":
         return [
@@ -151,7 +157,16 @@ export const useFetchData = () => {
             case "branches":
               reduxDispatch(setBranch(result));
               const staffs = result.flatMap((branch) => branch.staffs || []);
-              reduxDispatch(setStaffs(staffs));
+
+              const uniqueStaffsMap = new Map();
+              staffs.forEach((staff) => {
+                if (!uniqueStaffsMap.has(staff.staffId)) {
+                  uniqueStaffsMap.set(staff.staffId, staff);
+                }
+              });
+              const uniqueStaffs = Array.from(uniqueStaffsMap.values());
+              console.log(uniqueStaffs);
+              reduxDispatch(setStaffs(uniqueStaffs));
               break;
             default:
               console.error("Unknown API call type: ", apiCall.type);

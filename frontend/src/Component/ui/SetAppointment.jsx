@@ -22,6 +22,11 @@ const SetAppointment = ({ onClose }) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [doesExists, setDoesExists] = useState(false);
   const reduxDispatch = useDispatch();
+  let branchId =
+    (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
+    user.userId ||
+    null;
+
   const [formData, setFormData] = useState({
     patient_name: "",
     reason: "",
@@ -114,7 +119,7 @@ const SetAppointment = ({ onClose }) => {
 
     try {
       const response = await addAppointmentService(
-        user.branchId,
+        branchId,
         appointmentData,
         accessToken,
         refreshToken,

@@ -11,22 +11,17 @@ const { EmailAlreadyExistsError } = require("../Service/UserService");
 const addStaffHandler = async (req, res) => {
   try {
     const organizationId = req.params.organizationId;
-    const branchId = req.params.branchId;
+
     const { firebaseUid } = req.query;
     const staffData = req.body;
 
-    if (!branchId || !organizationId || Object.keys(staffData).length === 0) {
+    if (!organizationId || Object.keys(staffData).length === 0) {
       return res.status(400).json({
-        message: "Branch ID, organization ID, and staff data are required.",
+        message: "Organization ID and staff data are required.",
       });
     }
 
-    const staffId = await addStaff(
-      organizationId,
-      branchId,
-      staffData,
-      firebaseUid
-    );
+    const staffId = await addStaff(organizationId, staffData, firebaseUid);
 
     return res
       .status(200)

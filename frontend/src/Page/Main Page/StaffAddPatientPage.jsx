@@ -79,9 +79,9 @@ const StaffAddPatientPage = () => {
     e.preventDefault();
     console.log(formData);
 
-    if (!validateForm()) {
-      return;
-    }
+    // if (!validateForm()) {
+    //   return;
+    // }
 
     try {
       const res = await addPatientHook(formData, selectedDoctor.staffId);

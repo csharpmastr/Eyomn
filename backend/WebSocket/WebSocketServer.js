@@ -26,11 +26,10 @@ const startWebSocketServer = () => {
 
     let unsubscribePatients, unsubscribeNotifications;
     const sentPatientIds = new Set();
-
     try {
       const patientQuery = query(
         patientCol,
-        where("branchId", "==", branchId),
+
         where("doctorId", "==", staffId)
       );
 

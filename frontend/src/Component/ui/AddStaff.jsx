@@ -22,11 +22,12 @@ const AddStaff = ({ onClose }) => {
   const [repeatPass, setRepeatPass] = useState("");
   const [passVisible, setPassVisible] = useState(false);
   const [cpVisible, setCpVisible] = useState(false);
-
+  const branches = useSelector((state) => state.reducer.branch.branch);
+  const user = useSelector((state) => state.reducer.user.user);
   const { addStaffHook, isLoading, error } = useAddStaff();
   const reduxDispatch = useDispatch();
-  const [branchAssignment, setBranchAssignment] = useState("");
   const [errors, setErrors] = useState({});
+  const [selectedBranchId, setSelectedBranchId] = useState(branchId);
   const [isMonOn, setIsMonOn] = useState(true);
   const [isTueOn, setIsTueOn] = useState(true);
   const [isWedOn, setIsWedOn] = useState(true);
@@ -34,7 +35,7 @@ const AddStaff = ({ onClose }) => {
   const [isFriOn, setIsFriOn] = useState(true);
   const [isSatOn, setIsSatOn] = useState(false);
   const [isSunOn, setIsSunOn] = useState(false);
-
+  const [branchAssignment, setBranchAssignment] = useState("");
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -46,31 +47,14 @@ const AddStaff = ({ onClose }) => {
     contact_number: "",
     position: "",
     password: "",
-    schedule: [
-      { day: "monday", in: "", out: "" },
-      { day: "tuesday", in: "", out: "" },
-      { day: "wednesday", in: "", out: "" },
-      { day: "thursday", in: "", out: "" },
-      { day: "friday", in: "", out: "" },
-      { day: "saturday", in: "", out: "" },
-      { day: "sunday", in: "", out: "" },
-    ],
+    branches: [],
   });
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImage(URL.createObjectURL(file));
-    }
-  };
-
-  const handleRemoveImage = () => {
-    setImage(null);
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
+    if (name === "branch_select") {
+      setSelectedBranchId(value);
+    }
     if (errors[name]) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -91,19 +75,112 @@ const AddStaff = ({ onClose }) => {
         "sunday",
       ].includes(day)
     ) {
-      setFormData((prevState) => ({
-        ...prevState,
-        schedule: prevState.schedule.map((scheduleDay) =>
-          scheduleDay.day === day
-            ? { ...scheduleDay, [timeType]: value }
-            : scheduleDay
-        ),
-      }));
-    } else if (name === "confirmpassword") {
-      setRepeatPass(value);
-    } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData((prevState) => {
+        const branchIndex = prevState.branches.findIndex(
+          (branch) => branch.branchId === selectedBranchId
+        );
+
+        if (branchIndex !== -1) {
+          const existingBranch = prevState.branches[branchIndex];
+          const existingScheduleDayIndex = existingBranch.schedule.findIndex(
+            (scheduleDay) => scheduleDay.day === day
+          );
+
+          if (existingScheduleDayIndex !== -1) {
+            // Update the existing schedule for the day
+            return {
+              ...prevState,
+              branches: prevState.branches.map((branch, index) =>
+                index === branchIndex
+                  ? {
+                      ...branch,
+                      schedule: branch.schedule.map((scheduleDay, i) =>
+                        i === existingScheduleDayIndex
+                          ? { ...scheduleDay, [timeType]: value }
+                          : scheduleDay
+                      ),
+                    }
+                  : branch
+              ),
+            };
+          } else {
+            // Add a new schedule entry if it doesn't exist
+            return {
+              ...prevState,
+              branches: prevState.branches.map((branch, index) =>
+                index === branchIndex
+                  ? {
+                      ...branch,
+                      schedule: [
+                        ...branch.schedule,
+                        {
+                          day,
+                          in: timeType === "in" ? value : "",
+                          out: timeType === "out" ? value : "",
+                        },
+                      ],
+                    }
+                  : branch
+              ),
+            };
+          }
+        } else {
+          // If the branch does not exist, create a new entry
+          return {
+            ...prevState,
+            branches: [
+              ...prevState.branches,
+              {
+                branchId: selectedBranchId,
+                schedule: [
+                  {
+                    day,
+                    in: timeType === "in" ? value : "",
+                    out: timeType === "out" ? value : "",
+                  },
+                ],
+              },
+            ],
+          };
+        }
+      });
+    } else if (name === "branch_select") {
+      const selectedBranchId = value;
+
+      setFormData((prevState) => {
+        const branchExists = prevState.branches.some(
+          (branch) => branch.branchId === selectedBranchId
+        );
+
+        if (!branchExists) {
+          return {
+            ...prevState,
+            branches: [
+              ...prevState.branches,
+              {
+                branchId: selectedBranchId,
+                schedule: [],
+              },
+            ],
+          };
+        }
+
+        return prevState;
+      });
+    } else if (name !== "confirmpassword") {
+      setFormData((prevState) => ({ ...prevState, [name]: value }));
     }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(URL.createObjectURL(file));
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImage(null);
   };
 
   const handleProvinceChange = (selectedOption) => {
@@ -149,16 +226,18 @@ const AddStaff = ({ onClose }) => {
     }));
 
   const handleNext = () => {
-    const isValid = validateForm();
-    if (isValid) {
-      setCurrentCardIndex(currentCardIndex + 1);
-    }
+    setCurrentCardIndex(currentCardIndex + 1);
+    // const isValid = validateForm();
+    // if (isValid) {
+    //   setCurrentCardIndex(currentCardIndex + 1);
+    // }
   };
 
   const handleBack = () => {
-    if (currentCardIndex > 0) {
-      setCurrentCardIndex(currentCardIndex - 1);
-    }
+    setCurrentCardIndex(currentCardIndex - 1);
+    // if (currentCardIndex > 0) {
+    //   setCurrentCardIndex(currentCardIndex - 1);
+    // }
   };
 
   const handleBranchAssignemnt = (e) => {
@@ -192,9 +271,6 @@ const AddStaff = ({ onClose }) => {
     } else if (currentCardIndex === 1) {
       if (!formData.position) newErrors.position = "(Please select a position)";
 
-      if (!formData.branch_ass)
-        newErrors.branch_ass = "(Please select Branch Assignment)";
-
       //call validateForm before saving
     } else if (currentCardIndex === 2) {
       if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
@@ -227,13 +303,11 @@ const AddStaff = ({ onClose }) => {
     console.log(formData);
 
     try {
-      const response = await addStaffHook(formData, branchId);
+      const response = await addStaffHook(formData);
       if (response) {
-        console.log(response);
-
         const staffId = response.data.staffId;
         setIsSuccess(true);
-        reduxDispatch(addStaff({ ...formData, staffId, branchId }));
+        reduxDispatch(addStaff({ ...formData, staffId }));
       }
     } catch {}
   };
@@ -568,12 +642,14 @@ const AddStaff = ({ onClose }) => {
                             <div className="flex gap-2">
                               <input
                                 type="time"
+                                step="1800"
                                 name="monday_in"
                                 onChange={handleChange}
                                 className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                               />
                               <input
                                 type="time"
+                                step="1800"
                                 name="monday_out"
                                 onChange={handleChange}
                                 className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
@@ -585,15 +661,17 @@ const AddStaff = ({ onClose }) => {
                                 onChange={handleChange}
                                 className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
                               >
-                                <option
-                                  value=""
-                                  disabled
-                                  className="text-c-gray3"
-                                >
+                                <option value="" className="text-c-gray3">
                                   Select branch
                                 </option>
-                                <option value="-">-</option>
-                                <option value="-">-</option>
+                                {branches.map((branch) => (
+                                  <option
+                                    key={branch.branchId}
+                                    value={branch.branchId}
+                                  >
+                                    {branch.name}
+                                  </option>
+                                ))}
                               </select>
                             )}
                           </>
@@ -631,12 +709,14 @@ const AddStaff = ({ onClose }) => {
                             <div className="flex gap-2">
                               <input
                                 type="time"
+                                step="1800"
                                 name="tuesday_in"
                                 onChange={handleChange}
                                 className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                               />
                               <input
                                 type="time"
+                                step="1800"
                                 name="tuesday_out"
                                 onChange={handleChange}
                                 className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
@@ -648,15 +728,14 @@ const AddStaff = ({ onClose }) => {
                                 onChange={handleChange}
                                 className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
                               >
-                                <option
-                                  value=""
-                                  disabled
-                                  className="text-c-gray3"
-                                >
+                                <option value="" className="text-c-gray3">
                                   Select branch
                                 </option>
-                                <option value="-">-</option>
-                                <option value="-">-</option>
+                                {branches.map((branch, key) => (
+                                  <option key={key} value={branch.branchId}>
+                                    {branch.name}
+                                  </option>
+                                ))}
                               </select>
                             )}
                           </>
@@ -711,15 +790,17 @@ const AddStaff = ({ onClose }) => {
                                 onChange={handleChange}
                                 className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
                               >
-                                <option
-                                  value=""
-                                  disabled
-                                  className="text-c-gray3"
-                                >
+                                <option value="" className="text-c-gray3">
                                   Select branch
                                 </option>
-                                <option value="-">-</option>
-                                <option value="-">-</option>
+                                {branches.map((branch) => (
+                                  <option
+                                    key={branch.branchId}
+                                    value={branch.branchId}
+                                  >
+                                    {branch.name}
+                                  </option>
+                                ))}
                               </select>
                             )}
                           </>
@@ -774,15 +855,17 @@ const AddStaff = ({ onClose }) => {
                                 onChange={handleChange}
                                 className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
                               >
-                                <option
-                                  value=""
-                                  disabled
-                                  className="text-c-gray3"
-                                >
+                                <option value="" className="text-c-gray3">
                                   Select branch
                                 </option>
-                                <option value="-">-</option>
-                                <option value="-">-</option>
+                                {branches.map((branch) => (
+                                  <option
+                                    key={branch.branchId}
+                                    value={branch.branchId}
+                                  >
+                                    {branch.name}
+                                  </option>
+                                ))}
                               </select>
                             )}
                           </>
@@ -837,15 +920,17 @@ const AddStaff = ({ onClose }) => {
                                 onChange={handleChange}
                                 className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
                               >
-                                <option
-                                  value=""
-                                  disabled
-                                  className="text-c-gray3"
-                                >
+                                <option value="" className="text-c-gray3">
                                   Select branch
                                 </option>
-                                <option value="-">-</option>
-                                <option value="-">-</option>
+                                {branches.map((branch) => (
+                                  <option
+                                    key={branch.branchId}
+                                    value={branch.branchId}
+                                  >
+                                    {branch.name}
+                                  </option>
+                                ))}
                               </select>
                             )}
                           </>
@@ -900,15 +985,17 @@ const AddStaff = ({ onClose }) => {
                                 onChange={handleChange}
                                 className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
                               >
-                                <option
-                                  value=""
-                                  disabled
-                                  className="text-c-gray3"
-                                >
+                                <option value="" className="text-c-gray3">
                                   Select branch
                                 </option>
-                                <option value="-">-</option>
-                                <option value="-">-</option>
+                                {branches.map((branch) => (
+                                  <option
+                                    key={branch.branchId}
+                                    value={branch.branchId}
+                                  >
+                                    {branch.name}
+                                  </option>
+                                ))}
                               </select>
                             )}
                           </>
@@ -963,15 +1050,17 @@ const AddStaff = ({ onClose }) => {
                                 onChange={handleChange}
                                 className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
                               >
-                                <option
-                                  value=""
-                                  disabled
-                                  className="text-c-gray3"
-                                >
+                                <option value="" className="text-c-gray3">
                                   Select branch
                                 </option>
-                                <option value="-">-</option>
-                                <option value="-">-</option>
+                                {branches.map((branch) => (
+                                  <option
+                                    key={branch.branchId}
+                                    value={branch.branchId}
+                                  >
+                                    {branch.name}
+                                  </option>
+                                ))}
                               </select>
                             )}
                           </>

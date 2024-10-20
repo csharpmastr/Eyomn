@@ -13,7 +13,10 @@ const OrgStaff = () => {
 
   const staffs = useSelector((state) => state.reducer.staff.staffs);
 
-  const filteredStaffs = staffs.filter((staff) => staff.branchId === branchId);
+  const filteredStaffs = staffs.filter((staff) =>
+    staff.branches.some((branch) => branch.branchId === branchId)
+  );
+  console.log(filteredStaffs);
 
   const handleOpenStaffModal = () => {
     setIsModalOpen(true);

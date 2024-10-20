@@ -2,7 +2,7 @@ import { useState } from "react";
 import Cookies from "universal-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { addStaff } from "../Slice/StaffSlice";
-import { addStaffService } from "../Service/OrganizationService";
+import { addStaffService } from "../Service/organizationService";
 
 export const useAddStaff = () => {
   const cookies = new Cookies();
@@ -12,14 +12,13 @@ export const useAddStaff = () => {
   const refreshToken = cookies.get("refreshToken", { path: "/" });
   const user = useSelector((state) => state.reducer.user.user);
   const reduxDispatch = useDispatch();
-  const addStaffHook = async (staffData, branchId) => {
+  const addStaffHook = async (staffData) => {
     setIsLoading(true);
     setError(null);
     try {
       const response = await addStaffService(
         staffData,
         user.userId,
-        branchId,
         accessToken,
         refreshToken,
         user.firebaseUid

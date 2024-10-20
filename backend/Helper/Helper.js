@@ -99,38 +99,42 @@ const getStaffs = async (organizationId, branchId, firebaseUid) => {
     if (!userRecord) {
       throw { status: 404, message: "User not found." };
     }
-    let staffQuery;
 
-    if (branchId) {
-      staffQuery = staffCollection
-        .where("organizationId", "==", organizationId)
-        .where("branchId", "==", branchId);
-    } else {
-      console.warn("Branch ID is not defined, returning an empty array.");
-      return [];
-    }
-
+    const staffQuery = staffCollection.where(
+      "organizationId",
+      "==",
+      organizationId
+    );
     const staffSnapshot = await staffQuery.get();
 
     if (staffSnapshot.empty) {
       console.warn(
-        "No staff found for the specified organization and branch, returning an empty array."
+        "No staff found for the specified organization, returning an empty array."
       );
       return [];
     }
 
-    const staffs = staffSnapshot.docs.map((staffDoc) => {
-      const staffData = staffDoc.data();
-      return decryptDocument(staffData, [
-        "organizationId",
-        "staffId",
-        "branchId",
-        "role",
-        "email",
-        "schedule",
-        "firebaseUid",
-      ]);
-    });
+    const staffs = staffSnapshot.docs
+      .map((staffDoc) => {
+        const staffData = staffDoc.data();
+
+        const hasBranch = staffData.branches.some(
+          (branch) => branch.branchId === branchId
+        );
+
+        if (hasBranch) {
+          return decryptDocument(staffData, [
+            "organizationId",
+            "staffId",
+            "role",
+            "email",
+            "branches",
+            "firebaseUid",
+          ]);
+        }
+        return null;
+      })
+      .filter((staff) => staff !== null);
 
     return staffs;
   } catch (error) {
@@ -145,32 +149,41 @@ const getBranchDoctors = async (organizationId, branchId, firebaseUid) => {
     if (!userRecord) {
       throw { status: 404, message: "User not found." };
     }
+
     const doctorQuery = staffCollection
       .where("organizationId", "==", organizationId)
-      .where("branchId", "==", branchId)
       .where("role", "==", "2");
 
     const doctorSnapShot = await doctorQuery.get();
     if (doctorSnapShot.empty) {
-      console.warn("No staff found, returning an empty array.");
+      console.warn("No doctors found, returning an empty array.");
       return [];
     }
-    const doctors = doctorSnapShot.docs.map((doctorDoc) => {
-      const { first_name, last_name, position, staffId, schedule } =
-        doctorDoc.data();
 
-      const decryptedFirstName = decryptData(first_name);
-      const decryptedLastName = decryptData(last_name);
-      const decryptedPosition = decryptData(position);
+    const doctors = doctorSnapShot.docs
+      .filter((doctorDoc) => {
+        const { branches } = doctorDoc.data();
+        return branches.some((branch) => branch.branchId === branchId);
+      })
+      .map((doctorDoc) => {
+        const { first_name, last_name, position, staffId, branches } =
+          doctorDoc.data();
+        const branchInfo = branches.find(
+          (branch) => branch.branchId === branchId
+        );
 
-      return {
-        first_name: decryptedFirstName,
-        last_name: decryptedLastName,
-        position: decryptedPosition,
-        staffId,
-        schedule,
-      };
-    });
+        const decryptedFirstName = decryptData(first_name);
+        const decryptedLastName = decryptData(last_name);
+        const decryptedPosition = decryptData(position);
+
+        return {
+          first_name: decryptedFirstName,
+          last_name: decryptedLastName,
+          position: decryptedPosition,
+          staffId,
+          schedule: branchInfo ? branchInfo.schedule : [],
+        };
+      });
 
     return doctors;
   } catch (error) {
