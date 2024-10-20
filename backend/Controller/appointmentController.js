@@ -2,6 +2,7 @@ const {
   addSchedule,
   deleteSchedule,
   getAppointments,
+  getDoctorAppointments,
 } = require("../Service/appointmentService");
 
 const addScheduleHandler = async (req, res) => {
@@ -55,7 +56,12 @@ const getAppoitmentsHandler = async (req, res) => {
     if (!branchId) {
       return res.status(401).json({ message: "Branch ID are required" });
     }
-    const appointments = await getAppointments(branchId, firebaseUid);
+    const appointments = await getAppointments(
+      branchId,
+      null,
+      firebaseUid,
+      false
+    );
 
     return res.status(200).json(appointments);
   } catch (error) {
@@ -65,8 +71,22 @@ const getAppoitmentsHandler = async (req, res) => {
     res.status(error.status || 500).json({ message: error.message });
   }
 };
+const getDoctorAppointmentHandler = async (req, res) => {
+  try {
+    const { doctorId, firebaseUid } = req.query;
+    if (!doctorId) {
+      return res.status(401).json({ message: "doctorId are required" });
+    }
+    const appointments = await getDoctorAppointments(doctorId, firebaseUid);
+    console.log(appointments);
+
+    return res.status(200).json(appointments);
+  } catch (error) {}
+};
+
 module.exports = {
   addScheduleHandler,
   deleteScheduleHandler,
   getAppoitmentsHandler,
+  getDoctorAppointmentHandler,
 };

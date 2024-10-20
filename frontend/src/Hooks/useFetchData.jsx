@@ -8,7 +8,10 @@ import { setBranch } from "../Slice/BranchSlice";
 import { setStaffs } from "../Slice/StaffSlice";
 import { getProducts } from "../Service/InventoryService";
 import { setProducts } from "../Slice/ProductSlice";
-import { getAppointments } from "../Service/AppointmentService";
+import {
+  getAppointments,
+  getDoctorAppointments,
+} from "../Service/AppointmentService";
 import { setAppointments } from "../Slice/AppointmentSlice";
 import { getBranchData, getDoctorList } from "../Service/organizationService";
 
@@ -130,6 +133,19 @@ export const useFetchData = () => {
             type: "branches",
           },
         ];
+      case "2":
+        return [
+          {
+            call: () =>
+              getDoctorAppointments(
+                user.userId,
+                accessToken,
+                refreshToken,
+                firebaseUid
+              ),
+            type: "appointments",
+          },
+        ];
       default:
         return [];
     }
@@ -146,6 +162,8 @@ export const useFetchData = () => {
               reduxDispatch(setPatients(result));
               break;
             case "appointments":
+              console.log(result);
+
               reduxDispatch(setAppointments(result));
               break;
             case "doctors":

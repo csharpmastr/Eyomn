@@ -3,6 +3,8 @@ const { v4: uuid } = require("uuid");
 const {
   appointmentCollection,
   organizationCollection,
+  staffCollection,
+  db,
 } = require("../Config/FirebaseConfig");
 
 const { decryptData, encryptData } = require("../Security/DataHashing");
@@ -11,6 +13,7 @@ const {
   encryptDocument,
   generateUniqueId,
 } = require("../Helper/Helper");
+const { collection, query, getDocs, where } = require("firebase/firestore");
 
 const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
   try {
@@ -107,16 +110,21 @@ const deleteSchedule = async (branchId, appointmentId, firebaseUid) => {
   }
 };
 
-const getAppointments = async (branchId, firebaseUid) => {
+const getAppointments = async (
+  branchId,
+  staffId = null,
+  firebaseUid,
+  isDoctor = true
+) => {
   try {
     const userRecord = await admin.auth().getUser(firebaseUid);
     if (!userRecord) {
       throw { status: 404, message: "User not found." };
     }
+
     let appointments = [];
 
     const branchDocRef = appointmentCollection.doc(branchId);
-
     const schedulesSnapshot = await branchDocRef.collection("schedules").get();
 
     if (schedulesSnapshot.empty) {
@@ -127,14 +135,29 @@ const getAppointments = async (branchId, firebaseUid) => {
     schedulesSnapshot.forEach((scheduleDoc) => {
       const scheduleDetails = scheduleDoc.data();
 
-      const decrytedSChedule = decryptDocument(scheduleDetails, [
-        "branchId",
-        "createdAt",
-        "id",
-        "scheduledTime",
-        "doctorId",
-      ]);
-      appointments.push(decrytedSChedule);
+      if (isDoctor) {
+        if (scheduleDetails.doctorId === staffId) {
+          const decryptedSchedule = decryptDocument(scheduleDetails, [
+            "branchId",
+            "createdAt",
+            "id",
+            "scheduledTime",
+            "doctorId",
+          ]);
+          appointments.push(decryptedSchedule);
+        }
+      } else {
+        if (!staffId || scheduleDetails.staffId === staffId) {
+          const decryptedSchedule = decryptDocument(scheduleDetails, [
+            "branchId",
+            "createdAt",
+            "id",
+            "scheduledTime",
+            "doctorId",
+          ]);
+          appointments.push(decryptedSchedule);
+        }
+      }
     });
 
     return appointments;
@@ -144,8 +167,55 @@ const getAppointments = async (branchId, firebaseUid) => {
   }
 };
 
+const getDoctorAppointments = async (doctorId, firebaseUid) => {
+  try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
+
+    const doctorRef = staffCollection.doc(doctorId);
+    const doctorDoc = await doctorRef.get();
+
+    if (!doctorDoc.exists) {
+      throw { status: 404, message: "Doctor not found." };
+    }
+
+    const docData = doctorDoc.data();
+    console.log(docData);
+
+    if (!docData.branches || !Array.isArray(docData.branches)) {
+      throw { status: 404, message: "No branches found for the doctor." };
+    }
+
+    let appointments = [];
+
+    for (const branch of docData.branches) {
+      const branchId = branch.branchId;
+
+      const branchAppointments = await getAppointments(
+        branchId,
+        doctorId,
+        firebaseUid,
+        true
+      );
+      appointments = [...appointments, ...branchAppointments];
+    }
+
+    return appointments;
+  } catch (error) {
+    console.error("Error fetching doctor appointments:", error);
+    return {
+      status: error.status || 500,
+      message:
+        error.message || "An error occurred while fetching appointments.",
+    };
+  }
+};
+
 module.exports = {
   addSchedule,
   deleteSchedule,
   getAppointments,
+  getDoctorAppointments,
 };
