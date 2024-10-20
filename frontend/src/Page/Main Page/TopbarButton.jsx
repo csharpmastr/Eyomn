@@ -13,7 +13,9 @@ const TopbarButton = () => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+
   const user = useSelector((state) => state.reducer.user.user);
+  const role = user.role;
   const notification = useSelector(
     (state) => state.reducer.notification.notifications
   );
@@ -88,10 +90,28 @@ const TopbarButton = () => {
                 className="rounded-full w-11 h-11 object-cover hover:cursor-pointer bg-gray-400"
               />
               <div className="flex flex-col">
-                <h1 className="text-p-rg font-medium">
-                  {user.first_name + " " + user.last_name}
-                </h1>
-                <p className="text-p-sm font-normal">{user.position}</p>
+                {role === "2" || role === "3" ? (
+                  <>
+                    <h1 className="text-p-rg font-medium">
+                      {user.first_name + " " + user.last_name}
+                    </h1>
+                    <p className="text-p-sm font-normal">{user.position}</p>
+                  </>
+                ) : role === "0" ? (
+                  <>
+                    <h1 className="text-p-rg font-medium">
+                      {user.organization}
+                    </h1>
+                    <p className="text-p-sm font-normal">
+                      {"Organizational Account"}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h1 className="text-p-rg font-medium">{user.name}</h1>
+                    <p className="text-p-sm font-normal">{"Branch Account"}</p>
+                  </>
+                )}
               </div>
             </section>
             <button
