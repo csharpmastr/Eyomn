@@ -3,6 +3,7 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { FaEllipsisV } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import AddEditProduct from "../../Component/ui/AddEditProduct";
+import ConfirmationModal from "../../Component/ui/ConfirmationModal"; // Import the ConfirmationModal
 
 const InventoryTable = () => {
   const products = useSelector((state) => state.reducer.product.products);
@@ -13,8 +14,10 @@ const InventoryTable = () => {
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const [isMenuOpen, setIsMenuOpen] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false); // Manage confirmation modal state
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [productId, setProductId] = useState("");
+
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   const toggleOpen = (productId) => {
@@ -52,6 +55,11 @@ const InventoryTable = () => {
     setSelectedProduct(productWithoutSKUId);
     setProductId(productId);
     toggleModal();
+  };
+
+  const handleDeleteProduct = (productId) => {
+    setProductId(productId); // Set product ID to be deleted
+    setIsConfirmationModalOpen(true); // Open the confirmation modal
   };
 
   useEffect(() => {
@@ -142,13 +150,16 @@ const InventoryTable = () => {
                             role="menuitem"
                             onClick={() =>
                               handleEditProduct(productDetail.productId)
-                            } // Update this line
+                            }
                           >
                             Edit
                           </a>
                           <a
                             className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
                             role="menuitem"
+                            onClick={() =>
+                              handleDeleteProduct(productDetail.productId)
+                            }
                           >
                             Delete
                           </a>
@@ -184,6 +195,13 @@ const InventoryTable = () => {
             productDetails={selectedProduct}
             title={"Edit Product"}
             productId={productId}
+          />
+        )}
+
+        {isConfirmationModalOpen && (
+          <ConfirmationModal
+            productId={productId}
+            onClose={() => setIsConfirmationModalOpen(false)}
           />
         )}
       </div>

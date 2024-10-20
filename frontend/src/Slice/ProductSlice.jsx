@@ -17,17 +17,17 @@ const productSlice = createSlice({
 
     removeProduct: (state, action) => {
       state.products = state.products.filter(
-        (product) => product.id !== action.payload
+        (product) => product.productId !== action.payload
       );
     },
     updateProduct: (state, action) => {
       const index = state.products.findIndex(
         (p) => p.productId === action.payload.productId
-      ); // Ensure you're matching the correct identifier
+      );
       if (index !== -1) {
         state.products[index] = {
           ...state.products[index],
-          ...action.payload, // Spread the entire payload to update the product details
+          ...action.payload,
         };
       }
     },

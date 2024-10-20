@@ -24,7 +24,10 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
   const [errors, setErrors] = useState({});
   const [modalTitle, setModalTitle] = useState("");
   const [modalDescription, setModalDescription] = useState("");
-
+  const [errorModalTitle, setErrorModalTitle] = useState("");
+  const [errorModalDescription, setErrorModalDescription] = useState("");
+  const [error, setError] = useState(false);
+  const branchId = user.branches[0].branchId;
   const initialFormData = {
     category: "",
     product_name: "",
@@ -55,19 +58,21 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
       )
     );
   };
-  console.log(productId);
 
   useEffect(() => {
+    console.log(productDetails);
+    console.log(productId);
+
     if (productDetails) {
+      setSelectedCategory(productDetails.category);
       setFormData({
         ...initialFormData,
         ...productDetails,
       });
-      setSelectedCategory(productDetails.category);
     } else {
       setFormData(initialFormData);
     }
-  }, [productDetails]);
+  }, [productId]);
 
   const getMinDate = () => {
     const today = new Date();
@@ -213,17 +218,16 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
   };
 
   const handleAddEditProduct = async () => {
-    if (!validateForm()) {
-      return;
-    }
-
+    // if (!validateForm()) {
+    //   return;
+    // }
     setIsLoading(true);
     try {
       const cleanedData = cleanFormData(formData);
 
       if (!productDetails) {
         const response = await addProductService(
-          user.branchId,
+          branchId,
           cleanedData,
           accessToken,
           refreshToken,
@@ -231,11 +235,12 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
         );
 
         if (response.status === 200) {
+          setIsSuccess(true);
           setModalTitle("Product Added");
           setModalDescription(
             "The product has been successfully added to the system."
           );
-          setIsSuccess(true);
+          setSelectedCategory("");
           resetForm();
           console.log(response);
 
@@ -247,7 +252,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
         console.log(cleanedData);
 
         const response = await updateProductService(
-          user.branchId,
+          branchId,
           productId,
           cleanedData,
           accessToken,
@@ -255,21 +260,24 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
         );
 
         if (response) {
+          setIsSuccess(true);
           setModalTitle("Product Updated");
           setModalDescription(
             "The product has been successfully updated in the system."
           );
-          setIsSuccess(true);
 
-          console.log("Product updated successfully.");
           reduxDispatch(updateProduct({ ...cleanedData, productId }));
         }
       }
     } catch (error) {
       if (error.status === 409) {
-        console.log("error");
-
+        setErrorModalTitle("Invalid request");
+        setErrorModalDescription("The product already exists.");
         setDoesExists(true);
+      } else {
+        setErrorModalTitle("Invalid request");
+        setErrorModalDescription("We can't process your request right now.");
+        setError(true);
       }
     } finally {
       setIsLoading(false);
@@ -282,16 +290,16 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
         <Loader />
       ) : (
         <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-          <div className="w-[380px] md:w-[600px]">
-            <header className="p-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
+          <div className="w-[380px] md:w-[600px] md:mr-8">
+            <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
               <h1 className="text-p-lg text-c-secondary font-semibold">
                 {title}
               </h1>
               <button onClick={onClose}>&times;</button>
             </header>
             <div className="bg-white h-[480px] md:h-[600px] overflow-y-scroll">
-              <div className="p-3 md:p-6">
-                <section className="mb-8">
+              <div className="p-3 md:p-8">
+                <section>
                   <header>
                     <h1 className="text-p-rg font-semibold text-c-secondary">
                       | Product Category
@@ -306,7 +314,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                     value={selectedCategory}
                     disabled={productDetails}
                     onChange={handleCategoryChange}
-                    className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                    className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
                   >
                     <option value="" disabled className="text-c-gray3">
                       Select Category
@@ -321,7 +329,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                   {selectedCategory === "Eye Glass" && (
                     <div>
                       <header>
-                        <h1 className="text-p-rg font-semibold text-c-secondary mb-4">
+                        <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
                           | Eye Glass Details
                         </h1>
                       </header>
@@ -535,7 +543,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                           name="dosage"
                           value={formData.dosage}
                           onChange={handleChange}
-                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
                             errors.dosage
                               ? "border-red-400 focus:outline-red-400"
                               : "border-c-gray3 focus:outline-c-primary"
@@ -548,7 +556,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                   {selectedCategory === "Contact Lens" && (
                     <div>
                       <header>
-                        <h1 className="text-p-rg font-semibold text-c-secondary mb-4">
+                        <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
                           | Contact Lens Details
                         </h1>
                       </header>
@@ -623,7 +631,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                           name="ct_material"
                           value={formData.ct_material}
                           onChange={handleChange}
-                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
                             errors.ct_material
                               ? "border-red-400 focus:outline-red-400"
                               : "border-c-gray3 focus:outline-c-primary"
@@ -636,7 +644,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                   {selectedCategory === "Other" && (
                     <div>
                       <header>
-                        <h1 className="text-p-rg font-semibold text-c-secondary mb-4">
+                        <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
                           | Product Details
                         </h1>
                       </header>
@@ -792,7 +800,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                           name="brand"
                           value={formData.brand}
                           onChange={handleChange}
-                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
                             errors.brand
                               ? "border-red-400 focus:outline-red-400"
                               : "border-c-gray3 focus:outline-c-primary"
@@ -805,13 +813,13 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                 </div>
               </div>
             </div>
-            <footer className="flex justify-end p-4 bg-white border border-t-f-gray rounded-b-lg">
+            <footer className="flex justify-end px-3 py-6 bg-white border border-t-f-gray rounded-b-lg">
               <button
-                className="px-4 py-2 bg-c-secondary text-f-light text-p-rg font-medium rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+                className="ml-2 px-8 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
                 type="submit"
                 onClick={handleAddEditProduct}
               >
-                Add Product
+                Save
               </button>
             </footer>
           </div>
@@ -820,6 +828,9 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
       <SuccessModal
         isOpen={isSuccess}
         onClose={() => {
+          if (productDetails) {
+            onClose();
+          }
           setIsSuccess(false);
         }}
         title={modalTitle}
@@ -828,15 +839,15 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
       <Modal
         isOpen={doesExists}
         onClose={() => {
-          setDoesExists(false);
+          setDoesExists(false) || setError(false);
         }}
-        title="Invalid request"
+        title={errorModalTitle}
         icon={<IoMdCloseCircleOutline className="w-24 h-24 text-red-700" />}
         className="w-[600px] h-auto p-4"
         overlayDescriptionClassName={
           "text-center font-Poppins pt-5 text-black text-[18px]"
         }
-        description={"The product already exists."}
+        description={errorModalDescription}
       ></Modal>
     </>,
     document.body

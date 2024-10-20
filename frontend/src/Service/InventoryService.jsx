@@ -1,6 +1,12 @@
 import axios from "axios";
+import { useSelector } from "react-redux";
+import Cookies from "universal-cookie";
 
 const INVENTORY_API_BASE_URL = "http://localhost:3000/api/v1/inventory";
+const cookies = new Cookies();
+
+const accessToken = cookies.get("accessToken", { path: "/" });
+const refreshToken = cookies.get("refreshToken", { path: "/" });
 
 export const addProductService = async (
   branchId,
@@ -57,17 +63,13 @@ export const getProducts = async (
   }
 };
 
-export const deleteProduct = async (
-  branchId,
-  productId,
-  accessToken,
-  refreshToken
-) => {
+export const deleteProduct = async (branchId, productId, firebaseUid) => {
   try {
-    const response = await axios.delete(`${INVENTORY_API_BASE_URL}/delete/`, {
+    const response = await axios.delete(`${INVENTORY_API_BASE_URL}/delete`, {
       params: {
         branchId,
         productId,
+        firebaseUid,
       },
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -76,8 +78,8 @@ export const deleteProduct = async (
     });
     return response;
   } catch (error) {
-    console.error("Error deleting product : ", err);
-    throw err;
+    console.error("Error deleting product : ", error);
+    throw error;
   }
 };
 

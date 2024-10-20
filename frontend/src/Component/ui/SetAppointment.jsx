@@ -24,8 +24,7 @@ const SetAppointment = ({ onClose }) => {
   const reduxDispatch = useDispatch();
   let branchId =
     (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
-    user.userId ||
-    null;
+    user.userId;
 
   const [formData, setFormData] = useState({
     patient_name: "",
@@ -64,7 +63,6 @@ const SetAppointment = ({ onClose }) => {
       }));
     }
   };
-
   const validateForm = () => {
     let newErrors = {};
 
@@ -103,6 +101,8 @@ const SetAppointment = ({ onClose }) => {
   const timeOptions = generateTimeOptions();
 
   const handleSubmitAppointment = async () => {
+    console.log(formData);
+
     // e.preventDefault();
 
     if (!validateForm()) {
@@ -264,9 +264,9 @@ const SetAppointment = ({ onClose }) => {
                 </label>
                 <select
                   name="doctor"
-                  value={formData.doctor}
+                  value={formData.doctorId || ""}
                   onChange={handleChange}
-                  className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                  className="mt-2 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
                 >
                   <option value="" disabled className="text-c-gray3">
                     Available Doctor
