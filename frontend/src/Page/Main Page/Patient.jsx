@@ -73,7 +73,7 @@ const Patient = () => {
                 {totalPatient}{" "}
                 <span className="text-f-gray2">Total patient</span>
               </p>
-              <div className="mt-8 md:mt-0 flex flex-row">
+              <div className="mt-2 md:mt-0 flex flex-row">
                 <div
                   className={` flex flex-row border border-c-gray3 px-4 rounded-md justify-center items-center w-full ${
                     role === "0" ? `` : `md:w-80`
@@ -90,7 +90,7 @@ const Patient = () => {
                 </div>
                 <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
                   <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
-                  <select className="md:block hover:cursor-pointer focus:outline-none bg-bg-mc">
+                  <select className="hover:cursor-pointer focus:outline-none w-16 bg-bg-mc">
                     <option value="" disabled selected>
                       Filter
                     </option>
@@ -112,7 +112,7 @@ const Patient = () => {
                 )}
               </div>
             </div>
-            <div className="mt-8">
+            <div className="mt-4 md:mt-6">
               <Table
                 data={filteredPatients}
                 handlePatientClick={handlePatientClick}

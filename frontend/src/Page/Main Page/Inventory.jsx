@@ -37,7 +37,7 @@ const Inventory = () => {
           </div>
           <div className="flex justify-center items-center rounded-lg px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
             <BsFilter className="h-6 w-6 md:mr-2" />
-            <select className="md:block hover:cursor-pointer focus:outline-none bg-bg-mc">
+            <select className="md:block hover:cursor-pointer focus:outline-none w-16 bg-bg-mc">
               <option value="filter1">A-Z</option>
               <option value="filter2">Filter 2</option>
               <option value="filter3">Filter 3</option>

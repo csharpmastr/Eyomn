@@ -37,14 +37,14 @@ const OrgStaff = () => {
           onClick={handleBackBranch}
         >
           <IoIosAddCircleOutline className="h-6 w-6" />
-          <h1 className="hidden md:block">Go back</h1>
+          <h1>Go back</h1>
         </div>
         <div
           className="px-4 py-2 flex gap-2 justify-center items-center border border-c-gray3 rounded-md font-Poppins cursor-pointer"
           onClick={handleOpenStaffModal}
         >
           <IoIosAddCircleOutline className="h-6 w-6" />
-          <h1 className="hidden md:block">Add Staff</h1>
+          <h1>Add Staff</h1>
         </div>
       </div>
 

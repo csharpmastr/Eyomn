@@ -146,14 +146,14 @@ const AddEditPatient = ({ onClose }) => {
 
   return ReactDOM.createPortal(
     <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-      <div className="w-[400px] md:w-[600px]">
+      <div className="w-[380px] md:w-[600px]">
         <header className="p-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
           <h1 className="text-p-lg text-c-secondary font-semibold">
             Patient Information
           </h1>
           <button onClick={onClose}>&times;</button>
         </header>
-        <div className="bg-white h-[600px] overflow-y-scroll">
+        <div className="bg-white h-[500px] md:h-[600px] overflow-y-scroll">
           {currentCardIndex == 0 ? (
             <div className="p-3 md:p-6">
               <header>

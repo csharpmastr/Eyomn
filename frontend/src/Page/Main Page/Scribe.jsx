@@ -82,7 +82,7 @@ const Scribe = () => {
       {hasSelected ? (
         <Outlet />
       ) : (
-        <div className="px-4 md:p-6 font-Poppins">
+        <div className="p-4 md:p-6 font-Poppins">
           <div className="flex flex-col md:flex-row md:items-center justify-between">
             <p className="text-p-lg font-semibold text-f-dark">
               {patients.length || 0}{" "}
@@ -97,9 +97,9 @@ const Scribe = () => {
                   className="w-full text-f-dark focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
                 />
               </div>
-              <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
+              <div className="ml-2 h-auto w- flex justify-center items-center rounded-md px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
                 <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
-                <select className="md:block hover:cursor-pointer focus:outline-none bg-bg-mc">
+                <select className="hover:cursor-pointer focus:outline-none bg-bg-mc w-16">
                   <option value="" disabled selected>
                     Filter
                   </option>

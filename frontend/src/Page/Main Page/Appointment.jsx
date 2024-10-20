@@ -95,7 +95,7 @@ const Appointment = () => {
         <div>
           <button
             onClick={handlePrevMonth}
-            className="p-2 md:py-3 md:px-4 bg-white border border-c-gray3 rounded-lg"
+            className="py-3 px-4 bg-white border border-c-gray3 rounded-lg"
           >
             &lt;
           </button>
@@ -104,7 +104,7 @@ const Appointment = () => {
           </span>
           <button
             onClick={handleNextMonth}
-            className="p-2 md:py-3 md:px-4 bg-white border border-c-gray3 rounded-lg"
+            className="py-3 px-4 bg-white border border-c-gray3 rounded-lg"
           >
             &gt;
           </button>
@@ -117,7 +117,7 @@ const Appointment = () => {
           <h1 className="md:block hidden">Set Appointment</h1>
         </div>
       </div>
-      <div className="grid grid-cols-7 text-center pt-6 pb-3 font-medium bg-bg-sb border border-c-gray3 mt-8 rounded-t-md">
+      <div className="grid grid-cols-7 text-center pt-3 md:pt-6 pb-3 font-medium bg-bg-sb border border-c-gray3 mt-4 md:mt-6 rounded-t-md">
         <div>Sun</div>
         <div>Mon</div>
         <div>Tue</div>

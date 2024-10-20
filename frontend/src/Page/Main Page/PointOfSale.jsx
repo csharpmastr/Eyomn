@@ -41,8 +41,8 @@ const PointOfSale = () => {
   };
 
   return (
-    <div className="text-f-dark font-Poppins flex h-full">
-      <div className="flex flex-col w-3/4 p-6">
+    <div className="text-f-dark font-Poppins flex flex-col md:flex-row h-full">
+      <div className="flex flex-col md:w-3/4 w-full p-6">
         <div className="flex flex-row h-14 mb-6">
           <div className="flex flex-row border border-c-gray3 px-4 rounded-lg justify-center items-center w-full">
             <IoMdSearch className="h-8 w-8 text-c-secondary" />
@@ -79,7 +79,7 @@ const PointOfSale = () => {
           </div>
         </div>
       </div>
-      <div className="w-2/5 h-full border border-l-f-gray bg-white flex flex-col">
+      <div className="w-full md:w-2/5 h-full border border-l-f-gray bg-white flex flex-col">
         <header className="p-6">
           <h1 className="text-p-lg font-semibold text-f-dark">Order List</h1>
         </header>

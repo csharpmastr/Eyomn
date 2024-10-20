@@ -66,7 +66,7 @@ const ScribeRecord = () => {
 
   return (
     <>
-      <div className="p-6 h-full font-Poppins">
+      <div className="p-4 md:p-6 h-full font-Poppins">
         <div className="flex justify-between mb-8">
           <h1 className="text-p-lg font-semibold flex justify-center items-center">
             {currentPatient
@@ -78,7 +78,7 @@ const ScribeRecord = () => {
             onClick={handleNewRecord}
           >
             <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
-            <h1 className="hidden md:block">Create New Note</h1>
+            <h1>Create New Note</h1>
           </div>
         </div>
 
@@ -148,7 +148,7 @@ const ScribeRecord = () => {
             </div>
           )}
           {currentCardIndex === 2 && (
-            <div className="w-full h-full pt-6 flex gap-6">
+            <div className="w-full h-full pt-6 flex gap-2 md:gap-6">
               <div className="w-1/6">
                 <div
                   className={`relative justify-center items-center rounded-md aspect-square ${
@@ -166,14 +166,16 @@ const ScribeRecord = () => {
                     >
                       <div className="flex flex-col justify-center items-center w-full h-full text-c-gray3 gap-2">
                         <TiUpload className="h-10 w-10" />
-                        <h1 className="text-p-rg">Upload an Image</h1>
+                        <h1 className="text-p-rg text-center hidden md:block">
+                          Upload an Image
+                        </h1>
                       </div>
                     </FileUploader>
                   ) : (
                     <div className="relative w-full h-full">
                       <button
                         onClick={handleRemoveImage}
-                        className="absolute top-2 right-2 bg-c-gray3 text-white pt-1 px-3 rounded-full text-2xl hover:bg-c-red"
+                        className="absolute -top-3 -right-4 md:top-2 md:right-2 bg-c-gray3 text-white pt-1 px-3 rounded-full text-2xl hover:bg-c-red"
                       >
                         &times;
                       </button>
@@ -186,18 +188,18 @@ const ScribeRecord = () => {
                   )}
                 </div>
                 {image && (
-                  <button className="bg-c-primary text-f-light text-p-rg rounded-md font-semibold py-2 w-full mt-3">
+                  <button className="bg-c-primary text-f-light text-p-rg rounded-md font-semibold py-1 md:py-3 w-full mt-3">
                     Save
                   </button>
                 )}
               </div>
-              <div className="grid grid-cols-4 gap-8 w-full h-full overflow-y-auto">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-8 w-full h-full overflow-y-auto">
                 {images.map((image, index) => (
                   <img
                     key={index}
                     src={image}
                     alt={`Image ${index + 1}`}
-                    className="cursor-pointer rounded-lg"
+                    className="cursor-pointer rounded-md"
                     onClick={() => handleOpenImg(image)}
                   />
                 ))}

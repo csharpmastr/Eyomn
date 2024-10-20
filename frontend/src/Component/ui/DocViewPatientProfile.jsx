@@ -24,7 +24,7 @@ const DocViewPatientProfile = ({ patient, visits }) => {
 
   return (
     <div className="w-full h-auto font-poppins">
-      <header className="flex flex-wrap gap-3 justify-between items-center p-5 rounded-lg bg-bg-sb border border-c-primary mb-8 md:flex-row md:gap-0">
+      <header className="flex flex-wrap gap-3 justify-between items-center p-4 rounded-lg bg-bg-sb border border-c-primary mb-3 md:mb-6 md:flex-row md:gap-0">
         <section>
           <p className="text-f-dark font-medium text-p-rg">
             {patient.first_name + " " + patient.last_name}
@@ -63,8 +63,8 @@ const DocViewPatientProfile = ({ patient, visits }) => {
           <p className="text-c-secondary font-medium text-p-rg">Edit</p>
         </button>
       </header>
-      <div className="flex flex-col gap-8 justify-between lg:flex-row">
-        <div className="w-full h-auto flex flex-col gap-8">
+      <div className="flex flex-col gap-3 md:gap-6 justify-between lg:flex-row">
+        <div className="w-full h-auto flex flex-col gap-3 md:gap-6">
           <div className="w-full bg-white p-5 rounded-lg border border-f-gray overflow-x-hidden">
             <h1 className="text-p-rg font-medium text-c-secondary mb-5">
               | Contact Information
@@ -152,7 +152,7 @@ const DocViewPatientProfile = ({ patient, visits }) => {
             </section>
           </div>
         </div>
-        <div className="w-full h-auto mb-8 lg:w-[600px]">
+        <div className="w-full h-auto lg:w-[600px]">
           <div className="w-full h-full bg-white rounded-lg font-poppins p-4">
             <header className="flex w-full h-auto justify-between pt-4 mb-4">
               <h1 className="text-p-rg font-medium text-c-gray3">

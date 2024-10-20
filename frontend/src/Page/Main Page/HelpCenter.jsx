@@ -16,24 +16,12 @@ const HelpCenter = () => {
 
   return (
     <div className="text-f-dark p-3 md:p-6 font-Poppin h-full flex flex-col md:flex-row gap-6">
-      <nav className="w-full md:w-1/3 flex flex-col justify-between h-full">
-        <div>
-          <div>
-            <h1 className="text-p-lg font-semibold">{selected}</h1>
-            <p className="text-p-rg">Lorem ipsum dolor sha.</p>
-          </div>
-          <div className="flex flex-row border border-c-gray3 px-4 rounded-md justify-center items-center w-full mt-2 md:mt-6">
-            <IoMdSearch className="h-8 w-8 text-c-secondary" />
-            <input
-              type="text"
-              className="w-full h-11 text-f-dark focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
-              placeholder="Search product... "
-              //value={searchTerm}
-              //onChange={handleSearchChange}
-            />
-          </div>
+      <nav className="w-full md:w-1/3 flex flex-col justify-between h-fit md:h-full">
+        <div className="hidden md:block">
+          <h1 className="text-p-lg font-semibold">{selected}</h1>
+          <p className="text-p-rg">Lorem ipsum dolor sha.</p>
         </div>
-        <div className="flex flex-col gap-8 mt-2 md:mt-0">
+        <div className="flex flex-col">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-1 w-3/4">
               {[

@@ -39,15 +39,15 @@ const Organization = () => {
         <>
           <div className="w-full flex flex-row-reverse">
             <div
-              className="px-4 py-2 flex justify-center items-center border border-c-gray3 rounded-md font-Poppins cursor-pointer"
+              className="px-4 py-2 flex justify-center items-center border border-c-gray3 rounded-md font-Poppins cursor-pointer mb-8 md:mb-0"
               onClick={handleOpenStaffModal}
             >
-              <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
-              <h1 className="hidden md:block">Add Branch</h1>
+              <IoIosAddCircleOutline className="h-6 w-6 mr-2" />
+              <h1>Add Branch</h1>
             </div>
           </div>
           {branch && branch.length > 0 ? (
-            <div className="flex flex-wrap justify-center gap-4 mt-4 items-center w-full h-full">
+            <div className="flex flex-wrap justify-center gap-4 md:items-center w-full md:h-full">
               {branch.map((branchItem) => (
                 <div
                   key={branchItem.branchId}
@@ -58,7 +58,7 @@ const Organization = () => {
               ))}
             </div>
           ) : (
-            <div className="flex flex-wrap justify-center gap-4 mt-4 items-center w-full h-full">
+            <div className="flex flex-wrap justify-center items-center w-full h-full">
               <p className="font-semibold text-3xl text-c-secondary">
                 No Active Branch found!
               </p>

@@ -174,10 +174,9 @@ const ProfileSettingSection = ({ selected }) => {
   return (
     <>
       {selected === "My Profile" && (
-        <form className="flex flex-col w-full h-full gap-8 font-Poppins">
+        <form className="flex flex-col w-full h-full gap-4 md:gap-8 font-Poppins">
           <div className="w-full border border-f-gray bg-white rounded-lg p-6 md:p-10 h-full flex flex-col-reverse md:flex-row justify-between items-center">
             <label className="flex items-center gap-4 mt-6 md:mt-0">
-
               {image ? (
                 <img
                   src={image}
@@ -410,7 +409,7 @@ const ProfileSettingSection = ({ selected }) => {
                   </h1>
                 </div>
               </div>
-              <h1 className="text-p-lg mt-10">
+              <h1 className="text-p-lg mt-10 text-center md:text-start">
                 Contact Organization Manager for schedule changes
               </h1>
             </div>
@@ -418,7 +417,7 @@ const ProfileSettingSection = ({ selected }) => {
         </form>
       )}
       {selected === "Account" && (
-        <div className="flex flex-col w-full h-full gap-8 font-Poppins">
+        <div className="flex flex-col w-full h-full gap-4 md:gap-8 font-Poppins">
           <div className="w-full border border-f-gray bg-white rounded-lg p-10 h-fit flex flex-col justify-between">
             <label className="text-p-lg font-semibold text-c-secondary">
               | Change Password

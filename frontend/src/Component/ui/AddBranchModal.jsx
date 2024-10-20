@@ -145,15 +145,15 @@ const AddBranchModal = ({ onClose }) => {
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
+        <div className="fixed top-0 left-0 flex items-center p-4 justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
           <div className="w-[600px]">
-            <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
+            <header className="px-4 py-3 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
               <h1 className="text-p-lg text-c-secondary font-semibold">
                 Add Branch
               </h1>
               <button onClick={onClose}> &times; </button>
             </header>
-            <div className="py-6 px-6 h-[500px] bg-white overflow-y-scroll">
+            <div className="py-6 px-6 h-[400px] md:h-[500px] bg-white overflow-y-scroll">
               <div>
                 <header>
                   <h1 className="text-p-rg font-medium text-c-secondary mb-4">
@@ -306,18 +306,18 @@ const AddBranchModal = ({ onClose }) => {
                 </div>
               </div>
             </div>
-            <footer className="border border-t-f-gray bg-white rounded-b-lg flex gap-2 justify-end py-6 px-4">
+            <footer className="border border-t-f-gray bg-white rounded-b-lg flex gap-4 justify-end py-3 px-4">
               <button
-                className="w-28 h-12 text-f-dark text-p-rg font-semibold"
+                className="px-4 py-2 text-f-dark text-p-rg font-medium rounded-md border border-c-gray3"
                 onClick={onClose}
               >
                 Cancel
               </button>
               <button
-                className="w-28 h-12 bg-[#3B7CF9] text-f-light text-p-rg font-semibold rounded-md hover:bg-[#77a0ec] active:bg-bg-[#2c4c86]"
+                className="py-2 px-4 bg-[#3B7CF9] text-f-light text-p-rg font-semibold rounded-md hover:bg-[#77a0ec] active:bg-bg-[#2c4c86]"
                 onClick={handleSubmit}
               >
-                Save
+                Add Branch
               </button>
             </footer>
           </div>
