@@ -87,10 +87,7 @@ const StaffAddPatientPage = () => {
       const res = await addPatientHook(formData, selectedDoctor.staffId);
       if (res) {
         setIsSuccess(true);
-        console.log(res);
-
         handleClear();
-        setSelectedDoctor(null);
       }
     } catch (err) {
       console.log(err);
@@ -116,6 +113,7 @@ const StaffAddPatientPage = () => {
     });
     setSelectedProvince(null);
     setSelectedMunicipality(null);
+    setSelectedDoctor(null);
   };
   const provinceOptions = Object.keys(PhList).reduce((acc, regionKey) => {
     const provinceList = PhList[regionKey].province_list;

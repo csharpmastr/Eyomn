@@ -263,9 +263,8 @@ const getBranchData = async (organizationId, firebaseUid) => {
 
         const [staffs, appointments] = await Promise.all([
           getStaffs(orgData.id, branchId, firebaseUid),
-          getAppointments(branchId, firebaseUid),
+          getAppointments(branchId, null, firebaseUid, false),
         ]);
-        console.log(staffs);
 
         decryptedBranchData.staffs = staffs;
         decryptedBranchData.appointments = appointments;

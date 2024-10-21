@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Notification = ({ data }) => {
+  const navigate = useNavigate();
   function timeAgo(notificationTime) {
     const notificationDate = new Date(notificationTime);
     const currentDate = new Date();
@@ -28,7 +30,11 @@ const Notification = ({ data }) => {
   const sortedData = [...data].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
-
+  const handleClickNotification = (patientId) => {
+    sessionStorage.setItem("currentPatient", patientId);
+    sessionStorage.setItem("selectedTab", "patient");
+    navigate(`/patient/${patientId}`);
+  };
   return (
     <div className="origin-top-right mt-2 absolute left-0 w-full z-50 rounded-md shadow-lg ring-1 ring-f-gray font-Poppins">
       <div>
@@ -44,6 +50,7 @@ const Notification = ({ data }) => {
               className={`text-p-rg text-f-dark rounded-md p-4
                  ${index % 2 === 0 ? "bg-bg-mc" : "bg-white"}`}
               key={index}
+              onClick={() => handleClickNotification(notifData.patientId)}
             >
               <h1>
                 <span className="font-semibold">{notifData.message}</span>

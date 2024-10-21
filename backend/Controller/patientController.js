@@ -18,6 +18,8 @@ const addPatientHandler = async (req, res) => {
     const doctorId = req.params.doctorId;
     const { firebaseUid } = req.query;
     const patientData = req.body;
+    console.log(`Doctor ID : ${doctorId}`);
+
     if (
       !branchId ||
       !organizationId ||

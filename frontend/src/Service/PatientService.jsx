@@ -26,6 +26,10 @@ export const addPatientService = async (
         },
       }
     );
+    console.log(
+      `${PATIENT_API_BASE_URL}/add-patient/${organizationID}/${branchId}/${doctorId}`
+    );
+
     return response;
   } catch (err) {
     console.error("Error adding patient : ", err);

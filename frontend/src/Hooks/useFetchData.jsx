@@ -174,6 +174,8 @@ export const useFetchData = () => {
               break;
             case "branches":
               reduxDispatch(setBranch(result));
+              console.log(result);
+
               const staffs = result.flatMap((branch) => branch.staffs || []);
 
               const uniqueStaffsMap = new Map();

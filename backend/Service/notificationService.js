@@ -23,6 +23,7 @@ const pushNotification = async (userId, type, data) => {
         message: `A new patient has been added.`,
         branchId: data.branchId,
         doctorId: data.doctorId,
+        patientId: data.patientId,
       };
     }
     if (type === "returnPatient") {
@@ -32,6 +33,7 @@ const pushNotification = async (userId, type, data) => {
         message: `Patient ${data.patientName} has returned for a follow-up visit.`,
         branchId: data.branchId,
         doctorId: data.doctorId,
+        patientId: data.patientId,
       };
     }
     await notificationCol.doc(notificationId).set(notificationData);

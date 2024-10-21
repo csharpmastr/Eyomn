@@ -39,7 +39,10 @@ const SideBar = () => {
   useEffect(() => {
     sessionStorage.setItem("selectedTab", selected);
   }, [selected]);
-
+  useEffect(() => {
+    const current = sessionStorage.getItem("selectedTab");
+    setSelected(current);
+  }, [selected]);
   return (
     <div
       className={`h-16 w-full xl:h-screen z-50 font-Poppins bg-c-primary xl:bg-bg-sb  transition-all duration-300 ease-in-out ${
@@ -341,7 +344,7 @@ const SideBar = () => {
                 }${
                   isCollapsed
                     ? " xl:px-2 py-2 justify-center"
-                    : "xl:py-3 xl:px-4 "
+                    : " xl:py-3 xl:px-4 "
                 } `}
                 onClick={() => setSelected("add-patient")}
                 to="add-patient"

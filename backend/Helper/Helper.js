@@ -4,6 +4,7 @@ const {
   organizationCollection,
   patientCollection,
   staffCollection,
+  visitCollection,
 } = require("../Config/FirebaseConfig");
 const { decryptData, encryptData } = require("../Security/DataHashing");
 
@@ -221,7 +222,7 @@ const getVisits = async (patientId, firebaseUid) => {
     if (!userRecord) {
       throw { status: 404, message: "User not found." };
     }
-    let visitQuery = patientCollection.doc(patientId).collection("visit");
+    let visitQuery = visitCollection.where("patientId", "==", patientId);
 
     const visitSnapshot = await visitQuery.get();
 

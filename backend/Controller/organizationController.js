@@ -124,6 +124,8 @@ const getBranchDataHandler = async (req, res) => {
         .status(400)
         .json({ message: "Organization ID and branch data are required." });
     }
+    console.log(firebaseUid);
+
     const branchData = await getBranchData(organizationId, firebaseUid);
 
     return res.status(200).json(branchData);

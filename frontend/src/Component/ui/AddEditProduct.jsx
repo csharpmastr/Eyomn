@@ -27,7 +27,9 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
   const [errorModalTitle, setErrorModalTitle] = useState("");
   const [errorModalDescription, setErrorModalDescription] = useState("");
   const [error, setError] = useState(false);
-  const branchId = user.branches[0].branchId;
+  let branchId =
+    (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
+    user.userId;
   const initialFormData = {
     category: "",
     product_name: "",

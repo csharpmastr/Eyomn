@@ -141,7 +141,6 @@ const updateProduct = async (branchId, productId, productDetails) => {
       if (doc.id !== productId && productData.product_name) {
         const decryptedProductName = decryptData(productData.product_name);
         const decryptedProductBrand = decryptData(productData.brand);
-        console.log(decryptedProductName, decryptedProductBrand);
 
         if (
           decryptedProductName === productDetails.product_name &&
