@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { IoMdSearch } from "react-icons/io";
-import { IoIosAddCircleOutline } from "react-icons/io";
+import { FiFilter } from "react-icons/fi";
 import PatientScribeCard from "../../Component/ui/PatientScribeCard";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -82,7 +82,7 @@ const Scribe = () => {
       {hasSelected ? (
         <Outlet />
       ) : (
-        <div className="p-4 md:p-6 font-Poppins">
+        <div className="p-4 md:p-6 xl:p-8 font-Poppins">
           <div className="flex flex-col md:flex-row md:items-center justify-between">
             <p className="text-p-lg font-semibold text-f-dark">
               {patients.length || 0}{" "}
@@ -98,7 +98,7 @@ const Scribe = () => {
                 />
               </div>
               <div className="ml-2 h-auto w- flex justify-center items-center rounded-md px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
-                <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
+                <FiFilter className="h-6 w-6 md:mr-2" />
                 <select className="hover:cursor-pointer focus:outline-none bg-bg-mc w-16">
                   <option value="" disabled selected>
                     Filter

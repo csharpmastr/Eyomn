@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
+import { FiMessageSquare } from "react-icons/fi";
 
 const LLMChatbot = () => {
   const [isLLMOpen, setIsLLMOpen] = useState(false);
@@ -21,8 +22,10 @@ const LLMChatbot = () => {
     <div className="relative w-full h-fit">
       <button
         onClick={() => setIsLLMOpen(!isLLMOpen)}
-        className="fixed bottom-5 right-5 bg-green-500 rounded-full shadow-lg h-10 w-10 transition-all hover:scale-110 focus:outline-none"
-      ></button>
+        className="fixed bottom-5 right-5 bg-white border border-f-gray items-center flex justify-center rounded-full shadow-lg h-10 w-10 transition-all hover:scale-110 focus:outline-none"
+      >
+        <FiMessageSquare className="h-5 w-5" />
+      </button>
       {isLLMOpen && (
         <div className="fixed bottom-20 right-5 w-80 bg-white shadow-lg border rounded-lg flex flex-col transition-all duration-300 ease-in-out">
           <div className="w-full h-fit p-3 flex items-center justify-between bg-bg-sb rounded-t-lg border border-b-f-gray">

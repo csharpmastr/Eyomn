@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { IoMdSearch } from "react-icons/io";
-import { BsFilter } from "react-icons/bs";
+import { FiFilter } from "react-icons/fi";
 import { FiPlus } from "react-icons/fi";
 import InventoryTable from "../../Component/ui/InventoryTable";
 import AddEditProduct from "../../Component/ui/AddEditProduct";
@@ -14,8 +14,8 @@ const Inventory = () => {
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   return (
-    <div className="text-f-dark p-3 md:p-6 font-Poppins">
-      <nav className="flex flex-col gap-3 lg:gap-0 lg:flex-row justify-between mb-8">
+    <div className="text-f-dark p-4 md:p-6 xl:p-8 font-Poppins">
+      <nav className="flex flex-col gap-4 lg:gap-0 lg:flex-row justify-between mb-8">
         <div>
           <h1 className="text-p-lg">All Product</h1>
           <p className="text-p-rg">
@@ -36,7 +36,7 @@ const Inventory = () => {
             />
           </div>
           <div className="flex justify-center items-center rounded-lg px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
-            <BsFilter className="h-6 w-6 md:mr-2" />
+            <FiFilter className="h-6 w-6 md:mr-2" />
             <select className="md:block hover:cursor-pointer focus:outline-none w-16 bg-bg-mc">
               <option value="filter1">A-Z</option>
               <option value="filter2">Filter 2</option>

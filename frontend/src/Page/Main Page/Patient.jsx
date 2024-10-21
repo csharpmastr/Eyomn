@@ -1,11 +1,12 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { IoMdSearch, IoIosAddCircleOutline } from "react-icons/io";
+import { FiFilter } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Loader from "../../Component/ui/Loader";
 import AddEditPatient from "../../Component/ui/AddEditPatient";
 import Table from "../../Component/ui/Table";
-import PatientProfile from "./PatientProfile";
+import { FiPlus } from "react-icons/fi";
 
 const Patient = () => {
   const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
@@ -67,7 +68,7 @@ const Patient = () => {
       ) : (
         <>
           {isLoading && <Loader />}
-          <div className="p-4 md:p-6">
+          <div className="p-4 md:p-6 xl:p-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between">
               <p className="text-p-lg font-semibold text-f-dark">
                 {totalPatient}{" "}
@@ -89,7 +90,7 @@ const Patient = () => {
                   />
                 </div>
                 <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
-                  <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
+                  <FiFilter className="h-6 w-6 md:mr-2" />
                   <select className="hover:cursor-pointer focus:outline-none w-16 bg-bg-mc">
                     <option value="" disabled selected>
                       Filter
@@ -106,7 +107,7 @@ const Patient = () => {
                     className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
                     onClick={openAddPatient}
                   >
-                    <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
+                    <FiPlus className="h-5 w-5 md:mr-2" />
                     <h1 className="hidden md:block">Add patient</h1>
                   </div>
                 )}
