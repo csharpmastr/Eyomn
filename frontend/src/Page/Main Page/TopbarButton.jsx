@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { GiHamburgerMenu } from "react-icons/gi";
-import { IoChevronBackCircleOutline } from "react-icons/io5";
 import useLogout from "../../Hooks/useLogout";
 import { useNavigate } from "react-router-dom";
 import Notification from "../../Component/ui/Notification";
 import { IoMdNotificationsOutline } from "react-icons/io";
+import { FiBell } from "react-icons/fi";
 import { MdKeyboardArrowDown } from "react-icons/md";
-
 import { IoMdNotifications } from "react-icons/io";
+
 import { useSelector } from "react-redux";
 const TopbarButton = () => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -74,7 +73,7 @@ const TopbarButton = () => {
               </>
             ) : (
               <>
-                <IoMdNotificationsOutline
+                <FiBell
                   className="h-6 w-6 rounded-full"
                   onClick={toggleNotification}
                 />

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import AddBranchModel from "../../Component/ui/AddBranchModal";
-import { IoIosAddCircleOutline } from "react-icons/io";
 import { useSelector } from "react-redux";
-import StaffCard from "../../Component/ui/StaffCard";
 import BranchCard from "../../Component/ui/BranchCard";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { FiPlus } from "react-icons/fi";
 
 const Organization = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,15 +33,15 @@ const Organization = () => {
   }, [location.state]);
 
   return (
-    <div className="w-full h-full flex flex-col items-center p-4 md:p-6">
+    <div className="w-full h-full flex flex-col items-center p-4 md:p-6 xl:p-8">
       {!hasSelectedBranch ? (
         <>
           <div className="w-full flex flex-row-reverse">
             <div
-              className="px-4 py-2 flex justify-center items-center border border-c-gray3 rounded-md font-Poppins cursor-pointer mb-8 md:mb-0"
+              className="h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
               onClick={handleOpenStaffModal}
             >
-              <IoIosAddCircleOutline className="h-6 w-6 mr-2" />
+              <FiPlus className="h-5 w-5 mr-2" />
               <h1>Add Branch</h1>
             </div>
           </div>

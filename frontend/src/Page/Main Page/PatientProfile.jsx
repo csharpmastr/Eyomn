@@ -64,7 +64,7 @@ const PatientProfile = () => {
   }, [currentPatient, accessToken, refreshToken, reduxDispatch]);
 
   return (
-    <div className="w-full h-fit p-4 md:p-6">
+    <div className="w-full h-fit p-4 md:p-6 xl:p-8">
       <div className="flex gap-2 items-center mb-6">
         <AiOutlineArrowLeft />
         <button className="text-p-rg font-medium" onClick={handleBack}>

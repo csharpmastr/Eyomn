@@ -1,6 +1,6 @@
 import React from "react";
 import { IoMdSearch } from "react-icons/io";
-import { IoIosAddCircleOutline } from "react-icons/io";
+import { FiFilter } from "react-icons/fi";
 import PosTable from "../../Component/ui/PosTable";
 
 const PointOfSale = () => {
@@ -42,7 +42,7 @@ const PointOfSale = () => {
 
   return (
     <div className="text-f-dark font-Poppins flex flex-col md:flex-row h-full">
-      <div className="flex flex-col md:w-3/4 w-full p-6">
+      <div className="flex flex-col md:w-3/4 w-full p-4 md:p-6 xl:p-8">
         <div className="flex flex-row h-14 mb-6">
           <div className="flex flex-row border border-c-gray3 px-4 rounded-lg justify-center items-center w-full">
             <IoMdSearch className="h-8 w-8 text-c-secondary" />
@@ -55,7 +55,7 @@ const PointOfSale = () => {
             />
           </div>
           <div className="ml-2 h-auto flex justify-center items-center rounded-lg px-4 py-3 border border-c-gray3 font-medium font-md hover:cursor-pointer">
-            <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
+            <FiFilter className="h-6 w-6 md:mr-2" />
             <select className="md:block hover:cursor-pointer focus:outline-none bg-bg-mc">
               <option value="" disabled selected>
                 Filter

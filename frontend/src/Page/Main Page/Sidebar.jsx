@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { TbLayoutDashboard } from "react-icons/tb";
 import TopbarButton from "./TopbarButton";
-import { TbScan } from "react-icons/tb";
-import { FaRegStickyNote } from "react-icons/fa";
-import { CiSettings } from "react-icons/ci";
-import { IoMdHelpCircleOutline } from "react-icons/io";
+import { FiUsers } from "react-icons/fi";
 import { FiUser } from "react-icons/fi";
-import { AiOutlineUserAdd } from "react-icons/ai";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { MdPointOfSale } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
-import { MdOutlineInventory } from "react-icons/md";
-import { IoAddCircle, IoLogOutOutline } from "react-icons/io5";
-import { SlOrganization } from "react-icons/sl";
-import { AiOutlineSchedule } from "react-icons/ai";
 import SidebarLogo from "../../assets/Image/sidebar_logo.png";
 import Cookies from "universal-cookie";
 import { useAuthContext } from "../../Hooks/useAuthContext";
 import { useSelector } from "react-redux";
+
+import { FiBox } from "react-icons/fi";
+import { FiCalendar } from "react-icons/fi";
+import { FiShoppingCart } from "react-icons/fi";
+import { FiSettings } from "react-icons/fi";
+import { FiHelpCircle } from "react-icons/fi";
+import { FiFileText } from "react-icons/fi";
+import { FiGrid } from "react-icons/fi";
+import { FiClipboard } from "react-icons/fi";
+import { FiUserPlus } from "react-icons/fi";
 
 const SideBar = () => {
   const role = useSelector((state) => state.reducer.user.user.role);
@@ -111,7 +111,7 @@ const SideBar = () => {
                 onClick={() => setSelected("dashboard")}
                 to="dashboard"
               >
-                <TbLayoutDashboard
+                <FiGrid
                   className={`${
                     isCollapsed
                       ? " h-[26px] w-[26px] "
@@ -136,7 +136,7 @@ const SideBar = () => {
                   onClick={() => setSelected("organization")}
                   to="organization"
                 >
-                  <SlOrganization
+                  <FiUsers
                     className={`${
                       isCollapsed
                         ? " h-[26px] w-[26px]"
@@ -183,7 +183,7 @@ const SideBar = () => {
                 onClick={() => setSelected("appointment")}
                 to="appointment"
               >
-                <AiOutlineSchedule
+                <FiCalendar
                   className={`${
                     isCollapsed
                       ? " h-[26px] w-[26px]"
@@ -205,7 +205,7 @@ const SideBar = () => {
                 onClick={() => setSelected("inventory")}
                 to="inventory"
               >
-                <FaRegStickyNote
+                <FiBox
                   className={`${
                     isCollapsed
                       ? " h-[26px] w-[26px] "
@@ -231,7 +231,7 @@ const SideBar = () => {
                 onClick={() => setSelected("dashboard")}
                 to="dashboard"
               >
-                <TbLayoutDashboard
+                <FiGrid
                   className={`${
                     isCollapsed
                       ? " h-[26px] w-[26px] "
@@ -255,7 +255,7 @@ const SideBar = () => {
                 onClick={() => setSelected("scribe")}
                 to="scribe"
               >
-                <FaRegStickyNote
+                <FiClipboard
                   className={`${
                     isCollapsed
                       ? " h-[26px] w-[26px]"
@@ -299,7 +299,7 @@ const SideBar = () => {
                 onClick={() => setSelected("appointment")}
                 to="appointment"
               >
-                <AiOutlineSchedule
+                <FiCalendar
                   className={`${
                     isCollapsed
                       ? " h-[26px] w-[26px]"
@@ -325,7 +325,7 @@ const SideBar = () => {
                 onClick={() => setSelected("dashboard")}
                 to="dashboard"
               >
-                <TbLayoutDashboard
+                <FiGrid
                   className={`${
                     isCollapsed
                       ? " h-[26px] w-[26px] "
@@ -349,7 +349,7 @@ const SideBar = () => {
                 onClick={() => setSelected("add-patient")}
                 to="add-patient"
               >
-                <AiOutlineUserAdd
+                <FiUserPlus
                   className={`${
                     isCollapsed
                       ? " h-[26px] w-[26px]  justify-center "
@@ -393,7 +393,7 @@ const SideBar = () => {
                 onClick={() => setSelected("appointment")}
                 to="appointment"
               >
-                <AiOutlineSchedule
+                <FiCalendar
                   className={`${
                     isCollapsed
                       ? " h-[26px] w-[26px] "
@@ -415,7 +415,7 @@ const SideBar = () => {
                 onClick={() => setSelected("inventory")}
                 to="inventory"
               >
-                <MdOutlineInventory
+                <FiBox
                   className={`${
                     isCollapsed
                       ? " h-[26px] w-[26px]"
@@ -445,7 +445,7 @@ const SideBar = () => {
                   onClick={() => setSelected("report")}
                   to="report"
                 >
-                  <MdPointOfSale
+                  <FiFileText
                     className={`${
                       isCollapsed
                         ? " h-[26px] w-[26px]"
@@ -468,7 +468,7 @@ const SideBar = () => {
                 onClick={() => setSelected("pos")}
                 to="pos"
               >
-                <MdPointOfSale
+                <FiShoppingCart
                   className={`${
                     isCollapsed
                       ? " h-[26px] w-[26px]"
@@ -490,7 +490,7 @@ const SideBar = () => {
             onClick={() => setSelected("manage-profile/:section")}
             to="manage-profile/:section"
           >
-            <CiSettings
+            <FiSettings
               className={`${
                 isCollapsed
                   ? " h-[26px] w-[26px]"
@@ -510,7 +510,7 @@ const SideBar = () => {
             onClick={() => setSelected("help")}
             to="help"
           >
-            <IoMdHelpCircleOutline
+            <FiHelpCircle
               className={`${
                 isCollapsed
                   ? " h-[26px] w-[26px]"

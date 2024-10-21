@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import dayjs from "dayjs";
-import { IoIosAddCircleOutline } from "react-icons/io";
+import { FiPlus } from "react-icons/fi";
 import SetAppointment from "../../Component/ui/SetAppointment";
 import ViewSchedule from "../../Component/ui/ViewSchedule";
 import { useSelector } from "react-redux";
@@ -90,7 +90,7 @@ const Appointment = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 text-c-secondary text-p-rg font-Poppins">
+    <div className="p-4 md:p-6 xl:p-8 text-c-secondary text-p-rg font-Poppins">
       <div className="flex justify-between items-center">
         <div>
           <button
@@ -113,7 +113,7 @@ const Appointment = () => {
           className="ml-2 h-auto flex justify-center items-center rounded-lg px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
           onClick={handleOpenSetApp}
         >
-          <IoIosAddCircleOutline className="h-6 w-6 md:mr-2" />
+          <FiPlus className="h-5 w-5 md:mr-2" />
           <h1 className="md:block hidden">Set Appointment</h1>
         </div>
       </div>

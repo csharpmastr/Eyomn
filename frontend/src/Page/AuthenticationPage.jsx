@@ -22,8 +22,8 @@ const AuthenticationPage = ({ type }) => {
             <h1 className="text-p-rg font-bold mr-3">Go Back</h1>
           </div>
         </div>
-        <h1 className="text-[150px] w-full text-center">Image to hahaha</h1>
-        <section className="flex w-full justify-between text-p-sm text-f-light pr-20">
+        <h1 className="text-[150px] w-full text-center">Image</h1>
+        <section className="flex w-full justify-between text-p-sm text-f-light pr-20 2xl:pr-28">
           <p>© 2024 Eyomn AI. All rights reserved.</p>
           <p>Privacy Policy and Terms of Service.</p>
         </section>

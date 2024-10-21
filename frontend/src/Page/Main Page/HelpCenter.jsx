@@ -15,7 +15,7 @@ const HelpCenter = () => {
   };
 
   return (
-    <div className="text-f-dark p-3 md:p-6 font-Poppin h-full flex flex-col md:flex-row gap-6">
+    <div className="text-f-dark p-3 md:p-6 xl:p-8 font-Poppin h-full flex flex-col md:flex-row gap-6">
       <nav className="w-full md:w-1/3 flex flex-col justify-between h-fit md:h-full">
         <div className="hidden md:block">
           <h1 className="text-p-lg font-semibold">{selected}</h1>
