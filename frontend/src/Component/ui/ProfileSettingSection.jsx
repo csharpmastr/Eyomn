@@ -365,55 +365,59 @@ const ProfileSettingSection = ({ selected }) => {
               />
             </div>
           </div>
-          <div className="w-full border border-f-gray bg-white rounded-lg p-10 h-full flex flex-col justify-between">
-            <label className="text-p-lg font-semibold text-c-secondary">
-              | Job Information
-            </label>
-            <div className="mt-3 text-c-gray3">
-              <div className="flex mb-5 gap-5">
-                <div className="flex-1">
-                  <label htmlFor="role" className="text-p-sm">
-                    Job / Role
-                  </label>
-                  <h1 className="mt-1 text-f-dark font-medium text-p-rg">
-                    {user.position === "Optometrist" ||
-                    user.position === "Ophthalmologist"
-                      ? `Doctor/${user.position}`
-                      : `${user.position}`}
-                  </h1>
+          {user.role === "0" || user.role === "1" ? (
+            ""
+          ) : (
+            <div className="w-full border border-f-gray bg-white rounded-lg p-10 h-full flex flex-col justify-between">
+              <label className="text-p-lg font-semibold text-c-secondary">
+                | Job Information
+              </label>
+              <div className="mt-3 text-c-gray3">
+                <div className="flex mb-5 gap-5">
+                  <div className="flex-1">
+                    <label htmlFor="role" className="text-p-sm">
+                      Job / Role
+                    </label>
+                    <h1 className="mt-1 text-f-dark font-medium text-p-rg">
+                      {user.position === "Optometrist" ||
+                      user.position === "Ophthalmologist"
+                        ? `Doctor/${user.position}`
+                        : `${user.position}`}
+                    </h1>
+                  </div>
+                  <div className="flex-1">
+                    <label htmlFor="contract" className="text-p-sm">
+                      Contract
+                    </label>
+                    <h1 className="mt-1 text-f-dark font-medium text-p-rg">
+                      {user.emp_type === "fulltime" ? `Full Time` : "Part Time"}
+                    </h1>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <label htmlFor="contract" className="text-p-sm">
-                    Contract
-                  </label>
-                  <h1 className="mt-1 text-f-dark font-medium text-p-rg">
-                    {user.emp_type === "fulltime" ? `Full Time` : "Part Time"}
-                  </h1>
+                <div className="flex gap-5">
+                  <div className="flex-1">
+                    <label htmlFor="work_hour" className="text-p-sm">
+                      Working Hours
+                    </label>
+                    <h1 className="mt-1 text-f-dark font-medium text-p-rg">
+                      09:00 am - 05:00 pm
+                    </h1>
+                  </div>
+                  <div className="flex-1">
+                    <label htmlFor="dayOff" className="text-p-sm">
+                      Day’s Off
+                    </label>
+                    <h1 className="mt-1 text-f-dark font-medium text-p-rg">
+                      Saturday & Sunday
+                    </h1>
+                  </div>
                 </div>
+                <h1 className="text-p-lg mt-10 text-center md:text-start">
+                  Contact Organization Manager for schedule changes
+                </h1>
               </div>
-              <div className="flex gap-5">
-                <div className="flex-1">
-                  <label htmlFor="work_hour" className="text-p-sm">
-                    Working Hours
-                  </label>
-                  <h1 className="mt-1 text-f-dark font-medium text-p-rg">
-                    09:00 am - 05:00 pm
-                  </h1>
-                </div>
-                <div className="flex-1">
-                  <label htmlFor="dayOff" className="text-p-sm">
-                    Day’s Off
-                  </label>
-                  <h1 className="mt-1 text-f-dark font-medium text-p-rg">
-                    Saturday & Sunday
-                  </h1>
-                </div>
-              </div>
-              <h1 className="text-p-lg mt-10 text-center md:text-start">
-                Contact Organization Manager for schedule changes
-              </h1>
             </div>
-          </div>
+          )}
         </form>
       )}
       {selected === "Account" && (
