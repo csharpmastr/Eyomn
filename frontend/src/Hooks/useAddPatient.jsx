@@ -12,8 +12,9 @@ export const useAddPatient = () => {
   const user = useSelector((state) => state.reducer.user.user);
   const accessToken = cookies.get("accessToken", { path: "/" });
   const refreshToken = cookies.get("refreshToken", { path: "/" });
+  const [isSuccess, setIsSuccess] = useState(false);
 
-  const addPatientHook = async (data, doctorId) => {
+  const addPatientHook = async (data, doctorId, branchId) => {
     setIsLoading(true);
     try {
       const response = await addPatientService(
@@ -21,24 +22,27 @@ export const useAddPatient = () => {
         accessToken,
         refreshToken,
         user.organizationId,
-        user.branches[0].branchId,
+        branchId,
         doctorId,
         user.firebaseUid
       );
 
-      reduxDispatch(
-        addPatient({
-          ...data,
-          patientId: response.data.id,
-          createdAt: response.data.createdAt,
-        })
-      );
-      return response;
+      if (response) {
+        setIsSuccess(true);
+        reduxDispatch(
+          addPatient({
+            ...data,
+            patientId: response.data.id,
+            createdAt: response.data.createdAt,
+          })
+        );
+        return response;
+      }
     } catch (err) {
       setError(err);
     } finally {
       setIsLoading(false);
     }
   };
-  return { addPatientHook, isLoading, error };
+  return { addPatientHook, isLoading, error, isSuccess };
 };
