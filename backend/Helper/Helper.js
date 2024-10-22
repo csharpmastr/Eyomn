@@ -5,6 +5,7 @@ const {
   patientCollection,
   staffCollection,
   visitCollection,
+  branchCollection,
 } = require("../Config/FirebaseConfig");
 const { decryptData, encryptData } = require("../Security/DataHashing");
 
@@ -278,6 +279,24 @@ const generateUniqueId = async (ref) => {
   return id;
 };
 
+const getBranchName = async (branchId) => {
+  try {
+    const branchRef = branchCollection.doc(branchId);
+    const branchSnap = await branchRef.get();
+
+    if (!branchSnap.exists) {
+      throw new Error("Branch not found");
+    }
+
+    const branchData = branchSnap.data();
+    const decryptedBranchName = decryptData(branchData.name);
+    return decryptedBranchName;
+  } catch (error) {
+    console.error("Error fetching branch name: ", error);
+    throw error;
+  }
+};
+
 module.exports = {
   getOrganizationName,
   getPatients,
@@ -289,4 +308,5 @@ module.exports = {
   removeNullValues,
   checkIfDocExists,
   generateUniqueId,
+  getBranchName,
 };

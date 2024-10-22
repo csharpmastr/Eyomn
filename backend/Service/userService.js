@@ -7,6 +7,7 @@ const {
   getBranchDoctors,
   getVisit,
   getPatients,
+  getBranchName,
 } = require("../Helper/Helper");
 const { v4: uuidv4 } = require("uuid");
 
@@ -187,7 +188,12 @@ const loginUser = async (userData) => {
         "branches",
         "firebaseUid",
       ]);
-
+      for (id in staffData.branches) {
+      }
+      for (const branch of staffData.branches) {
+        const branchName = await getBranchName(branch.branchId);
+        branch.branchName = branchName;
+      }
       const organization = await getOrganizationName(user.organizationId);
 
       data = {
