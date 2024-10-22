@@ -33,7 +33,6 @@ const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
       "doctorId",
     ]);
 
-    const oneHourGap = 60 * 60 * 1000;
     const thirtyMinuteGap = 30 * 60 * 1000;
 
     const newStartTime = new Date(scheduleDetails.scheduledTime).getTime();
@@ -41,7 +40,7 @@ const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
       newStartTime +
       (scheduleDetails.duration
         ? scheduleDetails.duration * 60 * 1000
-        : oneHourGap);
+        : thirtyMinuteGap);
 
     const schedulesSnapshot = await schedRef.get();
     schedulesSnapshot.forEach((doc) => {
@@ -50,8 +49,8 @@ const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
 
       const requiredGap =
         existingReason === "check up" || existingReason === "consultation"
-          ? oneHourGap
-          : thirtyMinuteGap;
+          ? thirtyMinuteGap
+          : 0;
 
       const existingStartTime = existingScheduleTime;
       const existingEndTime = existingStartTime + requiredGap;

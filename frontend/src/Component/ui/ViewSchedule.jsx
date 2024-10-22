@@ -39,11 +39,16 @@ const ViewSchedule = ({ onClose, appointments }) => {
                     <p>{appointment.patient_name}</p>
                     <p>Dr. {appointment.doctor}</p>
                   </div>
-                  <div className="flex items-center gap-1 justify-end">
-                    <FiClock className="h-4 w-4 text-c-gray3" />
+                  <div className="flex items-center gap-1 justify-between">
                     <p className="text-p-sm text-c-gray3">
-                      {dayjs(appointment.scheduledTime).format("h:mm A")}
+                      {appointment.reason}
                     </p>
+                    <div className="flex gap-2">
+                      <FiClock className="h-4 w-4 text-c-gray3" />
+                      <p className="text-p-sm text-c-gray3">
+                        {dayjs(appointment.scheduledTime).format("h:mm A")}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ))

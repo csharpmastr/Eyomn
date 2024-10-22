@@ -23,7 +23,7 @@ export const useFetchData = () => {
   const refreshToken = cookies.get("refreshToken");
 
   const buildApiCalls = () => {
-    let organizationId = user.organizationId || null;
+    let organizationId = user.role === "0" ? user.userId : user.organizationId;
     let branchId =
       (user.branches &&
         user.branches.length > 0 &&

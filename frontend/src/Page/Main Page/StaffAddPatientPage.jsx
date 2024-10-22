@@ -65,6 +65,7 @@ const StaffAddPatientPage = () => {
   };
   const handleClose = () => {
     setIsSuccess(false);
+    window.location.reload();
   };
 
   const handleMunicipalityChange = (selectedOption) => {

@@ -249,7 +249,6 @@ const SetAppointment = ({ onClose }) => {
                   </option>
                   <option value="check up">Check Up</option>
                   <option value="consultation">Consultation</option>
-                  <option value="eyeglass">Eye Glass</option>
                 </select>
               </section>
               <section>

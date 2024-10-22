@@ -71,7 +71,7 @@ const addPatient = async (
     const patientRef = patientCollection.doc(patientId);
     await patientRef.set(encryptedPatientData);
 
-    await addVisit(patientId, doctorId, reason_visit, branchId, encryptedName);
+    await addVisit(patientId, doctorId, reason_visit, branchId);
 
     return {
       id: patientId,
@@ -145,13 +145,7 @@ const getPatients = async (
   }
 };
 
-const addVisit = async (
-  patientId,
-  doctorId,
-  reason_visit,
-  branchId,
-  patientName
-) => {
+const addVisit = async (patientId, doctorId, reason_visit, branchId) => {
   const currentDate = new Date();
   try {
     const visitId = await generateUniqueId(visitCollection);
@@ -171,18 +165,6 @@ const addVisit = async (
 
     let isReturningPatient = !previousVisitsSnapshot.empty;
 
-    if (!patientName) {
-      const patientProfile = await patientCollection.doc(patientId).get();
-      const patientData = patientProfile.data();
-
-      if (patientData) {
-        const firstName = decryptData(patientData.first_name);
-        const lastName = decryptData(patientData.last_name);
-        patientName = `${firstName} ${lastName}`;
-        patientName = encryptData(patientName);
-      }
-    }
-
     const visitSubColRef = visitCollection.doc(visitId);
     await visitSubColRef.set(visitData);
 
@@ -194,16 +176,10 @@ const addVisit = async (
       ? "returnPatient"
       : "newPatient";
 
-    const notificationMessage = isReturningPatient
-      ? `${decryptData(patientName)} has returned for another visit.`
-      : `${decryptData(patientName)} has been added as a new patient.`;
-
     await pushNotification(doctorId, notificationType, {
       branchId,
       doctorId,
       patientId,
-      patientName,
-      message: notificationMessage,
     });
 
     return visitId;
