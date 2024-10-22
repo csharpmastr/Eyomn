@@ -16,6 +16,8 @@ const StaffAddPatientPage = () => {
   const [errors, setErrors] = useState({});
   const doctorsList = useSelector((state) => state.reducer.doctor.doctor);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const branch = useSelector((state) => state.reducer.user.user.branches);
+  const branchId = branch[0].branchId;
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -85,7 +87,11 @@ const StaffAddPatientPage = () => {
     // }
 
     try {
-      const res = await addPatientHook(formData, selectedDoctor.staffId);
+      const res = await addPatientHook(
+        formData,
+        selectedDoctor.staffId,
+        branchId
+      );
       if (res) {
         setIsSuccess(true);
         handleClear();
