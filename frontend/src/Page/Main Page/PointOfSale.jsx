@@ -10,27 +10,39 @@ const PointOfSale = () => {
     const existingProductIndex = selectedProducts.findIndex(
       (item) => item.productId === product.productId
     );
+
     if (existingProductIndex > -1) {
       const updatedProducts = [...selectedProducts];
-      updatedProducts[existingProductIndex].quantity += 1;
+      const existingProduct = updatedProducts[existingProductIndex];
+
+      if (existingProduct.quantity < product.quantity) {
+        updatedProducts[existingProductIndex].quantity += 1;
+      } else {
+        return;
+      }
+
       setSelectedProducts(updatedProducts);
     } else {
       setSelectedProducts([...selectedProducts, { ...product, quantity: 1 }]);
     }
   };
-
+  const handlePurchase = () => {
+    console.log(selectedProducts);
+  };
   const handleQuantityChange = (action, productId) => {
     setSelectedProducts((prevProducts) => {
-      return prevProducts.map((product) => {
-        if (product.productId === productId) {
-          const newQuantity =
-            action === "increase"
-              ? product.quantity + 1
-              : Math.max(product.quantity - 1, 0);
-          return { ...product, quantity: newQuantity };
-        }
-        return product;
-      });
+      return prevProducts
+        .map((product) => {
+          if (product.productId === productId) {
+            const newQuantity =
+              action === "increase"
+                ? product.quantity + 1
+                : Math.max(product.quantity - 1, 0);
+            return { ...product, quantity: newQuantity };
+          }
+          return product;
+        })
+        .filter((product) => product.quantity > 0);
     });
   };
 
@@ -38,6 +50,14 @@ const PointOfSale = () => {
     setSelectedProducts((prevProducts) =>
       prevProducts.filter((product) => product.productId !== productId)
     );
+  };
+
+  const calculateTotalPrice = () => {
+    return selectedProducts
+      .reduce((total, product) => {
+        return total + product.price * product.quantity;
+      }, 0)
+      .toFixed(2);
   };
 
   return (
@@ -138,7 +158,9 @@ const PointOfSale = () => {
           <div className="rounded-lg bg-bg-sb p-6 mx-6 mb-6 shadow-gray-300 shadow-md">
             <div className="flex justify-between mb-2 text-rg">
               <p className="text-f-gray2">Total</p>
-              <p className="font-semibold text-f-dark">Php. 0.00</p>
+              <p className="font-semibold text-f-dark">
+                Php. {calculateTotalPrice()}
+              </p>
             </div>
             <div className="flex justify-between items-center mb-5">
               <p className="text-f-gray2">Cash Tendered</p>
@@ -157,7 +179,10 @@ const PointOfSale = () => {
             </div>
           </div>
           <div className="px-6 pb-6">
-            <button className="w-full h-12 bg-[#31d19c] text-f-light text-p-rg font-semibold rounded-lg">
+            <button
+              className="w-full h-12 bg-[#31d19c] text-f-light text-p-rg font-semibold rounded-lg"
+              onClick={handlePurchase}
+            >
               Process Purchase
             </button>
           </div>
