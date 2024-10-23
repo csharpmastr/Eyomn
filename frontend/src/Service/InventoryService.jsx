@@ -107,3 +107,32 @@ export const updateProductService = async (
     throw error;
   }
 };
+
+export const addPurchaseService = async (
+  purchaseDetails,
+  branchId,
+  staffId,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.post(
+      `${INVENTORY_API_BASE_URL}/add-purchase/${branchId}/${staffId}`,
+      purchaseDetails,
+      {
+        params: {
+          firebaseUid,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error updating product : ", error);
+    throw error;
+  }
+};

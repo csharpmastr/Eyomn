@@ -3,6 +3,7 @@ const {
   getProducts,
   deleteProduct,
   updateProduct,
+  addPurchase,
 } = require("../Service/inventoryService");
 
 const addProductHandler = async (req, res) => {
@@ -99,10 +100,30 @@ const updateProductHandler = async (req, res) => {
       .json({ message: "Error updating product.", error: error.message });
   }
 };
+const addPurchaseHandler = async (req, res) => {
+  try {
+    const branchId = req.params.branchId;
+    const staffId = req.params.staffId;
+    const { firebaseUid } = req.query;
+    const purchaseDetails = req.body;
+    console.log(branchId, staffId);
 
+    if (!branchId || !staffId) {
+      return res.status(400).json({ message: "No Branch/Staff ID provided." });
+    }
+
+    await addPurchase(purchaseDetails, branchId, staffId, firebaseUid);
+    return res.status(201).json({ message: "Success" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error adding purchase", error: error.message });
+  }
+};
 module.exports = {
   addProductHandler,
   getProductsHandler,
   deleteProductHandler,
   updateProductHandler,
+  addPurchaseHandler,
 };

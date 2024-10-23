@@ -1,6 +1,6 @@
 const admin = require("firebase-admin");
 const { v4: uuid } = require("uuid");
-const { inventoryCollection } = require("../Config/FirebaseConfig");
+const { inventoryCollection, db } = require("../Config/FirebaseConfig");
 const {
   encryptDocument,
   removeNullValues,
@@ -179,9 +179,97 @@ const updateProduct = async (branchId, productId, productDetails) => {
   }
 };
 
+const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
+  try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
+
+    const currentDate = new Date();
+    const purchaseCollectionRef = inventoryCollection
+      .doc(branchId)
+      .collection("purchases");
+    const productsCollectionRef = inventoryCollection
+      .doc(branchId)
+      .collection("products");
+
+    const purchaseId = await generateUniqueId(purchaseCollectionRef);
+    const purchaseRef = purchaseCollectionRef.doc(purchaseId);
+
+    //batch read
+    await db.runTransaction(async (transaction) => {
+      const productDocs = await Promise.all(
+        purchaseDetails.map(async (product) => {
+          const productRef = productsCollectionRef.doc(product.productId);
+          const productDoc = await transaction.get(productRef);
+
+          if (!productDoc.exists) {
+            throw {
+              status: 404,
+              message: `Product not found: ${product.productId}`,
+            };
+          }
+
+          const productData = productDoc.data();
+          const decryptedProductData = decryptDocument(productData, [
+            "quantity",
+            "expirationDate",
+            "price",
+            "productSKU",
+            "productId",
+          ]);
+
+          if (decryptedProductData.quantity < product.quantity) {
+            throw {
+              status: 400,
+              message: `Insufficient stock for product: ${product.productId}`,
+            };
+          }
+
+          return {
+            productRef,
+            decryptedProductData,
+            requestedQuantity: product.quantity,
+          };
+        })
+      );
+
+      // proceed with the writes
+      // create purchase record
+      transaction.set(purchaseRef, {
+        staffId,
+        purchaseDetails,
+        createdAt: currentDate.toISOString(),
+      });
+
+      // update product stock each product
+      productDocs.forEach(
+        ({ productRef, decryptedProductData, requestedQuantity }) => {
+          const updatedQuantity =
+            decryptedProductData.quantity - requestedQuantity;
+
+          const updatedProductData = encryptDocument(
+            { ...decryptedProductData, quantity: updatedQuantity },
+            ["quantity", "expirationDate", "price", "productSKU", "productId"]
+          );
+
+          transaction.update(productRef, updatedProductData);
+        }
+      );
+    });
+
+    console.log("Purchase and stock updates successful.");
+  } catch (error) {
+    console.error("Error during purchase:", error);
+    throw error;
+  }
+};
+
 module.exports = {
   addProduct,
   getProducts,
   deleteProduct,
   updateProduct,
+  addPurchase,
 };
