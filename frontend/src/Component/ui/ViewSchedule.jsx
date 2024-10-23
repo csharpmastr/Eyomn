@@ -26,7 +26,7 @@ const ViewSchedule = ({ onClose, appointments }) => {
           <button onClick={onClose}> &times; </button>
         </header>
         <div className="bg-bg-mc h-full rounded-b-lg text-f-dark flex flex-col px-2 py-4">
-          <div className="overflow-y-auto flex flex-col gap-4">
+          <div className="overflow-y-auto h-full flex flex-col gap-4">
             {appointments.length > 0 ? (
               appointments.map((appointment, index) => (
                 <div
@@ -53,7 +53,9 @@ const ViewSchedule = ({ onClose, appointments }) => {
                 </div>
               ))
             ) : (
-              <p className="text-center">No appointments for this day.</p>
+              <div className="h-full flex justify-center items-center">
+                <p className="text-center">No appointments for this day.</p>
+              </div>
             )}
           </div>
         </div>

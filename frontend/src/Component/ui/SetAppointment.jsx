@@ -80,7 +80,16 @@ const SetAppointment = ({ onClose }) => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
+  const handleClear = () => {
+    setFormData({
+      patient_name: "",
+      reason: "",
+      doctorId: "",
+      doctor: "",
+    });
+    setDate("");
+    setTime("");
+  };
   const generateTimeOptions = () => {
     const times = [];
     const start = new Date();
@@ -128,7 +137,7 @@ const SetAppointment = ({ onClose }) => {
 
       if (response) {
         setIsSuccess(true);
-
+        handleClear();
         console.log(response.data);
         const scheduleId = response.data.scheduleId;
         reduxDispatch(addAppointment({ ...appointmentData, scheduleId }));
