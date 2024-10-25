@@ -65,8 +65,17 @@ const startWebSocketServer = () => {
         snapshot.docChanges().forEach((change) => {
           if (change.type === "added") {
             const notificationData = change.doc.data();
+            const decryptedDocument = decryptDocument(notificationData, [
+              "patientId",
+              "doctorId",
+              "branchId",
+              "createdAt",
+              "type",
+              "notificationId",
+              "read",
+            ]);
             ws.send(
-              JSON.stringify({ type: "notification", data: notificationData })
+              JSON.stringify({ type: "notification", data: decryptedDocument })
             );
           }
         });

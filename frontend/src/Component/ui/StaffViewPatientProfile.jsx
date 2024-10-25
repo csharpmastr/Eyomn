@@ -9,7 +9,10 @@ import { getPatientVisit } from "../../Service/PatientService";
 import Cookies from "universal-cookie";
 import { useDispatch } from "react-redux";
 import { addVisit } from "../../Slice/VisitSlice";
+import VisitReasonModal from "./VisitReasonModal";
 const StaffViewPatientProfile = ({ patient, visits }) => {
+  const [isVisitOpen, setIsVisitOpen] = useState(false);
+  const toggleModal = () => setIsVisitOpen(!isVisitOpen);
   const reduxDispatch = useDispatch();
   const formattedDate = patient.createdAt
     ? new Date(patient.createdAt).toLocaleDateString("en-US", {
@@ -123,7 +126,10 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
               | Recent Visit
             </h1>
             <button>
-              <IoIosAddCircleOutline className="h-6 w-6 md:mr-2 text-c-gray3]" />
+              <IoIosAddCircleOutline
+                className="h-6 w-6 md:mr-2 text-c-gray3]"
+                onClick={toggleModal}
+              />
             </button>
           </header>
           {visits.length > 0 ? (
@@ -135,6 +141,7 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
           )}{" "}
         </div>
       </div>
+      {isVisitOpen && <VisitReasonModal onClose={toggleModal} />}
     </div>
   );
 };

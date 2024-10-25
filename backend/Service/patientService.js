@@ -145,9 +145,20 @@ const getPatients = async (
   }
 };
 
-const addVisit = async (patientId, doctorId, reason_visit, branchId) => {
+const addVisit = async (
+  patientId,
+  doctorId,
+  reason_visit,
+  branchId,
+  firebaseUid
+) => {
   const currentDate = new Date();
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
+
     const visitId = await generateUniqueId(visitCollection);
 
     const visitData = {
@@ -159,17 +170,30 @@ const addVisit = async (patientId, doctorId, reason_visit, branchId) => {
       branchId: branchId,
     };
 
-    const previousVisitsSnapshot = await visitCollection
-      .where("patientId", "==", patientId)
-      .get();
+    const patientSnapshot = await patientCollection.doc(patientId).get();
+    let patientName = "";
+    let isReturningPatient = false;
 
-    let isReturningPatient = !previousVisitsSnapshot.empty;
+    if (patientSnapshot.exists) {
+      const patientData = patientSnapshot.data();
+      const firstName = decryptData(patientData.first_name);
+      const lastName = decryptData(patientData.last_name);
+      patientName = `${firstName} ${lastName}`;
+
+      const previousVisitsSnapshot = await visitCollection
+        .where("patientId", "==", patientId)
+        .get();
+
+      isReturningPatient = !previousVisitsSnapshot.empty;
+    } else {
+      throw { status: 404, message: "Patient not found." };
+    }
 
     const visitSubColRef = visitCollection.doc(visitId);
     await visitSubColRef.set(visitData);
 
     console.log(
-      `Visit added for patient ${patientId} with visit ID: ${visitId}`
+      `Visit added for patient ${patientId} (${patientName}) with visit ID: ${visitId}`
     );
 
     const notificationType = isReturningPatient
@@ -180,9 +204,10 @@ const addVisit = async (patientId, doctorId, reason_visit, branchId) => {
       branchId,
       doctorId,
       patientId,
+      patientName,
     });
 
-    return visitId;
+    return { visitId, date: visitData.date };
   } catch (error) {
     console.error("Error adding visit: ", error);
     throw new Error("Failed to add visit: " + error.message);
@@ -343,7 +368,7 @@ module.exports = {
   retrievePatient,
   addNote,
   getNote,
-
+  addVisit,
   // getPatientsByDoctor,
   // getPatients,
 };

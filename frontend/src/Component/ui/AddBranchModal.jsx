@@ -5,7 +5,7 @@ import { FaRegEyeSlash } from "react-icons/fa";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import PhList from "../../assets/Data/location_list.json";
 import Loader from "./Loader";
-import { addBranchService } from "../../Service/OrganizationService";
+import { addBranchService } from "../../Service/organizationService";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "universal-cookie";
 import SuccessModal from "./SuccessModal";

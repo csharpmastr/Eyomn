@@ -10,6 +10,7 @@ const {
   getPatientNoteHandler,
   getPatientVisitsHandler,
   testingnoteHandler,
+  addVisitHandler,
 } = require("../Controller/patientController");
 const { validateToken } = require("../Wrapper/Wrapper");
 
@@ -27,5 +28,5 @@ router.put("/retrieve/:patientId", retrievePatientHandler);
 router.post("/add-note/:patientId/:visitId", addNoteHandler);
 router.get("/get-note/:patientId/:visitId", getPatientNoteHandler);
 router.get("/get-visits", getPatientVisitsHandler);
-
+router.post("/add-visit/:patientId/:doctorId/:branchId", addVisitHandler);
 module.exports = router;

@@ -121,3 +121,33 @@ export const getPatientVisit = async (
     throw err;
   }
 };
+
+export const addVisitService = async (
+  reason_visit,
+  patientId,
+  doctorId,
+  branchId,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.post(
+      `${PATIENT_API_BASE_URL}/add-visit/${patientId}/${doctorId}/${branchId}`,
+      { reason_visit },
+      {
+        params: {
+          firebaseUid,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error fetching patients: ", error);
+    throw error;
+  }
+};

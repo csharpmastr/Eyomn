@@ -9,6 +9,7 @@ const {
   addNote,
   getNote,
   testingNote,
+  addVisit,
 } = require("../Service/patientService");
 
 const addPatientHandler = async (req, res) => {
@@ -195,6 +196,50 @@ const getPatientVisitsHandler = async (req, res) => {
       .json({ message: "Error getting patient's note.", error: error.message });
   }
 };
+const addVisitHandler = async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+    const branchId = req.params.branchId;
+    const doctorId = req.params.doctorId;
+
+    // Assuming req.body is structured like this:
+    // {
+    //   reason_visit: {
+    //     reason_visit: "check up"
+    //   }
+    // }
+    const reason_visit = req.body.reason_visit?.reason_visit; // Extracting the string value
+    const { firebaseUid } = req.query;
+
+    if (!patientId || !branchId || !doctorId || !reason_visit) {
+      return res.status(400).json({
+        message:
+          "Please provide Patient ID, Branch ID, Doctor ID, and Reason for Visit.",
+      });
+    }
+
+    console.log("Reason for visit:", reason_visit); // Log the extracted reason_visit
+
+    const { visitId, date } = await addVisit(
+      patientId,
+      doctorId,
+      reason_visit, // Use the extracted reason_visit string
+      branchId,
+      firebaseUid
+    );
+
+    return res.status(201).json({
+      message: "Visit added successfully.",
+      visitId,
+      date,
+    });
+  } catch (error) {
+    console.error("Error adding visit:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to add visit: " + error.message });
+  }
+};
 
 module.exports = {
   addPatientHandler,
@@ -206,4 +251,5 @@ module.exports = {
   addNoteHandler,
   getPatientNoteHandler,
   getPatientVisitsHandler,
+  addVisitHandler,
 };

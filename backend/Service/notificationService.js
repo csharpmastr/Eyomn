@@ -1,6 +1,7 @@
 const { notificationCollection } = require("../Config/FirebaseConfig");
 const { v4: uuid } = require("uuid");
 const { serverTimestamp } = require("firebase/firestore");
+const { decryptData, encryptData } = require("../Security/DataHashing");
 
 const pushNotification = async (userId, type, data) => {
   try {
@@ -26,11 +27,14 @@ const pushNotification = async (userId, type, data) => {
         patientId: data.patientId,
       };
     }
+
     if (type === "returnPatient") {
+      const message = `Patient ${data.patientName} has returned for a follow-up visit.`;
+      const decryptedMessage = encryptData(message);
       notificationData = {
         ...notificationData,
         type: "returnPatient",
-        message: `Patient ${data.patientName} has returned for a follow-up visit.`,
+        message: decryptedMessage,
         branchId: data.branchId,
         doctorId: data.doctorId,
         patientId: data.patientId,
