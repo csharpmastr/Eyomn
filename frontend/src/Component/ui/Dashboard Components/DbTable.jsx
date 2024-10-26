@@ -82,7 +82,7 @@ const DbTable = () => {
   };
 
   return (
-    <div className="text-p-rg h-[500px] text-c-secondary rounded-lg bg-white p-4 overflow-clip">
+    <div className="text-p-rg h-[500px] text-c-secondary rounded-lg bg-white p-4 overflow-clip shadow-sm">
       <header className="flex justify-between items-center">
         <h1 className="font-medium text-nowrap">| Recent Patient</h1>
         <button
@@ -98,7 +98,7 @@ const DbTable = () => {
         <div className="w-1/4">Email</div>
         <div className="w-1/4">Last Visit</div>
       </div>
-      <div className="h-full overflow-y-scroll pb-24">
+      <div className="h-full overflow-auto pb-24">
         {currentData.map((patientData, index) => (
           <div
             key={index}

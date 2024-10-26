@@ -2,7 +2,7 @@ import React from "react";
 
 const DbGraph = () => {
   return (
-    <div className="text-p-rg h-[500px] text-c-secondary rounded-lg bg-white p-4 border">
+    <div className="text-p-rg h-[500px] text-c-secondary rounded-lg bg-white p-4 shadow-sm">
       <header className="flex justify-between h-fit w-full items-center mb-4">
         <h1 className=" font-semibold">| Inventory / Patient Graph</h1>
         <select className="hover:cursor-pointer focus:outline-none bg-bg-mc p-1 rounded-md border border-f-gray">
