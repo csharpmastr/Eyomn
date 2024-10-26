@@ -42,6 +42,7 @@ const StaffAddPatientPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log(value);
 
     if (errors[name]) {
       setErrors((prevErrors) => ({
@@ -372,14 +373,22 @@ const StaffAddPatientPage = () => {
                 <label htmlFor="occupation" className="text-p-sm">
                   Occupation (Optional)
                 </label>
-                <input
-                  type="text"
+                <select
                   name="occupation"
                   value={formData.occupation}
                   onChange={handleChange}
-                  className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                  placeholder="Enter middle name"
-                />
+                  className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                    errors.occupation
+                      ? "border-red-400 focus:outline-red-400"
+                      : "border-c-gray3 focus:outline-c-primary"
+                  }`}
+                >
+                  <option value="" disabled className="text-c-gray3">
+                    Select occupation
+                  </option>
+                  <option value="Employed">Employed</option>
+                  <option value="Unemployed">Unemployed</option>
+                </select>
               </div>
             </div>
             <div className="p-8 w-full lg:w-[660px] rounded-lg bg-white mb-6">

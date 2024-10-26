@@ -10,7 +10,10 @@ import SuccessModal from "../../Component/ui/SuccessModal";
 const PointOfSale = () => {
   const [selectedProducts, setSelectedProducts] = React.useState([]);
   const user = useSelector((state) => state.reducer.user.user);
-  const branchId = user.branches[0].branchId;
+  let branchId =
+    (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
+    user.userId ||
+    null;
   const { addPurchase, isLoading, error } = useAddPurchase();
   const [isSuccess, setIsSuccess] = useState(false);
   const handleProductSelect = (product) => {

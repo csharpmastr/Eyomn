@@ -34,15 +34,16 @@ const Login = () => {
       console.log(response);
 
       if (response) {
-        if (response.role === "0" || response.role === "1") {
+        if (
+          response.role === "0" ||
+          response.role === "1" ||
+          response.role === "3"
+        ) {
           sessionStorage.setItem("selectedTab", "dashboard");
           navigate("/dashboard");
         } else if (response.role === "2") {
           sessionStorage.setItem("selectedTab", "dashboard");
           navigate("/dashboard");
-        } else {
-          sessionStorage.setItem("selectedTab", "add-patient");
-          navigate("/add-patient");
         }
       } else {
         setIsvisible(true);
