@@ -3,7 +3,7 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { FaEllipsisV } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import AddEditProduct from "../../Component/ui/AddEditProduct";
-import ConfirmationModal from "../../Component/ui/ConfirmationModal"; // Import the ConfirmationModal
+import ConfirmationModal from "../../Component/ui/ConfirmationModal";
 
 const InventoryTable = () => {
   const products = useSelector((state) => state.reducer.product.products);
@@ -14,7 +14,7 @@ const InventoryTable = () => {
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const [isMenuOpen, setIsMenuOpen] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false); // Manage confirmation modal state
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [productId, setProductId] = useState("");
 
@@ -58,8 +58,8 @@ const InventoryTable = () => {
   };
 
   const handleDeleteProduct = (productId) => {
-    setProductId(productId); // Set product ID to be deleted
-    setIsConfirmationModalOpen(true); // Open the confirmation modal
+    setProductId(productId);
+    setIsConfirmationModalOpen(true);
   };
 
   useEffect(() => {
@@ -119,7 +119,9 @@ const InventoryTable = () => {
                     Php {productDetail.price || 0}
                   </div>
                   <div className="flex-1 pl-4">
-                    {productDetail.quantity || 0}
+                    {productDetail.quantity === 0
+                      ? "Out of stock"
+                      : productDetail.quantity || 0}
                   </div>
                   <div className="flex-1 pl-4">
                     {productDetail.brand || "Luxottica"}

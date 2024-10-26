@@ -1,19 +1,19 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useFetchData } from "../../../Hooks/useFetchData";
 
 const DbAppointment = () => {
-  const appointmentDummyData = [
-    { month: "Oct", day: "24", name: "John Doe", time: "4:15 PM" },
-    { month: "Oct", day: "24", name: "Jane Smith", time: "3:30 PM" },
-    { month: "Oct", day: "25", name: "Emily Johnson", time: "10:00 AM" },
-    { month: "Oct", day: "25", name: "Michael Brown", time: "2:45 PM" },
-    { month: "Oct", day: "26", name: "Sarah Wilson", time: "9:15 AM" },
-    { month: "Oct", day: "26", name: "David Lee", time: "11:30 AM" },
-    { month: "Oct", day: "27", name: "Sophia Martinez", time: "1:00 PM" },
-    { month: "Oct", day: "27", name: "James Anderson", time: "5:00 PM" },
-    { month: "Oct", day: "28", name: "Olivia Taylor", time: "3:00 PM" },
-    { month: "Oct", day: "29", name: "Liam Thomas", time: "4:30 PM" },
-  ];
+  const { loading } = useFetchData();
+  const appointments = useSelector(
+    (state) => state.reducer.appointment.appointment
+  );
+
+  const currentDate = new Date();
+
+  const sortedAppointments = [...appointments]
+    .filter((appointment) => new Date(appointment.scheduledTime) > currentDate)
+    .sort((a, b) => new Date(a.scheduledTime) - new Date(b.scheduledTime));
 
   const dateColors = [
     "bg-fuchsia-200",
@@ -31,6 +31,7 @@ const DbAppointment = () => {
   const navigate = useNavigate();
 
   const viewAll = () => {
+    sessionStorage.setItem("selectedTab", "appointment");
     navigate(`/appointment`);
   };
 
@@ -46,26 +47,46 @@ const DbAppointment = () => {
         </button>
       </header>
       <section className="h-full overflow-y-scroll flex flex-col gap-4 px-4 mt-6 pb-12">
-        {appointmentDummyData.map((data, index) => (
-          <div
-            className="rounded-md flex items-center justify-between bg-gray-100 p-3"
-            key={index}
-          >
-            <section className="flex items-center gap-3">
-              <h1
-                className={`w-fit rounded-md text-center px-2 ${
-                  dateColors[index % dateColors.length]
-                }`}
+        {loading ? (
+          <p className="text-center text-gray-500">Loading appointments...</p>
+        ) : sortedAppointments.length > 0 ? (
+          sortedAppointments.map((appointment, index) => {
+            const date = new Date(appointment.scheduledTime);
+            const month = date.toLocaleString("default", { month: "short" });
+            const day = date.getDate();
+            const time = date.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+
+            return (
+              <div
+                className="rounded-md flex items-center justify-between bg-gray-100 p-3"
+                key={appointment.id}
               >
-                {data.month}
-                <br />
-                {data.day}
-              </h1>
-              <p>{data.name}</p>
-            </section>
-            <p>{data.time}</p>
+                <section className="flex items-center gap-3">
+                  <h1
+                    className={`w-fit rounded-md text-center px-2 ${
+                      dateColors[index % dateColors.length] // Apply color from dateColors array
+                    }`}
+                  >
+                    {month}
+                    <br />
+                    {day}
+                  </h1>
+                  <p>{appointment.patient_name}</p>
+                </section>
+                <p>{time}</p>
+              </div>
+            );
+          })
+        ) : (
+          <div className="h-full flex justify-center items-center">
+            <p className="text-center text-gray-500">
+              No upcoming appointments.
+            </p>
           </div>
-        ))}
+        )}
       </section>
     </div>
   );

@@ -1,80 +1,27 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useFetchData } from "../../../Hooks/useFetchData";
+
+// Function to format date
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  return date.toLocaleDateString(undefined, options);
+};
 
 const DbTable = () => {
-  const currentData = [
-    {
-      first_name: "John",
-      last_name: "Doe",
-      contact_number: "123-456-7890",
-      email: "john.doe@example.com",
-      date: "2024-10-01",
-    },
-    {
-      first_name: "Jane",
-      last_name: "Smith",
-      contact_number: "098-765-4321",
-      email: "jane.smith@example.com",
-      date: "2024-10-05",
-    },
-    {
-      first_name: "Alice",
-      last_name: "Johnson",
-      contact_number: "555-123-4567",
-      email: "alice.johnson@example.com",
-      date: "2024-10-10",
-    },
-    {
-      first_name: "Bob",
-      last_name: "Williams",
-      contact_number: "444-987-6543",
-      email: "bob.williams@example.com",
-      date: "2024-10-15",
-    },
-    {
-      first_name: "Charlie",
-      last_name: "Brown",
-      contact_number: "333-555-7890",
-      email: "charlie.brown@example.com",
-      date: "2024-10-20",
-    },
-    {
-      first_name: "David",
-      last_name: "Wilson",
-      contact_number: "222-777-8888",
-      email: "david.wilson@example.com",
-      date: "2024-10-22",
-    },
-    {
-      first_name: "Emily",
-      last_name: "Davis",
-      contact_number: "111-222-3333",
-      email: "emily.davis@example.com",
-      date: "2024-10-25",
-    },
-    {
-      first_name: "Frank",
-      last_name: "Garcia",
-      contact_number: "999-888-7777",
-      email: "frank.garcia@example.com",
-      date: "2024-10-30",
-    },
-    {
-      first_name: "Grace",
-      last_name: "Martinez",
-      contact_number: "555-444-3333",
-      email: "grace.martinez@example.com",
-      date: "2024-11-01",
-    },
-    {
-      first_name: "Henry",
-      last_name: "Hernandez",
-      contact_number: "888-555-4444",
-      email: "henry.hernandez@example.com",
-      date: "2024-11-05",
-    },
-  ];
+  const { loading } = useFetchData();
+  const patients = useSelector((state) => state.reducer.patient.patients);
 
+  const sortedPatients =
+    !loading && patients?.length > 0
+      ? [...patients].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        )
+      : [];
+
+  const currentData = sortedPatients.slice(0, 10);
   const navigate = useNavigate();
 
   const viewAll = () => {
@@ -84,7 +31,7 @@ const DbTable = () => {
   return (
     <div className="text-p-rg h-[500px] text-c-secondary rounded-lg bg-white p-4 overflow-clip">
       <header className="flex justify-between items-center">
-        <h1 className="font-medium text-nowrap">| Recent Patient</h1>
+        <h1 className="font-medium text-nowrap">| Recent Patients</h1>
         <button
           onClick={viewAll}
           className="px-2 py-1 border border-c-primary text-c-primary rounded-lg"
@@ -96,7 +43,7 @@ const DbTable = () => {
         <div className="pl-8 w-1/4">Patient Name</div>
         <div className="w-1/4">Contact</div>
         <div className="w-1/4">Email</div>
-        <div className="w-1/4">Last Visit</div>
+        <div className="w-1/4 pl-2">Last Visit</div>
       </div>
       <div className="h-full overflow-y-scroll pb-24">
         {currentData.map((patientData, index) => (
@@ -104,12 +51,14 @@ const DbTable = () => {
             key={index}
             className="border-b border-f-gray py-4 text-f-dark cursor-pointer flex bg-white"
           >
-            <td className="pl-8 w-1/4">
+            <div className="pl-8 w-1/4">
               {patientData.first_name + " " + patientData.last_name}
-            </td>
-            <td className="w-1/4">{patientData.contact_number}</td>
-            <td className="w-1/4 truncate">{patientData.email}</td>
-            <td className="w-1/4">{patientData.date}</td>
+            </div>
+            <div className="w-1/4">{patientData.contact_number}</div>
+            <div className="w-1/4 truncate">{patientData.email}</div>
+            <div className="w-1/4 pl-2">
+              {formatDate(patientData.createdAt)}
+            </div>
           </div>
         ))}
       </div>

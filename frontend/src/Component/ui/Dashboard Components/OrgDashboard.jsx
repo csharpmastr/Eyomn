@@ -1,20 +1,26 @@
-import React, { useState, useEffect } from "react";
-import DbCard from "./DbCard";
-import DbGraph from "./DbGraph";
-import DbAppointment from "./DbAppointment";
-import DbTable from "./DbTable";
-import DbProduct from "./DbProduct";
+import React, { useState, useEffect, Suspense, lazy } from "react";
+import { useSelector } from "react-redux";
+
+const DbCard = lazy(() => import("./DbCard"));
+const DbGraph = lazy(() => import("./DbGraph"));
+const DbAppointment = lazy(() => import("./DbAppointment"));
+const DbTable = lazy(() => import("./DbTable"));
+const DbProduct = lazy(() => import("./DbProduct"));
 
 const OrgDashboard = () => {
+  const patients = useSelector((state) => state.reducer.patient.patients);
+  const products = useSelector((state) => state.reducer.product.products);
+  const staffs = useSelector((state) => state.reducer.staff.staffs);
+
+  const patientCount = patients.length;
+  const productCount = products.length;
+  const staffCount = staffs.length;
+
   const dummyData = [
-    {
-      title: "Gross Income",
-      value: "Php. 20,000",
-      percentageChange: "+4.3%",
-    },
-    { title: "Total Patients", value: "500", percentageChange: "+4.3%" },
-    { title: "Total Product", value: "13, 200", percentageChange: "+4.3%" },
-    { title: "Number of Staffs", value: "21", percentageChange: "+4.3%" },
+    { title: "Gross Income", value: "Php. 20,000", percentageChange: "+4.3%" },
+    { title: "Total Patients", value: patientCount, percentageChange: "+4.3%" },
+    { title: "Total Product", value: productCount, percentageChange: "+4.3%" },
+    { title: "Number of Staffs", value: staffCount, percentageChange: "+4.3%" },
   ];
 
   const [currentDateTime, setCurrentDateTime] = useState({
@@ -38,7 +44,9 @@ const OrgDashboard = () => {
   return (
     <>
       <div className="flex w-full gap-6">
-        <DbCard data={dummyData} />
+        <Suspense fallback={<div>Loading cards...</div>}>
+          <DbCard data={dummyData} />
+        </Suspense>
         <div className="flex flex-col justify-between bg-white p-4 rounded-lg">
           <div className="font-Poppins text-p-sm">
             <p>Date: {currentDateTime.date}</p>
@@ -55,19 +63,27 @@ const OrgDashboard = () => {
         </div>
       </div>
       <div className="flex w-full h-full gap-6">
-        <div className=" w-1/3 ">
-          <DbProduct />
+        <div className="w-1/3">
+          <Suspense fallback={<div>Loading products...</div>}>
+            <DbProduct />
+          </Suspense>
         </div>
         <div className="w-2/3">
-          <DbGraph />
+          <Suspense fallback={<div>Loading graph...</div>}>
+            <DbGraph patients={patients} />
+          </Suspense>
         </div>
       </div>
       <div className="flex w-full gap-6">
         <div className="w-2/3">
-          <DbTable />
+          <Suspense fallback={<div>Loading table...</div>}>
+            <DbTable />
+          </Suspense>
         </div>
         <div className="w-1/3">
-          <DbAppointment />
+          <Suspense fallback={<div>Loading appointments...</div>}>
+            <DbAppointment />
+          </Suspense>
         </div>
       </div>
     </>

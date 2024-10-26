@@ -23,7 +23,10 @@ const VisitReasonModal = ({ onClose }) => {
   const { patientId } = useParams();
   const user = useSelector((state) => state.reducer.user.user);
   const firebaseUid = user.firebaseUid;
-  const branchId = user.branches[0].branchId;
+  let branchId =
+    (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
+    user.userId ||
+    null;
 
   const handleDoctorChange = (e) => {
     setSelectedDoctor(e.target.value);
@@ -139,7 +142,7 @@ const VisitReasonModal = ({ onClose }) => {
         isOpen={isSuccess}
         onClose={onClose}
         title={"Visit Added Successfully"}
-        description={"Patient's visit added to the system"} // Ensure description is a string
+        description={"Patient's visit added to the system"}
       />
     </>
   );
