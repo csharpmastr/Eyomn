@@ -6,6 +6,7 @@ const {
   patientCollection,
   branchCollection,
   visitCollection,
+  noteCollection,
 } = require("../Config/FirebaseConfig");
 const {
   encryptDocument,
@@ -71,7 +72,7 @@ const addPatient = async (
     const patientRef = patientCollection.doc(patientId);
     await patientRef.set(encryptedPatientData);
 
-    await addVisit(patientId, doctorId, reason_visit, branchId);
+    await addVisit(patientId, doctorId, reason_visit, branchId, firebaseUid);
 
     return {
       id: patientId,
@@ -214,15 +215,16 @@ const addVisit = async (
   }
 };
 
-const addNote = async (patientId, visitId, noteDetails) => {
+const addNote = async (patientId, noteDetails, firebaseUid) => {
   try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
     const noteId = await generateUniqueId(
       patientCollection.doc(patientId).collection("notes")
     );
-    const noteRef = patientCollection
-      .doc(patientId)
-      .collection("notes")
-      .doc(visitId);
+    const noteCol = noteCollection.doc(patientId).collection("notes");
     const cleanedNote = removeNullValues(noteDetails);
 
     const encryptValue = (value) => {
@@ -249,7 +251,7 @@ const addNote = async (patientId, visitId, noteDetails) => {
     };
 
     const finalEncryptedData = deepEncrypt(cleanedNote);
-
+    const noteRef = noteCol.doc(noteId);
     await noteRef.set({
       noteId,
       ...finalEncryptedData,
