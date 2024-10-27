@@ -7,7 +7,7 @@ const DbCard = ({ data }) => {
       {data.map((item, index) => (
         <div
           key={index}
-          className="p-4 w-full rounded-xl text-f-dark font-Poppins border border-f-gray text-p-rg"
+          className="p-4 w-full rounded-xl text-f-dark font-Poppins border border-white text-p-rg shadow-sm"
           style={{
             background: "linear-gradient(to top, #EEF1F1, #B8D4D4, #EEF1F1)",
           }}

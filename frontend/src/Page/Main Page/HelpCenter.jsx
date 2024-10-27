@@ -38,13 +38,13 @@ const HelpCenter = () => {
           </div>
         ))}
       </nav>
-      <div className="flex h-full pt-4 pb-12">
-        <section className="w-full md:w-1/3 flex flex-col justify-between h-fit md:h-full">
+      <div className="flex flex-col lg:flex-row h-full pt-4 pb-12">
+        <section className="w-full md:w-1/3 lg:flex flex-row lg:flex-col justify-between h-fit md:h-full hidden">
           <div>
-            <h1 className="text-p-lg font-semibold">{selected}</h1>
-            <p className="text-p-rg">Lorem ipsum dolor sha.</p>
+            <h1 className="text-4xl font-semibold">{selected}</h1>
+            <p className="text-p-rg mt-2">Lorem ipsum dolor sha.</p>
           </div>
-          <div className="w-2/3 bg-c-primary rounded-lg px-4 py-4  text-f-light text-p-rg">
+          <div className="w-2/3 h-fit bg-c-primary rounded-lg px-4 py-4  text-f-light text-p-rg">
             <section>
               <h1 className="font-semibold">Do you still need our help?</h1>
               <p className="text-p-sm">Send you request via email.</p>
@@ -54,7 +54,7 @@ const HelpCenter = () => {
             </div>
           </div>
         </section>
-        <aside className="w-full md:w-2/3 h-full overflow-y-scroll">
+        <aside className="w-full lg:w-2/3 h-full overflow-y-scroll">
           {selected && <HelpSections selected={selected} />}
         </aside>
       </div>
