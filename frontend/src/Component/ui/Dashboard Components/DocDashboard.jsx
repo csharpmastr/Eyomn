@@ -1,22 +1,16 @@
-import React, { Suspense } from "react";
-import DbCard from "./DbCard";
-import DbGraph from "./DbGraph";
-import DbAppointment from "./DbAppointment";
-import DbTable from "./DbTable";
+import React, { Suspense, lazy } from "react";
 import { useSelector } from "react-redux";
 
-// Loader Component as fallback UI
-const Loader = () => (
-  <div className="flex justify-center items-center h-64 text-gray-500">
-    Loading dashboard...
-  </div>
-);
+// Use lazy loading for the components
+const DbCard = lazy(() => import("./DbCard"));
+const DbGraph = lazy(() => import("./DbGraph"));
+const DbAppointment = lazy(() => import("./DbAppointment"));
+const DbTable = lazy(() => import("./DbTable"));
 
 const DocDashboard = () => {
-  const patients = useSelector((state) => state.reducer.patient.patients || []);
+  const patients = useSelector((state) => state.reducer.patient.patients);
   const patientCount = patients.length;
 
-  // Dummy data for cards
   const dummyData = [
     {
       title: "Number of Visit Today",
@@ -31,29 +25,30 @@ const DocDashboard = () => {
     { title: "Total Patients", value: patientCount, percentageChange: "+4.3%" },
   ];
 
-  // Conditionally render dashboard only if patients data is available
   return (
     <>
-      {patients.length ? (
-        <Suspense fallback={<Loader />}>
-          <div className="flex w-full gap-6">
-            <DbCard data={dummyData} />
-          </div>
-          <div className="w-full flex gap-6">
-            <div className="w-2/3">
-              <DbGraph />
-            </div>
-            <div className="w-1/3">
-              <DbAppointment />
-            </div>
-          </div>
-          <div className="w-full">
-            <DbTable />
-          </div>
+      <div className="flex w-full gap-6">
+        <Suspense fallback={<div>Loading cards...</div>}>
+          <DbCard data={dummyData} />
         </Suspense>
-      ) : (
-        <Loader />
-      )}
+      </div>
+      <div className="w-full flex gap-6">
+        <div className="w-2/3">
+          <Suspense fallback={<div>Loading graph...</div>}>
+            <DbGraph patients={patients} />
+          </Suspense>
+        </div>
+        <div className="w-1/3">
+          <Suspense fallback={<div>Loading appointments...</div>}>
+            <DbAppointment />
+          </Suspense>
+        </div>
+      </div>
+      <div className="w-full">
+        <Suspense fallback={<div>Loading table...</div>}>
+          <DbTable />
+        </Suspense>
+      </div>
     </>
   );
 };
