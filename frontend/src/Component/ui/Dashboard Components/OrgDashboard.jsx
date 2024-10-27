@@ -37,9 +37,9 @@ const OrgDashboard = () => {
 
   return (
     <>
-      <div className="flex w-full gap-6">
+      <div className="flex w-full gap-6 font-Poppins">
         <DbCard data={dummyData} />
-        <div className="flex flex-col justify-between bg-white p-4 rounded-lg">
+        <div className="flex flex-col justify-between bg-white p-4 rounded-lg shadow-sm">
           <div className="font-Poppins text-p-sm">
             <p>Date: {currentDateTime.date}</p>
             <p>Time: {currentDateTime.time}</p>

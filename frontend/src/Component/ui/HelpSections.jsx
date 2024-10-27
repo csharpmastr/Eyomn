@@ -166,8 +166,10 @@ const HelpSections = ({ selected }) => {
         </div>
       )}
       {selected === "Changelog" && (
-        <div className="w-full border border-f-gray bg-white rounded-lg px-10 h-52 flex flex-col justify-center items-center">
-          <h1 className="font-semibold text-p-lg">Changelog</h1>
+        <div className="w-full h-full border border-f-gray bg-white rounded-lg px-10 flex flex-col justify-center items-center">
+          <h1 className="font-semibold text-p-lg">
+            No changes have been made so far.
+          </h1>
         </div>
       )}
     </div>
