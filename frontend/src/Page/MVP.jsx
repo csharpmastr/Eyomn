@@ -66,7 +66,10 @@ const MVP = () => {
         <SideBar />
         <div className="flex-1 flex flex-col overflow-hidden">
           <div className="hidden xl:h-20 w-full bg-white font-Poppins text-f-dark border-b border-f-gray xl:flex items-center xl:px-6 text-h-h6 font-bold justify-between">
-            <h1>{currentTab}</h1>
+            <div>
+              <h1 className="font-helvetica-rounded font-bold">{currentTab}</h1>
+              <p className="text-p-sm font-normal">manage patients hetres</p>
+            </div>
             <div className="xl:w-2/6 w-full h-full flex items-center xl:justify-end">
               <TopbarButton />
             </div>

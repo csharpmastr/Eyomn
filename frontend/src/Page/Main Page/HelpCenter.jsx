@@ -1,17 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import HelpSections from "../../Component/ui/HelpSections";
-import { IoMdSearch } from "react-icons/io";
-import { IoIosAddCircleOutline } from "react-icons/io";
 
 const HelpCenter = () => {
   const [selected, setSelected] = useState("Getting Started");
+  const [selectedPart, setSelectedPart] = useState("Creating an Account");
 
   const navigate = useNavigate();
 
   const handleSelected = (section) => {
     setSelected(section);
     navigate(`/help/${section}`);
+  };
+
+  const handleSectionPart = (section_part) => {
+    setSelectedPart(section_part);
+    document
+      .getElementById(section_part)
+      ?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -39,10 +45,36 @@ const HelpCenter = () => {
         ))}
       </nav>
       <div className="flex flex-col lg:flex-row h-full pt-4 pb-12">
-        <section className="w-full md:w-1/3 lg:flex flex-row lg:flex-col justify-between h-fit md:h-full hidden">
+        <section className="w-full md:w-1/3 lg:flex flex-row lg:flex-col justify-between h-fit md:h-full hidden text-f-dark">
           <div>
-            <h1 className="text-4xl font-semibold">{selected}</h1>
-            <p className="text-p-rg mt-2">Lorem ipsum dolor sha.</p>
+            <h1 className="text-4xl font-bold font-helvetica-rounded mb-5">
+              {selected}
+            </h1>
+            <section>
+              {selected === "Account" && (
+                <>
+                  {[
+                    "Creating an Account",
+                    "Logging In and Out",
+                    "Password Management",
+                    "Profile Management",
+                    "Deleting Your Account",
+                  ].map((section_part) => (
+                    <div
+                      key={section_part}
+                      className={`w-fit pl-2 py-2  cursor-pointer ${
+                        selectedPart === section_part
+                          ? " border-l-2 border-c-primary font-semibold text-c-primary"
+                          : " border-l-2 border-f-gray font-medium text-c-gray3"
+                      }`}
+                      onClick={() => handleSectionPart(section_part)}
+                    >
+                      <p>{section_part}</p>
+                    </div>
+                  ))}
+                </>
+              )}
+            </section>
           </div>
           <div className="w-2/3 h-fit bg-c-primary rounded-lg px-4 py-4  text-f-light text-p-rg">
             <section>
