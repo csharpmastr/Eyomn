@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { FiUser } from "react-icons/fi";
 import { FaRegEyeSlash } from "react-icons/fa";
@@ -12,7 +12,7 @@ import Loader from "./Loader";
 import SuccessModal from "./SuccessModal";
 import { addStaff } from "../../Slice/StaffSlice";
 
-const AddStaff = ({ onClose }) => {
+const AddStaff = ({ onClose, staffData }) => {
   const [image, setImage] = useState(null);
   const { branchId } = useParams();
   const [isSuccess, setIsSuccess] = useState(false);
@@ -23,7 +23,6 @@ const AddStaff = ({ onClose }) => {
   const [passVisible, setPassVisible] = useState(false);
   const [cpVisible, setCpVisible] = useState(false);
   const branches = useSelector((state) => state.reducer.branch.branch);
-  const user = useSelector((state) => state.reducer.user.user);
   const { addStaffHook, isLoading, error } = useAddStaff();
   const reduxDispatch = useDispatch();
   const [errors, setErrors] = useState({});
@@ -36,6 +35,7 @@ const AddStaff = ({ onClose }) => {
   const [isSatOn, setIsSatOn] = useState(false);
   const [isSunOn, setIsSunOn] = useState(false);
   const [branchAssignment, setBranchAssignment] = useState("");
+
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -49,6 +49,44 @@ const AddStaff = ({ onClose }) => {
     password: "",
     branches: [],
   });
+
+  //Viewing staff details
+  useEffect(() => {
+    if (staffData) {
+      if (staffData.branches.length === 1) {
+        setBranchAssignment("stationary");
+      } else {
+        setBranchAssignment("rotational");
+      }
+      setFormData({
+        first_name: staffData.first_name || "",
+        last_name: staffData.last_name || "",
+        middle_name: staffData.middle_name || "",
+        birthdate: staffData.birthdate || "",
+        province: staffData.province || "",
+        municipality: staffData.municipality || "",
+        email: staffData.email || "",
+        contact_number: staffData.contact_number || "",
+        position: staffData.position || "",
+        branches: staffData.branches || [],
+      });
+      if (staffData.province) {
+        const initialProvince = {
+          value: staffData.province,
+          label: staffData.province,
+        };
+        setSelectedProvince(initialProvince);
+      }
+
+      if (staffData.municipality) {
+        const initialMunicipality = {
+          value: staffData.municipality,
+          label: staffData.municipality,
+        };
+        setSelectedMunicipality(initialMunicipality);
+      }
+    }
+  }, [staffData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -293,6 +331,8 @@ const AddStaff = ({ onClose }) => {
 
     return Object.keys(newErrors).length === 0;
   };
+
+  //Adding Staff
   const handleSubmitStaff = async (e) => {
     e.preventDefault();
 
@@ -309,7 +349,9 @@ const AddStaff = ({ onClose }) => {
         setIsSuccess(true);
         reduxDispatch(addStaff({ ...formData, staffId }));
       }
-    } catch {}
+    } catch (error) {
+      console.log(error);
+    }
   };
   return ReactDOM.createPortal(
     <>

@@ -1,10 +1,15 @@
 import React from "react";
 
-const StaffCard = ({ name, email, position, showImage = true }) => {
+const StaffCard = ({ staffData, showImage = true, onClick }) => {
   return (
-    <div className="min-w-[350px] rounded-lg overflow-hidden shadow-lg hover:cursor-pointer font-Poppins">
+    <div
+      className="min-w-[350px] rounded-lg overflow-hidden shadow-lg hover:cursor-pointer font-Poppins"
+      onClick={onClick}
+    >
       <div className="bg-[#41a6ac] h-fit font-bold px-4 py-4">
-        <h1 className="text-p-lg font-semibold text-f-light">{position}</h1>
+        <h1 className="text-p-lg font-semibold text-f-light">
+          {staffData.position}
+        </h1>
       </div>
       <div
         className={`p-6 flex bg-white ${
@@ -19,8 +24,10 @@ const StaffCard = ({ name, email, position, showImage = true }) => {
           />
         )}
         <div>
-          <h3 className="text-p-lg font-semibold text-f-dark">{name}</h3>
-          <p className="text-p-rg text-f-dark">{email}</p>
+          <h3 className="text-p-lg font-semibold text-f-dark">
+            {staffData.first_name + " " + staffData.last_name}
+          </h3>
+          <p className="text-p-rg text-f-dark">{staffData.email}</p>
         </div>
       </div>
     </div>
