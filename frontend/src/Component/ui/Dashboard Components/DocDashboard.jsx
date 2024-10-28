@@ -28,9 +28,17 @@ const DocDashboard = () => {
   return (
     <>
       <div className="flex w-full gap-6">
-        <Suspense fallback={<div>Loading cards...</div>}>
-          <DbCard data={dummyData} />
-        </Suspense>
+        {dummyData.map((data) =>
+          data.title === "Number of Staffs" && user.role === "3" ? null : (
+            <Suspense fallback={<div>Loading cards...</div>} key={data.title}>
+              <DbCard
+                title={data.title}
+                value={data.value}
+                percentageChange={data.percentageChange}
+              />
+            </Suspense>
+          )
+        )}
       </div>
       <div className="w-full flex gap-6">
         <div className="w-2/3">

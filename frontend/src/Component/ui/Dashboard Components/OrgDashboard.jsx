@@ -8,6 +8,7 @@ const DbTable = lazy(() => import("./DbTable"));
 const DbProduct = lazy(() => import("./DbProduct"));
 
 const OrgDashboard = () => {
+  const user = useSelector((state) => state.reducer.user.user);
   const patients = useSelector((state) => state.reducer.patient.patients);
   const products = useSelector((state) => state.reducer.product.products);
   const staffs = useSelector((state) => state.reducer.staff.staffs);
@@ -44,9 +45,18 @@ const OrgDashboard = () => {
   return (
     <>
       <div className="flex w-full gap-6">
-        <Suspense fallback={<div>Loading cards...</div>}>
-          <DbCard data={dummyData} />
-        </Suspense>
+        {dummyData.map((data) =>
+          data.title === "Number of Staffs" && user.role === "3" ? null : (
+            <Suspense fallback={<div>Loading cards...</div>} key={data.title}>
+              <DbCard
+                title={data.title}
+                value={data.value}
+                percentageChange={data.percentageChange}
+              />
+            </Suspense>
+          )
+        )}
+
         <div className="flex flex-col justify-between bg-white p-4 rounded-lg">
           <div className="font-Poppins text-p-sm">
             <p>Date: {currentDateTime.date}</p>
