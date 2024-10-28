@@ -296,9 +296,9 @@ const AddStaff = ({ onClose }) => {
   const handleSubmitStaff = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      return false;
-    }
+    // if (!validateForm()) {
+    //   return false;
+    // }
 
     console.log(formData);
 

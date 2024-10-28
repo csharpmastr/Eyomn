@@ -18,10 +18,12 @@ const pushNotification = async (userId, type, data) => {
     };
 
     if (type === "newPatient") {
+      const message = `New patient registered: ${data.patientName}.`;
+      const encryptedMessage = encryptData(message);
       notificationData = {
         ...notificationData,
         type: "newPatient",
-        message: `A new patient has been added.`,
+        message: encryptedMessage,
         branchId: data.branchId,
         doctorId: data.doctorId,
         patientId: data.patientId,
@@ -30,11 +32,11 @@ const pushNotification = async (userId, type, data) => {
 
     if (type === "returnPatient") {
       const message = `Patient ${data.patientName} has returned for a follow-up visit.`;
-      const decryptedMessage = encryptData(message);
+      const encryptedMessage = encryptData(message);
       notificationData = {
         ...notificationData,
         type: "returnPatient",
-        message: decryptedMessage,
+        message: encryptedMessage,
         branchId: data.branchId,
         doctorId: data.doctorId,
         patientId: data.patientId,

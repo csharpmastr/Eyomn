@@ -30,6 +30,8 @@ const startWebSocketServer = () => {
       const patientQuery = query(patientCol, where("doctorId", "==", staffId));
 
       unsubscribePatients = onSnapshot(patientQuery, (snapshot) => {
+        const patients = [];
+
         snapshot.docChanges().forEach((change) => {
           const patientId = change.doc.id;
 
@@ -44,13 +46,18 @@ const startWebSocketServer = () => {
               "isDeleted",
             ]);
             if (!sentPatientIds.has(patientId)) {
-              ws.send(
-                JSON.stringify({ type: "patient", data: decryptedPatientData })
-              );
+              patients.push(decryptedPatientData);
               sentPatientIds.add(patientId);
             }
           }
         });
+        console.log(`Patients length ${patients.length}`);
+
+        if (patients.length > 0) {
+          patients.forEach((patient) => {
+            ws.send(JSON.stringify({ type: "patient", data: patient }));
+          });
+        }
       });
 
       const notificationRef = collection(dbClient, "notification");
@@ -62,6 +69,7 @@ const startWebSocketServer = () => {
       );
 
       unsubscribeNotifications = onSnapshot(notificationQuery, (snapshot) => {
+        const notifications = [];
         snapshot.docChanges().forEach((change) => {
           if (change.type === "added") {
             const notificationData = change.doc.data();
@@ -74,11 +82,19 @@ const startWebSocketServer = () => {
               "notificationId",
               "read",
             ]);
-            ws.send(
-              JSON.stringify({ type: "notification", data: decryptedDocument })
-            );
+            notifications.push(decryptedDocument);
           }
         });
+        if (notifications.length > 0) {
+          console.log(`Notification length ${notifications.length}`);
+          console.log(notifications);
+
+          notifications.forEach((notification) => {
+            ws.send(
+              JSON.stringify({ type: "notification", data: notification })
+            );
+          });
+        }
       });
     } catch (error) {
       console.error("Error fetching real-time updates:", error.message);

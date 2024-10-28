@@ -6,8 +6,6 @@ import { FiCalendar } from "react-icons/fi";
 const ReasonVisitCard = ({ reasonData }) => {
   const doctors = useSelector((state) => state.reducer.doctor.doctor);
 
-  const doctor = doctors.find((doc) => doc.staffId === reasonData.doctorId);
-
   const getDateAndTime = (timestamp) => {
     const dateObj = new Date(timestamp);
     const date = dateObj.toLocaleDateString();

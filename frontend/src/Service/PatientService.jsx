@@ -117,8 +117,8 @@ export const getPatientVisit = async (
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching patients: ", err);
-    throw err;
+    console.error("Error fetching patients: ", error);
+    throw error;
   }
 };
 

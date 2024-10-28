@@ -222,7 +222,7 @@ const SideBar = () => {
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "dashboard"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : "text-f-dark font-medium"
+                    : "text-f-dark font-medium "
                 }${
                   isCollapsed
                     ? " xl:justify-center xl:px-2 py-2 "
@@ -246,10 +246,10 @@ const SideBar = () => {
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "scribe"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : "text-f-dark font-medium"
+                    : "text-f-dark font-medium "
                 }${
                   isCollapsed
-                    ? "xl:px-2 py-2 justify-center"
+                    ? "xl:px-2 py-2 justify-center "
                     : "xl:py-3 xl:px-4 "
                 }`}
                 onClick={() => setSelected("scribe")}
@@ -268,11 +268,11 @@ const SideBar = () => {
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "patient"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : "text-f-dark font-medium"
+                    : "text-f-dark font-medium "
                 }${
                   isCollapsed
-                    ? " xl:px-2 py-2 justify-center"
-                    : "xl:py-3 xl:px-4 "
+                    ? " xl:px-2 py-2 justify-center "
+                    : " xl:py-3 xl:px-4 "
                 }`}
                 onClick={() => setSelected("patient")}
                 to="patient"
@@ -290,10 +290,10 @@ const SideBar = () => {
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
                   selected === "appointment"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : "text-f-dark font-medium"
+                    : "text-f-dark font-medium "
                 }${
                   isCollapsed
-                    ? "xl:px-2 py-2 justify-center"
+                    ? "xl:px-2 py-2 justify-center "
                     : "xl:py-3 xl:px-4 "
                 }`}
                 onClick={() => setSelected("appointment")}
@@ -316,7 +316,7 @@ const SideBar = () => {
                 className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
                   selected === "dashboard"
                     ? "bg-c-secondary text-f-light font-semibold "
-                    : "text-f-dark font-medium"
+                    : "text-f-dark font-medium "
                 }${
                   isCollapsed
                     ? " xl:justify-center xl:px-2 py-2 "

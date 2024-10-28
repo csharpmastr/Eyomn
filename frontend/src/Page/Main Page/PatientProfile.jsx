@@ -19,6 +19,7 @@ const PatientProfile = () => {
   const visitsStore = useSelector((state) => state.reducer.visit.visits);
   const user = useSelector((state) => state.reducer.user.user);
   const { patientId } = useParams();
+
   const [currentPatient, setCurrentPatient] = useState(null);
   const navigate = useNavigate();
   const reduxDispatch = useDispatch();
@@ -38,30 +39,39 @@ const PatientProfile = () => {
   useEffect(() => {
     const fetchPatientVisit = async () => {
       try {
-        const visitsRes = await getPatientVisit(
-          currentPatient.patientId,
-          accessToken,
-          refreshToken,
-          user.firebaseUid
+        const existingVisits = visitsStore.filter(
+          (visit) => visit.patientId === currentPatient.patientId
         );
 
-        visitsRes.forEach((visit) => {
-          const visitExists = visitsStore.some(
-            (storedVisit) => storedVisit.visitId === visit.visitId
+        if (existingVisits.length > 0) {
+          setVisits(existingVisits);
+        } else {
+          const visitsRes = await getPatientVisit(
+            currentPatient.patientId,
+            accessToken,
+            refreshToken,
+            user.firebaseUid
           );
-          if (!visitExists && visit.visitId) {
-            reduxDispatch(addVisit(visit));
-          }
-        });
-        setVisits(visitsRes);
+
+          visitsRes.forEach((visit) => {
+            const visitExists = visitsStore.some(
+              (storedVisit) => storedVisit.visitId === visit.visitId
+            );
+            if (!visitExists && visit.visitId) {
+              reduxDispatch(addVisit(visit));
+            }
+          });
+          setVisits(visitsRes);
+        }
       } catch (error) {
         console.error("Error fetching patient visit data:", error);
       }
     };
+
     if (currentPatient?.patientId && accessToken && refreshToken) {
       fetchPatientVisit();
     }
-  }, [currentPatient, accessToken, refreshToken, reduxDispatch]);
+  }, [currentPatient, accessToken, refreshToken, reduxDispatch, visitsStore]);
 
   return (
     <div className="w-full h-fit p-4 md:p-6 xl:p-8">
