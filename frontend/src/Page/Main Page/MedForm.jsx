@@ -10,6 +10,7 @@ import FRONT from "../../assets/Image/FRONT.png";
 
 const MedForm = () => {
   const [currentPage, setCurrentPage] = useState(0);
+  const pageTitles = ["Subjective", "Objective", "Assessment", "Plan"];
   const [isCanvasOpen, setIsCanvasOpen] = useState(false);
   const [selectedBG, setSelectedBG] = useState("OD");
   const [canvasImages, setCanvasImages] = useState({
@@ -19,77 +20,97 @@ const MedForm = () => {
     BLANK: "",
     FRONT: "",
   });
-
   const [medformData, setMedformData] = useState({
-    //p1
-    initial_observation: "",
-    chief_complaints: "",
+    //Subjective
+    initial_observation: {
+      options: {
+        headache: false,
+        bov: false,
+        halo: false,
+        photophobia: false,
+        diplopia: false,
+        tearing: false,
+        glare: false,
+        eyepain: false,
+      },
+      additional_note: "",
+    },
+
+    general_health_hx: {
+      option: {
+        hypertension: false,
+        cardiovas_prob: false,
+        diabetes: false,
+        asthma: false,
+      },
+      last_exam: "",
+      additional_note: "",
+    },
 
     occular_history: {
-      description: "",
+      option: {
+        glaucoma: false,
+        cataract: false,
+        astigmatism: false,
+        macular: false,
+      },
       last_exam: "",
+      additional_note: "",
     },
-    gen_health_hx: {
-      description: "",
-      last_exam: "",
+
+    fam_occular_history: {
+      option: {
+        glaucoma: false,
+        cataract: false,
+        astigmatism: false,
+        macular: false,
+      },
+      additional_note: "",
     },
+
+    current_medication: "",
+    lifestyle: "",
+
+    //Objective
     bp: "",
     bg: "",
     hr: "",
     o2_saturation: "",
     temperature: "",
 
-    //p2
-    habitual_va: {
-      od: "",
-      os: "",
-      ou: "",
-    },
-    unaided_va: {
-      od: "",
-      os: "",
-      ou: "",
-    },
-    pinhole_va: {
-      od: "",
-      os: "",
-      ou: "",
-    },
-    habitual_prescription: {
-      date_prescribed: "",
-      od: "",
-      os: "",
-      ou: "",
-    },
-    pupillary_distance: {
-      od: "",
-      os: "",
-      ou: "",
-    },
-    cover_test: {
-      od: {
-        with_rx_distance: false,
-        with_rx_near: false,
-        without_rx_distance: false,
-        without_rx_near: false,
+    visual_acuity: {
+      habitual_va: {
+        od: "",
+        os: "",
+        ou: "",
+        additional_note: "",
       },
-      os: {
-        with_rx_distance: false,
-        with_rx_near: false,
-        without_rx_distance: false,
-        without_rx_near: false,
+      unaided_va: {
+        od: "",
+        os: "",
+        ou: "",
+        additional_note: "",
+      },
+      pinhole_va: {
+        od: "",
+        os: "",
+        additional_note: "",
       },
     },
-    corneal_reflex_test: {
-      od: {
-        present: false,
-        absent: false,
+
+    retinoscopy: {
+      with_drop: {
+        od: "",
+        os: "",
+        additional_note: "",
       },
-      os: {
-        present: false,
-        absent: false,
+      without_drop: {
+        od: "",
+        os: "",
+        additional_note: "",
       },
     },
+
     dominant_EH: {
       dominant_eye: {
         left: false,
@@ -99,107 +120,382 @@ const MedForm = () => {
         left: false,
         right: false,
       },
-    },
-    diplopia_test: {
-      left: false,
-      right: false,
+      additional_note: "",
     },
 
-    //p3
-    pupil_reaction: {
-      perrla: "",
-      comment: "",
+    pupillary_distance: {
+      od: "",
+      os: "",
+      ou: "",
+      additional_note: "",
     },
+
+    cover_test: {
+      od: {
+        with_rx: {
+          near: false,
+          distance: false,
+          tropia: false,
+          phoria: false,
+        },
+        without_rx: {
+          near: false,
+          distance: false,
+          tropia: false,
+          phoria: false,
+        },
+      },
+      os: {
+        with_rx: {
+          near: false,
+          distance: false,
+          tropia: false,
+          phoria: false,
+        },
+        without_rx: {
+          near: false,
+          distance: false,
+          tropia: false,
+          phoria: false,
+        },
+      },
+    },
+
+    confrontation_test: {
+      od: "",
+      os: "",
+      image: "",
+    },
+
+    stereopsis: {
+      stereopsis_score: {
+        od: "",
+        os: "",
+      },
+      perceived_DO: {
+        od: {
+          yes: false,
+          no: false,
+        },
+        os: {
+          yes: false,
+          no: false,
+        },
+      },
+      additional_note: "",
+    },
+
+    diplopia_test: {
+      present: false,
+      absent: false,
+      additional_note: "",
+    },
+
+    corneal_reflex_test: {
+      od: {
+        present: false,
+        absent: false,
+      },
+      os: {
+        present: false,
+        absent: false,
+      },
+      additional_note: "",
+    },
+
+    motility_test: {
+      od: {
+        normal: false,
+        abnormal: false,
+      },
+      os: {
+        normal: false,
+        abnormal: false,
+      },
+      additional_note: "",
+    },
+
+    saccadic_test: {
+      od: {
+        present: false,
+        absent: false,
+      },
+      os: {
+        present: false,
+        absent: false,
+      },
+      additional_note: "",
+    },
+
+    amsler_grid: {
+      od: "",
+      os: "",
+      additional_note: "",
+    },
+
+    worths_FD: {
+      od: "",
+      os: "",
+    },
+
+    ishihara_test: {
+      od: "",
+      os: "",
+    },
+
+    schirmer_test: {
+      od: "",
+      os: "",
+    },
+
+    ophthalmoscopy: {
+      od: "",
+      os: "",
+    },
+
+    IOP: {
+      od: "",
+      os: "",
+      image: "",
+    },
+
     internal_examination: {
+      image: {
+        od: "",
+        os: "",
+      },
       cup_disc_ratio: {
+        od: "",
+        os: "",
+      },
+      av_ratio: {
+        od: "",
+        os: "",
+      },
+      macula: {
+        od: "",
+        os: "",
+      },
+      virteous: {
         od: "",
         os: "",
       },
       vessel: {
-        od: "",
-        os: "",
+        od: {
+          normal: false,
+          abnormal: false,
+        },
+        os: {
+          normal: false,
+          abnormal: false,
+        },
       },
-      foveal_reflex: {
-        od: "",
-        os: "",
+      venous_pulse: {
+        od: {
+          normal: false,
+          abnormal: false,
+        },
+        os: {
+          normal: false,
+          abnormal: false,
+        },
       },
-      macula: "",
-      vitreous: "",
-      periphery: "",
+      forveal_reflex: {
+        od: {
+          present: false,
+          absent: false,
+        },
+        os: {
+          present: false,
+          absent: false,
+        },
+      },
+      periphery: {
+        od: {
+          normal: false,
+          abnormal: false,
+        },
+        os: {
+          normal: false,
+          abnormal: false,
+        },
+      },
     },
+
     external_examination: {
-      lids_lashes: {
+      image: {
         od: "",
         os: "",
       },
-      bulbar_conjunctiva: {
-        od: "",
-        os: "",
+      eyebrow: {
+        od: {
+          options: {
+            inflamation: false,
+            dandruff: false,
+            crust_formation: false,
+            foreign_body: false,
+          },
+          additional_note: "",
+        },
+        os: {
+          options: {
+            inflamation: false,
+            dandruff: false,
+            crust_formation: false,
+            foreign_body: false,
+          },
+          additional_note: "",
+        },
       },
-      palpebral_conjunctiva: {
-        od: "",
-        os: "",
+
+      eyelashes: {
+        od: {
+          options: {
+            crusting: false,
+            discharge: false,
+            eyelash_lice: false,
+            foreign_body: false,
+          },
+          additional_note: "",
+        },
+        os: {
+          options: {
+            crusting: false,
+            discharge: false,
+            eyelash_lice: false,
+            foreign_body: false,
+          },
+          additional_note: "",
+        },
       },
+
+      eyelids: {
+        od: {
+          options: {
+            blepharitis: false,
+            edema: false,
+            chalazion: false,
+            stye: false,
+          },
+          additional_note: "",
+        },
+        os: {
+          options: {
+            blepharitis: false,
+            edema: false,
+            chalazion: false,
+            stye: false,
+          },
+          additional_note: "",
+        },
+      },
+
       cornea: {
-        od: "",
-        os: "",
+        od: {
+          options: {
+            corneal_abrasion: false,
+            keratitis: false,
+            pterygium: false,
+            corneal_scar: false,
+          },
+          additional_note: "",
+        },
+        os: {
+          options: {
+            corneal_abrasion: false,
+            keratitis: false,
+            pterygium: false,
+            corneal_scar: false,
+          },
+          additional_note: "",
+        },
       },
-      anterior_chamber: {
-        od: "",
-        os: "",
+
+      limbus: {
+        od: {
+          options: {
+            pinguecula: false,
+            melanosis: false,
+            scarring: false,
+            foreign_debris: false,
+          },
+          additional_note: "",
+        },
+        os: {
+          options: {
+            pinguecula: false,
+            melanosis: false,
+            scarring: false,
+            foreign_debris: false,
+          },
+          additional_note: "",
+        },
       },
+
+      pupil: {
+        od: {
+          options: {
+            miosis_or_mydriasis: false,
+            IIS: false,
+            pupil_distortion: false,
+            LRA: false,
+          },
+          additional_note: "",
+        },
+        os: {
+          options: {
+            miosis_or_mydriasis: false,
+            IIS: false,
+            pupil_distortion: false,
+            LRA: false,
+          },
+          additional_note: "",
+        },
+      },
+
       iris: {
-        od: "",
-        os: "",
-      },
-      lens: {
-        od: "",
-        os: "",
-      },
-    },
-
-    ///p4
-    objective_refraction: {
-      static_retinoscopy: {
-        od: "",
-        os: "",
-      },
-      automated_refraction: {
-        od: "",
-        os: "",
-      },
-      cup_disc_ratio: {
-        od: "",
-        os: "",
-        ou: "",
-      },
-    },
-    subjective_refraction: {
-      near_add: {
-        od: "",
-        os: "",
-        ou: "",
-      },
-      total_near_correction: {
-        od: "",
-        os: "",
-        ou: "",
+        od: {
+          options: {
+            iris_neovascularization: false,
+            posterior_synechiae: false,
+            hyphema: false,
+            inflammatory_deposit: false,
+          },
+          additional_note: "",
+        },
+        os: {
+          options: {
+            iris_neovascularization: false,
+            posterior_synechiae: false,
+            hyphema: false,
+            inflammatory_deposit: false,
+          },
+          additional_note: "",
+        },
       },
     },
 
-    //p5
-    visual_field_stereopsis_test: {
-      confrontation_test: {
-        od: "",
-        os: "",
-      },
-      facial_amsler: {
-        od: "",
-        os: "",
-      },
-      stereopsis: "",
+    habitual_prescription: {
+      date_prescribed: "",
+      od: "",
+      os: "",
     },
-    additional_note: "",
+
+    contact_lens_prescription: {
+      date_prescribed: "",
+      od: "",
+      os: "",
+    },
+
+    //Assessment
+    diagnosis: "",
+    refractive_error: "",
+
+    //Plan
+    new_prescription_od: "",
+    new_prescription_os: "",
+    management: "",
+    followup_care: "",
   });
 
   const toggle = () => setIsCanvasOpen(!isCanvasOpen);
@@ -280,26 +576,27 @@ const MedForm = () => {
           </div>
         </div>
         <nav className="flex gap-1">
-          {["Subjective", "Objective", "Assessment", "Plan"].map((med_page) => (
+          {pageTitles.map((med_page, index) => (
             <div
-              key={med_page}
-              className={`w-fit pl-2 py-2  cursor-pointer ${
-                currentPage === med_page
-                  ? " border-b-2 border-c-primary font-semibold text-c-primary"
-                  : " border-b-2 border-f-gray font-medium text-c-gray3"
+              key={index}
+              className={`w-fit pl-2 py-2 cursor-pointer ${
+                currentPage === index
+                  ? "border-b-2 border-c-primary font-semibold text-c-primary"
+                  : "border-b-2 border-f-gray font-medium text-c-gray3"
               }`}
+              onClick={() => setCurrentPage(index)}
             >
               <p>{med_page}</p>
             </div>
           ))}
         </nav>
       </header>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="w-full bg-white border border-f-gray rounded-lg">
           <header className=" bg-bg-sb border border-b-f-gray flex justify-center items-center h-14 font-semibold text-p-lg text-c-secondary">
-            <h1>Medical Form ({currentPage})</h1>
+            <h1>Medical Form ({pageTitles[currentPage]})</h1>
           </header>
-          {currentPage === "Subjective" && (
+          {currentPage === 0 && (
             <div className="p-5 flex flex-col gap-5">
               <div className="flex gap-5">
                 <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-1/2">
@@ -311,8 +608,16 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="initial_headache"
+                          checked={
+                            medformData.initial_observation.options.headache
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "initial_observation.options.headache"
+                            )
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -322,8 +627,11 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="initial_bov"
+                          checked={medformData.initial_observation.options.bov}
+                          onChange={(e) =>
+                            handleChange(e, "initial_observation.options.bov")
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -333,8 +641,11 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="initial_halo"
+                          checked={medformData.initial_observation.options.halo}
+                          onChange={(e) =>
+                            handleChange(e, "initial_observation.options.halo")
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -344,8 +655,16 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="initial_photophobia"
+                          checked={
+                            medformData.initial_observation.options.photophobia
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "initial_observation.options.photophobia"
+                            )
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -357,8 +676,16 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="initial_diplopia"
+                          checked={
+                            medformData.initial_observation.options.diplopia
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "initial_observation.options.diplopia"
+                            )
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -368,8 +695,16 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="initial_tearing"
+                          checked={
+                            medformData.initial_observation.options.tearing
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "initial_observation.options.tearing"
+                            )
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -379,8 +714,13 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="initial_glare"
+                          checked={
+                            medformData.initial_observation.options.glare
+                          }
+                          onChange={(e) =>
+                            handleChange(e, "initial_observation.options.glare")
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -390,8 +730,16 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="initial_eyepain"
+                          checked={
+                            medformData.initial_observation.options.eyepain
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "initial_observation.options.eyepain"
+                            )
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -402,9 +750,11 @@ const MedForm = () => {
                   </section>
                   <textarea
                     type="text"
-                    name=""
-                    // value={}
-                    // onChange={}
+                    name="initial_additional_note"
+                    value={medformData.initial_observation.additional_note}
+                    onChange={(e) =>
+                      handleChange(e, "initial_observation.additional_note")
+                    }
                     className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
                   />
@@ -418,8 +768,16 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="gen_health_hypertension"
+                          checked={
+                            medformData.general_health_hx.option.hypertension
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "general_health_hx.option.hypertension"
+                            )
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -429,8 +787,16 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="gen_health_cardiovascular_problem"
+                          checked={
+                            medformData.general_health_hx.option.cardiovas_prob
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "general_health_hx.option.cardiovas_prob"
+                            )
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -440,8 +806,13 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="gen_health_diabetes"
+                          checked={
+                            medformData.general_health_hx.option.diabetes
+                          }
+                          onChange={(e) =>
+                            handleChange(e, "general_health_hx.option.diabetes")
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -451,8 +822,11 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="gen_health_asthma"
+                          checked={medformData.general_health_hx.option.asthma}
+                          onChange={(e) =>
+                            handleChange(e, "general_health_hx.option.asthma")
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -467,10 +841,12 @@ const MedForm = () => {
                         </p>
                         <input
                           type="date"
-                          name=""
+                          name="gen_health_gen_date"
                           max={new Date().toISOString().split("T")[0]}
-                          // value={}
-                          // onChange={}
+                          value={medformData.general_health_hx.last_exam}
+                          onChange={(e) =>
+                            handleChange(e, "general_health_hx.last_exam")
+                          }
                           className="mt-1 w-fit h-fit px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </label>
@@ -478,9 +854,11 @@ const MedForm = () => {
                   </section>
                   <textarea
                     type="text"
-                    name=""
-                    // value={}
-                    // onChange={}
+                    name="gen_health_additional_note"
+                    value={medformData.general_health_hx.additional_note}
+                    onChange={(e) =>
+                      handleChange(e, "general_health_hx.additional_note")
+                    }
                     className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
                   />
@@ -496,8 +874,11 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="occhis_glaucoma"
+                          checked={medformData.occular_history.option.glaucoma}
+                          onChange={(e) =>
+                            handleChange(e, "occular_history.option.glaucoma")
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -507,8 +888,11 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="occhis_cataract"
+                          checked={medformData.occular_history.option.cataract}
+                          onChange={(e) =>
+                            handleChange(e, "occular_history.option.cataract")
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -518,8 +902,16 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="occhis_stigmatism"
+                          checked={
+                            medformData.occular_history.option.astigmatism
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "occular_history.option.astigmatism"
+                            )
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -529,8 +921,11 @@ const MedForm = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          // checked={}
-                          // onChange={}
+                          name="occhis_macular"
+                          checked={medformData.occular_history.option.macular}
+                          onChange={(e) =>
+                            handleChange(e, "occular_history.option.macular")
+                          }
                           className="w-6 h-6"
                         />
                         <span className="text-c-gray3 font-medium text-p-sm">
@@ -545,10 +940,12 @@ const MedForm = () => {
                         </p>
                         <input
                           type="date"
-                          name=""
+                          name="occhis_date"
                           max={new Date().toISOString().split("T")[0]}
-                          // value={}
-                          // onChange={}
+                          value={medformData.occular_history.last_exam}
+                          onChange={(e) =>
+                            handleChange(e, "occular_history.last_exam")
+                          }
                           className="mt-1 w-fit h-fit px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </label>
@@ -556,9 +953,11 @@ const MedForm = () => {
                   </section>
                   <textarea
                     type="text"
-                    name=""
-                    // value={}
-                    // onChange={}
+                    name="occhis_additional_note"
+                    value={medformData.occular_history.additional_note}
+                    onChange={(e) =>
+                      handleChange(e, "occular_history.additional_note")
+                    }
                     className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
                   />
@@ -571,8 +970,13 @@ const MedForm = () => {
                     <label className="flex items-center gap-2">
                       <input
                         type="checkbox"
-                        // checked={}
-                        // onChange={}
+                        name="fam_occhis_glaucoma"
+                        checked={
+                          medformData.fam_occular_history.option.glaucoma
+                        }
+                        onChange={(e) =>
+                          handleChange(e, "fam_occular_history.option.glaucoma")
+                        }
                         className="w-6 h-6"
                       />
                       <span className="text-c-gray3 font-medium text-p-sm">
@@ -582,8 +986,13 @@ const MedForm = () => {
                     <label className="flex items-center gap-2">
                       <input
                         type="checkbox"
-                        // checked={}
-                        // onChange={}
+                        name="fam_occhis_cataract"
+                        checked={
+                          medformData.fam_occular_history.option.cataract
+                        }
+                        onChange={(e) =>
+                          handleChange(e, "fam_occular_history.option.cataract")
+                        }
                         className="w-6 h-6"
                       />
                       <span className="text-c-gray3 font-medium text-p-sm">
@@ -593,8 +1002,16 @@ const MedForm = () => {
                     <label className="flex items-center gap-2">
                       <input
                         type="checkbox"
-                        // checked={}
-                        // onChange={}
+                        name="fam_occhis_astigmatism"
+                        checked={
+                          medformData.fam_occular_history.option.astigmatism
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "fam_occular_history.option.astigmatism"
+                          )
+                        }
                         className="w-6 h-6"
                       />
                       <span className="text-c-gray3 font-medium text-p-sm">
@@ -604,8 +1021,11 @@ const MedForm = () => {
                     <label className="flex items-center gap-2">
                       <input
                         type="checkbox"
-                        // checked={}
-                        // onChange={}
+                        name="fam_occhis_macular"
+                        checked={medformData.fam_occular_history.option.macular}
+                        onChange={(e) =>
+                          handleChange(e, "fam_occular_history.option.macular")
+                        }
                         className="w-6 h-6"
                       />
                       <span className="text-c-gray3 font-medium text-p-sm">
@@ -615,9 +1035,11 @@ const MedForm = () => {
                   </section>
                   <textarea
                     type="text"
-                    name=""
-                    // value={}
-                    // onChange={}
+                    name="fam_occhis_additional_note"
+                    value={medformData.fam_occular_history.additional_note}
+                    onChange={(e) =>
+                      handleChange(e, "fam_occular_history.additional_note")
+                    }
                     className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
                   />
@@ -630,9 +1052,9 @@ const MedForm = () => {
                   </label>
                   <textarea
                     type="text"
-                    name=""
-                    // value={}
-                    // onChange={}
+                    name="current_medication"
+                    value={medformData.current_medication}
+                    onChange={(e) => handleChange(e, "current_medication")}
                     className="mt-5 h-52 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
                   />
@@ -643,9 +1065,9 @@ const MedForm = () => {
                   </label>
                   <textarea
                     type="text"
-                    name=""
-                    // value={}
-                    // onChange={}
+                    name="lifestyle"
+                    value={medformData.lifestyle}
+                    onChange={(e) => handleChange(e, "lifestyle")}
                     className="mt-5 h-52 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
                   />
@@ -653,7 +1075,7 @@ const MedForm = () => {
               </div>
             </div>
           )}
-          {currentPage === 0 && (
+          {currentPage === 1 && (
             <div className="p-5 flex flex-col gap-5">
               <div className="border border-f-gray p-5 bg-bg-mc rounded-md flex gap-5 w-full">
                 <div className="w-full">
@@ -730,9 +1152,11 @@ const MedForm = () => {
                       <div className="flex flex-col w-full">
                         <p className="text-p-sm font-medium text-f-gray">OD</p>
                         <select
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="habitual_od"
+                          value={medformData.visual_acuity.habitual_va.od}
+                          onChange={(e) =>
+                            handleChange(e, "visual_acuity.habitual_va.od")
+                          }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
                           <option
@@ -748,9 +1172,11 @@ const MedForm = () => {
                       <div className="flex flex-col w-full">
                         <p className="text-p-sm font-medium text-f-gray">OS</p>
                         <select
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="habitual_os"
+                          value={medformData.visual_acuity.habitual_va.os}
+                          onChange={(e) =>
+                            handleChange(e, "visual_acuity.habitual_va.os")
+                          }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
                           <option
@@ -766,9 +1192,11 @@ const MedForm = () => {
                       <div className="flex flex-col w-full">
                         <p className="text-p-sm font-medium text-f-gray">OU</p>
                         <select
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="habitual_ou"
+                          value={medformData.visual_acuity.habitual_va.ou}
+                          onChange={(e) =>
+                            handleChange(e, "visual_acuity.habitual_va.ou")
+                          }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
                           <option
@@ -784,9 +1212,16 @@ const MedForm = () => {
                     </section>
                     <textarea
                       type="text"
-                      name=""
-                      // value={}
-                      // onChange={}
+                      name="habitual_additional_note"
+                      value={
+                        medformData.visual_acuity.habitual_va.additional_note
+                      }
+                      onChange={(e) =>
+                        handleChange(
+                          e,
+                          "visual_acuity.habitual_va.additional_note"
+                        )
+                      }
                       className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
                     />
@@ -799,9 +1234,11 @@ const MedForm = () => {
                       <div className="flex flex-col w-full">
                         <p className="text-p-sm font-medium text-f-gray">OD</p>
                         <select
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="unaided_od"
+                          value={medformData.visual_acuity.unaided_va.od}
+                          onChange={(e) =>
+                            handleChange(e, "visual_acuity.unaided_va.od")
+                          }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
                           <option
@@ -817,9 +1254,11 @@ const MedForm = () => {
                       <div className="flex flex-col w-full">
                         <p className="text-p-sm font-medium text-f-gray">OS</p>
                         <select
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="unaided_os"
+                          value={medformData.visual_acuity.unaided_va.os}
+                          onChange={(e) =>
+                            handleChange(e, "visual_acuity.unaided_va.os")
+                          }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
                           <option
@@ -835,9 +1274,11 @@ const MedForm = () => {
                       <div className="flex flex-col w-full">
                         <p className="text-p-sm font-medium text-f-gray">OU</p>
                         <select
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="unaided_ou"
+                          value={medformData.visual_acuity.unaided_va.ou}
+                          onChange={(e) =>
+                            handleChange(e, "visual_acuity.unaided_va.ou")
+                          }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
                           <option
@@ -853,9 +1294,16 @@ const MedForm = () => {
                     </section>
                     <textarea
                       type="text"
-                      name=""
-                      // value={}
-                      // onChange={}
+                      name="unaided_additional_note"
+                      value={
+                        medformData.visual_acuity.unaided_va.additional_note
+                      }
+                      onChange={(e) =>
+                        handleChange(
+                          e,
+                          "visual_acuity.unaided_va.additional_note"
+                        )
+                      }
                       className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
                     />
@@ -868,9 +1316,11 @@ const MedForm = () => {
                       <div className="flex flex-col w-full">
                         <p className="text-p-sm font-medium text-f-gray">OD</p>
                         <select
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="pinhole_od"
+                          value={medformData.visual_acuity.pinhole_va.od}
+                          onChange={(e) =>
+                            handleChange(e, "visual_acuity.pinhole_va.od")
+                          }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
                           <option
@@ -886,9 +1336,11 @@ const MedForm = () => {
                       <div className="flex flex-col w-full">
                         <p className="text-p-sm font-medium text-f-gray">OS</p>
                         <select
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="pinhole_os"
+                          value={medformData.visual_acuity.pinhole_va.os}
+                          onChange={(e) =>
+                            handleChange(e, "visual_acuity.pinhole_va.os")
+                          }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
                           <option
@@ -904,9 +1356,16 @@ const MedForm = () => {
                     </section>
                     <textarea
                       type="text"
-                      name=""
-                      // value={}
-                      // onChange={}
+                      name="pinhole_additional_note"
+                      value={
+                        medformData.visual_acuity.pinhole_va.additional_note
+                      }
+                      onChange={(e) =>
+                        handleChange(
+                          e,
+                          "visual_acuity.pinhole_va.additional_note"
+                        )
+                      }
                       className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
                     />
@@ -920,15 +1379,17 @@ const MedForm = () => {
                 <div className="flex gap-2">
                   <div className="border border-f-gray bg-bg-mc w-1/2 rounded-bl-md p-5">
                     <label className="text-p-rg font-semibold text-c-secondary">
-                      | Without Drops
+                      | With Drops
                     </label>
                     <section className=" mt-5 flex gap-3 w-full">
                       <div className="flex flex-col w-full">
                         <p className="text-p-sm font-medium text-f-gray">OD</p>
                         <select
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="retinoscopy_w_od"
+                          value={medformData.retinoscopy.with_drop.od}
+                          onChange={(e) =>
+                            handleChange(e, "retinoscopy.with_drop.od")
+                          }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
                           <option
@@ -944,9 +1405,11 @@ const MedForm = () => {
                       <div className="flex flex-col w-full">
                         <p className="text-p-sm font-medium text-f-gray">OS</p>
                         <select
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="retinoscopy_w_os"
+                          value={medformData.retinoscopy.with_drop.os}
+                          onChange={(e) =>
+                            handleChange(e, "retinoscopy.with_drop.os")
+                          }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
                           <option
@@ -962,9 +1425,11 @@ const MedForm = () => {
                     </section>
                     <textarea
                       type="text"
-                      name=""
-                      // value={}
-                      // onChange={}
+                      name="retinoscopy_w_additional_note"
+                      value={medformData.retinoscopy.with_drop.additional_note}
+                      onChange={(e) =>
+                        handleChange(e, "with_drop.additional_note")
+                      }
                       className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
                     />
@@ -977,9 +1442,11 @@ const MedForm = () => {
                       <div className="flex flex-col w-full">
                         <p className="text-p-sm font-medium text-f-gray">OD</p>
                         <select
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="retinoscopy_wo_od"
+                          value={medformData.retinoscopy.without_drop.od}
+                          onChange={(e) =>
+                            handleChange(e, "retinoscopy.without_drop.od")
+                          }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
                           <option
@@ -995,9 +1462,11 @@ const MedForm = () => {
                       <div className="flex flex-col w-full">
                         <p className="text-p-sm font-medium text-f-gray">OS</p>
                         <select
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="retinoscopy_wo_os"
+                          value={medformData.retinoscopy.without_drop.os}
+                          onChange={(e) =>
+                            handleChange(e, "retinoscopy.without_drop.os")
+                          }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
                           <option
@@ -1013,9 +1482,13 @@ const MedForm = () => {
                     </section>
                     <textarea
                       type="text"
-                      name=""
-                      // value={}
-                      // onChange={}
+                      name="retinoscopy_wo_additional_note"
+                      value={
+                        medformData.retinoscopy.without_drop.additional_note
+                      }
+                      onChange={(e) =>
+                        handleChange(e, "without_drop.additional_note")
+                      }
                       className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
                     />
@@ -1036,10 +1509,18 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="dominant_e_right"
+                            value="right"
+                            checked={medformData.dominant_EH.dominant_eye.right}
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                dominant_EH: {
+                                  ...prevData.dominant_EH,
+                                  dominant_eye: { right: true, left: false },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -1049,10 +1530,18 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="dominant_e_left"
+                            value="left"
+                            checked={medformData.dominant_EH.dominant_eye.left}
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                dominant_EH: {
+                                  ...prevData.dominant_EH,
+                                  dominant_eye: { right: false, left: true },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -1069,10 +1558,20 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="dominant_h_right"
+                            value="right"
+                            checked={
+                              medformData.dominant_EH.dominant_hand.right
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                dominant_EH: {
+                                  ...prevData.dominant_EH,
+                                  dominant_hand: { right: true, left: false },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -1082,10 +1581,18 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="dominant_h_left"
+                            value="left"
+                            checked={medformData.dominant_EH.dominant_hand.left}
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                dominant_EH: {
+                                  ...prevData.dominant_EH,
+                                  dominant_hand: { right: false, left: true },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -1097,9 +1604,11 @@ const MedForm = () => {
                   </section>
                   <textarea
                     type="text"
-                    name=""
-                    // value={}
-                    // onChange={}
+                    name="dominant_he_additional_note"
+                    value={medformData.dominant_EH.additional_note}
+                    onChange={(e) =>
+                      handleChange(e, "dominant_EH.additional_note")
+                    }
                     className="mt-4 h-36 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
                   />
@@ -1113,9 +1622,11 @@ const MedForm = () => {
                       <p className="text-p-sm font-medium text-f-gray">OD</p>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="pd_od"
+                        value={medformData.pupillary_distance.od}
+                        onChange={(e) =>
+                          handleChange(e, "pupillary_distance.od")
+                        }
                         className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -1123,9 +1634,11 @@ const MedForm = () => {
                       <p className="text-p-sm font-medium text-f-gray">OS</p>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="pd_os"
+                        value={medformData.pupillary_distance.os}
+                        onChange={(e) =>
+                          handleChange(e, "pupillary_distance.os")
+                        }
                         className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -1133,18 +1646,22 @@ const MedForm = () => {
                       <p className="text-p-sm font-medium text-f-gray">OU</p>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="pd_ou"
+                        value={medformData.pupillary_distance.ou}
+                        onChange={(e) =>
+                          handleChange(e, "pupillary_distance.ou")
+                        }
                         className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
                   </section>
                   <textarea
                     type="text"
-                    name=""
-                    // value={}
-                    // onChange={}
+                    name="pd_additional_note"
+                    value={medformData.pupillary_distance.additional_note}
+                    onChange={(e) =>
+                      handleChange(e, "pupillary_distance.additional_note")
+                    }
                     className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
                   />
@@ -1164,8 +1681,12 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="with_rx_near"
+                              value="near"
+                              checked={medformData.cover_test.od.with_rx.near}
+                              onChange={(e) =>
+                                handleChange(e, "cover_test.od.with_rx.near")
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1175,8 +1696,17 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="with_rx_distance"
+                              value="distance"
+                              checked={
+                                medformData.cover_test.od.with_rx.distance
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "cover_test.od.with_rx.distance"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1186,8 +1716,12 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="with_rx_tropia"
+                              value="tropia"
+                              checked={medformData.cover_test.od.with_rx.tropia}
+                              onChange={(e) =>
+                                handleChange(e, "cover_test.od.with_rx.tropia")
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1197,8 +1731,12 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="with_rx_phoria"
+                              value="phoria"
+                              checked={medformData.cover_test.od.with_rx.phoria}
+                              onChange={(e) =>
+                                handleChange(e, "cover_test.od.with_rx.phoria")
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1215,8 +1753,14 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="without_rx_near"
+                              value="near"
+                              checked={
+                                medformData.cover_test.od.without_rx.near
+                              }
+                              onChange={(e) =>
+                                handleChange(e, "cover_test.od.without_rx.near")
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1226,8 +1770,17 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="without_rx_distance"
+                              value="distance"
+                              checked={
+                                medformData.cover_test.od.without_rx.distance
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "cover_test.od.without_rx.distance"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1237,8 +1790,17 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="without_rx_tropia"
+                              value="tropia"
+                              checked={
+                                medformData.cover_test.od.without_rx.tropia
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "cover_test.od.without_rx.tropia"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1248,8 +1810,17 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="without_rx_phoria"
+                              value="phoria"
+                              checked={
+                                medformData.cover_test.od.without_rx.phoria
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "cover_test.od.without_rx.phoria"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1269,8 +1840,12 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="with_rx_near"
+                              value="near"
+                              checked={medformData.cover_test.os.with_rx.near}
+                              onChange={(e) =>
+                                handleChange(e, "cover_test.os.with_rx.near")
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1280,8 +1855,17 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="with_rx_distance"
+                              value="distance"
+                              checked={
+                                medformData.cover_test.os.with_rx.distance
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "cover_test.os.with_rx.distance"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1291,8 +1875,12 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="with_rx_tropia"
+                              value="tropia"
+                              checked={medformData.cover_test.os.with_rx.tropia}
+                              onChange={(e) =>
+                                handleChange(e, "cover_test.os.with_rx.tropia")
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1302,8 +1890,12 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="with_rx_phoria"
+                              value="phoria"
+                              checked={medformData.cover_test.os.with_rx.phoria}
+                              onChange={(e) =>
+                                handleChange(e, "cover_test.os.with_rx.phoria")
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1320,8 +1912,14 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="without_rx_near"
+                              value="near"
+                              checked={
+                                medformData.cover_test.os.without_rx.near
+                              }
+                              onChange={(e) =>
+                                handleChange(e, "cover_test.os.without_rx.near")
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1331,8 +1929,17 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="without_rx_distance"
+                              value="distance"
+                              checked={
+                                medformData.cover_test.os.without_rx.distance
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "cover_test.os.without_rx.distance"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1342,8 +1949,17 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="without_rx_tropia"
+                              value="tropia"
+                              checked={
+                                medformData.cover_test.os.without_rx.tropia
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "cover_test.os.without_rx.tropia"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1353,8 +1969,17 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="without_rx_phoria"
+                              value="phoria"
+                              checked={
+                                medformData.cover_test.os.without_rx.phoria
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "cover_test.os.without_rx.phoria"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-f-gray font-medium text-p-sm">
@@ -1368,9 +1993,11 @@ const MedForm = () => {
                 </section>
                 <textarea
                   type="text"
-                  name=""
-                  // value={}
-                  // onChange={}
+                  name="cover_test_additional_note"
+                  value={medformData.cover_test.additional_note}
+                  onChange={(e) =>
+                    handleChange(e, "cover_test.additional_note")
+                  }
                   className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                   placeholder="If option not available"
                 />
@@ -1386,9 +2013,11 @@ const MedForm = () => {
                         <p className="text-p-sm font-medium text-f-gray">OD</p>
                         <textarea
                           type="text"
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="confrontation_test_od"
+                          value={medformData.confrontation_test.od}
+                          onChange={(e) =>
+                            handleChange(e, "confrontation_test.od")
+                          }
                           className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           placeholder=""
                         />
@@ -1397,9 +2026,11 @@ const MedForm = () => {
                         <p className="text-p-sm font-medium text-f-gray">OS</p>
                         <textarea
                           type="text"
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="confrontation_test_os"
+                          value={medformData.confrontation_test.os}
+                          onChange={(e) =>
+                            handleChange(e, "confrontation_test.os")
+                          }
                           className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           placeholder=""
                         />
@@ -1430,9 +2061,11 @@ const MedForm = () => {
                         <p className="text-p-sm font-medium text-f-gray">OD</p>
                         <input
                           type="text"
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="stereopsis_score_od"
+                          value={medformData.stereopsis.stereopsis_score.od}
+                          onChange={(e) =>
+                            handleChange(e, "stereopsis.stereopsis_score.od")
+                          }
                           className="mt-2 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </div>
@@ -1440,9 +2073,11 @@ const MedForm = () => {
                         <p className="text-p-sm font-medium text-f-gray">OS</p>
                         <input
                           type="text"
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="stereopsis_score_os"
+                          value={medformData.stereopsis.stereopsis_score.os}
+                          onChange={(e) =>
+                            handleChange(e, "stereopsis.stereopsis_score.os")
+                          }
                           className="mt-2 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </div>
@@ -1458,10 +2093,21 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="pdo_od_yes"
+                            value="yes"
+                            checked={medformData.stereopsis.perceived_DO.od.yes}
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                stereopsis: {
+                                  ...prevData.stereopsis,
+                                  perceived_DO: {
+                                    ...prevData.stereopsis.perceived_DO,
+                                    od: { yes: true, no: false },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -1471,10 +2117,21 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="pdo_od_no"
+                            value="no"
+                            checked={medformData.stereopsis.perceived_DO.od.no}
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                stereopsis: {
+                                  ...prevData.stereopsis,
+                                  perceived_DO: {
+                                    ...prevData.stereopsis.perceived_DO,
+                                    od: { yes: false, no: true },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -1486,10 +2143,21 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="pdo_os_yes"
+                            value="yes"
+                            checked={medformData.stereopsis.perceived_DO.os.yes}
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                stereopsis: {
+                                  ...prevData.stereopsis,
+                                  perceived_DO: {
+                                    ...prevData.stereopsis.perceived_DO,
+                                    os: { yes: true, no: false },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -1499,10 +2167,21 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="pdo_os_no"
+                            value="no"
+                            checked={medformData.stereopsis.perceived_DO.os.no}
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                stereopsis: {
+                                  ...prevData.stereopsis,
+                                  perceived_DO: {
+                                    ...prevData.stereopsis.perceived_DO,
+                                    os: { yes: false, no: true },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -1514,9 +2193,11 @@ const MedForm = () => {
                   </section>
                   <textarea
                     type="text"
-                    name=""
-                    // value={}
-                    // onChange={}
+                    name="stereopsis_additional_note"
+                    value={medformData.stereopsis.additional_note}
+                    onChange={(e) =>
+                      handleChange(e, "stereopsis.additional_note")
+                    }
                     className="mt-4 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
                   />
@@ -1533,10 +2214,19 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="diplopia_present"
+                            value="present"
+                            checked={medformData.diplopia_test.present}
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                diplopia_test: {
+                                  ...prevData.diplopia_test,
+                                  present: true,
+                                  absent: false,
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -1546,10 +2236,19 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="diplopia_absent"
+                            value="absent"
+                            checked={medformData.diplopia_test.absent}
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                diplopia_test: {
+                                  ...prevData.diplopia_test,
+                                  present: false,
+                                  absent: true,
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -1559,9 +2258,11 @@ const MedForm = () => {
                       </div>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="diplopia_additional_note"
+                        value={medformData.diplopia_test.additional_note}
+                        onChange={(e) =>
+                          handleChange(e, "diplopia_test.additional_note")
+                        }
                         className="w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </section>
@@ -1579,10 +2280,20 @@ const MedForm = () => {
                           <div className="flex items-center">
                             <input
                               type="radio"
-                              name=""
-                              value=""
-                              // checked={}
-                              // onChange={}
+                              name="corneal_od_present"
+                              value="present"
+                              checked={
+                                medformData.corneal_reflex_test.od.present
+                              }
+                              onChange={() =>
+                                setMedformData((prevData) => ({
+                                  ...prevData,
+                                  corneal_reflex_test: {
+                                    ...prevData.corneal_reflex_test,
+                                    od: { present: true, absent: false },
+                                  },
+                                }))
+                              }
                               className="mr-3 w-6 h-6"
                             />
                             <span className="text-f-gray font-semibold text-p-sm">
@@ -1592,10 +2303,20 @@ const MedForm = () => {
                           <div className="flex items-center">
                             <input
                               type="radio"
-                              name=""
-                              value=""
-                              // checked={}
-                              // onChange={}
+                              name="corneal_od_absent"
+                              value="absent"
+                              checked={
+                                medformData.corneal_reflex_test.od.absent
+                              }
+                              onChange={() =>
+                                setMedformData((prevData) => ({
+                                  ...prevData,
+                                  corneal_reflex_test: {
+                                    ...prevData.corneal_reflex_test,
+                                    od: { present: false, absent: true },
+                                  },
+                                }))
+                              }
                               className="mr-3 w-6 h-6"
                             />
                             <span className="text-f-gray font-semibold text-p-sm">
@@ -1612,10 +2333,20 @@ const MedForm = () => {
                           <div className="flex items-center">
                             <input
                               type="radio"
-                              name=""
-                              value=""
-                              // checked={}
-                              // onChange={}
+                              name="corneal_os_present"
+                              value="present"
+                              checked={
+                                medformData.corneal_reflex_test.os.present
+                              }
+                              onChange={() =>
+                                setMedformData((prevData) => ({
+                                  ...prevData,
+                                  corneal_reflex_test: {
+                                    ...prevData.corneal_reflex_test,
+                                    os: { present: true, absent: false },
+                                  },
+                                }))
+                              }
                               className="mr-3 w-6 h-6"
                             />
                             <span className="text-f-gray font-semibold text-p-sm">
@@ -1625,10 +2356,20 @@ const MedForm = () => {
                           <div className="flex items-center">
                             <input
                               type="radio"
-                              name=""
-                              value=""
-                              // checked={}
-                              // onChange={}
+                              name="corneal_os_absent"
+                              value="absent"
+                              checked={
+                                medformData.corneal_reflex_test.os.absent
+                              }
+                              onChange={() =>
+                                setMedformData((prevData) => ({
+                                  ...prevData,
+                                  corneal_reflex_test: {
+                                    ...prevData.corneal_reflex_test,
+                                    os: { present: false, absent: true },
+                                  },
+                                }))
+                              }
                               className="mr-3 w-6 h-6"
                             />
                             <span className="text-f-gray font-semibold text-p-sm">
@@ -1640,9 +2381,11 @@ const MedForm = () => {
                     </section>
                     <textarea
                       type="text"
-                      name=""
-                      // value={}
-                      // onChange={}
+                      name="corneal_additional_note"
+                      value={medformData.corneal_reflex_test.additional_note}
+                      onChange={(e) =>
+                        handleChange(e, "occular_history.option.glaucoma")
+                      }
                       className="mt-4 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder=""
                     />
@@ -1660,10 +2403,18 @@ const MedForm = () => {
                           <div className="flex items-center">
                             <input
                               type="radio"
-                              name=""
-                              value=""
-                              // checked={}
-                              // onChange={}
+                              name="motility_od_normal"
+                              value="normal"
+                              checked={medformData.motility_test.od.normal}
+                              onChange={() =>
+                                setMedformData((prevData) => ({
+                                  ...prevData,
+                                  motility_test: {
+                                    ...prevData.motility_test,
+                                    od: { normal: true, abnormal: false },
+                                  },
+                                }))
+                              }
                               className="mr-3 w-6 h-6"
                             />
                             <span className="text-f-gray font-semibold text-p-sm">
@@ -1673,10 +2424,18 @@ const MedForm = () => {
                           <div className="flex items-center">
                             <input
                               type="radio"
-                              name=""
-                              value=""
-                              // checked={}
-                              // onChange={}
+                              name="motility_od_abnormal"
+                              value="abnormal"
+                              checked={medformData.motility_test.od.abnormal}
+                              onChange={() =>
+                                setMedformData((prevData) => ({
+                                  ...prevData,
+                                  motility_test: {
+                                    ...prevData.motility_test,
+                                    od: { normal: false, abnormal: true },
+                                  },
+                                }))
+                              }
                               className="mr-3 w-6 h-6"
                             />
                             <span className="text-f-gray font-semibold text-p-sm">
@@ -1693,10 +2452,18 @@ const MedForm = () => {
                           <div className="flex items-center">
                             <input
                               type="radio"
-                              name=""
-                              value=""
-                              // checked={}
-                              // onChange={}
+                              name="motility_os_normal"
+                              value="normal"
+                              checked={medformData.motility_test.os.normal}
+                              onChange={() =>
+                                setMedformData((prevData) => ({
+                                  ...prevData,
+                                  motility_test: {
+                                    ...prevData.motility_test,
+                                    os: { normal: true, abnormal: false },
+                                  },
+                                }))
+                              }
                               className="mr-3 w-6 h-6"
                             />
                             <span className="text-f-gray font-semibold text-p-sm">
@@ -1706,10 +2473,18 @@ const MedForm = () => {
                           <div className="flex items-center">
                             <input
                               type="radio"
-                              name=""
-                              value=""
-                              // checked={}
-                              // onChange={}
+                              name="motility_os_abnormal"
+                              value="abnormal"
+                              checked={medformData.motility_test.os.abnormal}
+                              onChange={() =>
+                                setMedformData((prevData) => ({
+                                  ...prevData,
+                                  motility_test: {
+                                    ...prevData.motility_test,
+                                    os: { normal: false, abnormal: true },
+                                  },
+                                }))
+                              }
                               className="mr-3 w-6 h-6"
                             />
                             <span className="text-f-gray font-semibold text-p-sm">
@@ -1721,16 +2496,18 @@ const MedForm = () => {
                     </section>
                     <textarea
                       type="text"
-                      name=""
-                      // value={}
-                      // onChange={}
+                      name="motility_additional_note"
+                      value={medformData.motility_test.additional_note}
+                      onChange={(e) =>
+                        handleChange(e, "motility_test.additional_note")
+                      }
                       className="mt-4 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder=""
                     />
                   </div>
                   <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
                     <label className="text-p-rg font-semibold text-c-secondary">
-                      | Corneal Reflex Test
+                      | Saccadic Test
                     </label>
                     <section className="mt-5 flex justify-between">
                       <div>
@@ -1741,10 +2518,18 @@ const MedForm = () => {
                           <div className="flex items-center">
                             <input
                               type="radio"
-                              name=""
-                              value=""
-                              // checked={}
-                              // onChange={}
+                              name="saccadic_od_present"
+                              value="present"
+                              checked={medformData.saccadic_test.od.present}
+                              onChange={() =>
+                                setMedformData((prevData) => ({
+                                  ...prevData,
+                                  saccadic_test: {
+                                    ...prevData.saccadic_test,
+                                    od: { present: true, absent: false },
+                                  },
+                                }))
+                              }
                               className="mr-3 w-6 h-6"
                             />
                             <span className="text-f-gray font-semibold text-p-sm">
@@ -1754,10 +2539,18 @@ const MedForm = () => {
                           <div className="flex items-center">
                             <input
                               type="radio"
-                              name=""
-                              value=""
-                              // checked={}
-                              // onChange={}
+                              name="saccadic_od_absent"
+                              value="absent"
+                              checked={medformData.saccadic_test.od.absent}
+                              onChange={() =>
+                                setMedformData((prevData) => ({
+                                  ...prevData,
+                                  saccadic_test: {
+                                    ...prevData.saccadic_test,
+                                    od: { present: false, absent: true },
+                                  },
+                                }))
+                              }
                               className="mr-3 w-6 h-6"
                             />
                             <span className="text-f-gray font-semibold text-p-sm">
@@ -1774,10 +2567,18 @@ const MedForm = () => {
                           <div className="flex items-center">
                             <input
                               type="radio"
-                              name=""
-                              value=""
-                              // checked={}
-                              // onChange={}
+                              name="saccadic_os_present"
+                              value="present"
+                              checked={medformData.saccadic_test.os.present}
+                              onChange={() =>
+                                setMedformData((prevData) => ({
+                                  ...prevData,
+                                  saccadic_test: {
+                                    ...prevData.saccadic_test,
+                                    os: { present: true, absent: false },
+                                  },
+                                }))
+                              }
                               className="mr-3 w-6 h-6"
                             />
                             <span className="text-f-gray font-semibold text-p-sm">
@@ -1787,10 +2588,18 @@ const MedForm = () => {
                           <div className="flex items-center">
                             <input
                               type="radio"
-                              name=""
-                              value=""
-                              // checked={}
-                              // onChange={}
+                              name="saccadic_os_absent"
+                              value="absent"
+                              checked={medformData.saccadic_test.os.absent}
+                              onChange={() =>
+                                setMedformData((prevData) => ({
+                                  ...prevData,
+                                  saccadic_test: {
+                                    ...prevData.saccadic_test,
+                                    os: { present: false, absent: true },
+                                  },
+                                }))
+                              }
                               className="mr-3 w-6 h-6"
                             />
                             <span className="text-f-gray font-semibold text-p-sm">
@@ -1802,9 +2611,11 @@ const MedForm = () => {
                     </section>
                     <textarea
                       type="text"
-                      name=""
-                      // value={}
-                      // onChange={}
+                      name="saccadic_additional_note"
+                      value={medformData.saccadic_test.additional_note}
+                      onChange={(e) =>
+                        handleChange(e, "saccadic_test.additional_note")
+                      }
                       className="mt-4 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder=""
                     />
@@ -1819,9 +2630,9 @@ const MedForm = () => {
                       <div className="flex flex-col w-full">
                         <p className="text-p-sm font-medium text-f-gray">OD</p>
                         <select
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="amsler_od"
+                          value={medformData.amsler_grid.od}
+                          onChange={(e) => handleChange(e, "amsler_grid.od")}
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
                           <option
@@ -1837,9 +2648,9 @@ const MedForm = () => {
                       <div className="flex flex-col w-full">
                         <p className="text-p-sm font-medium text-f-gray">OS</p>
                         <select
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="amsler_os"
+                          value={medformData.amsler_grid.os}
+                          onChange={(e) => handleChange(e, "amsler_grid.os")}
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
                           <option
@@ -1856,9 +2667,11 @@ const MedForm = () => {
                     <section className="flex gap-5 mt-5 ">
                       <textarea
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="amsler_additional_note"
+                        value={medformData.amsler_grid.additional_note}
+                        onChange={(e) =>
+                          handleChange(e, "amsler_grid.additional_note")
+                        }
                         className="h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         placeholder=""
                       />
@@ -1879,9 +2692,9 @@ const MedForm = () => {
                         <p className="text-p-sm font-medium text-f-gray">OD</p>
                         <textarea
                           type="text"
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="wfd_od"
+                          value={medformData.worths_FD.od}
+                          onChange={(e) => handleChange(e, "worths_FD.od")}
                           className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           placeholder=""
                         />
@@ -1890,9 +2703,9 @@ const MedForm = () => {
                         <p className="text-p-sm font-medium text-f-gray">OS</p>
                         <textarea
                           type="text"
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="wfd_os"
+                          value={medformData.worths_FD.os}
+                          onChange={(e) => handleChange(e, "worths_FD.os")}
                           className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           placeholder=""
                         />
@@ -1908,9 +2721,9 @@ const MedForm = () => {
                         <p className="text-p-sm font-medium text-f-gray">OD</p>
                         <textarea
                           type="text"
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="ishihara_od"
+                          value={medformData.ishihara_test.od}
+                          onChange={(e) => handleChange(e, "ishihara_test.od")}
                           className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           placeholder=""
                         />
@@ -1919,9 +2732,9 @@ const MedForm = () => {
                         <p className="text-p-sm font-medium text-f-gray">OS</p>
                         <textarea
                           type="text"
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="ishihara_os"
+                          value={medformData.ishihara_test.os}
+                          onChange={(e) => handleChange(e, "ishihara_test.os")}
                           className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           placeholder=""
                         />
@@ -1937,9 +2750,9 @@ const MedForm = () => {
                         <p className="text-p-sm font-medium text-f-gray">OD</p>
                         <textarea
                           type="text"
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="schirmer_od"
+                          value={medformData.schirmer_test.od}
+                          onChange={(e) => handleChange(e, "schirmer_test.od")}
                           className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           placeholder=""
                         />
@@ -1948,9 +2761,9 @@ const MedForm = () => {
                         <p className="text-p-sm font-medium text-f-gray">OS</p>
                         <textarea
                           type="text"
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="schirmer_os"
+                          value={medformData.schirmer_test.os}
+                          onChange={(e) => handleChange(e, "schirmer_test.os")}
                           className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           placeholder=""
                         />
@@ -1995,16 +2808,16 @@ const MedForm = () => {
                 </div>
                 <div className="border border-f-gray bg-bg-mc w-1/2 rounded-md p-5">
                   <label className="text-p-rg font-semibold text-c-secondary">
-                    | Ophthalmoscopy
+                    | Intra-Ocular Pressure (IOP)
                   </label>
                   <section className="flex mt-5 gap-3">
                     <div className="flex flex-col w-full">
                       <p className="text-p-sm font-medium text-f-gray">OD</p>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="iop_od"
+                        value={medformData.IOP.od}
+                        onChange={(e) => handleChange(e, "IOP.od")}
                         className="mt-2 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -2012,9 +2825,9 @@ const MedForm = () => {
                       <p className="text-p-sm font-medium text-f-gray">OS</p>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="iop_os"
+                        value={medformData.IOP.os}
+                        onChange={(e) => handleChange(e, "IOP.os")}
                         className="mt-2 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -2053,9 +2866,16 @@ const MedForm = () => {
                     <div className="flex gap-3 items-center">
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="cdr_od"
+                        value={
+                          medformData.internal_examination.cup_disc_ratio.od
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "internal_examination.cup_disc_ratio.od"
+                          )
+                        }
                         className="mt-2 w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                       <p className="text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
@@ -2063,18 +2883,27 @@ const MedForm = () => {
                       </p>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="cdr_os"
+                        value={
+                          medformData.internal_examination.cup_disc_ratio.os
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "internal_examination.cup_disc_ratio.os"
+                          )
+                        }
                         className="mt-2 w-2/3  p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
                     <div className="flex gap-3 items-center">
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="avr_od"
+                        value={medformData.internal_examination.av_ratio.od}
+                        onChange={(e) =>
+                          handleChange(e, "internal_examination.av_ratio.od")
+                        }
                         className="mt-2 w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                       <p className="text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
@@ -2082,17 +2911,21 @@ const MedForm = () => {
                       </p>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="avr_os"
+                        value={medformData.internal_examination.av_ratio.os}
+                        onChange={(e) =>
+                          handleChange(e, "internal_examination.av_ratio.os")
+                        }
                         className="mt-2 w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
                     <div className="flex gap-3 items-center">
                       <select
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="macula_od"
+                        value={medformData.internal_examination.macula.od}
+                        onChange={(e) =>
+                          handleChange(e, "internal_examination.macula.od")
+                        }
                         className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                       >
                         <option
@@ -2110,9 +2943,11 @@ const MedForm = () => {
                         Macula
                       </p>
                       <select
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="macula_os"
+                        value={medformData.internal_examination.macula.os}
+                        onChange={(e) =>
+                          handleChange(e, "internal_examination.macula.os")
+                        }
                         className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                       >
                         <option
@@ -2129,9 +2964,11 @@ const MedForm = () => {
                     </div>
                     <div className="flex gap-3 items-center">
                       <select
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="virtreous_od"
+                        value={medformData.internal_examination.virteous.od}
+                        onChange={(e) =>
+                          handleChange(e, "internal_examination.virteous.od")
+                        }
                         className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                       >
                         <option
@@ -2147,9 +2984,11 @@ const MedForm = () => {
                         Vitreous
                       </p>
                       <select
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="virtreous_os"
+                        value={medformData.internal_examination.virteous.os}
+                        onChange={(e) =>
+                          handleChange(e, "internal_examination.virteous.os")
+                        }
                         className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                       >
                         <option
@@ -2167,10 +3006,23 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="vessel_od_normal"
+                            value="normal"
+                            checked={
+                              medformData.internal_examination.vessel.od.normal
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  vessel: {
+                                    ...prevData.internal_examination.vessel,
+                                    od: { normal: true, abnormal: false },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2180,10 +3032,24 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="vessel_od_abnormal"
+                            value="abnormal"
+                            checked={
+                              medformData.internal_examination.vessel.od
+                                .abnormal
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  vessel: {
+                                    ...prevData.internal_examination.vessel,
+                                    od: { normal: false, abnormal: true },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2198,10 +3064,24 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="vessel_os_abnormal"
+                            value="abnormal"
+                            checked={
+                              medformData.internal_examination.vessel.os
+                                .abnormal
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  vessel: {
+                                    ...prevData.internal_examination.vessel,
+                                    os: { normal: false, abnormal: true },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2211,10 +3091,23 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="vessel_os_normal"
+                            value="normal"
+                            checked={
+                              medformData.internal_examination.vessel.os.normal
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  vessel: {
+                                    ...prevData.internal_examination.vessel,
+                                    os: { normal: true, abnormal: false },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2228,10 +3121,25 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="venous_od_normal"
+                            value="normal"
+                            checked={
+                              medformData.internal_examination.venous_pulse.od
+                                .normal
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  venous_pulse: {
+                                    ...prevData.internal_examination
+                                      .venous_pulse,
+                                    od: { normal: true, abnormal: false },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2241,10 +3149,25 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
+                            name="venous_od_abnormal"
                             value=""
-                            // checked={}
-                            // onChange={}
+                            checked={
+                              medformData.internal_examination.venous_pulse.od
+                                .abnormal
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  venous_pulse: {
+                                    ...prevData.internal_examination
+                                      .venous_pulse,
+                                    od: { normal: false, abnormal: true },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2259,10 +3182,25 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="venous_os_abnormal"
+                            value="abnormal"
+                            checked={
+                              medformData.internal_examination.venous_pulse.os
+                                .abnormal
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  venous_pulse: {
+                                    ...prevData.internal_examination
+                                      .venous_pulse,
+                                    os: { normal: false, abnormal: true },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2272,10 +3210,25 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="venous_os_normal"
+                            value="normal"
+                            checked={
+                              medformData.internal_examination.venous_pulse.os
+                                .normal
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  venous_pulse: {
+                                    ...prevData.internal_examination
+                                      .venous_pulse,
+                                    os: { normal: true, abnormal: false },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2289,10 +3242,25 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="forveal_od_present"
+                            value="present"
+                            checked={
+                              medformData.internal_examination.forveal_reflex.od
+                                .present
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  forveal_reflex: {
+                                    ...prevData.internal_examination
+                                      .forveal_reflex,
+                                    od: { present: true, absent: false },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2302,10 +3270,25 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="forveal_od_absent"
+                            value="absent"
+                            checked={
+                              medformData.internal_examination.forveal_reflex.od
+                                .absent
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  forveal_reflex: {
+                                    ...prevData.internal_examination
+                                      .forveal_reflex,
+                                    od: { present: false, absent: true },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2320,10 +3303,25 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="forveal_os_absent"
+                            value="absent"
+                            checked={
+                              medformData.internal_examination.forveal_reflex.os
+                                .absent
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  forveal_reflex: {
+                                    ...prevData.internal_examination
+                                      .forveal_reflex,
+                                    os: { present: false, absent: true },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2333,10 +3331,25 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="forveal_os_present"
+                            value="present"
+                            checked={
+                              medformData.internal_examination.forveal_reflex.os
+                                .present
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  forveal_reflex: {
+                                    ...prevData.internal_examination
+                                      .forveal_reflex,
+                                    os: { present: true, absent: false },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2350,10 +3363,24 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="periphery_od_normal"
+                            value="normal"
+                            checked={
+                              medformData.internal_examination.periphery.od
+                                .normal
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  periphery: {
+                                    ...prevData.internal_examination.periphery,
+                                    od: { normal: true, abnormal: false },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2363,10 +3390,24 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="periphery_od_abnormal"
+                            value="abnormal"
+                            checked={
+                              medformData.internal_examination.periphery.od
+                                .abnormal
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  periphery: {
+                                    ...prevData.internal_examination.periphery,
+                                    od: { normal: false, abnormal: true },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2381,10 +3422,24 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="periphery_os_abnormal"
+                            value="abnormal"
+                            checked={
+                              medformData.internal_examination.periphery.os
+                                .abnormal
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  periphery: {
+                                    ...prevData.internal_examination.periphery,
+                                    os: { normal: false, abnormal: true },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2394,10 +3449,24 @@ const MedForm = () => {
                         <div className="flex items-center">
                           <input
                             type="radio"
-                            name=""
-                            value=""
-                            // checked={}
-                            // onChange={}
+                            name="periphery_os_normal"
+                            value="normal"
+                            checked={
+                              medformData.internal_examination.periphery.os
+                                .normal
+                            }
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                internal_examination: {
+                                  ...prevData.internal_examination,
+                                  periphery: {
+                                    ...prevData.internal_examination.periphery,
+                                    os: { normal: true, abnormal: false },
+                                  },
+                                },
+                              }))
+                            }
                             className="mr-3 w-6 h-6"
                           />
                           <span className="text-f-gray font-semibold text-p-sm">
@@ -2462,8 +3531,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyebrow_od_inflamation"
+                              value="Inflammation"
+                              checked={
+                                medformData.external_examination.eyebrow.od
+                                  .options.inflamation
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyebrow.od.options.inflamation"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2473,8 +3552,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyebrow_od_crust_formation"
+                              value="Crust formation"
+                              checked={
+                                medformData.external_examination.eyebrow.od
+                                  .options.crust_formation
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyebrow.od.options.crust_formation"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2486,8 +3575,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyebrow_od_dandruff"
+                              value="Dandruff"
+                              checked={
+                                medformData.external_examination.eyebrow.od
+                                  .options.dandruff
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyebrow.od.options.dandruff"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2497,8 +3596,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyebrow_od_foreign_body"
+                              value="Foreign Bodies"
+                              checked={
+                                medformData.external_examination.eyebrow.od
+                                  .options.foreign_body
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyebrow.od.options.foreign_body"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2509,14 +3618,22 @@ const MedForm = () => {
                       </div>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="eyebrow_od_additional_note"
+                        value={
+                          medformData.external_examination.eyebrow.od
+                            .additional_note
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "external_examination.eyebrow.od.additional_note"
+                          )
+                        }
                         className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
                     <p className="text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
-                      Periphery
+                      Eyebrows
                     </p>
                     <div className="border border-f-gray rounded-md bg-white p-5 w-2/3">
                       <div className="flex justify-between">
@@ -2524,8 +3641,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyebrow_os_inflamation"
+                              value="Inflammation"
+                              checked={
+                                medformData.external_examination.eyebrow.os
+                                  .options.inflamation
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyebrow.os.options.inflamation"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2535,8 +3662,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyebrow_os_crust_formation"
+                              value="Crust formation"
+                              checked={
+                                medformData.external_examination.eyebrow.os
+                                  .options.crust_formation
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyebrow.os.options.crust_formation"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2548,8 +3685,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyebrow_os_dandruff"
+                              value="Dandruff"
+                              checked={
+                                medformData.external_examination.eyebrow.os
+                                  .options.dandruff
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyebrow.os.options.dandruff"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2559,8 +3706,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyebrow_os_foreign_body"
+                              value="Foreign Bodies"
+                              checked={
+                                medformData.external_examination.eyebrow.os
+                                  .options.foreign_body
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyebrow.os.options.foreign_body"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2571,9 +3728,17 @@ const MedForm = () => {
                       </div>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="eyebrow_os_additional_note"
+                        value={
+                          medformData.external_examination.eyebrow.os
+                            .additional_note
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "external_examination.eyebrow.os.additional_note"
+                          )
+                        }
                         className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -2585,8 +3750,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelashes_od_crusting"
+                              value="Crusting"
+                              checked={
+                                medformData.external_examination.eyelashes.od
+                                  .options.crusting
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelashes.od.options.crusting"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2596,8 +3771,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelashes_od_discharge"
+                              value="Discharge"
+                              checked={
+                                medformData.external_examination.eyelashes.od
+                                  .options.discharge
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelashes.od.options.discharge"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2609,8 +3794,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelashes_od_eyelash_lice"
+                              value="Eyelash Lice"
+                              checked={
+                                medformData.external_examination.eyelashes.od
+                                  .options.eyelash_lice
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelashes.od.options.eyelash_lice"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2620,8 +3815,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelashes_od_foreign_body"
+                              value="Foreign Bodies"
+                              checked={
+                                medformData.external_examination.eyelashes.od
+                                  .options.foreign_body
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelashes.od.options.foreign_body"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2632,9 +3837,17 @@ const MedForm = () => {
                       </div>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="eyelashes_additional_note"
+                        value={
+                          medformData.external_examination.eyelashes.od
+                            .additional_note
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "external_examination.eyelashes.od.additional_note"
+                          )
+                        }
                         className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -2647,8 +3860,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelashes_os_crusting"
+                              value="Crusting"
+                              checked={
+                                medformData.external_examination.eyelashes.os
+                                  .options.crusting
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelashes.os.options.crusting"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2658,8 +3881,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelashes_os_discharge"
+                              value="Discharge"
+                              checked={
+                                medformData.external_examination.eyelashes.os
+                                  .options.discharge
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelashes.os.options.discharge"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2671,8 +3904,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelashes_os_eyelash_lice"
+                              value="Eyelash Lice"
+                              checked={
+                                medformData.external_examination.eyelashes.os
+                                  .options.eyelash_lice
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelashes.os.options.eyelash_lice"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2682,8 +3925,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelashes_os_foreign_body"
+                              value="Foreign Bodies"
+                              checked={
+                                medformData.external_examination.eyelashes.os
+                                  .options.foreign_body
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelashes.os.options.foreign_body"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2694,9 +3947,17 @@ const MedForm = () => {
                       </div>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="eyelashes_additional_note"
+                        value={
+                          medformData.external_examination.eyelashes.os
+                            .additional_note
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "external_examination.eyelashes.os.additional_note"
+                          )
+                        }
                         className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -2708,8 +3969,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelids_od_blepharitis"
+                              value="Blepharitis"
+                              checked={
+                                medformData.external_examination.eyelids.od
+                                  .options.blepharitis
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelids.od.options.blepharitis"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2719,8 +3990,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelids_od_edema"
+                              value="Edema"
+                              checked={
+                                medformData.external_examination.eyelids.od
+                                  .options.edema
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelids.od.options.edema"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2732,8 +4013,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelids_od_chalazion"
+                              value="Chalazion"
+                              checked={
+                                medformData.external_examination.eyelids.od
+                                  .options.chalazion
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelids.od.options.chalazion"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2743,8 +4034,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelids_od_style"
+                              value="Stye(hordeolum)"
+                              checked={
+                                medformData.external_examination.eyelids.od
+                                  .options.stye
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelids.od.options.stye"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2755,9 +4056,17 @@ const MedForm = () => {
                       </div>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="eyelids_od_additional_note"
+                        value={
+                          medformData.external_examination.eyelids.od
+                            .additional_note
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "external_examination.eyelids.od.additional_note"
+                          )
+                        }
                         className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -2770,8 +4079,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelids_os_blepharitis"
+                              value="Blepharitis"
+                              checked={
+                                medformData.external_examination.eyelids.os
+                                  .options.blepharitis
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelids.os.options.blepharitis"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2781,8 +4100,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelids_os_edema"
+                              value="Edema"
+                              checked={
+                                medformData.external_examination.eyelids.os
+                                  .options.edema
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelids.os.options.edema"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2794,8 +4123,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelids_os_chalazion"
+                              value="Chalazion"
+                              checked={
+                                medformData.external_examination.eyelids.os
+                                  .options.chalazion
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelids.os.options.chalazion"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2805,8 +4144,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="eyelids_os_style"
+                              value="Stye(hordeolum)"
+                              checked={
+                                medformData.external_examination.eyelids.os
+                                  .options.stye
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.eyelids.os.options.stye"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2817,9 +4166,17 @@ const MedForm = () => {
                       </div>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="eyelids_os_additional_note"
+                        value={
+                          medformData.external_examination.eyelids.os
+                            .additional_note
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "external_examination.eyelids.os.additional_note"
+                          )
+                        }
                         className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -2831,8 +4188,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="cornea_od_ca"
+                              value="Corneal abrasion"
+                              checked={
+                                medformData.external_examination.cornea.od
+                                  .options.corneal_abrasion
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.cornea.od.options.corneal_abrasion"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2842,8 +4209,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="cornea_od_keratis"
+                              value="Keratitis"
+                              checked={
+                                medformData.external_examination.cornea.od
+                                  .options.keratitis
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.cornea.od.options.keratitis"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2855,8 +4232,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="cornea_od_ptery"
+                              value="Pterygium"
+                              checked={
+                                medformData.external_examination.cornea.od
+                                  .options.pterygium
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.cornea.od.options.pterygium"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2866,8 +4253,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="cornea_od_cs"
+                              value="Corneal Scar"
+                              checked={
+                                medformData.external_examination.cornea.od
+                                  .options.corneal_scar
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.cornea.od.options.corneal_scar"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2878,9 +4275,17 @@ const MedForm = () => {
                       </div>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="cornea_od_additional_note"
+                        value={
+                          medformData.external_examination.cornea.od
+                            .additional_note
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "external_examination.cornea.od.additional_note"
+                          )
+                        }
                         className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -2893,8 +4298,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="cornea_os_ca"
+                              value="Corneal abrasion"
+                              checked={
+                                medformData.external_examination.cornea.os
+                                  .options.corneal_abrasion
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.cornea.os.options.corneal_abrasion"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2904,8 +4319,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="cornea_os_keratis"
+                              value="Keratitis"
+                              checked={
+                                medformData.external_examination.cornea.os
+                                  .options.keratitis
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.cornea.os.options.keratitis"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2917,8 +4342,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="cornea_os_ptery"
+                              value="Pterygium"
+                              checked={
+                                medformData.external_examination.cornea.os
+                                  .options.pterygium
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.cornea.os.options.pterygium"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2928,8 +4363,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="cornea_os_cs"
+                              value="Corneal Scar"
+                              checked={
+                                medformData.external_examination.cornea.os
+                                  .options.corneal_scar
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.cornea.os.options.corneal_scar"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2940,9 +4385,17 @@ const MedForm = () => {
                       </div>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="cornea_os_additional_note"
+                        value={
+                          medformData.external_examination.cornea.os
+                            .additional_note
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "external_examination.cornea.os.additional_note"
+                          )
+                        }
                         className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -2954,8 +4407,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="limbus_od_pinguecula"
+                              value="Pinguecula"
+                              checked={
+                                medformData.external_examination.limbus.od
+                                  .options.pinguecula
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.limbus.od.options.pinguecula"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2965,8 +4428,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="limbus_od_melanosis"
+                              value="Melanosis"
+                              checked={
+                                medformData.external_examination.limbus.od
+                                  .options.melanosis
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.limbus.od.options.melanosis"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -2978,19 +4451,39 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="limbus_od_scarring"
+                              value="Scarring"
+                              checked={
+                                medformData.external_examination.limbus.od
+                                  .options.scarring
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.limbus.od.options.scarring"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
-                              Scarring 
+                              Scarring
                             </span>
                           </label>
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="limbus_od_foreign_debri"
+                              value="Foreign debris"
+                              checked={
+                                medformData.external_examination.limbus.od
+                                  .options.foreign_debris
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.limbus.od.options.foreign_debris"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3001,14 +4494,22 @@ const MedForm = () => {
                       </div>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="limbus_od_additional_note"
+                        value={
+                          medformData.external_examination.limbus.od
+                            .additional_note
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "external_examination.limbus.od.additional_note"
+                          )
+                        }
                         className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
                     <p className="text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
-                      Limus
+                      Limbus
                     </p>
                     <div className="border border-f-gray rounded-md bg-white p-5 w-2/3">
                       <div className="flex justify-between">
@@ -3016,8 +4517,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="limbus_os_pinguecula"
+                              value="Pinguecula"
+                              checked={
+                                medformData.external_examination.limbus.os
+                                  .options.pinguecula
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.limbus.os.options.pinguecula"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3027,8 +4538,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="limbus_os_melanosis"
+                              value="Melanosis"
+                              checked={
+                                medformData.external_examination.limbus.os
+                                  .options.melanosis
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.limbus.os.options.melanosis"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3040,19 +4561,39 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="limbus_os_scarring"
+                              value="Scarring"
+                              checked={
+                                medformData.external_examination.limbus.os
+                                  .options.scarring
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.limbus.os.options.scarring"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
-                              Scarring 
+                              Scarring
                             </span>
                           </label>
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="limbus_os_foreign_debri"
+                              value="Foreign debris"
+                              checked={
+                                medformData.external_examination.limbus.os
+                                  .options.foreign_debris
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.limbus.os.options.foreign_debris"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3063,9 +4604,17 @@ const MedForm = () => {
                       </div>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="limbus_os_additional_note"
+                        value={
+                          medformData.external_examination.limbus.os
+                            .additional_note
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "external_examination.limbus.os.additional_note"
+                          )
+                        }
                         className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -3077,8 +4626,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="pupil_od_miosis"
+                              value="Miosis or mydriasis"
+                              checked={
+                                medformData.external_examination.pupil.od
+                                  .options.miosis_or_mydriasis
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.pupil.od.options.miosis_or_mydriasis"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3088,8 +4647,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="pupil_od_IIS"
+                              value="Inflammation-induced synechiae"
+                              checked={
+                                medformData.external_examination.pupil.od
+                                  .options.IIS
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.pupil.od.options.IIS"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3101,8 +4670,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="pupil_od_distortion"
+                              value="Pupil distortion"
+                              checked={
+                                medformData.external_examination.pupil.od
+                                  .options.pupil_distortion
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.pupil.od.options.pupil_distortion"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3112,8 +4691,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="pupil_od_LRA"
+                              value="Light reflex abnormalities"
+                              checked={
+                                medformData.external_examination.pupil.od
+                                  .options.LRA
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.pupil.od.options.LRA"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3124,9 +4713,17 @@ const MedForm = () => {
                       </div>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="pupil_od_additional_note"
+                        value={
+                          medformData.external_examination.pupil.od
+                            .additional_note
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "external_examination.pupil.od.additional_note"
+                          )
+                        }
                         className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -3139,8 +4736,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="pupil_os_miosis"
+                              value="Miosis or mydriasis"
+                              checked={
+                                medformData.external_examination.pupil.os
+                                  .options.miosis_or_mydriasis
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.pupil.os.options.miosis_or_mydriasis"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3150,8 +4757,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="pupil_os_IIS"
+                              value="Inflammation-induced synechiae"
+                              checked={
+                                medformData.external_examination.pupil.os
+                                  .options.IIS
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.pupil.os.options.IIS"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3163,8 +4780,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="pupil_os_distortion"
+                              value="Pupil distortion"
+                              checked={
+                                medformData.external_examination.pupil.os
+                                  .options.pupil_distortion
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.pupil.os.options.pupil_distortion"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3174,8 +4801,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="pupil_os_LRA"
+                              value="Light reflex abnormalities"
+                              checked={
+                                medformData.external_examination.pupil.os
+                                  .options.LRA
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.pupil.os.options.LRA"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3186,9 +4823,17 @@ const MedForm = () => {
                       </div>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="pupil_os_additional_note"
+                        value={
+                          medformData.external_examination.pupil.os
+                            .additional_note
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "external_examination.pupil.os.additional_note"
+                          )
+                        }
                         className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -3200,8 +4845,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="iris_od_iris_neovascularization"
+                              value="Iris neovascularization"
+                              checked={
+                                medformData.external_examination.iris.od.options
+                                  .iris_neovascularization
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.iris.od.options.iris_neovascularization"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3211,8 +4866,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="iris_od_posterior_synechiae"
+                              value="Posterior synechiae"
+                              checked={
+                                medformData.external_examination.iris.od.options
+                                  .posterior_synechiae
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.iris.od.options.posterior_synechiae"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3224,8 +4889,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="iris_od_hyphema"
+                              value="Hyphema"
+                              checked={
+                                medformData.external_examination.iris.od.options
+                                  .hyphema
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.iris.od.options.hyphema"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3235,8 +4910,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="iris_od_inflammatory_deposit"
+                              value="Inflammatory deposits"
+                              checked={
+                                medformData.external_examination.iris.od.options
+                                  .inflammatory_deposit
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.iris.od.options.inflammatory_deposit"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3247,9 +4932,17 @@ const MedForm = () => {
                       </div>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="iris_od_additional_note"
+                        value={
+                          medformData.external_examination.iris.od
+                            .additional_note
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "external_examination.iris.od.additional_note"
+                          )
+                        }
                         className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -3262,8 +4955,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="iris_os_iris_neovascularization"
+                              value="Iris neovascularization"
+                              checked={
+                                medformData.external_examination.iris.os.options
+                                  .iris_neovascularization
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.iris.os.options.iris_neovascularization"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3273,8 +4976,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="iris_os_posterior_synechiae"
+                              value="Posterior synechiae"
+                              checked={
+                                medformData.external_examination.iris.os.options
+                                  .posterior_synechiae
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.iris.os.options.posterior_synechiae"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3286,8 +4999,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="iris_os_hyphema"
+                              value="Hyphema"
+                              checked={
+                                medformData.external_examination.iris.os.options
+                                  .hyphema
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.iris.os.options.hyphema"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3297,8 +5020,18 @@ const MedForm = () => {
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              // checked={}
-                              // onChange={}
+                              name="iris_os_inflammatory_deposit"
+                              value="Inflammatory deposits"
+                              checked={
+                                medformData.external_examination.iris.os.options
+                                  .inflammatory_deposit
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "external_examination.iris.os.options.inflammatory_deposit"
+                                )
+                              }
                               className="w-6 h-6"
                             />
                             <span className="text-c-gray3 font-medium text-p-sm">
@@ -3309,9 +5042,17 @@ const MedForm = () => {
                       </div>
                       <input
                         type="text"
-                        name=""
-                        // value={}
-                        // onChange={}
+                        name="iris_os_additional_note"
+                        value={
+                          medformData.external_examination.iris.os
+                            .additional_note
+                        }
+                        onChange={(e) =>
+                          handleChange(
+                            e,
+                            "external_examination.iris.os.additional_note"
+                          )
+                        }
                         className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                     </div>
@@ -3334,10 +5075,17 @@ const MedForm = () => {
                         </p>
                         <input
                           type="date"
-                          name=""
+                          name="hp_date"
                           max={new Date().toISOString().split("T")[0]}
-                          // value={}
-                          // onChange={}
+                          value={
+                            medformData.habitual_prescription.date_prescribed
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "habitual_prescription.date_prescribed"
+                            )
+                          }
                           className="mt-1 w-fit h-fit px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </label>
@@ -3347,20 +5095,24 @@ const MedForm = () => {
                         <p className="text-p-sm font-medium text-f-gray">OD</p>
                         <textarea
                           type="text"
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="hp_od"
+                          value={medformData.habitual_prescription.od}
+                          onChange={(e) =>
+                            handleChange(e, "habitual_prescription.od")
+                          }
                           className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           placeholder=""
                         />
                       </div>
                       <div className="flex flex-col w-full">
-                        <p className="text-p-sm font-medium text-f-gray">OD</p>
+                        <p className="text-p-sm font-medium text-f-gray">OS</p>
                         <textarea
                           type="text"
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="hp_os"
+                          value={medformData.habitual_prescription.os}
+                          onChange={(e) =>
+                            handleChange(e, "habitual_prescription.os")
+                          }
                           className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           placeholder=""
                         />
@@ -3378,10 +5130,18 @@ const MedForm = () => {
                         </p>
                         <input
                           type="date"
-                          name=""
+                          name="clp_date"
                           max={new Date().toISOString().split("T")[0]}
-                          // value={}
-                          // onChange={}
+                          value={
+                            medformData.contact_lens_prescription
+                              .date_prescribed
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "contact_lens_prescription.date_prescribed"
+                            )
+                          }
                           className="mt-1 w-fit h-fit px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </label>
@@ -3391,20 +5151,24 @@ const MedForm = () => {
                         <p className="text-p-sm font-medium text-f-gray">OD</p>
                         <textarea
                           type="text"
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="clp_od"
+                          value={medformData.contact_lens_prescription.od}
+                          onChange={(e) =>
+                            handleChange(e, "contact_lens_prescription.od")
+                          }
                           className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           placeholder=""
                         />
                       </div>
                       <div className="flex flex-col w-full">
-                        <p className="text-p-sm font-medium text-f-gray">OD</p>
+                        <p className="text-p-sm font-medium text-f-gray">OS</p>
                         <textarea
                           type="text"
-                          name=""
-                          // value={}
-                          // onChange={}
+                          name="clp_os"
+                          value={medformData.contact_lens_prescription.os}
+                          onChange={(e) =>
+                            handleChange(e, "contact_lens_prescription.os")
+                          }
                           className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           placeholder=""
                         />
@@ -3415,7 +5179,7 @@ const MedForm = () => {
               </div>
             </div>
           )}
-          {currentPage === "Assessment" && (
+          {currentPage === 2 && (
             <div className="p-5 flex gap-5">
               <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-1/2">
                 <label className="text-p-rg font-semibold text-c-secondary">
@@ -3423,9 +5187,9 @@ const MedForm = () => {
                 </label>
                 <textarea
                   type="text"
-                  name=""
-                  // value={}
-                  // onChange={}
+                  name="diagnosis"
+                  value={medformData.diagnosis}
+                  onChange={handleChange}
                   className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                   placeholder="If option not available"
                 />
@@ -3436,16 +5200,16 @@ const MedForm = () => {
                 </label>
                 <textarea
                   type="text"
-                  name=""
-                  // value={}
-                  // onChange={}
+                  name="refractive_error"
+                  value={medformData.refractive_error}
+                  onChange={handleChange}
                   className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                   placeholder="If option not available"
                 />
               </div>
             </div>
           )}
-          {currentPage === "Plan" && (
+          {currentPage === 3 && (
             <div className="p-5 flex flex-col gap-5">
               <div className="flex gap-5">
                 <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-1/2">
@@ -3454,9 +5218,9 @@ const MedForm = () => {
                   </label>
                   <textarea
                     type="text"
-                    name=""
-                    // value={}
-                    // onChange={}
+                    name="new_prescription_od"
+                    value={medformData.new_prescription_od}
+                    onChange={(e) => handleChange(e, "new_prescription_od")}
                     className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
                   />
@@ -3467,9 +5231,9 @@ const MedForm = () => {
                   </label>
                   <textarea
                     type="text"
-                    name=""
-                    // value={}
-                    // onChange={}
+                    name="new_prescription_os"
+                    value={medformData.new_prescription_os}
+                    onChange={handleChange}
                     className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
                   />
@@ -3482,9 +5246,9 @@ const MedForm = () => {
                   </label>
                   <textarea
                     type="text"
-                    name=""
-                    // value={}
-                    // onChange={}
+                    name="management"
+                    value={medformData.management}
+                    onChange={handleChange}
                     className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
                   />
@@ -3495,9 +5259,9 @@ const MedForm = () => {
                   </label>
                   <textarea
                     type="text"
-                    name=""
-                    // value={}
-                    // onChange={}
+                    name="followup_care"
+                    value={medformData.followup_care}
+                    onChange={handleChange}
                     className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
                   />
@@ -3506,6 +5270,13 @@ const MedForm = () => {
             </div>
           )}
         </div>
+        {currentPage === 3 ? (
+          <button className="py-4 rounded-md bg-c-primary font-semibold text-p-rg text-f-light w-full mt-5">
+            Dito muna submit button
+          </button>
+        ) : (
+          ""
+        )}
       </form>
       {isCanvasOpen && (
         <EyeSketch
