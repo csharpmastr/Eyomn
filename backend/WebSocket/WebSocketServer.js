@@ -26,40 +26,55 @@ const startWebSocketServer = () => {
 
     let unsubscribePatients, unsubscribeNotifications;
     const sentPatientIds = new Set();
+
+    // Fetch and listen to patient updates
     try {
       const patientQuery = query(patientCol, where("doctorId", "==", staffId));
 
       unsubscribePatients = onSnapshot(patientQuery, (snapshot) => {
-        const patients = [];
+        try {
+          const patients = [];
 
-        snapshot.docChanges().forEach((change) => {
-          const patientId = change.doc.id;
+          snapshot.docChanges().forEach((change) => {
+            const patientId = change.doc.id;
 
-          if (change.type === "added") {
-            const newPatient = change.doc.data();
-            const decryptedPatientData = decryptDocument(newPatient, [
-              "patientId",
-              "branchId",
-              "doctorId",
-              "organizationId",
-              "createdAt",
-              "isDeleted",
-            ]);
-            if (!sentPatientIds.has(patientId)) {
-              patients.push(decryptedPatientData);
-              sentPatientIds.add(patientId);
+            if (change.type === "added") {
+              const newPatient = change.doc.data();
+              const decryptedPatientData = decryptDocument(newPatient, [
+                "patientId",
+                "branchId",
+                "doctorId",
+                "organizationId",
+                "createdAt",
+                "isDeleted",
+              ]);
+              if (!sentPatientIds.has(patientId)) {
+                patients.push(decryptedPatientData);
+                sentPatientIds.add(patientId);
+              }
             }
-          }
-        });
-        console.log(`Patients length ${patients.length}`);
-
-        if (patients.length > 0) {
-          patients.forEach((patient) => {
-            ws.send(JSON.stringify({ type: "patient", data: patient }));
           });
+
+          console.log(`Patients length ${patients.length}`);
+          if (patients.length > 0) {
+            patients.forEach((patient) => {
+              ws.send(JSON.stringify({ type: "patient", data: patient }));
+            });
+          }
+        } catch (error) {
+          console.error("Error processing patient data:", error.message);
+          ws.send(
+            JSON.stringify({ error: "Failed to process patient data updates" })
+          );
         }
       });
+    } catch (error) {
+      console.error("Error fetching patient updates:", error.message);
+      ws.send(JSON.stringify({ error: "Failed to fetch patient updates" }));
+    }
 
+    // Fetch and listen to notification updates
+    try {
       const notificationRef = collection(dbClient, "notification");
       const staffRef = doc(notificationRef, staffId);
       const notifsRef = collection(staffRef, "notifs");
@@ -69,36 +84,47 @@ const startWebSocketServer = () => {
       );
 
       unsubscribeNotifications = onSnapshot(notificationQuery, (snapshot) => {
-        const notifications = [];
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            const notificationData = change.doc.data();
-            const decryptedDocument = decryptDocument(notificationData, [
-              "patientId",
-              "doctorId",
-              "branchId",
-              "createdAt",
-              "type",
-              "notificationId",
-              "read",
-            ]);
-            notifications.push(decryptedDocument);
-          }
-        });
-        if (notifications.length > 0) {
-          console.log(`Notification length ${notifications.length}`);
-          console.log(notifications);
+        try {
+          const notifications = [];
 
-          notifications.forEach((notification) => {
-            ws.send(
-              JSON.stringify({ type: "notification", data: notification })
-            );
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+              const notificationData = change.doc.data();
+              const decryptedDocument = decryptDocument(notificationData, [
+                "patientId",
+                "doctorId",
+                "branchId",
+                "createdAt",
+                "type",
+                "notificationId",
+                "read",
+              ]);
+              notifications.push(decryptedDocument);
+            }
           });
+
+          if (notifications.length > 0) {
+            console.log(`Notification length ${notifications.length}`);
+            notifications.forEach((notification) => {
+              ws.send(
+                JSON.stringify({ type: "notification", data: notification })
+              );
+            });
+          }
+        } catch (error) {
+          console.error("Error processing notification data:", error.message);
+          ws.send(
+            JSON.stringify({
+              error: "Failed to process notification data updates",
+            })
+          );
         }
       });
     } catch (error) {
-      console.error("Error fetching real-time updates:", error.message);
-      ws.send(JSON.stringify({ error: "Failed to fetch real-time updates" }));
+      console.error("Error fetching notification updates:", error.message);
+      ws.send(
+        JSON.stringify({ error: "Failed to fetch notification updates" })
+      );
     }
 
     ws.on("close", () => {
