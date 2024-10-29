@@ -27,6 +27,7 @@ const PatientProfile = () => {
   const handleBack = () => {
     navigate("/patient", { state: { resetSelected: true } });
     sessionStorage.removeItem("currentPatient");
+    sessionStorage.removeItem("currentPath");
   };
 
   useEffect(() => {
@@ -75,11 +76,12 @@ const PatientProfile = () => {
 
   return (
     <div className="w-full h-fit p-4 md:p-6 xl:p-8">
-      <div className="flex gap-2 items-center mb-6">
-        <AiOutlineArrowLeft />
-        <button className="text-p-rg font-medium" onClick={handleBack}>
-          Back
-        </button>
+      <div
+        className="flex gap-2 items-center mb-6 hover:cursor-pointer"
+        onClick={handleBack}
+      >
+        <AiOutlineArrowLeft className="h-6 w-6" />
+        <button className="text-p-rg font-medium">Back</button>
       </div>
       {currentPatient ? (
         role === "2" ? (

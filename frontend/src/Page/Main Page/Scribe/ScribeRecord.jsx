@@ -6,6 +6,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FileUploader } from "react-drag-drop-files";
 import EnlargeImg from "../../../Component/ui/EnlargeImg";
 import SampleImage from "../../../assets/Image/eyomn_logoS1-2-06.jpg";
+import { AiOutlineArrowLeft } from "react-icons/ai";
 
 const ScribeRecord = () => {
   const { patientId } = useParams();
@@ -63,16 +64,24 @@ const ScribeRecord = () => {
   const handleCloseImg = () => {
     setSelectImgOpen(null);
   };
-
+  const handleBack = () => {
+    navigate("/scribe", { state: { resetSelected: true } });
+    sessionStorage.removeItem("currentPatientId");
+  };
   return (
     <>
-      <div className="p-4 md:p-6 h-full font-Poppins">
+      <div className="p-4 md:p-6 lg:p-8 h-full font-Poppins">
         <div className="flex justify-between mb-8">
-          <h1 className="text-p-lg font-semibold flex justify-center items-center">
-            {currentPatient
-              ? `${currentPatient.first_name} ${currentPatient.last_name}`
-              : "Loading..."}
-          </h1>
+          <div className="flex flex-col gap-2 hover:cursor-pointer">
+            <p className="flex gap-2 font-medium" onClick={handleBack}>
+              <AiOutlineArrowLeft className="h-6 w-6" /> Back
+            </p>
+            <h1 className="text-p-lg font-semibold flex justify-center items-center">
+              {currentPatient
+                ? `${currentPatient.first_name} ${currentPatient.last_name}`
+                : "Loading..."}
+            </h1>
+          </div>
           <div
             className="h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
             onClick={handleNewRecord}

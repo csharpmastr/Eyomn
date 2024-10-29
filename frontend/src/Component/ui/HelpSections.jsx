@@ -17,11 +17,11 @@ const HelpSections = ({ selected }) => {
         </div>
       )}
       {selected === "Account" && (
-        <>
+        <div className="flex flex-col gap-5 mr-2">
           <div
             ref={sectionRefs["Creating an Account"]}
             id="Creating an Account"
-            className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark"
+            className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark "
           >
             <h1 className="font-medium text-p-lg">1. Creating an Account</h1>
             <article className=" mt-4">
@@ -174,7 +174,7 @@ const HelpSections = ({ selected }) => {
               </p>
             </article>
           </div>
-        </>
+        </div>
       )}
       {selected === "Billing" && (
         <div className="w-full border border-f-gray bg-white rounded-lg px-10 h-52 flex flex-col justify-center items-center">

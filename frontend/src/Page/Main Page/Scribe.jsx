@@ -32,13 +32,6 @@ const Scribe = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const currentPath = location.pathname;
-  // useEffect(() => {
-  //   if (location.state && location.state.resetSelected) {
-  //     setHasSelected(false);
-  //   }
-  // }, [location.state]);
-
   useEffect(() => {
     const storedPatientId = sessionStorage.getItem("currentPatientId");
     const storedLocation = sessionStorage.getItem("currentPath");
