@@ -13,6 +13,8 @@ const DbGraph = ({ patients }) => {
   const filteredPatients = useMemo(() => {
     const now = dayjs();
 
+    if (!patients) return [];
+
     if (selectedFilter === "filter1") {
       return patients.filter((patient) =>
         dayjs(patient.createdAt).isSame(now, "day")

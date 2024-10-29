@@ -3,6 +3,8 @@ import { ReactSketchCanvas } from "react-sketch-canvas";
 import OD from "../../assets/Image/OD.png";
 import OS from "../../assets/Image/OS.png";
 import CROSS from "../../assets/Image/CROSS.png";
+import BLANK from "../../assets/Image/BLANK.png";
+import FRONT from "../../assets/Image/FRONT.png";
 import ReactDOM from "react-dom";
 import { FaUndo, FaRedo } from "react-icons/fa";
 
@@ -17,6 +19,10 @@ const EyeSketch = ({ onClose, onSave, backgroundImage }) => {
         return OS;
       case "CROSS":
         return CROSS;
+      case "BLANK":
+        return BLANK;
+      case "FRONT":
+        return FRONT;
       default:
         return null;
     }

@@ -1,8 +1,14 @@
-import React, { useState } from "react";
-import { TiUpload } from "react-icons/ti";
-import { FileUploader } from "react-drag-drop-files";
+import React, { useRef } from "react";
 
 const HelpSections = ({ selected }) => {
+  const sectionRefs = {
+    "Creating an Account": useRef(null),
+    "Logging In and Out": useRef(null),
+    "Password Management": useRef(null),
+    "Profile Management": useRef(null),
+    "Deleting Your Account": useRef(null),
+  };
+
   return (
     <div className="w-full h-full flex flex-col gap-8 font-Poppins">
       {selected === "Getting Started" && (
@@ -12,10 +18,14 @@ const HelpSections = ({ selected }) => {
       )}
       {selected === "Account" && (
         <>
-          <div className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark">
+          <div
+            ref={sectionRefs["Creating an Account"]}
+            id="Creating an Account"
+            className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark"
+          >
             <h1 className="font-medium text-p-lg">1. Creating an Account</h1>
             <article className=" mt-4">
-              <h6 className="font-medium ">Who can create an account?</h6>
+              <h6 className="font-medium">Who can create an account?</h6>
               <ul className="list-disc ml-10 mt-2">
                 <li>
                   Only the Organization Manager has the permissions to create
@@ -48,7 +58,11 @@ const HelpSections = ({ selected }) => {
               </p>
             </article>
           </div>
-          <div className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark">
+          <div
+            ref={sectionRefs["Logging In and Out"]}
+            id="Logging In and Out"
+            className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark"
+          >
             <h1 className="font-medium text-p-lg">2. Logging In and Out</h1>
             <article className=" mt-4">
               <h6 className="font-medium ">How do I log into my account?</h6>
@@ -70,7 +84,11 @@ const HelpSections = ({ selected }) => {
               </ol>
             </article>
           </div>
-          <div className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark">
+          <div
+            ref={sectionRefs["Password Management"]}
+            id="Password Management"
+            className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark"
+          >
             <h1 className="font-medium text-p-lg">3. Password Management</h1>
             <article className=" mt-4">
               <h6 className="font-medium ">
@@ -96,7 +114,11 @@ const HelpSections = ({ selected }) => {
               </ol>
             </article>
           </div>
-          <div className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark">
+          <div
+            ref={sectionRefs["Profile Management"]}
+            id="Profile Management"
+            className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark"
+          >
             <h1 className="font-medium text-p-lg">4. Profile Management</h1>
             <article className=" mt-4">
               <h6 className="font-medium ">
@@ -127,7 +149,11 @@ const HelpSections = ({ selected }) => {
               </ol>
             </article>
           </div>
-          <div className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark">
+          <div
+            ref={sectionRefs["Deleting Your Account"]}
+            id="Deleting Your Account"
+            className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark"
+          >
             <h1 className="font-medium text-p-lg">5. Deleting Your Account</h1>
             <article className=" mt-4">
               <h6 className="font-medium ">
