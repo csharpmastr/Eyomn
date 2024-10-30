@@ -9,6 +9,7 @@ import SuccessModal from "../../Component/ui/SuccessModal";
 
 const PointOfSale = () => {
   const [selectedProducts, setSelectedProducts] = React.useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const user = useSelector((state) => state.reducer.user.user);
   let branchId =
     (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
@@ -100,8 +101,8 @@ const PointOfSale = () => {
                 type="text"
                 className="w-full focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
                 placeholder="Search product... "
-                //value={searchTerm}
-                //onChange={handleSearchChange}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <div className="ml-2 h-auto flex justify-center items-center rounded-lg px-4 py-3 border border-c-gray3 font-medium font-md hover:cursor-pointer">
@@ -125,7 +126,10 @@ const PointOfSale = () => {
           </header>
           <div className="overflow-y-scroll">
             <div className="rounded-lg">
-              <PosTable onProductSelect={handleProductSelect} />
+              <PosTable
+                onProductSelect={handleProductSelect}
+                searchTerm={searchTerm}
+              />
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { FiFilter } from "react-icons/fi";
 import PatientScribeCard from "../../Component/ui/PatientScribeCard";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import Sample from "../../assets/Image/3.png";
 
 const groupPatientsByInitial = (patients) => {
   if (!Array.isArray(patients) || patients.length === 0) {
@@ -31,6 +32,7 @@ const Scribe = () => {
   const patients = useSelector((state) => state.reducer.patient.patients);
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const storedPatientId = sessionStorage.getItem("currentPatientId");
@@ -70,12 +72,20 @@ const Scribe = () => {
   const groupedPatients = groupPatientsByInitial(patients);
   const sortedInitials = Object.keys(groupedPatients).sort();
 
+  const filteredPatients = patients.filter((patient) => {
+    const fullName = `${patient.first_name} ${patient.last_name}`.toLowerCase();
+    return fullName.includes(searchQuery.toLowerCase());
+  });
+
+  const filteredGroupedPatients = groupPatientsByInitial(filteredPatients);
+  const sortedFilteredInitials = Object.keys(filteredGroupedPatients).sort();
+
   return (
     <div className="h-full w-full">
       {hasSelected ? (
         <Outlet />
       ) : (
-        <div className="p-4 md:p-6 xl:p-8 font-Poppins">
+        <div className="p-4 md:p-6 xl:p-8 font-Poppins h-full overflow-clip">
           <div className="flex flex-col md:flex-row md:items-center justify-between">
             <p className="text-p-lg font-semibold text-f-dark">
               {patients.length || 0}{" "}
@@ -87,6 +97,8 @@ const Scribe = () => {
                 <input
                   type="text"
                   placeholder="Search patient..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full text-f-dark focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
                 />
               </div>
@@ -96,20 +108,20 @@ const Scribe = () => {
                   <option value="" disabled selected>
                     Filter
                   </option>
-                  <option value="filter1">A to Z</option>
-                  <option value="filter2">Newest to Oldest</option>
-                  <option value="filter3">Highest to Lowest</option>
+                  <option value="-">-</option>
+                  <option value="-">-</option>
+                  <option value="-">-</option>
                 </select>
               </div>
             </div>
           </div>
-          <div className="w-auto h-auto mt-8">
-            {sortedInitials.length > 0 ? (
-              sortedInitials.map((initial) => (
+          <div className="w-auto h-full mt-8 overflow-y-scroll">
+            {sortedFilteredInitials.length > 0 ? (
+              sortedFilteredInitials.map((initial) => (
                 <div key={initial} className="mb-8">
                   <h2 className="text-p-lg text-f-gray2 mb-4">{initial}</h2>
                   <div className="grid grid-cols-5 gap-8 px-4">
-                    {groupedPatients[initial].map((patient, index) => (
+                    {filteredGroupedPatients[initial].map((patient, index) => (
                       <PatientScribeCard
                         key={index}
                         name={`${patient.first_name} ${patient.last_name}`}
@@ -120,7 +132,14 @@ const Scribe = () => {
                 </div>
               ))
             ) : (
-              <p>No patients found.</p>
+              <div className="w-full h-full flex flex-col items-center justify-center text-center text-c-primary text-p-lg font-medium gap-4">
+                <img src={Sample} alt="no data image" className="w-80" />
+                <p>
+                  We couldn't find any patients. Check your spelling
+                  <br />
+                  or try different keywords.
+                </p>
+              </div>
             )}
           </div>
         </div>

@@ -10,7 +10,7 @@ import Cookies from "universal-cookie";
 
 const Inventory = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [searchTerm, setSearchTerm] = useState("");
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   return (
@@ -31,8 +31,8 @@ const Inventory = () => {
               type="text"
               className="w-full text-f-dark focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
               placeholder="Search product... "
-              //value={searchTerm}
-              //onChange={handleSearchChange}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div className="flex justify-center items-center rounded-lg px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
@@ -53,7 +53,7 @@ const Inventory = () => {
         </div>
       </nav>
       <main className="overflow-x-auto">
-        <InventoryTable />
+        <InventoryTable searchTerm={searchTerm} />
       </main>
       {isModalOpen && (
         <AddEditProduct onClose={toggleModal} title={"Add Product"} />
