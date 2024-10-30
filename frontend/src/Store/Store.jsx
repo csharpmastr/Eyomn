@@ -7,6 +7,7 @@ import branchReducer from "../Slice/BranchSlice";
 import productReducer from "../Slice/ProductSlice";
 import appointmentReducer from "../Slice/AppointmentSlice";
 import notificationReducer from "../Slice/NotificationSlice";
+import noteReducer from "../Slice/NoteSlice";
 import visitReducer from "../Slice/VisitSlice";
 import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
@@ -28,6 +29,7 @@ const reducer = combineReducers({
   appointment: appointmentReducer,
   notification: notificationReducer,
   visit: visitReducer,
+  note: noteReducer,
 });
 const persistedReducer = persistReducer(persistConfig, reducer);
 export const store = configureStore({

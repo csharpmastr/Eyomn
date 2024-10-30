@@ -151,8 +151,12 @@ const addNoteHandler = async (req, res) => {
         message: "Invalid request. Missing Patient ID.",
       });
     }
-    await addNote(patientId, noteDetails, firebaseUid);
-    return res.status(200).json({ message: "Notes Added." });
+    const { noteId, createdAt } = await addNote(
+      patientId,
+      noteDetails,
+      firebaseUid
+    );
+    return res.status(200).json({ message: "Notes Added.", createdAt, noteId });
   } catch (error) {
     return res
       .status(500)

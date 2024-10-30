@@ -68,12 +68,23 @@ const ScribeRecord = () => {
     navigate("/scribe", { state: { resetSelected: true } });
     sessionStorage.removeItem("currentPatientId");
   };
+  useEffect(() => {
+    if (location.pathname === "/scribe") {
+      setHasSelected(false);
+    }
+    if (location.state && location.state.resetSelected) {
+      setHasSelected(false);
+    }
+  }, [location]);
   return (
     <>
       <div className="p-4 md:p-6 lg:p-8 h-full font-Poppins">
         <div className="flex justify-between mb-8">
-          <div className="flex flex-col gap-2 hover:cursor-pointer">
-            <p className="flex gap-2 font-medium" onClick={handleBack}>
+          <div className="flex flex-col gap-2">
+            <p
+              className="flex gap-2 text-p-rg  hover:cursor-pointer"
+              onClick={handleBack}
+            >
               <AiOutlineArrowLeft className="h-6 w-6" /> Back
             </p>
             <h1 className="text-p-lg font-semibold flex justify-center items-center">

@@ -96,7 +96,33 @@ export const getPatients = async (
   }
 };
 
-export const addPatientNote = async (note) => {};
+export const addPatientNote = async (
+  note,
+  patientId,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.post(
+      `${PATIENT_API_BASE_URL}/add-note/${patientId}`,
+      note,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+        params: {
+          firebaseUid,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching patients: ", err);
+    throw err;
+  }
+};
 
 export const getPatientVisit = async (
   patientId,

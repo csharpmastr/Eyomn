@@ -13,6 +13,7 @@ import { clearAppointment } from "../Slice/AppointmentSlice";
 import { clearProducts } from "../Slice/ProductSlice";
 import { clearNotifications } from "../Slice/NotificationSlice";
 import { clearVisits } from "../Slice/VisitSlice";
+import { clearNotes } from "../Slice/NoteSlice";
 
 export const useLogout = () => {
   const { dispatch } = useAuthContext();
@@ -40,6 +41,7 @@ export const useLogout = () => {
       reduxDispatch(clearProducts());
       reduxDispatch(clearNotifications());
       reduxDispatch(clearVisits());
+      reduxDispatch(clearNotes());
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred during logout.");

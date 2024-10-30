@@ -249,14 +249,15 @@ const addNote = async (patientId, noteDetails, firebaseUid) => {
       }
       return encryptedData;
     };
-
+    const createdAt = new Date().toISOString();
     const finalEncryptedData = deepEncrypt(cleanedNote);
     const noteRef = noteCol.doc(noteId);
     await noteRef.set({
       noteId,
       ...finalEncryptedData,
-      createdAt: new Date().toISOString(),
+      createdAt: createdAt,
     });
+    return { noteId, createdAt };
   } catch (error) {
     console.error("Error adding note:", error);
     throw error;
