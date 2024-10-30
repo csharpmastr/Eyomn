@@ -17,29 +17,75 @@ const MVP = () => {
   const [isFetched, setIsFetched] = useState(hasFetched === "true");
 
   const tabMapping = {
-    "/dashboard": "Dashboard",
-    "/scan": "Scan Fundus",
-    "/scribe": "Scribe",
-    "/patient": "Patients",
-    "/staff": "Staffs",
-    "/organization": "Organization",
-    "/add-patient": "Add Patient",
-    "/appointment": "Appointment",
-    "/inventory": "Inventory",
-    "/report": "Reports",
-    "/pos": "Point of Sale",
-    "/help": "Help Center",
-    "/profile": "Profile",
+    "/dashboard": {
+      main: "Dashboard",
+      sub: "Overview of clinic activities, patient stats, and key metrics.",
+    },
+    "/scribe": {
+      main: "Scribe",
+      sub: "Efficiently record patient encounters and clinical notes.",
+    },
+    "/patient": {
+      main: "Patients",
+      sub: "Access and manage detailed patient profiles and history.",
+    },
+    "/staff": {
+      main: "Staffs",
+      sub: "Manage staff profiles, roles, and responsibilities.",
+    },
+    "/organization": {
+      main: "Organization",
+      sub: "Configure your clinic’s structure and operational settings.",
+    },
+    "/add-patient": {
+      main: "Add Patient",
+      sub: "Easily add new patient information to your records.",
+    },
+    "/appointment": {
+      main: "Appointment Schedule",
+      sub: "View, schedule, and manage patient appointments.",
+    },
+    "/inventory": {
+      main: "Inventory",
+      sub: "Track medical supplies and control inventory levels.",
+    },
+    "/report": {
+      main: "Reports",
+      sub: "Generate and view reports on patient flow, finances, and more.",
+    },
+    "/pos": {
+      main: "Point of Sale",
+      sub: "Process payments, issue receipts, and track sales history.",
+    },
+    "/help": {
+      main: "Help Center",
+      sub: "Access guides, FAQs, and support for your questions.",
+    },
+    "/profile": {
+      main: "Profile",
+      sub: "Manage personal settings and account details.",
+    },
+    "/manage-profile": {
+      main: "Settings",
+      sub: "Customize your account preferences and notifications.",
+    },
   };
 
   const getCurrentTab = () => {
-    for (const [path, name] of Object.entries(tabMapping)) {
-      if (currentPath.startsWith(path)) {
-        return name;
-      }
+    for (const path in tabMapping) {
+      if (currentPath.startsWith(path)) return tabMapping[path];
     }
-    return "";
+    return null;
   };
+
+  // const getCurrentTab = () => {
+  //   for (const [path, name] of Object.entries(tabMapping)) {
+  //     if (currentPath.startsWith(path)) {
+  //       return name;
+  //     }
+  //   }
+  //   return "";
+  // };
 
   if (!currentPath.startsWith("/scribe")) {
     sessionStorage.removeItem("currentPatientId");
@@ -67,8 +113,10 @@ const MVP = () => {
         <div className="flex-1 flex flex-col overflow-hidden">
           <div className="hidden xl:h-20 w-full bg-white font-Poppins text-f-dark border-b border-f-gray xl:flex items-center xl:px-6 text-h-h6 font-bold justify-between">
             <div>
-              <h1 className="font-helvetica-rounded font-bold">{currentTab}</h1>
-              <p className="text-p-sm font-normal">manage patients hetres</p>
+              <h1 className="font-helvetica-rounded font-bold">
+                {currentTab?.main}
+              </h1>
+              <p className="text-p-sm font-normal">{currentTab?.sub}</p>
             </div>
             <div className="xl:w-2/6 w-full h-full flex items-center xl:justify-end">
               <TopbarButton />

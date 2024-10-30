@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Sample from "../../assets/Image/3.png";
 
 const capitalizeFirstLetter = (string) => {
   if (!string) return "";
@@ -32,73 +33,88 @@ const Table = ({ data, handlePatientClick }) => {
 
   return (
     <>
-      <div>
-        <table className="w-full font-Poppins rounded-t-lg table-fixed bg-white">
-          <thead className="w-full h-20">
-            <tr className="text-left font-semibold text-c-secondary">
-              <th className="pl-8 w-1/4">Patient Name</th>
-              <th className="w-1/4">Contact</th>
-              <th className="w-1/4">Email</th>
-              <th className="w-1/4">Last Visit</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentData.map((patientData, index) => (
-              <tr
+      {currentData.length > 0 ? (
+        <>
+          <div>
+            <table className="w-full font-Poppins rounded-t-lg table-fixed bg-white">
+              <thead className="w-full h-20">
+                <tr className="text-left font-semibold text-c-secondary">
+                  <th className="pl-8 w-1/4">Patient Name</th>
+                  <th className="w-1/4">Contact</th>
+                  <th className="w-1/4">Email</th>
+                  <th className="w-1/4">Last Visit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentData.map((patientData, index) => (
+                  <tr
+                    key={index}
+                    className={`border-b border-f-gray h-20 text-c-secondary text-p-rg cursor-pointer ${
+                      index % 2 === 0 ? "bg-bg-mc" : `bg-white`
+                    }`}
+                    onClick={() => handlePatientClick(patientData.patientId)}
+                  >
+                    <td className="pl-8">
+                      {patientData.first_name + " " + patientData.last_name}
+                    </td>
+                    <td>{patientData.contact_number}</td>
+                    <td className="max-w-[15vw] truncate">
+                      {patientData.email}
+                    </td>
+                    <td>{formatDate(patientData.createdAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`px-4 py-2 mx-1 rounded ${
+                currentPage === 1
+                  ? "bg-gray-400 text-f-light"
+                  : "bg-gray-200 text-f-gray2"
+              }`}
+            >
+              &lt;
+            </button>
+            {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+              <button
                 key={index}
-                className={`border-b border-f-gray h-20 text-c-secondary text-p-rg cursor-pointer ${
-                  index % 2 === 0 ? "bg-bg-mc" : `bg-white`
+                onClick={() => handlePageChange(startPage + index)}
+                className={`px-4 py-2 mx-1 rounded ${
+                  currentPage === startPage + index
+                    ? "bg-c-secondary text-f-light"
+                    : "bg-gray-200 text-f-gray2"
                 }`}
-                onClick={() => handlePatientClick(patientData.patientId)}
               >
-                <td className="pl-8">
-                  {patientData.first_name + " " + patientData.last_name}
-                </td>
-                <td>{patientData.contact_number}</td>
-                <td className="max-w-[15vw] truncate">{patientData.email}</td>
-                <td>{formatDate(patientData.createdAt)}</td>
-              </tr>
+                {startPage + index}
+              </button>
             ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="flex justify-end mt-4">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className={`px-4 py-2 mx-1 rounded ${
-            currentPage === 1
-              ? "bg-gray-400 text-f-light"
-              : "bg-gray-200 text-f-gray2"
-          }`}
-        >
-          &lt;
-        </button>
-        {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
-          <button
-            key={index}
-            onClick={() => handlePageChange(startPage + index)}
-            className={`px-4 py-2 mx-1 rounded ${
-              currentPage === startPage + index
-                ? "bg-c-secondary text-f-light"
-                : "bg-gray-200 text-f-gray2"
-            }`}
-          >
-            {startPage + index}
-          </button>
-        ))}
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className={`px-4 py-2 mx-1 rounded ${
-            currentPage === totalPages
-              ? "bg-gray-400 text-f-light"
-              : "bg-gray-200 text-f-gray2"
-          }`}
-        >
-          &gt;
-        </button>
-      </div>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`px-4 py-2 mx-1 rounded ${
+                currentPage === totalPages
+                  ? "bg-gray-400 text-f-light"
+                  : "bg-gray-200 text-f-gray2"
+              }`}
+            >
+              &gt;
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="w-full mt-40 flex flex-col items-center justify-center text-center text-c-primary text-p-lg font-medium gap-4">
+          <img src={Sample} alt="no data image" className="w-80" />
+          <p>
+            We couldn't find any patients. Check your spelling
+            <br />
+            or try different keywords.
+          </p>
+        </div>
+      )}
     </>
   );
 };

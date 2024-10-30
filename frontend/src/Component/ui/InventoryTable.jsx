@@ -4,8 +4,9 @@ import { FaEllipsisV } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import AddEditProduct from "../../Component/ui/AddEditProduct";
 import ConfirmationModal from "../../Component/ui/ConfirmationModal";
+import Sample from "../../assets/Image/3.png";
 
-const InventoryTable = () => {
+const InventoryTable = ({ searchTerm }) => {
   const products = useSelector((state) => state.reducer.product.products);
   const [collapsedProducts, setCollapsedProducts] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,11 +35,14 @@ const InventoryTable = () => {
     }));
   };
 
-  const paginatedProducts = products.slice(
+  const filteredProducts = products.filter((product) =>
+    product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -81,169 +85,178 @@ const InventoryTable = () => {
 
   return (
     <>
-      <div className="w-fit md:w-full text-f-dark overflow-x-auto font-poppins">
-        <header className="flex text-p-rg font-semibold py-8 border bg-white border-b-f-gray rounded-t-lg">
-          <div className="flex-1 pl-4">Product Name</div>
-          <div className="flex-1 pl-4">Category</div>
-          <div className="flex-1 pl-4">Prescription/Type</div>
-          <div className="flex-1 pl-4">Price</div>
-          <div className="flex-1 pl-4">Quantity</div>
-          <div className="flex-1 pl-4">Brand</div>
-          <div className="w-20"></div>
-        </header>
-        <main>
-          {paginatedProducts.map((productDetail, index) => {
-            const isCollapsed =
-              collapsedProducts[productDetail.productId] !== false;
+      {filteredProducts.length > 0 ? (
+        <>
+          <div className="w-fit md:w-full text-f-dark overflow-x-auto font-poppins">
+            <header className="flex text-p-rg font-semibold py-8 border bg-white border-b-f-gray rounded-t-lg">
+              <div className="flex-1 pl-4">Product Name</div>
+              <div className="flex-1 pl-4">Category</div>
+              <div className="flex-1 pl-4">Prescription/Type</div>
+              <div className="flex-1 pl-4">Price</div>
+              <div className="flex-1 pl-4">Quantity</div>
+              <div className="flex-1 pl-4">Brand</div>
+              <div className="w-20"></div>
+            </header>
+            <main>
+              {paginatedProducts.map((productDetail, index) => {
+                const isCollapsed =
+                  collapsedProducts[productDetail.productId] !== false;
 
-            return (
-              <section
-                key={productDetail.productId}
-                className={`${index % 2 === 0 ? "bg-bg-mc" : "bg-white"}`}
-              >
-                <div
-                  className={`flex text-p-rg py-6 ${
-                    isCollapsed ? "border border-b-f-gray" : ""
-                  }`}
-                >
-                  <div className="flex-1 pl-4">
-                    {productDetail.product_name}
-                  </div>
-                  <div className="flex-1 pl-4">
-                    {productDetail.category || "Eyeglasses"}
-                  </div>
-                  <div className="flex-1 pl-4">
-                    {productDetail.eyeglass_category || ""}
-                  </div>
-                  <div className="flex-1 pl-4">
-                    Php {productDetail.price || 0}
-                  </div>
-                  <div className="flex-1 pl-4">
-                    {productDetail.quantity === 0
-                      ? "Out of stock"
-                      : productDetail.quantity || 0}
-                  </div>
-                  <div className="flex-1 pl-4">
-                    {productDetail.brand || "Luxottica"}
-                  </div>
-                  <div className="w-20 flex items-center gap-4">
-                    <MdKeyboardArrowDown
-                      className={`h-6 w-6 ${
-                        isCollapsed ? `rotate-0` : `rotate-180`
+                return (
+                  <section
+                    key={productDetail.productId}
+                    className={`${index % 2 === 0 ? "bg-bg-mc" : "bg-white"}`}
+                  >
+                    <div
+                      className={`flex text-p-rg py-6 ${
+                        isCollapsed ? "border border-b-f-gray" : ""
                       }`}
-                      onClick={() =>
-                        handleCollapseToggle(productDetail.productId)
-                      }
-                    />
-                    <FaEllipsisV
-                      className="h-4 w-2 cursor-pointer"
-                      onClick={() => toggleOpen(productDetail.productId)}
-                    />
-                    {isMenuOpen[productDetail.productId] && (
-                      <div className="menu-dropdown absolute right-0 w-fit rounded-md shadow-lg bg-white ring-1 ring-f-gray z-50 origin-top-right mr-4">
-                        <div
-                          className="p-2"
-                          role="menu"
-                          aria-orientation="vertical"
-                          aria-labelledby="options-menu"
-                        >
-                          <a
-                            className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
-                            role="menuitem"
-                            onClick={() =>
-                              handleEditProduct(productDetail.productId)
-                            }
-                          >
-                            Edit
-                          </a>
-                          <a
-                            className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
-                            role="menuitem"
-                            onClick={() =>
-                              handleDeleteProduct(productDetail.productId)
-                            }
-                          >
-                            Delete
-                          </a>
+                    >
+                      <div className="flex-1 pl-4">
+                        {productDetail.product_name}
+                      </div>
+                      <div className="flex-1 pl-4">
+                        {productDetail.category || "Eyeglasses"}
+                      </div>
+                      <div className="flex-1 pl-4">
+                        {productDetail.eyeglass_category || ""}
+                      </div>
+                      <div className="flex-1 pl-4">
+                        Php {productDetail.price || 0}
+                      </div>
+                      <div className="flex-1 pl-4">
+                        {productDetail.quantity === 0
+                          ? "Out of stock"
+                          : productDetail.quantity || 0}
+                      </div>
+                      <div className="flex-1 pl-4">
+                        {productDetail.brand || "Luxottica"}
+                      </div>
+                      <div className="w-20 flex items-center gap-4">
+                        <MdKeyboardArrowDown
+                          className={`h-6 w-6 ${
+                            isCollapsed ? `rotate-0` : `rotate-180`
+                          }`}
+                          onClick={() =>
+                            handleCollapseToggle(productDetail.productId)
+                          }
+                        />
+                        <FaEllipsisV
+                          className="h-4 w-2 cursor-pointer"
+                          onClick={() => toggleOpen(productDetail.productId)}
+                        />
+                        {isMenuOpen[productDetail.productId] && (
+                          <div className="menu-dropdown absolute right-0 w-fit rounded-md shadow-lg bg-white ring-1 ring-f-gray z-50 origin-top-right mr-4">
+                            <div
+                              className="p-2"
+                              role="menu"
+                              aria-orientation="vertical"
+                              aria-labelledby="options-menu"
+                            >
+                              <a
+                                className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
+                                role="menuitem"
+                                onClick={() =>
+                                  handleEditProduct(productDetail.productId)
+                                }
+                              >
+                                Edit
+                              </a>
+                              <a
+                                className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
+                                role="menuitem"
+                                onClick={() =>
+                                  handleDeleteProduct(productDetail.productId)
+                                }
+                              >
+                                Delete
+                              </a>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    {!isCollapsed && (
+                      <div className={`py-5 flex border border-b-f-gray`}>
+                        <div className="flex-1 pl-4">
+                          <p className="text-p-sm">Other Info:</p>
+                          <p>Sample Info</p>
+                        </div>
+                        <div className="flex-1 pl-4">
+                          <p className="text-p-sm">Other Info:</p>
+                          <p>Sample Info</p>
+                        </div>
+                        <div className="flex-1 pl-4">
+                          <p className="text-p-sm">Other Info:</p>
+                          <p>Sample Info</p>
                         </div>
                       </div>
                     )}
-                  </div>
-                </div>
-                {!isCollapsed && (
-                  <div className={`py-5 flex border border-b-f-gray`}>
-                    <div className="flex-1 pl-4">
-                      <p className="text-p-sm">Other Info:</p>
-                      <p>Sample Info</p>
-                    </div>
-                    <div className="flex-1 pl-4">
-                      <p className="text-p-sm">Other Info:</p>
-                      <p>Sample Info</p>
-                    </div>
-                    <div className="flex-1 pl-4">
-                      <p className="text-p-sm">Other Info:</p>
-                      <p>Sample Info</p>
-                    </div>
-                  </div>
-                )}
-              </section>
-            );
-          })}
-        </main>
+                  </section>
+                );
+              })}
+            </main>
 
-        {isModalOpen && (
-          <AddEditProduct
-            onClose={toggleModal}
-            productDetails={selectedProduct}
-            title={"Edit Product"}
-            productId={productId}
-          />
-        )}
+            {isModalOpen && (
+              <AddEditProduct
+                onClose={toggleModal}
+                productDetails={selectedProduct}
+                title={"Edit Product"}
+                productId={productId}
+              />
+            )}
 
-        {isConfirmationModalOpen && (
-          <ConfirmationModal
-            productId={productId}
-            onClose={() => setIsConfirmationModalOpen(false)}
-          />
-        )}
-      </div>
-      <div className="flex justify-end mt-8">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className={`px-4 py-2 mx-1 rounded ${
-            currentPage === 1
-              ? "bg-gray-400 text-f-light"
-              : "bg-gray-200 text-f-gray2"
-          }`}
-        >
-          &lt;
-        </button>
-        {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
-          <button
-            key={index}
-            onClick={() => handlePageChange(startPage + index)}
-            className={`px-4 py-2 mx-1 rounded ${
-              currentPage === startPage + index
-                ? "bg-c-secondary text-f-light"
-                : "bg-gray-200 text-f-gray2"
-            }`}
-          >
-            {startPage + index}
-          </button>
-        ))}
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className={`px-4 py-2 mx-1 rounded ${
-            currentPage === totalPages
-              ? "bg-gray-400 text-f-light"
-              : "bg-gray-200 text-f-gray2"
-          }`}
-        >
-          &gt;
-        </button>
-      </div>
+            {isConfirmationModalOpen && (
+              <ConfirmationModal
+                productId={productId}
+                onClose={() => setIsConfirmationModalOpen(false)}
+              />
+            )}
+          </div>
+          <div className="flex justify-end mt-8">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`px-4 py-2 mx-1 rounded ${
+                currentPage === 1
+                  ? "bg-gray-400 text-f-light"
+                  : "bg-gray-200 text-f-gray2"
+              }`}
+            >
+              &lt;
+            </button>
+            {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+              <button
+                key={index}
+                onClick={() => handlePageChange(startPage + index)}
+                className={`px-4 py-2 mx-1 rounded ${
+                  currentPage === startPage + index
+                    ? "bg-c-secondary text-f-light"
+                    : "bg-gray-200 text-f-gray2"
+                }`}
+              >
+                {startPage + index}
+              </button>
+            ))}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`px-4 py-2 mx-1 rounded ${
+                currentPage === totalPages
+                  ? "bg-gray-400 text-f-light"
+                  : "bg-gray-200 text-f-gray2"
+              }`}
+            >
+              &gt;
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="w-full mt-24 flex flex-col items-center justify-center text-center text-c-primary text-p-lg font-medium gap-4">
+          <img src={Sample} alt="no data image" className="w-80" />
+          <p>Oops! No products found.</p>
+        </div>
+      )}
     </>
   );
 };

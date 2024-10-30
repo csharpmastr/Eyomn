@@ -12,22 +12,46 @@ const Patient = () => {
   const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [hasSelected, setHasSelected] = useState(false);
+  const [sortOption, setSortOption] = useState("a-z"); // State for sort option
+
   const role = useSelector((state) => state.reducer.user.user.role);
   const [isLoading, setIsLoading] = useState(false);
   const patients = useSelector((state) => state.reducer.patient.patients);
   const totalPatient = patients.length;
   const navigate = useNavigate();
   const location = useLocation();
+
   const filteredPatients = useMemo(() => {
     if (!Array.isArray(patients) || patients.length === 0) {
       return [];
     }
-    return patients.filter((patient) =>
+
+    // Search filter
+    let filtered = patients.filter((patient) =>
       `${patient.first_name} ${patient.last_name}`
         .toLowerCase()
         .includes(searchTerm.toLowerCase())
     );
-  }, [searchTerm, patients]);
+
+    // Sort filter
+    if (sortOption === "a-z") {
+      filtered = filtered.sort((a, b) =>
+        `${a.first_name} ${a.last_name}`.localeCompare(
+          `${b.first_name} ${b.last_name}`
+        )
+      );
+    } else if (sortOption === "newest") {
+      filtered = filtered.sort(
+        (a, b) => new Date(b.last_visit) - new Date(a.last_visit)
+      );
+    } else if (sortOption === "oldest") {
+      filtered = filtered.sort(
+        (a, b) => new Date(a.last_visit) - new Date(b.last_visit)
+      );
+    }
+
+    return filtered;
+  }, [searchTerm, patients, sortOption]);
 
   const openAddPatient = () => setIsAddPatientModalOpen(true);
   const closeAddPatient = () => setIsAddPatientModalOpen(false);
@@ -36,9 +60,11 @@ const Patient = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handlePatientClick = (patientId) => {
-    console.log(patientId);
+  const handleSortChange = (e) => {
+    setSortOption(e.target.value);
+  };
 
+  const handlePatientClick = (patientId) => {
     setHasSelected(true);
     sessionStorage.setItem("currentPatient", patientId);
     navigate(`/patient/${patientId}`);
@@ -55,12 +81,12 @@ const Patient = () => {
 
   useEffect(() => {
     const storedPatientId = sessionStorage.getItem("currentPatient");
-
     if (storedPatientId) {
       setHasSelected(true);
       navigate(`/patient/${storedPatientId}`);
     }
   }, [navigate]);
+
   return (
     <div className="h-screen w-full font-Poppins">
       {hasSelected ? (
@@ -76,7 +102,7 @@ const Patient = () => {
               </p>
               <div className="mt-2 md:mt-0 flex flex-row">
                 <div
-                  className={` flex flex-row border border-c-gray3 px-4 rounded-md justify-center items-center w-full ${
+                  className={`flex flex-row border border-c-gray3 px-4 rounded-md justify-center items-center w-full ${
                     role === "0" ? `` : `md:w-80`
                   }`}
                 >
@@ -84,20 +110,21 @@ const Patient = () => {
                   <input
                     type="text"
                     className="w-full text-f-dark focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
-                    placeholder="Search patient... "
+                    placeholder="Search patient..."
                     value={searchTerm}
                     onChange={handleSearchChange}
                   />
                 </div>
-                <div className="ml-2 h-auto flex justify-center items-center rounded-md px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
+                <div className="ml-2 w-auto flex justify-center items-center rounded-md px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
                   <FiFilter className="h-6 w-6 md:mr-2" />
-                  <select className="hover:cursor-pointer focus:outline-none w-16 bg-bg-mc">
-                    <option value="" disabled selected>
-                      Filter
-                    </option>
-                    <option value="filter1">Filter 1</option>
-                    <option value="filter2">Filter 2</option>
-                    <option value="filter3">Filter 3</option>
+                  <select
+                    className="hover:cursor-pointer focus:outline-none w-16 bg-bg-mc"
+                    value={sortOption}
+                    onChange={handleSortChange}
+                  >
+                    <option value="a-z">A-Z</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="newest">Newest</option>
                   </select>
                 </div>
                 {role === "0" || role === "1" ? (
