@@ -260,7 +260,7 @@ const AddBranchModal = ({ onClose }) => {
                       />
                       <button
                         type="button"
-                        className="absolute top-4 right-2 text-[#999999]"
+                        className="absolute top-4 right-2 text-c-gray3"
                         onClick={() => setPassVisible(!passVisible)}
                       >
                         {passVisible ? (
@@ -292,7 +292,7 @@ const AddBranchModal = ({ onClose }) => {
                       />
                       <button
                         type="button"
-                        className="absolute top-4 right-2 text-[#999999]"
+                        className="absolute top-4 right-2 text-c-gray3"
                         onClick={() => setCpVisible(!cpVisible)}
                       >
                         {cpVisible ? (

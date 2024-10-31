@@ -38,7 +38,7 @@ const Organization = () => {
         <>
           <div className="w-full flex flex-row-reverse">
             <div
-              className="h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+              className="h-fit flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
               onClick={handleOpenStaffModal}
             >
               <FiPlus className="h-5 w-5 mr-2" />
@@ -46,7 +46,7 @@ const Organization = () => {
             </div>
           </div>
           {branch && branch.length > 0 ? (
-            <div className="flex flex-wrap justify-center gap-4 md:items-center w-full md:h-full">
+            <div className="flex flex-wrap justify-center gap-4 mt-4 md:items-center w-full md:h-full">
               {branch.map((branchItem) => (
                 <div
                   key={branchItem.branchId}

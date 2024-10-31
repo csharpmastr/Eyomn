@@ -56,7 +56,7 @@ const OrgStaff = () => {
             className="h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
             onClick={handleOpenStaffModal}
           >
-            <FiPlus className="h-5 w-5" />
+            <FiPlus className="h-5 w-5 mr-2" />
             <h1>Add Staff</h1>
           </div>
         </div>
