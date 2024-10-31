@@ -34,7 +34,7 @@ const MedForm = () => {
     BLANK: "",
     FRONT: "",
   });
-  const [medformData, setMedformData] = useState({
+  const initialMedFormData = {
     //Subjective
     subjective: {
       initial_observation: {
@@ -519,7 +519,9 @@ const MedForm = () => {
       management: "",
       followup_care: "",
     },
-  });
+  };
+
+  const [medformData, setMedformData] = useState(initialMedFormData);
 
   useEffect(() => {
     const handleBeforeUnload = (event) => {
@@ -540,6 +542,7 @@ const MedForm = () => {
 
   const handleSubmitNote = async (e) => {
     e.preventDefault();
+
     setHasUnsavedChanges(false);
     try {
       const response = await addNote(medformData, patientId);
@@ -553,6 +556,7 @@ const MedForm = () => {
             createdAt: response.createdAt,
           })
         );
+
         setIsSuccess(true);
       }
     } catch (error) {
@@ -560,7 +564,10 @@ const MedForm = () => {
       console.log(error);
     }
   };
-
+  const navigateAfterSuccess = () => {
+    navigate(`/scribe/${patientId}`);
+    sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
+  };
   const handleNext = (e) => {
     e.preventDefault();
     if (currentPage < pageTitles.length - 1) {
@@ -6009,9 +6016,12 @@ const MedForm = () => {
       </div>
       <SuccessModal
         isOpen={isSuccess}
-        onClose={() => setIsSuccess(false)}
+        onClose={() => {
+          setIsSuccess(false);
+          navigateAfterSuccess();
+        }}
         title="Patient Note Added Successfully"
-        description="The patient note has been successfully added to the records."
+        description="The patient note has been successfully added to the records. We will notify you once "
       />
       <Modal
         title="Error"
