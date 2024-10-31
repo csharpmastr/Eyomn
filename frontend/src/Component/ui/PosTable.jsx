@@ -2,16 +2,34 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import Sample from "../../assets/Image/3.png";
 
-const PosTable = ({ onProductSelect, searchTerm }) => {
+const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
   const products = useSelector((state) => state.reducer.product.products);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
   const maxPageButtons = 4;
   const totalPages = Math.ceil(products.length / itemsPerPage);
 
-  const filteredProducts = products.filter((product) =>
+  let filteredProducts = products.filter((product) =>
     product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (sortOption === "ascending") {
+    filteredProducts = filteredProducts.sort((a, b) =>
+      `${a.product_name}`.localeCompare(`${b.product_name}`)
+    );
+  } else if (sortOption === "descending") {
+    filteredProducts = filteredProducts.sort((b, a) =>
+      `${a.product_name}`.localeCompare(`${b.product_name}`)
+    );
+  } else if (sortOption === "price-l") {
+    filteredProducts = filteredProducts.sort((a, b) =>
+      `${a.price}`.localeCompare(`${b.price}`)
+    );
+  } else if (sortOption === "price-h") {
+    filteredProducts = filteredProducts.sort((a, b) =>
+      `${b.price}`.localeCompare(`${a.price}`)
+    );
+  }
 
   const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * itemsPerPage,

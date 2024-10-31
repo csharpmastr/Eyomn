@@ -36,9 +36,9 @@ const Table = ({ data, handlePatientClick }) => {
       {currentData.length > 0 ? (
         <>
           <div>
-            <table className="w-full font-Poppins rounded-t-lg table-fixed bg-white">
+            <table className="w-full font-Poppins rounded-t-lg table-fixed bg-f-light  text-p-rg">
               <thead className="w-full h-20">
-                <tr className="text-left font-semibold text-c-secondary">
+                <tr className="text-left font-medium text-c-secondary">
                   <th className="pl-8 w-1/4">Patient Name</th>
                   <th className="w-1/4">Contact</th>
                   <th className="w-1/4">Email</th>
@@ -49,8 +49,8 @@ const Table = ({ data, handlePatientClick }) => {
                 {currentData.map((patientData, index) => (
                   <tr
                     key={index}
-                    className={`border-b border-f-gray h-20 text-c-secondary text-p-rg cursor-pointer ${
-                      index % 2 === 0 ? "bg-bg-mc" : `bg-white`
+                    className={`border-b border-f-gray h-16 text-c-secondary cursor-pointer ${
+                      index % 2 === 0 ? "bg-bg-mc" : `bg-f-light`
                     }`}
                     onClick={() => handlePatientClick(patientData.patientId)}
                   >

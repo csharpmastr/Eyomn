@@ -10,6 +10,7 @@ import SuccessModal from "../../Component/ui/SuccessModal";
 const PointOfSale = () => {
   const [selectedProducts, setSelectedProducts] = React.useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortOption, setSortOption] = useState("");
   const user = useSelector((state) => state.reducer.user.user);
   let branchId =
     (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
@@ -93,31 +94,35 @@ const PointOfSale = () => {
     <>
       {isLoading && <Loader />}
       <div className="text-f-dark font-Poppins flex flex-col md:flex-row h-full">
-        <div className="flex flex-col md:w-3/4 w-full p-4 md:p-6 xl:p-8">
-          <div className="flex flex-row h-14 mb-6">
-            <div className="flex flex-row border border-c-gray3 px-4 rounded-lg justify-center items-center w-full">
+        <div className="flex flex-col md:w-3/4 w-full p-4 md:p-6 2xl:p-8">
+          <div className="flex flex-row gap-3 mb-6">
+            <div className="flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-f-light text-c-gray3 font-normal hover:cursor-pointer">
+              <select
+                className="hover:cursor-pointer focus:outline-none bg-f-light w-fit"
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+              >
+                <option value="" disabled selected>
+                  Sort by
+                </option>
+                <option value="ascending">Ascending</option>
+                <option value="descending">Descending</option>
+                <option value="price-l">Low (Price)</option>
+                <option value="price-h">High (Price)</option>
+              </select>
+            </div>
+            <div className="flex flex-row border border-f-gray bg-f-light px-4 rounded-md justify-center items-center w-full gap-2">
               <IoMdSearch className="h-8 w-8 text-c-secondary" />
               <input
                 type="text"
-                className="w-full focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
+                className="w-full focus:outline-none placeholder-f-gray2 bg-f-light text-p-rg"
                 placeholder="Search product... "
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="ml-2 h-auto flex justify-center items-center rounded-lg px-4 py-3 border border-c-gray3 font-medium font-md hover:cursor-pointer">
-              <FiFilter className="h-6 w-6 md:mr-2" />
-              <select className="md:block hover:cursor-pointer focus:outline-none bg-bg-mc">
-                <option value="" disabled selected>
-                  Filter
-                </option>
-                <option value="filter1">Filter 1</option>
-                <option value="filter2">Filter 2</option>
-                <option value="filter3">Filter 3</option>
-              </select>
-            </div>
           </div>
-          <header className="flex text-p-rg font-semibold py-5 bg-white border border-b-f-gray rounded-t-lg sticky">
+          <header className="flex text-p-rg font-semibold py-5 bg-f-light border border-b-f-gray rounded-t-lg sticky">
             <div className="w-1/6 pl-4">Code</div>
             <div className="flex-1 pl-4">Product Name</div>
             <div className="flex-1 pl-4">Category</div>
@@ -129,6 +134,7 @@ const PointOfSale = () => {
               <PosTable
                 onProductSelect={handleProductSelect}
                 searchTerm={searchTerm}
+                sortOption={sortOption}
               />
             </div>
           </div>

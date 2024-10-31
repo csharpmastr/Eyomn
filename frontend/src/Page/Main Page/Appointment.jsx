@@ -90,12 +90,12 @@ const Appointment = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 xl:p-8 text-c-secondary text-p-rg font-Poppins">
+    <div className="p-4 md:p-6 2xl:p-8 text-c-secondary text-p-rg font-Poppins">
       <div className="flex justify-between items-center">
         <div>
           <button
             onClick={handlePrevMonth}
-            className="py-3 px-4 bg-white border border-c-gray3 rounded-lg"
+            className="py-3 px-4 bg-f-light border border-c-gray3 rounded-md"
           >
             &lt;
           </button>
@@ -104,13 +104,13 @@ const Appointment = () => {
           </span>
           <button
             onClick={handleNextMonth}
-            className="py-3 px-4 bg-white border border-c-gray3 rounded-lg"
+            className="py-3 px-4 bg-f-light border border-c-gray3 rounded-md"
           >
             &gt;
           </button>
         </div>
         <div
-          className="ml-2 h-auto flex justify-center items-center rounded-lg px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+          className="ml-2 h-fit flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
           onClick={handleOpenSetApp}
         >
           <FiPlus className="h-5 w-5 md:mr-2" />

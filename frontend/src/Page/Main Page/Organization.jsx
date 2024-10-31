@@ -33,7 +33,7 @@ const Organization = () => {
   }, [location.state]);
 
   return (
-    <div className="w-full h-full flex flex-col items-center p-4 md:p-6 xl:p-8">
+    <div className="w-full h-full flex flex-col items-center p-4 md:p-6 2xl:p-8">
       {!hasSelectedBranch ? (
         <>
           <div className="w-full flex flex-row-reverse">
