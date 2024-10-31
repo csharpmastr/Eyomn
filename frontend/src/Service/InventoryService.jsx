@@ -132,7 +132,34 @@ export const addPurchaseService = async (
     );
     return response;
   } catch (error) {
-    console.error("Error updating product : ", error);
+    console.error("Error adding purchase : ", error);
+    throw error;
+  }
+};
+
+export const getPurchases = async (
+  branchId,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.get(
+      `${INVENTORY_API_BASE_URL}/get-purchases`,
+      {
+        params: {
+          branchId,
+          firebaseUid,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error getting purchases : ", error);
     throw error;
   }
 };

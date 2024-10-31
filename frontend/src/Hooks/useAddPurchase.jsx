@@ -2,7 +2,7 @@ import { useState } from "react";
 import Cookies from "universal-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { addPurchaseService } from "../Service/InventoryService";
-import { purchaseProduct, updateProduct } from "../Slice/ProductSlice";
+import { purchaseProduct, updateProduct } from "../Slice/InventorySlice";
 
 export const useAddPurchase = () => {
   const cookies = new Cookies();

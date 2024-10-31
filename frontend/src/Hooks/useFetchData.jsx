@@ -6,8 +6,8 @@ import { setPatients } from "../Slice/PatientSlice";
 import { setDoctor } from "../Slice/doctorSlice";
 import { setBranch } from "../Slice/BranchSlice";
 import { setStaffs } from "../Slice/StaffSlice";
-import { getProducts } from "../Service/InventoryService";
-import { setProducts } from "../Slice/ProductSlice";
+import { getProducts, getPurchases } from "../Service/InventoryService";
+import { setProducts, setPurchases } from "../Slice/InventorySlice";
 import {
   getAppointments,
   getDoctorAppointments,
@@ -71,6 +71,11 @@ export const useFetchData = () => {
             call: () =>
               getAppointments(branchId, accessToken, refreshToken, firebaseUid),
             type: "appointments",
+          },
+          {
+            call: () =>
+              getPurchases(branchId, firebaseUid, accessToken, refreshToken),
+            type: "purchases",
           },
         ];
       case "0":
@@ -138,6 +143,8 @@ export const useFetchData = () => {
               case "products":
                 reduxDispatch(setProducts(result));
                 break;
+              case "purchases":
+                reduxDispatch(setPurchases(result));
               case "branches":
                 reduxDispatch(setBranch(result));
                 const staffs = result.flatMap((branch) => branch.staffs || []);

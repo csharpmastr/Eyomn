@@ -10,15 +10,32 @@ const DbProduct = lazy(() => import("./DbProduct"));
 const OrgDashboard = () => {
   const user = useSelector((state) => state.reducer.user.user);
   const patients = useSelector((state) => state.reducer.patient.patients);
-  const products = useSelector((state) => state.reducer.product.products);
+  const products = useSelector((state) => state.reducer.inventory.products);
   const staffs = useSelector((state) => state.reducer.staff.staffs);
+  const sales = useSelector((state) => state.reducer.inventory.purchases);
 
   const patientCount = patients.length;
   const productCount = products.length;
   const staffCount = staffs.length;
 
+  const getTotalSales = () => {
+    return sales.reduce((total, item) => {
+      const itemTotal = item.purchaseDetails.reduce((sum, detail) => {
+        return sum + detail.totalAmount;
+      }, 0);
+
+      return total + itemTotal;
+    }, 0);
+  };
+
+  const totalSales = getTotalSales();
+
   const dummyData = [
-    { title: "Gross Income", value: "Php. 20,000", percentageChange: "+4.3%" },
+    {
+      title: "Gross Income",
+      value: `₱ ${totalSales}`,
+      percentageChange: "+4.3%",
+    },
     { title: "Total Patients", value: patientCount, percentageChange: "+4.3%" },
     { title: "Total Product", value: productCount, percentageChange: "+4.3%" },
     { title: "Number of Staffs", value: staffCount, percentageChange: "+4.3%" },
@@ -80,7 +97,7 @@ const OrgDashboard = () => {
         </div>
         <div className="w-2/3">
           <Suspense fallback={<div>Loading graph...</div>}>
-            <DbGraph patients={patients} />
+            <DbGraph patients={patients} sales={sales} />
           </Suspense>
         </div>
       </div>

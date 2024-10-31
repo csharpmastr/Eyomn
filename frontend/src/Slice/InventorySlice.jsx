@@ -2,10 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   products: [],
+  purchases: [],
 };
 
-const productSlice = createSlice({
-  name: "products",
+const inventorySlice = createSlice({
+  name: "inventory",
   initialState,
   reducers: {
     addProduct: (state, action) => {
@@ -20,25 +21,26 @@ const productSlice = createSlice({
         (product) => product.productId !== action.payload
       );
     },
+
     updateProduct: (state, action) => {
       const index = state.products.findIndex(
         (p) => p.productId === action.payload.productId
       );
 
       if (index !== -1) {
-        // Update the product details
         state.products[index] = {
           ...state.products[index],
-          quantity: action.payload.quantity, // Set new quantity directly
+          quantity: action.payload.quantity,
           ...Object.keys(action.payload).reduce((acc, key) => {
             if (key !== "quantity") {
-              acc[key] = action.payload[key]; // Update other fields
+              acc[key] = action.payload[key];
             }
             return acc;
           }, {}),
         };
       }
     },
+
     purchaseProduct: (state, action) => {
       const index = state.products.findIndex(
         (p) => p.productId === action.payload.productId
@@ -54,11 +56,27 @@ const productSlice = createSlice({
         );
       }
     },
+
     setProducts: (state, action) => {
       state.products = action.payload;
     },
+
     clearProducts: (state) => {
       state.products = [];
+    },
+
+    addPurchase: (state, action) => {
+      if (!Array.isArray(state.purchases)) {
+        state.purchases = [];
+      }
+      state.purchases.push(action.payload);
+    },
+
+    setPurchases: (state, action) => {
+      state.purchases = action.payload;
+    },
+    clearPurchases: (state) => {
+      state.purchases = [];
     },
   },
 });
@@ -70,6 +88,9 @@ export const {
   setProducts,
   clearProducts,
   purchaseProduct,
-} = productSlice.actions;
+  addPurchase,
+  setPurchases,
+  clearPurchases,
+} = inventorySlice.actions;
 
-export default productSlice.reducer;
+export default inventorySlice.reducer;

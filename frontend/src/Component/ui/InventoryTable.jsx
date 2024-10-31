@@ -7,7 +7,7 @@ import ConfirmationModal from "../../Component/ui/ConfirmationModal";
 import Sample from "../../assets/Image/3.png";
 
 const InventoryTable = ({ searchTerm }) => {
-  const products = useSelector((state) => state.reducer.product.products);
+  const products = useSelector((state) => state.reducer.inventory.products);
   const [collapsedProducts, setCollapsedProducts] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
