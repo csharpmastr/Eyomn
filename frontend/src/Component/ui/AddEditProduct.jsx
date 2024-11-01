@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Cookies from "universal-cookie";
 import Loader from "./Loader";
 import SuccessModal from "./SuccessModal";
-import { addProduct, updateProduct } from "../../Slice/ProductSlice";
+import { addProduct, updateProduct } from "../../Slice/InventorySlice";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import Modal from "./Modal";
 const AddEditProduct = ({ onClose, productDetails, title, productId }) => {

@@ -4,7 +4,7 @@ import doctorReducer from "../Slice/doctorSlice";
 import staffReducer from "../Slice/StaffSlice";
 import userReducer from "../Slice/UserSlice";
 import branchReducer from "../Slice/BranchSlice";
-import productReducer from "../Slice/ProductSlice";
+import inventoryReducer from "../Slice/InventorySlice";
 import appointmentReducer from "../Slice/AppointmentSlice";
 import notificationReducer from "../Slice/NotificationSlice";
 import noteReducer from "../Slice/NoteSlice";
@@ -25,7 +25,7 @@ const reducer = combineReducers({
   staff: staffReducer,
   user: userReducer,
   branch: branchReducer,
-  product: productReducer,
+  inventory: inventoryReducer,
   appointment: appointmentReducer,
   notification: notificationReducer,
   visit: visitReducer,

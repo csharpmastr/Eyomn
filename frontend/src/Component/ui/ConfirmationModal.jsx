@@ -3,7 +3,7 @@ import SuccessModal from "./SuccessModal";
 import Loader from "./Loader";
 import { deleteProduct } from "../../Service/InventoryService";
 import { useDispatch, useSelector } from "react-redux";
-import { removeProduct } from "../../Slice/ProductSlice";
+import { removeProduct } from "../../Slice/InventorySlice";
 
 const ConfirmationModal = ({ productId, onClose }) => {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);

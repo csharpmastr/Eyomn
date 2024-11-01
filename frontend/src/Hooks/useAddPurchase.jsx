@@ -2,7 +2,7 @@ import { useState } from "react";
 import Cookies from "universal-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { addPurchaseService } from "../Service/InventoryService";
-import { purchaseProduct, updateProduct } from "../Slice/ProductSlice";
+import { purchaseProduct, updateProduct } from "../Slice/InventorySlice";
 
 export const useAddPurchase = () => {
   const cookies = new Cookies();
@@ -13,7 +13,7 @@ export const useAddPurchase = () => {
   const user = useSelector((state) => state.reducer.user.user);
   const reduxDispatch = useDispatch();
 
-  const addPurchase = async (purchaseDetails, branchId) => {
+  const addPurchaseHook = async (purchaseDetails, branchId) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -36,6 +36,8 @@ export const useAddPurchase = () => {
           );
         });
       }
+      console.log(response);
+
       return response;
     } catch (err) {
       setError(err?.response?.data?.message || "An error occurred.");
@@ -44,5 +46,5 @@ export const useAddPurchase = () => {
     }
   };
 
-  return { addPurchase, isLoading, error };
+  return { addPurchaseHook, isLoading, error };
 };

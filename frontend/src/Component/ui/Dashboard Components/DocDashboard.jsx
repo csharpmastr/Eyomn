@@ -9,6 +9,7 @@ const DbTable = lazy(() => import("./DbTable"));
 
 const DocDashboard = () => {
   const patients = useSelector((state) => state.reducer.patient.patients);
+  const user = useSelector((state) => state.reducer.user.user);
   const patientCount = patients.length;
 
   const dummyData = [
@@ -43,7 +44,11 @@ const DocDashboard = () => {
       <div className="w-full flex gap-6">
         <div className="w-2/3">
           <Suspense fallback={<div>Loading graph...</div>}>
-            <DbGraph patients={patients} />
+            <DbGraph
+              patients={patients}
+              sales={user.role === "doctor" ? null : null}
+              selectedDataType={user.role === "2" ? "patients" : undefined}
+            />
           </Suspense>
         </div>
         <div className="w-1/3">

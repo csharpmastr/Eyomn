@@ -2,21 +2,23 @@ import React, { useState } from "react";
 import { IoMdSearch } from "react-icons/io";
 import { FiFilter } from "react-icons/fi";
 import PosTable from "../../Component/ui/PosTable";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useAddPurchase } from "../../Hooks/useAddPurchase";
 import Loader from "../../Component/ui/Loader";
 import SuccessModal from "../../Component/ui/SuccessModal";
+import { addPurchase } from "../../Slice/InventorySlice";
 
 const PointOfSale = () => {
   const [selectedProducts, setSelectedProducts] = React.useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("");
+  const reduxDispatch = useDispatch();
   const user = useSelector((state) => state.reducer.user.user);
   let branchId =
     (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
     user.userId ||
     null;
-  const { addPurchase, isLoading, error } = useAddPurchase();
+  const { addPurchaseHook, isLoading, error } = useAddPurchase();
   const [isSuccess, setIsSuccess] = useState(false);
   const handleProductSelect = (product) => {
     const existingProductIndex = selectedProducts.findIndex(
@@ -48,10 +50,13 @@ const PointOfSale = () => {
       })
     );
     try {
-      const response = await addPurchase(purchaseDetails, branchId);
+      const response = await addPurchaseHook(purchaseDetails, branchId);
       if (response) {
+        const purchaseId = response.purchaseId;
+        const createdAt = response.createdAt;
         setIsSuccess(true);
         setSelectedProducts([]);
+        reduxDispatch(addPurchase({ purchaseDetails, createdAt, purchaseId }));
       }
     } catch (error) {
       console.log(error);

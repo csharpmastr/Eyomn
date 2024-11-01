@@ -197,6 +197,7 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
     const purchaseId = await generateUniqueId(purchaseCollectionRef);
     const purchaseRef = purchaseCollectionRef.doc(purchaseId);
 
+    const createdAt = currentDate.toISOString();
     //batch read
     await db.runTransaction(async (transaction) => {
       const productDocs = await Promise.all(
@@ -237,10 +238,11 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
 
       // proceed with the writes
       // create purchase record
+
       transaction.set(purchaseRef, {
         staffId,
         purchaseDetails,
-        createdAt: currentDate.toISOString(),
+        createdAt: createdAt,
       });
 
       // update product stock each product
@@ -258,11 +260,35 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
         }
       );
     });
-
-    console.log("Purchase and stock updates successful.");
+    return { purchaseId, createdAt };
   } catch (error) {
     console.error("Error during purchase:", error);
     throw error;
+  }
+};
+
+const getPurchases = async (branchId, firebaseUid) => {
+  try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
+    const salesColRef = inventoryCollection
+      .doc(branchId)
+      .collection("purchases");
+
+    const saleSnapShot = await salesColRef.get();
+    if (saleSnapShot.empty) {
+      return [];
+    }
+    const purchases = saleSnapShot.docs.map((doc) => doc.data());
+
+    return purchases;
+  } catch (error) {
+    return {
+      status: error.status || 500,
+      message: error.message || "An error occurred while fetching purchases.",
+    };
   }
 };
 
@@ -272,4 +298,5 @@ module.exports = {
   deleteProduct,
   updateProduct,
   addPurchase,
+  getPurchases,
 };

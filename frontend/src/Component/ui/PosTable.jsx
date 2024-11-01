@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import Sample from "../../assets/Image/3.png";
 
+
 const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
-  const products = useSelector((state) => state.reducer.product.products);
+  const products = useSelector((state) => state.reducer.inventory.products);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
   const maxPageButtons = 4;

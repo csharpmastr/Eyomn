@@ -10,7 +10,7 @@ import { clearStaffs } from "../Slice/StaffSlice";
 import { removeUser } from "../Slice/UserSlice";
 import { clearBranch } from "../Slice/BranchSlice";
 import { clearAppointment } from "../Slice/AppointmentSlice";
-import { clearProducts } from "../Slice/ProductSlice";
+import { clearProducts, clearPurchases } from "../Slice/InventorySlice";
 import { clearNotifications } from "../Slice/NotificationSlice";
 import { clearVisits } from "../Slice/VisitSlice";
 import { clearNotes } from "../Slice/NoteSlice";
@@ -42,6 +42,8 @@ export const useLogout = () => {
       reduxDispatch(clearNotifications());
       reduxDispatch(clearVisits());
       reduxDispatch(clearNotes());
+      reduxDispatch(clearPurchases());
+      reduxDispatch(clearBranch());
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred during logout.");
