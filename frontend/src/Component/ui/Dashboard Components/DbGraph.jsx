@@ -1,10 +1,22 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Chart from "react-apexcharts";
 import dayjs from "dayjs";
+import { useSelector } from "react-redux";
 
 const DbGraph = ({ patients, sales }) => {
+  const user = useSelector((state) => state.reducer.user.user);
   const [selectedFilter, setSelectedFilter] = useState("filter1");
-  const [selectedDataType, setSelectedDataType] = useState("sales");
+  const [selectedDataType, setSelectedDataType] = useState(
+    user.role === "3" ? "sales" : "patients"
+  );
+
+  useEffect(() => {
+    if (["0", "1", "3"].includes(user.role)) {
+      setSelectedDataType("sales");
+    } else {
+      setSelectedDataType("patients");
+    }
+  }, [user.role]);
 
   const handleFilterChange = (event) => {
     setSelectedFilter(event.target.value);
@@ -136,16 +148,22 @@ const DbGraph = ({ patients, sales }) => {
   return (
     <div className="text-p-rg h-[500px] text-c-secondary rounded-lg bg-white p-4 border">
       <header className="flex justify-between h-fit w-full items-center mb-4">
-        <h1 className="font-semibold">| Inventory / Patient Graph</h1>
+        <h1 className="font-semibold">
+          {user.role !== "2"
+            ? "| Inventory / Patient Graph"
+            : "| Patient Graph"}
+        </h1>
         <div className="flex gap-2">
-          <select
-            value={selectedDataType}
-            onChange={handleDataTypeChange}
-            className="hover:cursor-pointer focus:outline-none bg-bg-mc p-1 rounded-md border border-f-gray"
-          >
-            <option value="sales">Sales</option>
-            <option value="patients">Patients</option>
-          </select>
+          {user.role !== "2" && (
+            <select
+              value={selectedDataType}
+              onChange={handleDataTypeChange}
+              className="hover:cursor-pointer focus:outline-none bg-bg-mc p-1 rounded-md border border-f-gray"
+            >
+              <option value="sales">Sales</option>
+              <option value="patients">Patients</option>
+            </select>
+          )}
           <select
             value={selectedFilter}
             onChange={handleFilterChange}

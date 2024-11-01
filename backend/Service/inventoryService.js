@@ -197,6 +197,7 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
     const purchaseId = await generateUniqueId(purchaseCollectionRef);
     const purchaseRef = purchaseCollectionRef.doc(purchaseId);
 
+    const createdAt = currentDate.toISOString();
     //batch read
     await db.runTransaction(async (transaction) => {
       const productDocs = await Promise.all(
@@ -237,10 +238,11 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
 
       // proceed with the writes
       // create purchase record
+
       transaction.set(purchaseRef, {
         staffId,
         purchaseDetails,
-        createdAt: currentDate.toISOString(),
+        createdAt: createdAt,
       });
 
       // update product stock each product
@@ -258,8 +260,7 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
         }
       );
     });
-
-    console.log("Purchase and stock updates successful.");
+    return { purchaseId, createdAt };
   } catch (error) {
     console.error("Error during purchase:", error);
     throw error;

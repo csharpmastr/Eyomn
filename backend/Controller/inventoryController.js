@@ -113,8 +113,13 @@ const addPurchaseHandler = async (req, res) => {
       return res.status(400).json({ message: "No Branch/Staff ID provided." });
     }
 
-    await addPurchase(purchaseDetails, branchId, staffId, firebaseUid);
-    return res.status(201).json({ message: "Success" });
+    const { purchaseId, createdAt } = await addPurchase(
+      purchaseDetails,
+      branchId,
+      staffId,
+      firebaseUid
+    );
+    return res.status(201).json({ purchaseId, createdAt });
   } catch (error) {
     res
       .status(500)

@@ -130,7 +130,7 @@ export const addPurchaseService = async (
         },
       }
     );
-    return response;
+    return response.data;
   } catch (error) {
     console.error("Error adding purchase : ", error);
     throw error;

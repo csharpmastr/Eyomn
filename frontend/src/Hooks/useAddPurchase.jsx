@@ -13,7 +13,7 @@ export const useAddPurchase = () => {
   const user = useSelector((state) => state.reducer.user.user);
   const reduxDispatch = useDispatch();
 
-  const addPurchase = async (purchaseDetails, branchId) => {
+  const addPurchaseHook = async (purchaseDetails, branchId) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -36,6 +36,8 @@ export const useAddPurchase = () => {
           );
         });
       }
+      console.log(response);
+
       return response;
     } catch (err) {
       setError(err?.response?.data?.message || "An error occurred.");
@@ -44,5 +46,5 @@ export const useAddPurchase = () => {
     }
   };
 
-  return { addPurchase, isLoading, error };
+  return { addPurchaseHook, isLoading, error };
 };
