@@ -2,17 +2,15 @@ import axios from "axios";
 
 const ORGANIZATION_API_BASE_URL = "http://localhost:3000/api/v1/organization";
 export const getStaffs = async (
-  clinicId,
+  organizationId,
+  branchId,
   accessToken,
   refreshToken,
   firebaseUid
 ) => {
   try {
-    const response = await axios.post(
+    const response = await axios.get(
       `${ORGANIZATION_API_BASE_URL}/get-staffs`,
-      {
-        clinicId,
-      },
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -20,6 +18,8 @@ export const getStaffs = async (
         },
         params: {
           firebaseUid,
+          organizationId,
+          branchId,
         },
       }
     );

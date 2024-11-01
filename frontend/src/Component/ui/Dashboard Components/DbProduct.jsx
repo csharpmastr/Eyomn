@@ -2,14 +2,14 @@ import React, { useMemo } from "react";
 import Chart from "react-apexcharts";
 import { useSelector } from "react-redux";
 
-const DbProduct = () => {
-  const sales = useSelector((state) => state.reducer.inventory.purchases);
+const DbProduct = ({ filteredSales }) => {
   const products = useSelector((state) => state.reducer.inventory.products);
 
   const productSales = useMemo(() => {
     const productTotals = {};
 
-    sales.forEach((sale) => {
+    // Calculate total sales per product from filtered sales
+    filteredSales.forEach((sale) => {
       sale.purchaseDetails.forEach((detail) => {
         const { productId, totalAmount } = detail;
         if (!productTotals[productId]) {
@@ -19,6 +19,7 @@ const DbProduct = () => {
       });
     });
 
+    // Get top 3 products sorted by total sales
     const sortedProducts = Object.entries(productTotals)
       .map(([productId, total]) => ({ productId, total }))
       .sort((a, b) => b.total - a.total)
@@ -33,7 +34,7 @@ const DbProduct = () => {
     });
 
     return topProducts;
-  }, [sales, products]);
+  }, [filteredSales, products]);
 
   const chartData = {
     series: [
@@ -55,8 +56,9 @@ const DbProduct = () => {
     },
     dataLabels: {
       enabled: true,
-      colors: ["#3B82F6"],
-      markers: { size: 10 },
+      fontSize: "18px",
+      fontFamily: "Helvetica, Arial, sans-serif",
+      fontWeight: "bold",
     },
   };
 

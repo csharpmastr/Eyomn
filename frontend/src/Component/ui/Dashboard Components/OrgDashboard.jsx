@@ -13,17 +13,31 @@ const OrgDashboard = () => {
   const products = useSelector((state) => state.reducer.inventory.products);
   const staffs = useSelector((state) => state.reducer.staff.staffs);
   const sales = useSelector((state) => state.reducer.inventory.purchases);
+  const branch = useSelector((state) => state.reducer.branch.branch);
+  const [selectedBranch, setSelectedBranch] = useState("");
 
-  const patientCount = patients.length;
-  const productCount = products.length;
+  // filter patients and sales based on selected branch
+  const filteredPatients = selectedBranch
+    ? patients.filter((patient) => patient.branchId === selectedBranch)
+    : patients;
+
+  const filteredSales = selectedBranch
+    ? sales.filter((sale) => sale.branchId === selectedBranch)
+    : sales;
+
+  const filteredProducts = selectedBranch
+    ? products.filter((product) => product.branchId === selectedBranch)
+    : products;
+
+  const patientCount = filteredPatients.length;
+  const productCount = filteredProducts.length;
   const staffCount = staffs.length;
 
   const getTotalSales = () => {
-    return sales.reduce((total, item) => {
+    return filteredSales.reduce((total, item) => {
       const itemTotal = item.purchaseDetails.reduce((sum, detail) => {
         return sum + detail.totalAmount;
       }, 0);
-
       return total + itemTotal;
     }, 0);
   };
@@ -74,30 +88,35 @@ const OrgDashboard = () => {
           )
         )}
 
-        <div className="flex flex-col justify-between bg-white p-4 rounded-lg">
-          <div className="font-Poppins text-p-sm">
-            <p>Date: {currentDateTime.date}</p>
-            <p>Time: {currentDateTime.time}</p>
+        {user.role === "0" && (
+          <div className="flex flex-col justify-between bg-white p-4 rounded-lg">
+            <div className="font-Poppins text-p-sm">
+              <p>Date: {currentDateTime.date}</p>
+              <p>Time: {currentDateTime.time}</p>
+            </div>
+            <select
+              className="hover:cursor-pointer h-fit w-fit focus:outline-none bg-[#E0EAEA] border border-c-primary text-c-primary px-2 py-1 rounded-md"
+              onChange={(e) => setSelectedBranch(e.target.value)}
+            >
+              <option value="">All Branches</option>
+              {branch.map((item, key) => (
+                <option key={key} value={item.branchId}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
           </div>
-          <select className="hover:cursor-pointer h-fit w-fit focus:outline-none bg-[#E0EAEA] border border-c-primary text-c-primary px-2 py-1 rounded-md">
-            <option value="" disabled selected>
-              All Branch
-            </option>
-            <option value="filter1">Filter 1</option>
-            <option value="filter2">Filter 2</option>
-            <option value="filter3">Filter 3</option>
-          </select>
-        </div>
+        )}
       </div>
       <div className="flex w-full h-full gap-6">
         <div className="w-1/3">
           <Suspense fallback={<div>Loading products...</div>}>
-            <DbProduct />
+            <DbProduct filteredSales={filteredSales} />
           </Suspense>
         </div>
         <div className="w-2/3">
           <Suspense fallback={<div>Loading graph...</div>}>
-            <DbGraph patients={patients} sales={sales} />
+            <DbGraph patients={filteredPatients} sales={filteredSales} />
           </Suspense>
         </div>
       </div>

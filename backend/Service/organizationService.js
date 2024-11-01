@@ -5,6 +5,7 @@ const {
   branchCollection,
   organizationCollection,
   staffCollection,
+  inventoryCollection,
 } = require("../Config/FirebaseConfig");
 const { v4: uuidv4 } = require("uuid");
 const {
@@ -281,10 +282,54 @@ const getBranchData = async (organizationId, firebaseUid) => {
   }
 };
 
+const getBranchStaffs = async (organizationId, branchId, firebaseUid) => {
+  try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
+
+    const staffQuery = staffCollection.where(
+      "organizationId",
+      "==",
+      organizationId
+    );
+
+    const staffSnapshot = await staffQuery.get();
+    if (staffSnapshot.empty) {
+      console.warn("No staffs found, returning an empty array.");
+      return [];
+    }
+
+    const staffs = staffSnapshot.docs
+      .filter((staffDoc) => {
+        const { branches } = staffDoc.data();
+        return branches.some((branch) => branch.branchId === branchId);
+      })
+      .map((staffDoc) => {
+        const staffData = staffDoc.data();
+        return decryptDocument(staffData, [
+          "organizationId",
+          "staffId",
+          "role",
+          "email",
+          "branches",
+          "firebaseUid",
+        ]);
+      });
+
+    return staffs;
+  } catch (error) {
+    console.error("Error fetching branch staffs:", error.message);
+    throw new Error("Error fetching branch staffs: " + error.message);
+  }
+};
+
 module.exports = {
   addStaff,
   getBranchData,
   // getAllStaff,
   // getDoctorsList,
   addBranch,
+  getBranchStaffs,
 };

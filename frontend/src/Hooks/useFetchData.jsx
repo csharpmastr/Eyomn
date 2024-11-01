@@ -6,14 +6,22 @@ import { setPatients } from "../Slice/PatientSlice";
 import { setDoctor } from "../Slice/doctorSlice";
 import { setBranch } from "../Slice/BranchSlice";
 import { setStaffs } from "../Slice/StaffSlice";
-import { getProducts, getPurchases } from "../Service/InventoryService";
+import {
+  getProducts,
+  getProductsSales,
+  getPurchases,
+} from "../Service/InventoryService";
 import { setProducts, setPurchases } from "../Slice/InventorySlice";
 import {
   getAppointments,
   getDoctorAppointments,
 } from "../Service/AppointmentService";
 import { setAppointments } from "../Slice/AppointmentSlice";
-import { getBranchData, getDoctorList } from "../Service/organizationService";
+import {
+  getBranchData,
+  getDoctorList,
+  getStaffs,
+} from "../Service/organizationService";
 
 export const useFetchData = () => {
   const user = useSelector((state) => state.reducer.user.user);
@@ -77,6 +85,17 @@ export const useFetchData = () => {
               getPurchases(branchId, firebaseUid, accessToken, refreshToken),
             type: "purchases",
           },
+          {
+            call: () =>
+              getStaffs(
+                organizationId,
+                branchId,
+                accessToken,
+                refreshToken,
+                firebaseUid
+              ),
+            type: "staffs",
+          },
         ];
       case "0":
         return [
@@ -102,6 +121,16 @@ export const useFetchData = () => {
                 firebaseUid
               ),
             type: "branches",
+          },
+          {
+            call: () =>
+              getProductsSales(
+                organizationId,
+                firebaseUid,
+                accessToken,
+                refreshToken
+              ),
+            type: "inventory",
           },
         ];
       case "2":
@@ -145,6 +174,31 @@ export const useFetchData = () => {
                 break;
               case "purchases":
                 reduxDispatch(setPurchases(result));
+                break;
+              case "staffs":
+                reduxDispatch(setStaffs(result));
+                break;
+              case "inventory":
+                let allPurchases = [];
+                let allProducts = [];
+                Object.entries(result).forEach(
+                  ([branchId, { purchases, products }]) => {
+                    const formattedPurchases = purchases.map((purchase) => ({
+                      ...purchase,
+                      branchId,
+                    }));
+                    allPurchases = [...allPurchases, ...formattedPurchases];
+
+                    const formattedProducts = products.map((product) => ({
+                      ...product,
+                      branchId,
+                    }));
+                    allProducts = [...allProducts, ...formattedProducts];
+                  }
+                );
+                reduxDispatch(setPurchases(allPurchases));
+                reduxDispatch(setProducts(allProducts));
+                break;
               case "branches":
                 reduxDispatch(setBranch(result));
                 const staffs = result.flatMap((branch) => branch.staffs || []);
@@ -167,7 +221,7 @@ export const useFetchData = () => {
     } catch (error) {
       console.error("Error fetching data: ", error);
     } finally {
-      setLoading(false); // Set loading to false when all data fetching is complete
+      setLoading(false);
     }
   };
 
