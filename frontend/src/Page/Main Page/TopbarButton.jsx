@@ -86,7 +86,7 @@ const TopbarButton = () => {
               <img
                 //src={image}
                 alt="Profile"
-                className="rounded-full w-11 h-11 object-cover hover:cursor-pointer bg-gray-400"
+                className="rounded-lg w-11 h-11 object-cover hover:cursor-pointer bg-gray-400"
               />
               <div className="flex flex-col">
                 {role === "2" || role === "3" ? (

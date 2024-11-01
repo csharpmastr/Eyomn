@@ -32,6 +32,7 @@ const Scribe = () => {
   const patients = useSelector((state) => state.reducer.patient.patients);
   const navigate = useNavigate();
   const location = useLocation();
+  const [sortOrder, setSortOrder] = useState("ascending");
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
@@ -69,8 +70,12 @@ const Scribe = () => {
     }
   }, [location]);
 
-  const groupedPatients = groupPatientsByInitial(patients);
-  const sortedInitials = Object.keys(groupedPatients).sort();
+  const handleSortChange = (e) => {
+    setSortOrder(e.target.value);
+  };
+
+  // const groupedPatients = groupPatientsByInitial(patients);
+  // const sortedInitials = Object.keys(groupedPatients).sort();
 
   const filteredPatients = patients.filter((patient) => {
     const fullName = `${patient.first_name} ${patient.last_name}`.toLowerCase();
@@ -78,40 +83,45 @@ const Scribe = () => {
   });
 
   const filteredGroupedPatients = groupPatientsByInitial(filteredPatients);
-  const sortedFilteredInitials = Object.keys(filteredGroupedPatients).sort();
+  const sortedFilteredInitials = Object.keys(filteredGroupedPatients).sort(
+    (a, b) =>
+      sortOrder === "ascending" ? a.localeCompare(b) : b.localeCompare(a)
+  );
 
   return (
     <div className="h-full w-full">
       {hasSelected ? (
         <Outlet />
       ) : (
-        <div className="p-4 md:p-6 xl:p-8 font-Poppins h-full overflow-clip">
-          <div className="flex flex-col md:flex-row md:items-center justify-between">
-            <p className="text-p-lg font-semibold text-f-dark">
+        <div className="p-4 md:p-6 2xl:p-8 font-Poppins h-full overflow-clip">
+          <div className="flex flex-col md:flex-row md:items-center justify-between text-p-rg ">
+            <p className="font-semibold text-f-dark">
               {patients.length || 0}{" "}
               <span className="text-f-gray2">Total patient</span>
             </p>
-            <div className="mt-8 md:mt-0 flex flex-row">
-              <div className="w-full flex flex-row border border-c-gray3 px-4 rounded-md justify-center items-center md:w-80">
-                <IoMdSearch className="h-8 w-8 text-c-secondary" />
+            <div className="mt-8 md:mt-0 flex flex-row gap-3">
+              <div className="h-auto flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-f-light text-c-gray3 font-normal hover:cursor-pointer">
+                <select
+                  value={sortOrder}
+                  onChange={handleSortChange}
+                  className="hover:cursor-pointer focus:outline-none bg-f-light w-fit"
+                >
+                  <option value="" disabled selected>
+                    Sort by
+                  </option>
+                  <option value="ascending">Ascending</option>
+                  <option value="descending">Descending</option>
+                </select>
+              </div>
+              <div className="w-full flex flex-row gap-2 border border-f-gray bg-f-light px-4 rounded-md justify-center items-center md:w-fit">
+                <IoMdSearch className="h-6 w-6 text-c-secondary" />
                 <input
                   type="text"
-                  placeholder="Search patient..."
+                  placeholder="Search patient name"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full text-f-dark focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-rg"
+                  className="w-full text-f-dark focus:outline-none placeholder-c-gray3 bg-f-light"
                 />
-              </div>
-              <div className="ml-2 h-auto w- flex justify-center items-center rounded-md px-4 py-3 border border-c-gray3 text-f-dark font-medium font-md hover:cursor-pointer">
-                <FiFilter className="h-6 w-6 md:mr-2" />
-                <select className="hover:cursor-pointer focus:outline-none bg-bg-mc w-16">
-                  <option value="" disabled selected>
-                    Filter
-                  </option>
-                  <option value="-">-</option>
-                  <option value="-">-</option>
-                  <option value="-">-</option>
-                </select>
               </div>
             </div>
           </div>
@@ -119,7 +129,9 @@ const Scribe = () => {
             {sortedFilteredInitials.length > 0 ? (
               sortedFilteredInitials.map((initial) => (
                 <div key={initial} className="mb-8">
-                  <h2 className="text-p-lg text-f-gray2 mb-4">{initial}</h2>
+                  <h2 className="text-p-rg text-f-gray2 font-medium mb-4">
+                    {initial}
+                  </h2>
                   <div className="grid grid-cols-5 gap-8 px-4">
                     {filteredGroupedPatients[initial].map((patient, index) => (
                       <PatientScribeCard

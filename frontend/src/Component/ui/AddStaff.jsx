@@ -376,10 +376,10 @@ const AddStaff = ({ onClose, staffData }) => {
                       <img
                         src={image}
                         alt="Staff"
-                        className="h-24 w-24 rounded-full object-cover hover:cursor-pointer"
+                        className="h-24 w-24 rounded-2xl object-cover hover:cursor-pointer"
                       />
                     ) : (
-                      <div className="h-24 w-24 rounded-full bg-blue-200 flex justify-center items-center text-gray-500">
+                      <div className="h-24 w-24 rounded-2xl bg-blue-200 flex justify-center items-center text-gray-500">
                         <FiUser className="w-12 h-12" />
                       </div>
                     )}

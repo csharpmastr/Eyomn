@@ -75,7 +75,7 @@ const PatientProfile = () => {
   }, [currentPatient, accessToken, refreshToken, reduxDispatch, visitsStore]);
 
   return (
-    <div className="w-full h-fit p-4 md:p-6 xl:p-8">
+    <div className="w-full h-fit p-4 md:p-6 2xl:p-8">
       <div
         className="flex gap-2 items-center mb-6 hover:cursor-pointer"
         onClick={handleBack}

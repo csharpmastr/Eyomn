@@ -21,7 +21,7 @@ const HelpCenter = () => {
   };
 
   return (
-    <div className="text-f-dark p-3 md:p-6 xl:p-8 font-Poppin h-full gap-6 overflow-clip">
+    <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppin h-full gap-6 overflow-clip">
       <nav className="w-full flex gap-4 overflow-x-auto pb-2 ">
         {[
           "Getting Started",

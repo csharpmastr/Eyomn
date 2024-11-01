@@ -15,7 +15,7 @@ const ProfileSetting = () => {
   };
 
   return (
-    <div className="text-f-dark h-full p-4 md:p-6 xl:p-8 font-Poppins flex flex-col gap-4 md:gap-8 ">
+    <div className="text-f-dark h-full p-4 md:p-6 2xl:p-8 font-Poppins flex flex-col gap-4 md:gap-8 ">
       <nav className="w-full">
         <div className="flex gap-4 w-1/4">
           <div

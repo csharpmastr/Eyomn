@@ -6,7 +6,7 @@ import AddEditProduct from "../../Component/ui/AddEditProduct";
 import ConfirmationModal from "../../Component/ui/ConfirmationModal";
 import Sample from "../../assets/Image/3.png";
 
-const InventoryTable = ({ searchTerm }) => {
+const InventoryTable = ({ searchTerm, sortOption }) => {
   const products = useSelector((state) => state.reducer.inventory.products);
   const [collapsedProducts, setCollapsedProducts] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,14 +35,33 @@ const InventoryTable = ({ searchTerm }) => {
     }));
   };
 
-  const filteredProducts = products.filter((product) =>
+  let filteredProducts = products.filter((product) =>
     product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (sortOption === "ascending") {
+    filteredProducts = filteredProducts.sort((a, b) =>
+      `${a.product_name}`.localeCompare(`${b.product_name}`)
+    );
+  } else if (sortOption === "descending") {
+    filteredProducts = filteredProducts.sort((b, a) =>
+      `${a.product_name}`.localeCompare(`${b.product_name}`)
+    );
+  } else if (sortOption === "quantity-l") {
+    filteredProducts = filteredProducts.sort((a, b) =>
+      `${a.quantity}`.localeCompare(`${b.quantity}`)
+    );
+  } else if (sortOption === "quantity-h") {
+    filteredProducts = filteredProducts.sort((a, b) =>
+      `${b.quantity}`.localeCompare(`${a.quantity}`)
+    );
+  }
 
   const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
