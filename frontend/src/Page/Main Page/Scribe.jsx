@@ -125,7 +125,7 @@ const Scribe = () => {
               </div>
             </div>
           </div>
-          <div className="w-auto h-full mt-8 overflow-y-scroll">
+          <div className="w-auto h-full mt-8 pb-8 overflow-y-scroll">
             {sortedFilteredInitials.length > 0 ? (
               sortedFilteredInitials.map((initial) => (
                 <div key={initial} className="mb-8">

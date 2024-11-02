@@ -19,6 +19,7 @@ import PointOfSale from "./Page/Main Page/PointOfSale";
 import HelpCenter from "./Page/Main Page/HelpCenter";
 import UserProfile from "./Page/Main Page/UserProfile";
 import ProfileSetting from "./Page/Main Page/ProfileSetting";
+import FullNotification from "./Page/Main Page/FullNotification";
 import { useContext } from "react";
 import { AuthContext, AuthContextProvider } from "./Context/AuthContext";
 import ScribePatient from "./Page/Main Page/Scribe/ScribePatient";
@@ -108,6 +109,7 @@ const AppRoutes = () => {
         <Route path="/help" element={<HelpCenter />}>
           <Route path=":section" element={<HelpCenter />} />
         </Route>
+        <Route path="/notification" element={<FullNotification />} />
       </Route>
     </Routes>
   );

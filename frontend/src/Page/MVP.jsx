@@ -69,6 +69,10 @@ const MVP = () => {
       main: "Settings",
       sub: "Customize your account preferences and notifications.",
     },
+    "/notification": {
+      main: "Notification",
+      sub: "dasdasdasd",
+    },
   };
 
   const getCurrentTab = () => {
