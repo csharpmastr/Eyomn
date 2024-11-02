@@ -53,6 +53,24 @@ const DbProduct = ({ filteredSales }) => {
     },
     xaxis: {
       categories: chartData.categories,
+      title: {
+        text: "Products",
+        style: {
+          fontSize: "14px",
+          fontWeight: "bold",
+          color: "#26282a",
+        },
+      },
+    },
+    yaxis: {
+      title: {
+        text: "Total Sales",
+        style: {
+          fontSize: "14px",
+          fontWeight: "bold",
+          color: "#26282a",
+        },
+      },
     },
     dataLabels: {
       enabled: true,
