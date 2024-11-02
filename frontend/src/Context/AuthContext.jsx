@@ -1,7 +1,8 @@
-import React, { createContext, useReducer, useEffect, useState } from "react";
+import React, { createContext, useReducer, useEffect } from "react";
 import PropTypes from "prop-types";
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 import Cookies from "universal-cookie";
+import { getNewAccess } from "../Service/UserService";
 
 export const AuthContext = createContext();
 
@@ -54,17 +55,26 @@ export const AuthContextProvider = ({ children }) => {
   const cookies = new Cookies();
 
   useEffect(() => {
-    const checkTokens = () => {
+    const checkTokens = async () => {
       const accessToken = cookies.get("accessToken");
       const refreshToken = cookies.get("refreshToken");
-      if (!accessToken || !refreshToken) {
-        return;
-      }
+
       const accessTokenExpired = isTokenExpired(accessToken);
       const refreshTokenExpired = isTokenExpired(refreshToken);
 
-      if (accessTokenExpired || refreshTokenExpired) {
-        dispatch({ type: "SESSION_EXPIRED" });
+      if (accessTokenExpired) {
+        if (!refreshTokenExpired) {
+          const newAccessToken = await getNewAccess(refreshToken);
+          if (newAccessToken) {
+            cookies.set("accessToken", newAccessToken, { path: "/" });
+            const user = jwtDecode(newAccessToken);
+            dispatch({ type: "LOGIN", payload: user });
+          } else {
+            dispatch({ type: "SESSION_EXPIRED" });
+          }
+        } else {
+          dispatch({ type: "SESSION_EXPIRED" });
+        }
       } else {
         const user = jwtDecode(accessToken);
         dispatch({ type: "LOGIN", payload: user });
@@ -83,10 +93,10 @@ export const AuthContextProvider = ({ children }) => {
     cookies.remove("refreshToken", { path: "/" });
     dispatch({ type: "LOGOUT" });
   };
+
   return (
     <AuthContext.Provider value={{ ...state, dispatch }}>
       {children}
-
       <SessionExpiredModal
         isVisible={state.isSessionExpired}
         onClose={handleLogout}

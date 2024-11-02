@@ -16,7 +16,6 @@ const OrgDashboard = () => {
   const branch = useSelector((state) => state.reducer.branch.branch);
   const [selectedBranch, setSelectedBranch] = useState("");
 
-  // filter patients and sales based on selected branch
   const filteredPatients = selectedBranch
     ? patients.filter((patient) => patient.branchId === selectedBranch)
     : patients;
