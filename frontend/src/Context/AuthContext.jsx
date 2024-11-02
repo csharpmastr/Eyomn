@@ -1,6 +1,6 @@
 import React, { createContext, useReducer, useEffect } from "react";
 import PropTypes from "prop-types";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import Cookies from "universal-cookie";
 import { getNewAccess } from "../Service/UserService";
 
