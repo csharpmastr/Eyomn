@@ -19,7 +19,7 @@ import PointOfSale from "./Page/Main Page/PointOfSale";
 import HelpCenter from "./Page/Main Page/HelpCenter";
 import UserProfile from "./Page/Main Page/UserProfile";
 import ProfileSetting from "./Page/Main Page/ProfileSetting";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext, AuthContextProvider } from "./Context/AuthContext";
 import ScribePatient from "./Page/Main Page/Scribe/ScribePatient";
 import { Provider, useSelector } from "react-redux";
@@ -44,10 +44,12 @@ const ProtectedRoute = ({ children, requiredRole, restrictedRole }) => {
   }
 
   if (requiredRole && userSlice.role !== requiredRole) {
+    sessionStorage.setItem("selectedTab", "dashboard");
     return <Navigate to="/dashboard" />;
   }
 
   if (restrictedRole && userSlice.role === restrictedRole) {
+    sessionStorage.setItem("selectedTab", "dashboard");
     return <Navigate to="/dashboard" />;
   }
 
@@ -103,8 +105,12 @@ const AppRoutes = () => {
           <Route path="new-record/:patientId" element={<MedForm />} />
         </Route>
 
-        <Route path="patient" element={<Patient />} />
-        <Route path="organization" element={<Organization />} />
+        <Route path="patient" element={<Patient />}>
+          <Route path=":patientId" element={<PatientProfile />} />
+        </Route>
+        <Route path="organization" element={<Organization />}>
+          <Route path=":branchId" element={<OrgStaff />} />
+        </Route>
 
         <Route path="appointment" element={<Appointment />} />
 
@@ -127,7 +133,7 @@ const AppRoutes = () => {
         <Route
           path="report"
           element={
-            <ProtectedRoute requiredRole="0">
+            <ProtectedRoute restrictedRole="2">
               <Report />
             </ProtectedRoute>
           }
@@ -135,14 +141,16 @@ const AppRoutes = () => {
         <Route
           path="pos"
           element={
-            <ProtectedRoute requiredRole="0">
+            <ProtectedRoute restrictedRole={"2"}>
               <PointOfSale />
             </ProtectedRoute>
           }
         />
         <Route path="manage-profile/:section" element={<ProfileSetting />} />
         <Route path="profile" element={<UserProfile />} />
-        <Route path="help" element={<HelpCenter />} />
+        <Route path="help" element={<HelpCenter />}>
+          <Route path=":section" element={<HelpCenter />} />
+        </Route>
       </Route>
     </Routes>
   );
