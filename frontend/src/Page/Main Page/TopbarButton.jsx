@@ -70,9 +70,13 @@ const TopbarButton = () => {
         <div className="flex w-fit">
           <section className="hidden xl:flex items-center gap-4 cursor-pointer">
             <div className="relative" onClick={toggleNotification}>
-              <div className="absolute -top-2 -right-2 h-5 w-5 text-p-sm font-normal rounded-full bg-red-500 text-f-light flex items-center justify-center overflow-hidden">
-                <span>{unreadNotif}</span>
-              </div>
+              {unreadNotif === 0 ? (
+                ""
+              ) : (
+                <div className="absolute -top-2 -right-2 h-5 w-5 text-p-sm font-normal rounded-full bg-red-500 text-f-light flex items-center justify-center overflow-hidden">
+                  <span>{unreadNotif}</span>
+                </div>
+              )}
               {notifOpen ? (
                 <IoMdNotifications className="h-6 w-6 rounded-full" />
               ) : (
