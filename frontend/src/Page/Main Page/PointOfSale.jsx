@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IoMdSearch } from "react-icons/io";
+import { IoMdCloseCircleOutline, IoMdSearch } from "react-icons/io";
 import { FiFilter } from "react-icons/fi";
 import PosTable from "../../Component/ui/PosTable";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +7,7 @@ import { useAddPurchase } from "../../Hooks/useAddPurchase";
 import Loader from "../../Component/ui/Loader";
 import SuccessModal from "../../Component/ui/SuccessModal";
 import { addPurchase } from "../../Slice/InventorySlice";
+import Modal from "../../Component/ui/Modal";
 
 const PointOfSale = () => {
   const [selectedProducts, setSelectedProducts] = React.useState([]);
@@ -14,12 +15,14 @@ const PointOfSale = () => {
   const [sortOption, setSortOption] = useState("");
   const reduxDispatch = useDispatch();
   const user = useSelector((state) => state.reducer.user.user);
+  const { addPurchaseHook, isLoading, error } = useAddPurchase();
+  const [isError, setIsError] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   let branchId =
     (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
     user.userId ||
     null;
-  const { addPurchaseHook, isLoading, error } = useAddPurchase();
-  const [isSuccess, setIsSuccess] = useState(false);
+
   const handleProductSelect = (product) => {
     const existingProductIndex = selectedProducts.findIndex(
       (item) => item.productId === product.productId
@@ -59,7 +62,7 @@ const PointOfSale = () => {
         reduxDispatch(addPurchase({ purchaseDetails, createdAt, purchaseId }));
       }
     } catch (error) {
-      console.log(error);
+      setIsError(true);
     }
   };
   const handleQuantityChange = (action, productId) => {
@@ -80,6 +83,9 @@ const PointOfSale = () => {
   };
   const handleClose = () => {
     setIsSuccess(false);
+  };
+  const handleCloseError = () => {
+    setIsError(false);
   };
   const handleDeleteProduct = (productId) => {
     setSelectedProducts((prevProducts) =>
@@ -241,6 +247,17 @@ const PointOfSale = () => {
         }
         isOpen={isSuccess}
         onClose={handleClose}
+      />
+      <Modal
+        isOpen={isError}
+        onClose={handleCloseError}
+        title={"Invalid Request"}
+        description={"We can't process your request at this moment."}
+        icon={<IoMdCloseCircleOutline className="w-24 h-24 text-red-700" />}
+        className="w-[600px] h-auto p-4"
+        overlayDescriptionClassName={
+          "text-center font-Poppins pt-5 text-black text-[18px]"
+        }
       />
     </>
   );

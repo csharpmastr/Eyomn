@@ -127,4 +127,32 @@ const loginUserHandler = async (req, res) => {
     });
   }
 };
-module.exports = { addUserHandler, loginUserHandler };
+
+const getNewAccessToken = (req, res) => {
+  try {
+    const refreshToken = req.body.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(403).json({ message: "Refresh token not valid" });
+    }
+
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
+      if (err) {
+        return res.status(403).json({ message: "Token verification failed" });
+      }
+
+      const accessToken = generateToken(
+        user.userId,
+        process.env.JWT_ACCESS_SECRET,
+        "5h"
+      );
+
+      return res.json({ accessToken });
+    });
+  } catch (error) {
+    console.error("Error refreshing token:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { addUserHandler, loginUserHandler, getNewAccessToken };

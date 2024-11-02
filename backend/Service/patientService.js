@@ -363,6 +363,30 @@ const retrievePatient = async (patientId) => {
   }
 };
 
+const getVisits = async (patientId, firebaseUid) => {
+  try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
+    let visitQuery = visitCollection.where("patientId", "==", patientId);
+
+    const visitSnapshot = await visitQuery.get();
+
+    if (visitSnapshot.empty) {
+      console.warn("No visits found for the patient.");
+      return [];
+    }
+
+    const visits = visitSnapshot.docs.map((visitDoc) => visitDoc.data());
+
+    return visits;
+  } catch (error) {
+    console.error("Error fetching visits:", error.message);
+    throw new Error("Error fetching visits: " + error.message);
+  }
+};
+
 module.exports = {
   addPatient,
   getPatients,
@@ -372,6 +396,7 @@ module.exports = {
   addNote,
   getNote,
   addVisit,
+  getVisits,
   // getPatientsByDoctor,
   // getPatients,
 };

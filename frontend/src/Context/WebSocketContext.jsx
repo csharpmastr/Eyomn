@@ -2,18 +2,24 @@ import React, { createContext, useContext, useRef, useEffect } from "react";
 import { addPatient } from "../Slice/PatientSlice";
 import { addNotification } from "../Slice/NotificationSlice";
 import { useDispatch, useSelector } from "react-redux";
+import Cookies from "universal-cookie";
 
 const WebSocketContext = createContext();
 
 export const WebSocketProvider = ({ children }) => {
+  const user = useSelector((state) => state.reducer.user.user);
+  const cookies = new Cookies();
   const ws = useRef(null);
   const reduxDispatch = useDispatch();
-
+  const accessToken = cookies.get("accessToken");
   const role = useSelector((state) => state.reducer.user.user.role);
   const organizationId = useSelector(
     (state) => state.reducer.user.user.organizationId
   );
-  const branchId = useSelector((state) => state.reducer.user.user.branchId);
+  let branchId =
+    (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
+    user.userId ||
+    null;
   const doctorId = useSelector((state) => state.reducer.user.user.staffId);
 
   const patients = useSelector((state) => state.reducer.patient.patients || []);
@@ -56,7 +62,7 @@ export const WebSocketProvider = ({ children }) => {
       return;
     }
 
-    const wsUrl = `ws://localhost:8080/${organizationId}/${branchId}/${doctorId}`;
+    const wsUrl = `ws://localhost:8080/${organizationId}/${branchId}/${doctorId}/?token=${accessToken}`;
 
     ws.current = new WebSocket(wsUrl);
 

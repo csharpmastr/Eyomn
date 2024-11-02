@@ -82,7 +82,13 @@ const HelpCenter = () => {
               <p className="text-p-sm">Send you request via email.</p>
             </section>
             <div className="h-fit w-fit items-center justify-center rounded-md px-4 py-2 font-md bg-f-light text-f-dark font-semibold mt-4">
-              <h1>Contact Us</h1>
+              <a
+                href="mailto:info@eyomn.com"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Contact Us
+              </a>
             </div>
           </div>
         </section>

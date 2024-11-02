@@ -5,6 +5,7 @@ const {
   updateProduct,
   addPurchase,
   getPurchases,
+  getOrgProductSales,
 } = require("../Service/inventoryService");
 
 const addProductHandler = async (req, res) => {
@@ -133,6 +134,21 @@ const getPurchasesHandler = async (req, res) => {
     return res.status(200).json(purchases);
   } catch (error) {}
 };
+
+const getOrgProductSalesHandler = async (req, res) => {
+  try {
+    const { organizationId, firebaseUid } = req.query;
+
+    const inventoryData = await getOrgProductSales(organizationId, firebaseUid);
+
+    return res.status(200).json(inventoryData);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Server error while fetching data." + error });
+  }
+};
+
 module.exports = {
   addProductHandler,
   getProductsHandler,
@@ -140,4 +156,5 @@ module.exports = {
   updateProductHandler,
   addPurchaseHandler,
   getPurchasesHandler,
+  getOrgProductSalesHandler,
 };

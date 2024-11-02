@@ -1,4 +1,6 @@
+require("dotenv").config();
 const WebSocket = require("ws");
+const jwt = require("jsonwebtoken");
 const { decryptDocument } = require("../Helper/Helper");
 const {
   query,
@@ -23,11 +25,30 @@ const startWebSocketServer = () => {
     const organizationId = urlParts[1];
     const branchId = urlParts[2];
     const staffId = urlParts[3];
+    console.log(organizationId, branchId, staffId);
+
+    const urlParams = new URLSearchParams(req.url.split("?")[1]);
+    const token = urlParams.get("token");
+
+    if (!token) {
+      ws.close(1008, "Token not provided");
+      console.error("Token not provided");
+      return;
+    }
+
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+      console.log("Token verified:", decodedToken);
+    } catch (error) {
+      ws.close(1008, "Invalid token"); // Policy Violation
+      console.error("Token verification failed:", error.message);
+      return;
+    }
 
     let unsubscribePatients, unsubscribeNotifications;
     const sentPatientIds = new Set();
 
-    // Fetch and listen to patient updates
     try {
       const patientQuery = query(patientCol, where("doctorId", "==", staffId));
 
@@ -73,7 +94,6 @@ const startWebSocketServer = () => {
       ws.send(JSON.stringify({ error: "Failed to fetch patient updates" }));
     }
 
-    // Fetch and listen to notification updates
     try {
       const notificationRef = collection(dbClient, "notification");
       const staffRef = doc(notificationRef, staffId);

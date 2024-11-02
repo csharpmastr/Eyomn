@@ -163,3 +163,30 @@ export const getPurchases = async (
     throw error;
   }
 };
+
+export const getProductsSales = async (
+  organizationId,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.get(
+      `${INVENTORY_API_BASE_URL}/get-product-sales`,
+      {
+        params: {
+          firebaseUid,
+          organizationId,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error getting organization products and sales : ", error);
+    throw error;
+  }
+};

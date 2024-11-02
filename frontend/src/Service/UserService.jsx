@@ -32,3 +32,16 @@ export const userSignUp = async (userData) => {
     throw err.response?.data?.error || "An error occurred";
   }
 };
+
+export const getNewAccess = async (refreshToken) => {
+  try {
+    const response = await axios.post(`${API_URL}/new-access`, {
+      refreshToken,
+    });
+
+    return response.data.accessToken;
+  } catch (error) {
+    console.error("Error refreshing access token:", error);
+    throw error;
+  }
+};

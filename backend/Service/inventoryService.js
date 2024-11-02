@@ -1,6 +1,10 @@
 const admin = require("firebase-admin");
 const { v4: uuid } = require("uuid");
-const { inventoryCollection, db } = require("../Config/FirebaseConfig");
+const {
+  inventoryCollection,
+  db,
+  organizationCollection,
+} = require("../Config/FirebaseConfig");
 const {
   encryptDocument,
   removeNullValues,
@@ -291,6 +295,55 @@ const getPurchases = async (branchId, firebaseUid) => {
     };
   }
 };
+const getOrgProductSales = async (organizationId, firebaseUid) => {
+  try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
+
+    const orgDoc = await organizationCollection.doc(organizationId).get();
+    if (!orgDoc.exists) {
+      throw { status: 404, message: "Organization not found." };
+    }
+
+    const orgData = orgDoc.data();
+    const inventoryData = {};
+
+    for (const branchId of orgData.branch) {
+      const salesSnapshot = await inventoryCollection
+        .doc(branchId)
+        .collection("purchases")
+        .get();
+      const sales = salesSnapshot.docs.map((doc) => doc.data());
+
+      const productsSnapshot = await inventoryCollection
+        .doc(branchId)
+        .collection("products")
+        .get();
+      const products = productsSnapshot.docs.map((doc) => {
+        const productData = doc.data();
+        return decryptDocument(productData, [
+          "expirationDate",
+          "price",
+          "quantity",
+          "productId",
+          "productSKU",
+        ]);
+      });
+
+      inventoryData[branchId] = {
+        purchases: sales,
+        products: products,
+      };
+    }
+
+    return inventoryData;
+  } catch (error) {
+    console.error("Error fetching organization product sales:", error);
+    throw new Error("Error fetching product sales data: " + error.message);
+  }
+};
 
 module.exports = {
   addProduct,
@@ -299,4 +352,5 @@ module.exports = {
   updateProduct,
   addPurchase,
   getPurchases,
+  getOrgProductSales,
 };

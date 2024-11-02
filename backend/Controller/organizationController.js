@@ -1,10 +1,12 @@
-const { getBranchDoctors } = require("../Helper/Helper");
+const { getBranchDoctors, getStaffs } = require("../Helper/Helper");
 const {
   addStaff,
   getAllStaff,
   getDoctorsList,
   addBranch,
   getBranchData,
+  getBranchStaffs,
+  getOrgProductSales,
 } = require("../Service/organizationService");
 const { EmailAlreadyExistsError } = require("../Service/UserService");
 
@@ -40,13 +42,13 @@ const addStaffHandler = async (req, res) => {
 
 const getStaffsHandler = async (req, res) => {
   try {
-    const { clinicId } = req.body;
-    if (!clinicId || Object.keys(clinicId).length === 0) {
+    const { organizationId, branchId, firebaseUid } = req.query;
+    if (!organizationId || Object.keys(organizationId).length === 0) {
       return res
         .status(400)
         .json({ message: "Clinic ID and patient data are required." });
     }
-    const staffs = await getAllStaff(clinicId);
+    const staffs = await getBranchStaffs(organizationId, branchId, firebaseUid);
 
     return res.status(200).json(staffs);
   } catch (error) {
@@ -137,10 +139,26 @@ const getBranchDataHandler = async (req, res) => {
   }
 };
 
+const getOrgProductSalesHandler = async (req, res) => {
+  try {
+    const { organizationId, firebaseUid } = req.query;
+
+    const { inventoryData } = await getOrgProductSales(
+      organizationId,
+      firebaseUid
+    );
+
+    return res.status(200).json(inventoryData);
+  } catch (error) {
+    res.status(500).json({ message: "Server error while fetching data." });
+  }
+};
+
 module.exports = {
   addStaffHandler,
   getStaffsHandler,
   getDoctorsListHandler,
   addBranchHandler,
   getBranchDataHandler,
+  getOrgProductSalesHandler,
 };

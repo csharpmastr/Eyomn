@@ -23,7 +23,7 @@ import FullNotification from "./Page/Main Page/FullNotification";
 import { useContext } from "react";
 import { AuthContext, AuthContextProvider } from "./Context/AuthContext";
 import ScribePatient from "./Page/Main Page/Scribe/ScribePatient";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import { store } from "./Store/Store";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
@@ -36,23 +36,35 @@ import MedForm from "./Page/Main Page/MedForm";
 import PatientProfile from "./Page/Main Page/PatientProfile";
 let persistor = persistStore(store);
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, requiredRole, restrictedRole }) => {
   const { user } = useAuthContext();
-  return user ? children : <Navigate to="/login" />;
+  const userSlice = useSelector((state) => state.reducer.user.user);
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  if (requiredRole && userSlice.role !== requiredRole) {
+    sessionStorage.setItem("selectedTab", "dashboard");
+    return <Navigate to="/dashboard" />;
+  }
+
+  if (restrictedRole && userSlice.role === restrictedRole) {
+    sessionStorage.setItem("selectedTab", "dashboard");
+    return <Navigate to="/dashboard" />;
+  }
+
+  return children;
 };
+
 const AppRoutes = () => {
   const { user } = useAuthContext();
   const selectedTab = sessionStorage.getItem("selectedTab") || "dashboard";
-  const currentPatientId = sessionStorage.getItem("currentPatientId");
 
   return (
     <Routes>
       <Route
         path="/*"
-        element={<Navigate to={user ? `/${selectedTab}` : "/login"} />}
-      />
-      <Route
-        path="/"
         element={<Navigate to={user ? `/${selectedTab}` : "/login"} />}
       />
       <Route
@@ -65,17 +77,8 @@ const AppRoutes = () => {
           )
         }
       />
-      <Route
-        path="/signup"
-        element={
-          user ? (
-            <Navigate to={`/${selectedTab}`} />
-          ) : (
-            <AuthenticationPage type="signup" />
-          )
-        }
-      />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+
       {/* Protected routes */}
       <Route
         path="/"
@@ -89,24 +92,64 @@ const AppRoutes = () => {
         <Route path="scan" element={<Scan />}>
           <Route path=":id" element={<ScanFundus />} />
         </Route>
-        <Route path="scribe" element={<Scribe />}>
+
+        {/* accessible to users with role 2 */}
+        <Route
+          path="scribe"
+          element={
+            <ProtectedRoute requiredRole="2">
+              <Scribe />
+            </ProtectedRoute>
+          }
+        >
           <Route path=":patientId" element={<ScribeRecord />} />
           <Route path="new-record/:patientId" element={<MedForm />} />
         </Route>
+
         <Route path="patient" element={<Patient />}>
           <Route path=":patientId" element={<PatientProfile />} />
         </Route>
         <Route path="organization" element={<Organization />}>
           <Route path=":branchId" element={<OrgStaff />} />
         </Route>
-        <Route path="add-patient" element={<StaffAddPatientPage />} />
+
         <Route path="appointment" element={<Appointment />} />
-        <Route path="inventory" element={<Inventory />} />
-        <Route path="report" element={<Report />} />
-        <Route path="profile" element={<UserProfile />} />
-        <Route path="pos" element={<PointOfSale />} />
+
+        <Route
+          path="add-patient"
+          element={
+            <ProtectedRoute requiredRole="3">
+              <StaffAddPatientPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="inventory"
+          element={
+            <ProtectedRoute restrictedRole="2">
+              <Inventory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="report"
+          element={
+            <ProtectedRoute restrictedRole="2">
+              <Report />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="pos"
+          element={
+            <ProtectedRoute restrictedRole={"2"}>
+              <PointOfSale />
+            </ProtectedRoute>
+          }
+        />
         <Route path="manage-profile/:section" element={<ProfileSetting />} />
-        <Route path="/help" element={<HelpCenter />}>
+        <Route path="profile" element={<UserProfile />} />
+        <Route path="help" element={<HelpCenter />}>
           <Route path=":section" element={<HelpCenter />} />
         </Route>
         <Route path="/notification" element={<FullNotification />} />

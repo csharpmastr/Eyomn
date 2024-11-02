@@ -1,15 +1,13 @@
-const { getVisits } = require("../Helper/Helper");
 const {
   addPatient,
-  getPatientsByDoctor,
   getPatients,
   updatePatientDetails,
   deletePatient,
   retrievePatient,
   addNote,
   getNote,
-  testingNote,
   addVisit,
+  getVisits,
 } = require("../Service/patientService");
 
 const addPatientHandler = async (req, res) => {
