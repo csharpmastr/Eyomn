@@ -48,13 +48,9 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
       `${a.product_name}`.localeCompare(`${b.product_name}`)
     );
   } else if (sortOption === "quantity-l") {
-    filteredProducts = filteredProducts.sort((a, b) =>
-      `${a.quantity}`.localeCompare(`${b.quantity}`)
-    );
+    filteredProducts = filteredProducts.sort((a, b) => a.quantity - b.quantity);
   } else if (sortOption === "quantity-h") {
-    filteredProducts = filteredProducts.sort((a, b) =>
-      `${b.quantity}`.localeCompare(`${a.quantity}`)
-    );
+    filteredProducts = filteredProducts.sort((a, b) => b.quantity - a.quantity);
   }
 
   const paginatedProducts = filteredProducts.slice(
