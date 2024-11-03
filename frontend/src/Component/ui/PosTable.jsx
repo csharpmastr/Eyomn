@@ -9,8 +9,10 @@ const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
   const maxPageButtons = 4;
   const totalPages = Math.ceil(products.length / itemsPerPage);
 
-  let filteredProducts = products.filter((product) =>
-    product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
+  let filteredProducts = products.filter(
+    (product) =>
+      product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.productSKU.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (sortOption === "ascending") {

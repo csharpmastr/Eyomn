@@ -35,8 +35,10 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
     }));
   };
 
-  let filteredProducts = products.filter((product) =>
-    product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
+  let filteredProducts = products.filter(
+    (product) =>
+      product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.productSKU.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (sortOption === "ascending") {
