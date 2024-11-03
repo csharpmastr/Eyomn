@@ -1,60 +1,167 @@
 import React, { useState } from "react";
-import EyeSketch from "../../Component/ui/EyeSketch";
-import OD from "../../assets/Image/OD.png";
-import OS from "../../assets/Image/OS.png";
-import CROSS from "../../assets/Image/CROSS.png";
+import { IoMdSearch } from "react-icons/io";
+import RCLineGraph from "../../Component/ui/Report Components/RCLineGraph";
+import RCPieChart from "../../Component/ui/Report Components/RCPieChart";
+import RCTable from "../../Component/ui/Report Components/RCTable";
+import { useSelector } from "react-redux";
 
 const Report = () => {
-  const [isCanvasOpen, setIsCanvasOpen] = useState(false);
-  const [selectedBG, setSelectedBG] = useState("OD");
-  const [canvasImages, setCanvasImages] = useState({
-    OD: "",
-    OS: "",
-    CROSS: "",
-  });
-
-  const toggle = () => setIsCanvasOpen(!isCanvasOpen);
-
-  const handleSaveCanvas = (image) => {
-    setCanvasImages((prevImages) => ({
-      ...prevImages,
-      [selectedBG]: image,
-    }));
-    setIsCanvasOpen(false);
-  };
-
-  const handleImageClick = (value) => {
-    setSelectedBG(value);
-    toggle();
+  const [selected, setSelected] = useState("Patients");
+  const branch = useSelector((state) => state.reducer.branch.branch);
+  const [selectedBranch, setSelectedBranch] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const handleSelected = (section) => {
+    setSelected(section);
   };
 
   return (
-    <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppin h-auto flex flex-col gap-4 md:gap-8">
-      <img
-        src={canvasImages.OD || OD}
-        alt="OD IMG"
-        className="w-20 h-20 border border-f-dark"
-        onClick={() => handleImageClick("OD")}
-      />
-      <img
-        src={canvasImages.OS || OS}
-        alt="OS IMG"
-        className="w-20 h-20 border border-f-dark"
-        onClick={() => handleImageClick("OS")}
-      />
-      <img
-        src={canvasImages.CROSS || CROSS}
-        alt="CROSS IMG"
-        className="w-20 h-20 border border-f-dark"
-        onClick={() => handleImageClick("CROSS")}
-      />
-      {isCanvasOpen && (
-        <EyeSketch
-          onClose={toggle}
-          onSave={handleSaveCanvas}
-          backgroundImage={selectedBG}
-        />
-      )}
+    <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppins w-full h-full overflow-auto">
+      <div className="flex justify-between">
+        <nav className="flex items-end gap-3 text-f-dark">
+          <button
+            className={`rounded-t-md border-x border-t border-f-gray px-5 pt-2 h-fit ${
+              selected === "Patients"
+                ? "bg-f-light font-semibold pb-1"
+                : "bg-non font-medium pb-0"
+            }`}
+            onClick={() => handleSelected("Patients")}
+          >
+            Patient
+          </button>
+          <div
+            className={`rounded-t-md border-x border-t border-f-gray px-5 pt-2 h-fit ${
+              selected === "Inventory" || selected === "Sales"
+                ? "bg-f-light font-semibold pb-1"
+                : "bg-non font-medium pb-0"
+            }`}
+          >
+            <select
+              name="section"
+              value={selected}
+              onChange={(e) => handleSelected(e.target.value)}
+              className={`w-full outline-none ${
+                selected === "Inventory" || selected === "Sales"
+                  ? "bg-f-light"
+                  : "bg-bg-mc"
+              }`}
+            >
+              <option value="Inventory">Inventory</option>
+              <option value="Sales">Sales</option>
+            </select>
+          </div>
+          <button
+            className={`rounded-t-md border-x border-t border-f-gray px-5 pt-2 h-fit ${
+              selected === "Staffs"
+                ? "bg-f-light font-semibold pb-1"
+                : "bg-non font-medium pb-0"
+            }`}
+            onClick={() => handleSelected("Staffs")}
+          >
+            Staff
+          </button>
+        </nav>
+      </div>
+      <div className="w-full h-full flex flex-col p-5 gap-5 rounded-b-xl rounded-tr-xl border border-f-gray bg-white text-f-dark text-p-rg">
+        <div className="w-full flex justify-between">
+          <div className="flex gap-5 w-3/5">
+            <select
+              className="hover:cursor-pointer w-fit focus:outline-none border border-f-gray px-4 py-2 rounded-md bg-bg-mc"
+              onChange={(e) => setSelectedBranch(e.target.value)}
+            >
+              <option value="">All Branches</option>
+              {branch.map((item, key) => (
+                <option key={key} value={item.branchId}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+            <div className="flex flex-row gap-2 border border-f-gray px-4 py-2 rounded-md justify-center items-center w-full">
+              <IoMdSearch className="h-6 w-6 text-c-secondary" />
+              <input
+                type="text"
+                className="w-full text-f-dark focus:outline-none placeholder-f-gray2 text-p-rg"
+                placeholder="Search "
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+          <button className="rounded-md font-medium px-4 py-2 h-fit bg-blue-400 text-f-light">
+            Export
+          </button>
+        </div>
+        {selected === "Patients" ? (
+          <>
+            <div className="flex gap-5 h-80">
+              <RCLineGraph />
+              <RCPieChart />
+              <div className="w-1/4 h-full rounded-md bg-c-primary">
+                Bar Graph (Returnee / New)
+              </div>
+            </div>
+          </>
+        ) : selected === "Inventory" ? (
+          <>
+            <div className="flex gap-5 h-80">
+              <RCLineGraph />
+              <RCPieChart />
+              <div className="w-1/4 h-full flex flex-col gap-5">
+                <div className="w-full h-1/3 rounded-md bg-c-primary">
+                  Total Srp Price
+                </div>
+                <div className="w-full h-1/3 rounded-md bg-c-primary">
+                  Total Retail Price
+                </div>
+                <div className="w-full h-1/3 rounded-md bg-c-primary">
+                  No. Low Stock
+                </div>
+              </div>
+            </div>
+          </>
+        ) : selected === "Sales" ? (
+          <>
+            <div className="flex gap-5 h-80">
+              <RCLineGraph />
+              <RCPieChart />
+              <div className="w-1/4 h-full flex flex-col gap-5">
+                <div className="w-full h-1/2 rounded-md bg-c-primary">
+                  Gross Profit
+                </div>
+                <div className="w-full h-1/2 rounded-md bg-c-primary">
+                  No. Sale Product
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex gap-5 h-28">
+              <div className="w-1/5 rounded-md bg-c-primary">No. of Staffs</div>
+              <div className="w-1/5 rounded-md bg-c-primary">
+                No. of Secretary
+              </div>
+              <div className="w-1/5 rounded-md bg-c-primary">No. of Doctor</div>
+              <div className="w-1/5 rounded-md bg-c-primary">
+                No. of Rotational
+              </div>
+              <div className="w-1/5 rounded-md bg-c-primary">
+                No. of Stationary
+              </div>
+            </div>
+          </>
+        )}
+        <section className="w-full flex items-center justify-between font-medium">
+          <h1>{selected} Report</h1>
+          <h1>01-31 September 2024</h1>
+        </section>
+        <div className="w-full h-full border border-f-gray rounded-md p-5 overflow-y-scroll">
+          <RCTable
+            selected={selected}
+            branch={selectedBranch}
+            searchTerm={searchTerm}
+          />
+        </div>
+      </div>
     </div>
   );
 };
