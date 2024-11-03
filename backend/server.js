@@ -13,6 +13,7 @@ const patientRoutes = require("./Route/patientRoute");
 const organizationRoute = require("./Route/organizationRoute");
 const appointmentRoute = require("./Route/appointmentRoute");
 const inventoryRoute = require("./Route/inventoryRoute");
+const notificationRoute = require("./Route/notificationRoute");
 //Middleware
 app.use(express.json());
 app.use(cors());
@@ -24,7 +25,7 @@ app.use("/api/v1/patient", patientRoutes);
 app.use("/api/v1/organization", organizationRoute);
 app.use("/api/v1/appointment", appointmentRoute);
 app.use("/api/v1/inventory", inventoryRoute);
-
+app.use("/api/v1/notification", notificationRoute);
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });

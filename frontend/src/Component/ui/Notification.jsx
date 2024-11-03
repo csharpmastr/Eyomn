@@ -1,15 +1,41 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import NotificationContent from "../../Component/ui/NotificationContent";
+import { updateNotification } from "../../Service/NotificationService";
+import { useDispatch, useSelector } from "react-redux";
+import { updateNotificationRead } from "../../Slice/NotificationSlice";
 
 const Notification = ({ data, setNotifOpen }) => {
+  const reduxDispatch = useDispatch();
   const navigate = useNavigate();
+  const user = useSelector((state) => state.reducer.user.user);
+  console.log(data);
 
-  const handleClickNotification = (patientId) => {
-    setNotifOpen(false);
-    sessionStorage.setItem("currentPatient", patientId);
-    sessionStorage.setItem("selectedTab", "patient");
-    navigate(`/patient/${patientId}`);
+  const handleClickNotification = async (patientId, notificationId) => {
+    try {
+      setNotifOpen(false);
+      sessionStorage.setItem("currentPatient", patientId);
+      sessionStorage.setItem("selectedTab", "patient");
+      navigate(`/patient/${patientId}`);
+      console.log(user.staffId, user.firebaseUid);
+      console.log(notificationId);
+
+      try {
+        const response = await updateNotification(
+          user.staffId,
+          notificationId,
+          user.firebaseUid
+        );
+        if (response) {
+          reduxDispatch(updateNotificationRead({ notificationId }));
+          console.log("Notificaton Updated");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleViewFull = () => {

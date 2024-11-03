@@ -2,6 +2,7 @@ const { notificationCollection } = require("../Config/FirebaseConfig");
 const { v4: uuid } = require("uuid");
 const { serverTimestamp } = require("firebase/firestore");
 const { decryptData, encryptData } = require("../Security/DataHashing");
+const { verifyFirebaseUid } = require("../Helper/Helper");
 
 const pushNotification = async (userId, type, data) => {
   try {
@@ -49,4 +50,24 @@ const pushNotification = async (userId, type, data) => {
   }
 };
 
-module.exports = { pushNotification };
+const updateNotification = async (
+  staffId,
+  notificationId,
+  firebaseUid,
+  read
+) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+    const notificationRef = notificationCollection
+      .doc(staffId)
+      .collection("notifs")
+      .doc(notificationId);
+    console.log(notificationId, read);
+
+    await notificationRef.update({ read });
+  } catch (error) {
+    console.error("Error updating notification:", error);
+  }
+};
+
+module.exports = { pushNotification, updateNotification };

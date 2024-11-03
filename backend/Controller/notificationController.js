@@ -1,23 +1,17 @@
-import { updateNotification } from "../Service/notificationService";
+const { updateNotification } = require("../Service/notificationService");
 
-const updateNotificationHandler = async (req, res) => {
+const updateNotificationReadHandler = async (req, res) => {
   try {
-    const notificationId = req.params.notificationId;
-    const { read } = req.body;
-    console.log(read);
     const { firebaseUid, staffId } = req.query;
+    const { read } = req.body;
+    const notificationId = req.params.notificationId;
+    console.log(staffId, notificationId);
 
     await updateNotification(staffId, notificationId, firebaseUid, read);
-    return res
-      .status(200)
-      .json({ message: "Notification Updated Successfully." });
+    return res.status(200).json({ message: "Notification updated!" });
   } catch (error) {
-    console.error("Error updating notification details: ", error);
-    return res.status(500).json({
-      message: "Error updating notification details",
-      error: error.message,
-    });
+    return res.status(500).json({ error: error });
   }
 };
 
-module.exports = updateNotificationHandler;
+module.exports = updateNotificationReadHandler;
