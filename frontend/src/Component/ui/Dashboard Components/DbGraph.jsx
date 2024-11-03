@@ -150,7 +150,9 @@ const DbGraph = ({ patients, sales }) => {
       <header className="flex justify-between h-fit w-full items-center mb-4">
         <h1 className="font-semibold">
           {user.role !== "2"
-            ? "| Inventory / Patient Graph"
+            ? selectedDataType === "sales"
+              ? "| Inventory Graph"
+              : "| Patient Graph"
             : "| Patient Graph"}
         </h1>
         <div className="flex gap-2">

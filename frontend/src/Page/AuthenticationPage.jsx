@@ -8,7 +8,7 @@ import { MdOutlineEmail, MdOutlineLock } from "react-icons/md";
 
 const AuthenticationPage = ({ type }) => {
   return (
-    <div className="h-screen w-full bg-bg-mc flex justify-between items-center p-10 gap-10">
+    <div className="h-screen w-full bg-bg-mc flex justify-between items-center p-10 gap-10 font-Poppins">
       <div
         className="w-full h-full p-5 rounded-xl flex flex-col justify-between bg-black"
         style={{
@@ -41,8 +41,14 @@ const AuthenticationPage = ({ type }) => {
             <FaInstagram className="h-6 w-6" />
           </section>
           <section className="flex gap-2">
-            <p>eyomn.info@gmail.com</p>
-            <MdOutlineEmail className="h-6 w-7" />
+            <a
+              href="mailto:info@eyomn.com"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              info@eyomn.com
+            </a>
+            <MdOutlineEmail className="h-6 w-6" />
           </section>
         </div>
       </div>
