@@ -59,6 +59,9 @@ export const AuthContextProvider = ({ children }) => {
       const accessToken = cookies.get("accessToken");
       const refreshToken = cookies.get("refreshToken");
 
+      if (!accessToken || !refreshToken) {
+        return;
+      }
       const accessTokenExpired = isTokenExpired(accessToken);
       const refreshTokenExpired = isTokenExpired(refreshToken);
 
