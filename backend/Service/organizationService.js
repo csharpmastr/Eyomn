@@ -14,15 +14,17 @@ const {
   decryptData,
 } = require("../Security/DataHashing");
 const { EmailAlreadyExistsError } = require("./UserService");
-const { getStaffs, getPatients, decryptDocument } = require("../Helper/Helper");
+const {
+  getStaffs,
+  getPatients,
+  decryptDocument,
+  verifyFirebaseUid,
+} = require("../Helper/Helper");
 const { getAppointments } = require("./appointmentService");
 
 const addStaff = async (organizationId, staffData, firebaseUid) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
     const emailQuery = await userCollection
       .where("email", "==", staffData.email)
       .get();
@@ -96,10 +98,7 @@ const addStaff = async (organizationId, staffData, firebaseUid) => {
 
 const addBranch = async (ogrId, branchData, firebaseUid) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
 
     const newUser = await admin.auth().createUser({
       email: branchData.email,
@@ -230,10 +229,7 @@ const addBranch = async (ogrId, branchData, firebaseUid) => {
 // };
 const getBranchData = async (organizationId, firebaseUid) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
 
     const orgRef = await organizationCollection.doc(organizationId).get();
 
@@ -284,10 +280,7 @@ const getBranchData = async (organizationId, firebaseUid) => {
 
 const getBranchStaffs = async (organizationId, branchId, firebaseUid) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
 
     const staffQuery = staffCollection.where(
       "organizationId",

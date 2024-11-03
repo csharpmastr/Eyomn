@@ -10,6 +10,7 @@ const {
   removeNullValues,
   decryptDocument,
   generateUniqueId,
+  verifyFirebaseUid,
 } = require("../Helper/Helper");
 const { decryptData } = require("../Security/DataHashing");
 
@@ -24,10 +25,7 @@ const generateSKU = () => {
 
 const addProduct = async (branchId, productDetails, firebaseUid) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
 
     const inventoryRef = inventoryCollection;
     const productsCollectionRef = inventoryRef
@@ -78,10 +76,7 @@ const addProduct = async (branchId, productDetails, firebaseUid) => {
 
 const getProducts = async (branchId, firebaseUid) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
     const productRef = inventoryCollection.doc(branchId).collection("products");
     const snapshot = await productRef.get();
 
@@ -185,10 +180,7 @@ const updateProduct = async (branchId, productId, productDetails) => {
 
 const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
 
     const currentDate = new Date();
     const purchaseCollectionRef = inventoryCollection
@@ -273,10 +265,7 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
 
 const getPurchases = async (branchId, firebaseUid) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
     const salesColRef = inventoryCollection
       .doc(branchId)
       .collection("purchases");
@@ -297,11 +286,7 @@ const getPurchases = async (branchId, firebaseUid) => {
 };
 const getOrgProductSales = async (organizationId, firebaseUid) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
-
+    await verifyFirebaseUid(firebaseUid);
     const orgDoc = await organizationCollection.doc(organizationId).get();
     if (!orgDoc.exists) {
       throw { status: 404, message: "Organization not found." };

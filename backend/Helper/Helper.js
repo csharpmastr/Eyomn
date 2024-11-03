@@ -297,6 +297,26 @@ const getBranchName = async (branchId) => {
   }
 };
 
+const verifyFirebaseUid = async (firebaseUid) => {
+  try {
+    const userRecord = await admin.auth().getUser(firebaseUid);
+    if (!userRecord) {
+      throw { status: 404, message: "User not found." };
+    }
+    return userRecord;
+  } catch (error) {
+    if (error.code === "auth/user-not-found") {
+      throw { status: 404, message: "User not found." };
+    } else {
+      throw {
+        status: 500,
+        message: "Failed to verify Firebase UID.",
+        details: error,
+      };
+    }
+  }
+};
+
 module.exports = {
   getOrganizationName,
   getPatients,
@@ -309,4 +329,5 @@ module.exports = {
   checkIfDocExists,
   generateUniqueId,
   getBranchName,
+  verifyFirebaseUid,
 };

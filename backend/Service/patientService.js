@@ -13,6 +13,7 @@ const {
   decryptDocument,
   generateUniqueId,
   removeNullValues,
+  verifyFirebaseUid,
 } = require("../Helper/Helper");
 const { pushNotification } = require("./notificationService");
 
@@ -26,16 +27,7 @@ const addPatient = async (
   const currentDate = new Date();
 
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
-
-    if (!organizationId || !branchId || !doctorId) {
-      throw new Error(
-        "Organization ID, Branch ID, and Doctor ID are required."
-      );
-    }
+    await verifyFirebaseUid(firebaseUid);
 
     const patientId = await generateUniqueId(patientCollection);
 
@@ -92,10 +84,7 @@ const getPatients = async (
   firebaseUid
 ) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
 
     let patientQuery;
 
@@ -155,10 +144,7 @@ const addVisit = async (
 ) => {
   const currentDate = new Date();
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
 
     const visitId = await generateUniqueId(visitCollection);
 
@@ -217,10 +203,7 @@ const addVisit = async (
 
 const addNote = async (patientId, noteDetails, firebaseUid) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
     const noteId = await generateUniqueId(
       patientCollection.doc(patientId).collection("notes")
     );
@@ -365,10 +348,7 @@ const retrievePatient = async (patientId) => {
 
 const getVisits = async (patientId, firebaseUid) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
     let visitQuery = visitCollection.where("patientId", "==", patientId);
 
     const visitSnapshot = await visitQuery.get();

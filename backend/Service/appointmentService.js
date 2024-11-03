@@ -12,15 +12,13 @@ const {
   decryptDocument,
   encryptDocument,
   generateUniqueId,
+  verifyFirebaseUid,
 } = require("../Helper/Helper");
 const { collection, query, getDocs, where } = require("firebase/firestore");
 
 const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
 
     const schedRef = appointmentCollection
       .doc(branchId)
@@ -94,10 +92,7 @@ const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
 
 const deleteSchedule = async (branchId, appointmentId, firebaseUid) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
     const scheduleRef = appointmentCollection
       .doc(branchId)
       .collection("schedules")
@@ -116,10 +111,7 @@ const getAppointments = async (
   isDoctor = true
 ) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
 
     let appointments = [];
 
@@ -168,10 +160,7 @@ const getAppointments = async (
 
 const getDoctorAppointments = async (doctorId, firebaseUid) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
+    await verifyFirebaseUid(firebaseUid);
 
     const doctorRef = staffCollection.doc(doctorId);
     const doctorDoc = await doctorRef.get();
