@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import Sample from "../../assets/Image/3.png";
 
-
 const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
   const products = useSelector((state) => state.reducer.inventory.products);
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,13 +22,9 @@ const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
       `${a.product_name}`.localeCompare(`${b.product_name}`)
     );
   } else if (sortOption === "price-l") {
-    filteredProducts = filteredProducts.sort((a, b) =>
-      `${a.price}`.localeCompare(`${b.price}`)
-    );
+    filteredProducts = filteredProducts.sort((a, b) => b.quantity - a.quantity);
   } else if (sortOption === "price-h") {
-    filteredProducts = filteredProducts.sort((a, b) =>
-      `${b.price}`.localeCompare(`${a.price}`)
-    );
+    filteredProducts = filteredProducts.sort((a, b) => a.quantity - b.quantity);
   }
 
   const paginatedProducts = filteredProducts.slice(
