@@ -316,7 +316,27 @@ const verifyFirebaseUid = async (firebaseUid) => {
     }
   }
 };
+const decryptValue = (key, value) => {
+  if (key === "noteId" || key === "createdAt") {
+    return value;
+  }
+  if (typeof value === "string" && isNaN(Date.parse(value))) {
+    return decryptData(value);
+  }
+  return value;
+};
 
+const deepDecrypt = (data) => {
+  const decryptedData = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      decryptedData[key] = deepDecrypt(value);
+    } else {
+      decryptedData[key] = decryptValue(key, value);
+    }
+  }
+  return decryptedData;
+};
 module.exports = {
   getOrganizationName,
   getPatients,
@@ -330,4 +350,5 @@ module.exports = {
   generateUniqueId,
   getBranchName,
   verifyFirebaseUid,
+  deepDecrypt,
 };

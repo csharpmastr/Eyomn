@@ -11,9 +11,10 @@ import { useAddNote } from "../../Hooks/useAddNote";
 import Loader from "../../Component/ui/Loader";
 import SuccessModal from "../../Component/ui/SuccessModal";
 import { useDispatch } from "react-redux";
-import { addNewNote } from "../../Slice/NoteSlice";
+
 import Modal from "../../Component/ui/Modal";
 import { IoMdCloseCircleOutline } from "react-icons/io";
+import { addNewRawNote } from "../../Slice/NoteSlice";
 
 const MedForm = () => {
   const { patientId } = useParams();
@@ -36,192 +37,266 @@ const MedForm = () => {
   });
   const initialMedFormData = {
     //Subjective
-    subjective: {
-      initial_observation: {
-        options: {
-          headache: false,
-          bov: false,
-          halo: false,
-          photophobia: false,
-          diplopia: false,
-          tearing: false,
-          glare: false,
-          eyepain: false,
-        },
-        additional_note: "",
+    initial_observation: {
+      options: {
+        headache: false,
+        bov: false,
+        halo: false,
+        photophobia: false,
+        diplopia: false,
+        tearing: false,
+        glare: false,
+        eyepain: false,
       },
-
-      general_health_hx: {
-        option: {
-          hypertension: false,
-          cardiovas_prob: false,
-          diabetes: false,
-          asthma: false,
-        },
-        last_exam: "",
-        additional_note: "",
-      },
-
-      occular_history: {
-        option: {
-          glaucoma: false,
-          cataract: false,
-          astigmatism: false,
-          macular: false,
-        },
-        last_exam: "",
-        additional_note: "",
-      },
-
-      fam_occular_history: {
-        option: {
-          glaucoma: false,
-          cataract: false,
-          astigmatism: false,
-          macular: false,
-        },
-        additional_note: "",
-      },
-
-      current_medication: "",
-      lifestyle: "",
+      additional_note: "",
     },
 
+    general_health_hx: {
+      option: {
+        hypertension: false,
+        cardiovas_prob: false,
+        diabetes: false,
+        asthma: false,
+      },
+      last_exam: "",
+      additional_note: "",
+    },
+
+    occular_history: {
+      option: {
+        glaucoma: false,
+        cataract: false,
+        astigmatism: false,
+        macular: false,
+      },
+      last_exam: "",
+      additional_note: "",
+    },
+
+    fam_occular_history: {
+      option: {
+        glaucoma: false,
+        cataract: false,
+        astigmatism: false,
+        macular: false,
+      },
+      additional_note: "",
+    },
+
+    current_medication: "",
+    lifestyle: "",
+
     //Objective
-    objective: {
-      bp: "",
-      bg: "",
-      hr: "",
-      o2_saturation: "",
-      temperature: "",
+    bp: "",
+    bg: "",
+    hr: "",
+    o2_saturation: "",
+    temperature: "",
 
-      visual_acuity: {
-        habitual_va: {
-          od: "",
-          os: "",
-          ou: "",
-          additional_note: "",
-        },
-        unaided_va: {
-          od: "",
-          os: "",
-          ou: "",
-          additional_note: "",
-        },
-        pinhole_va: {
-          od: "",
-          os: "",
-          additional_note: "",
-        },
-      },
-
-      retinoscopy: {
-        with_drop: {
-          od: "",
-          os: "",
-          additional_note: "",
-        },
-        without_drop: {
-          od: "",
-          os: "",
-          additional_note: "",
-        },
-      },
-
-      dominant_EH: {
-        dominant_eye: {
-          left: false,
-          right: false,
-        },
-        dominant_hand: {
-          left: false,
-          right: false,
-        },
-        additional_note: "",
-      },
-
-      pupillary_distance: {
+    visual_acuity: {
+      habitual_va: {
         od: "",
         os: "",
         ou: "",
         additional_note: "",
       },
-
-      cover_test: {
-        od: {
-          with_rx: {
-            near: false,
-            distance: false,
-            tropia: false,
-            phoria: false,
-          },
-          without_rx: {
-            near: false,
-            distance: false,
-            tropia: false,
-            phoria: false,
-          },
-        },
-        os: {
-          with_rx: {
-            near: false,
-            distance: false,
-            tropia: false,
-            phoria: false,
-          },
-          without_rx: {
-            near: false,
-            distance: false,
-            tropia: false,
-            phoria: false,
-          },
-        },
-        additional_note: "",
-      },
-
-      confrontation_test: {
+      unaided_va: {
         od: "",
         os: "",
-        image: "",
-      },
-
-      stereopsis: {
-        stereopsis_score: {
-          od: "",
-          os: "",
-        },
-        perceived_DO: {
-          od: {
-            yes: false,
-            no: false,
-          },
-          os: {
-            yes: false,
-            no: false,
-          },
-        },
+        ou: "",
         additional_note: "",
       },
+      pinhole_va: {
+        od: "",
+        os: "",
+        additional_note: "",
+      },
+    },
 
-      diplopia_test: {
+    retinoscopy: {
+      with_drop: {
+        od: "",
+        os: "",
+        additional_note: "",
+      },
+      without_drop: {
+        od: "",
+        os: "",
+        additional_note: "",
+      },
+    },
+
+    dominant_EH: {
+      dominant_eye: {
+        left: false,
+        right: false,
+      },
+      dominant_hand: {
+        left: false,
+        right: false,
+      },
+      additional_note: "",
+    },
+
+    pupillary_distance: {
+      od: "",
+      os: "",
+      ou: "",
+      additional_note: "",
+    },
+
+    cover_test: {
+      od: {
+        with_rx: {
+          near: false,
+          distance: false,
+          tropia: false,
+          phoria: false,
+        },
+        without_rx: {
+          near: false,
+          distance: false,
+          tropia: false,
+          phoria: false,
+        },
+      },
+      os: {
+        with_rx: {
+          near: false,
+          distance: false,
+          tropia: false,
+          phoria: false,
+        },
+        without_rx: {
+          near: false,
+          distance: false,
+          tropia: false,
+          phoria: false,
+        },
+      },
+      additional_note: "",
+    },
+
+    confrontation_test: {
+      od: "",
+      os: "",
+      image: "",
+    },
+
+    stereopsis: {
+      stereopsis_score: {
+        od: "",
+        os: "",
+      },
+      perceived_DO: {
+        od: {
+          yes: false,
+          no: false,
+        },
+        os: {
+          yes: false,
+          no: false,
+        },
+      },
+      additional_note: "",
+    },
+
+    diplopia_test: {
+      present: false,
+      absent: false,
+      additional_note: "",
+    },
+
+    corneal_reflex_test: {
+      od: {
         present: false,
         absent: false,
-        additional_note: "",
       },
-
-      corneal_reflex_test: {
-        od: {
-          present: false,
-          absent: false,
-        },
-        os: {
-          present: false,
-          absent: false,
-        },
-        additional_note: "",
+      os: {
+        present: false,
+        absent: false,
       },
+      additional_note: "",
+    },
 
-      motility_test: {
+    motility_test: {
+      od: {
+        normal: false,
+        abnormal: false,
+      },
+      os: {
+        normal: false,
+        abnormal: false,
+      },
+      additional_note: "",
+    },
+
+    saccadic_test: {
+      od: {
+        present: false,
+        absent: false,
+      },
+      os: {
+        present: false,
+        absent: false,
+      },
+      additional_note: "",
+    },
+
+    amsler_grid: {
+      od: "",
+      os: "",
+      additional_note: "",
+    },
+
+    worths_FD: {
+      od: "",
+      os: "",
+    },
+
+    ishihara_test: {
+      od: "",
+      os: "",
+    },
+
+    schirmer_test: {
+      od: "",
+      os: "",
+    },
+
+    ophthalmoscopy: {
+      od: "",
+      os: "",
+    },
+
+    IOP: {
+      od: "",
+      os: "",
+      image: "",
+    },
+
+    internal_examination: {
+      image: {
+        od: "",
+        os: "",
+      },
+      cup_disc_ratio: {
+        od: "",
+        os: "",
+      },
+      av_ratio: {
+        od: "",
+        os: "",
+      },
+      macula: {
+        od: "",
+        os: "",
+      },
+      virteous: {
+        od: "",
+        os: "",
+      },
+      vessel: {
         od: {
           normal: false,
           abnormal: false,
@@ -230,10 +305,18 @@ const MedForm = () => {
           normal: false,
           abnormal: false,
         },
-        additional_note: "",
       },
-
-      saccadic_test: {
+      venous_pulse: {
+        od: {
+          normal: false,
+          abnormal: false,
+        },
+        os: {
+          normal: false,
+          abnormal: false,
+        },
+      },
+      forveal_reflex: {
         od: {
           present: false,
           absent: false,
@@ -242,283 +325,193 @@ const MedForm = () => {
           present: false,
           absent: false,
         },
-        additional_note: "",
       },
-
-      amsler_grid: {
-        od: "",
-        os: "",
-        additional_note: "",
+      periphery: {
+        od: {
+          normal: false,
+          abnormal: false,
+        },
+        os: {
+          normal: false,
+          abnormal: false,
+        },
       },
+    },
 
-      worths_FD: {
-        od: "",
-        os: "",
-      },
-
-      ishihara_test: {
-        od: "",
-        os: "",
-      },
-
-      schirmer_test: {
+    external_examination: {
+      image: {
         od: "",
         os: "",
       },
-
-      ophthalmoscopy: {
-        od: "",
-        os: "",
-      },
-
-      IOP: {
-        od: "",
-        os: "",
-        image: "",
-      },
-
-      internal_examination: {
-        image: {
-          od: "",
-          os: "",
-        },
-        cup_disc_ratio: {
-          od: "",
-          os: "",
-        },
-        av_ratio: {
-          od: "",
-          os: "",
-        },
-        macula: {
-          od: "",
-          os: "",
-        },
-        virteous: {
-          od: "",
-          os: "",
-        },
-        vessel: {
-          od: {
-            normal: false,
-            abnormal: false,
+      eyebrow: {
+        od: {
+          options: {
+            inflamation: false,
+            dandruff: false,
+            crust_formation: false,
+            foreign_body: false,
           },
-          os: {
-            normal: false,
-            abnormal: false,
-          },
+          additional_note: "",
         },
-        venous_pulse: {
-          od: {
-            normal: false,
-            abnormal: false,
+        os: {
+          options: {
+            inflamation: false,
+            dandruff: false,
+            crust_formation: false,
+            foreign_body: false,
           },
-          os: {
-            normal: false,
-            abnormal: false,
-          },
-        },
-        forveal_reflex: {
-          od: {
-            present: false,
-            absent: false,
-          },
-          os: {
-            present: false,
-            absent: false,
-          },
-        },
-        periphery: {
-          od: {
-            normal: false,
-            abnormal: false,
-          },
-          os: {
-            normal: false,
-            abnormal: false,
-          },
+          additional_note: "",
         },
       },
 
-      external_examination: {
-        image: {
-          od: "",
-          os: "",
+      eyelashes: {
+        od: {
+          options: {
+            crusting: false,
+            discharge: false,
+            eyelash_lice: false,
+            foreign_body: false,
+          },
+          additional_note: "",
         },
-        eyebrow: {
-          od: {
-            options: {
-              inflamation: false,
-              dandruff: false,
-              crust_formation: false,
-              foreign_body: false,
-            },
-            additional_note: "",
+        os: {
+          options: {
+            crusting: false,
+            discharge: false,
+            eyelash_lice: false,
+            foreign_body: false,
           },
-          os: {
-            options: {
-              inflamation: false,
-              dandruff: false,
-              crust_formation: false,
-              foreign_body: false,
-            },
-            additional_note: "",
-          },
-        },
-
-        eyelashes: {
-          od: {
-            options: {
-              crusting: false,
-              discharge: false,
-              eyelash_lice: false,
-              foreign_body: false,
-            },
-            additional_note: "",
-          },
-          os: {
-            options: {
-              crusting: false,
-              discharge: false,
-              eyelash_lice: false,
-              foreign_body: false,
-            },
-            additional_note: "",
-          },
-        },
-
-        eyelids: {
-          od: {
-            options: {
-              blepharitis: false,
-              edema: false,
-              chalazion: false,
-              stye: false,
-            },
-            additional_note: "",
-          },
-          os: {
-            options: {
-              blepharitis: false,
-              edema: false,
-              chalazion: false,
-              stye: false,
-            },
-            additional_note: "",
-          },
-        },
-
-        cornea: {
-          od: {
-            options: {
-              corneal_abrasion: false,
-              keratitis: false,
-              pterygium: false,
-              corneal_scar: false,
-            },
-            additional_note: "",
-          },
-          os: {
-            options: {
-              corneal_abrasion: false,
-              keratitis: false,
-              pterygium: false,
-              corneal_scar: false,
-            },
-            additional_note: "",
-          },
-        },
-
-        limbus: {
-          od: {
-            options: {
-              pinguecula: false,
-              melanosis: false,
-              scarring: false,
-              foreign_debris: false,
-            },
-            additional_note: "",
-          },
-          os: {
-            options: {
-              pinguecula: false,
-              melanosis: false,
-              scarring: false,
-              foreign_debris: false,
-            },
-            additional_note: "",
-          },
-        },
-
-        pupil: {
-          od: {
-            options: {
-              miosis_or_mydriasis: false,
-              IIS: false,
-              pupil_distortion: false,
-              LRA: false,
-            },
-            additional_note: "",
-          },
-          os: {
-            options: {
-              miosis_or_mydriasis: false,
-              IIS: false,
-              pupil_distortion: false,
-              LRA: false,
-            },
-            additional_note: "",
-          },
-        },
-
-        iris: {
-          od: {
-            options: {
-              iris_neovascularization: false,
-              posterior_synechiae: false,
-              hyphema: false,
-              inflammatory_deposit: false,
-            },
-            additional_note: "",
-          },
-          os: {
-            options: {
-              iris_neovascularization: false,
-              posterior_synechiae: false,
-              hyphema: false,
-              inflammatory_deposit: false,
-            },
-            additional_note: "",
-          },
+          additional_note: "",
         },
       },
 
-      habitual_prescription: {
-        date_prescribed: "",
-        od: "",
-        os: "",
+      eyelids: {
+        od: {
+          options: {
+            blepharitis: false,
+            edema: false,
+            chalazion: false,
+            stye: false,
+          },
+          additional_note: "",
+        },
+        os: {
+          options: {
+            blepharitis: false,
+            edema: false,
+            chalazion: false,
+            stye: false,
+          },
+          additional_note: "",
+        },
       },
 
-      contact_lens_prescription: {
-        date_prescribed: "",
-        od: "",
-        os: "",
+      cornea: {
+        od: {
+          options: {
+            corneal_abrasion: false,
+            keratitis: false,
+            pterygium: false,
+            corneal_scar: false,
+          },
+          additional_note: "",
+        },
+        os: {
+          options: {
+            corneal_abrasion: false,
+            keratitis: false,
+            pterygium: false,
+            corneal_scar: false,
+          },
+          additional_note: "",
+        },
       },
+
+      limbus: {
+        od: {
+          options: {
+            pinguecula: false,
+            melanosis: false,
+            scarring: false,
+            foreign_debris: false,
+          },
+          additional_note: "",
+        },
+        os: {
+          options: {
+            pinguecula: false,
+            melanosis: false,
+            scarring: false,
+            foreign_debris: false,
+          },
+          additional_note: "",
+        },
+      },
+
+      pupil: {
+        od: {
+          options: {
+            miosis_or_mydriasis: false,
+            IIS: false,
+            pupil_distortion: false,
+            LRA: false,
+          },
+          additional_note: "",
+        },
+        os: {
+          options: {
+            miosis_or_mydriasis: false,
+            IIS: false,
+            pupil_distortion: false,
+            LRA: false,
+          },
+          additional_note: "",
+        },
+      },
+
+      iris: {
+        od: {
+          options: {
+            iris_neovascularization: false,
+            posterior_synechiae: false,
+            hyphema: false,
+            inflammatory_deposit: false,
+          },
+          additional_note: "",
+        },
+        os: {
+          options: {
+            iris_neovascularization: false,
+            posterior_synechiae: false,
+            hyphema: false,
+            inflammatory_deposit: false,
+          },
+          additional_note: "",
+        },
+      },
+    },
+
+    habitual_prescription: {
+      date_prescribed: "",
+      od: "",
+      os: "",
+    },
+
+    contact_lens_prescription: {
+      date_prescribed: "",
+      od: "",
+      os: "",
     },
 
     //Assessment
-    assessment: {
-      diagnosis: "",
-      refractive_error: "",
-    },
+    diagnosis: "",
+    refractive_error: "",
 
     //Plan
-    plan: {
-      new_prescription_od: "",
-      new_prescription_os: "",
-      management: "",
-      followup_care: "",
-    },
+    new_prescription_od: "",
+    new_prescription_os: "",
+    management: "",
+    followup_care: "",
   };
 
   const [medformData, setMedformData] = useState(initialMedFormData);
@@ -542,18 +535,19 @@ const MedForm = () => {
 
   const handleSubmitNote = async (e) => {
     e.preventDefault();
-
     setHasUnsavedChanges(false);
     try {
       const response = await addNote(medformData, patientId);
+
       if (response) {
         console.log(response);
         reduxDispatch(
-          addNewNote({
-            ...medformData,
-            patientId: patientId,
-            noteId: response.noteId,
-            createdAt: response.createdAt,
+          addNewRawNote({
+            [patientId]: {
+              ...medformData,
+              noteId: response.noteId,
+              createdAt: response.createdAt,
+            },
           })
         );
 
@@ -698,13 +692,12 @@ const MedForm = () => {
                             type="checkbox"
                             name="initial_headache"
                             checked={
-                              medformData.subjective.initial_observation.options
-                                .headache
+                              medformData.initial_observation.options.headache
                             }
                             onChange={(e) =>
                               handleChange(
                                 e,
-                                "subjective.initial_observation.options.headache"
+                                "initial_observation.options.headache"
                               )
                             }
                             className="w-6 h-6"
@@ -718,14 +711,10 @@ const MedForm = () => {
                             type="checkbox"
                             name="initial_bov"
                             checked={
-                              medformData.subjective.initial_observation.options
-                                .bov
+                              medformData.initial_observation.options.bov
                             }
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "subjective.initial_observation.options.bov"
-                              )
+                              handleChange(e, "initial_observation.options.bov")
                             }
                             className="w-6 h-6"
                           />
@@ -738,13 +727,12 @@ const MedForm = () => {
                             type="checkbox"
                             name="initial_halo"
                             checked={
-                              medformData.subjective.initial_observation.options
-                                .halo
+                              medformData.initial_observation.options.halo
                             }
                             onChange={(e) =>
                               handleChange(
                                 e,
-                                "subjective.initial_observation.options.halo"
+                                "initial_observation.options.halo"
                               )
                             }
                             className="w-6 h-6"
@@ -758,13 +746,13 @@ const MedForm = () => {
                             type="checkbox"
                             name="initial_photophobia"
                             checked={
-                              medformData.subjective.initial_observation.options
+                              medformData.initial_observation.options
                                 .photophobia
                             }
                             onChange={(e) =>
                               handleChange(
                                 e,
-                                "subjective.initial_observation.options.photophobia"
+                                "initial_observation.options.photophobia"
                               )
                             }
                             className="w-6 h-6"
@@ -780,13 +768,12 @@ const MedForm = () => {
                             type="checkbox"
                             name="initial_diplopia"
                             checked={
-                              medformData.subjective.initial_observation.options
-                                .diplopia
+                              medformData.initial_observation.options.diplopia
                             }
                             onChange={(e) =>
                               handleChange(
                                 e,
-                                "subjective.initial_observation.options.diplopia"
+                                "initial_observation.options.diplopia"
                               )
                             }
                             className="w-6 h-6"
@@ -800,13 +787,12 @@ const MedForm = () => {
                             type="checkbox"
                             name="initial_tearing"
                             checked={
-                              medformData.subjective.initial_observation.options
-                                .tearing
+                              medformData.initial_observation.options.tearing
                             }
                             onChange={(e) =>
                               handleChange(
                                 e,
-                                "subjective.initial_observation.options.tearing"
+                                "initial_observation.options.tearing"
                               )
                             }
                             className="w-6 h-6"
@@ -820,13 +806,12 @@ const MedForm = () => {
                             type="checkbox"
                             name="initial_glare"
                             checked={
-                              medformData.subjective.initial_observation.options
-                                .glare
+                              medformData.initial_observation.options.glare
                             }
                             onChange={(e) =>
                               handleChange(
                                 e,
-                                "subjective.initial_observation.options.glare"
+                                "initial_observation.options.glare"
                               )
                             }
                             className="w-6 h-6"
@@ -840,13 +825,12 @@ const MedForm = () => {
                             type="checkbox"
                             name="initial_eyepain"
                             checked={
-                              medformData.subjective.initial_observation.options
-                                .eyepain
+                              medformData.initial_observation.options.eyepain
                             }
                             onChange={(e) =>
                               handleChange(
                                 e,
-                                "subjective.initial_observation.options.eyepain"
+                                "initial_observation.options.eyepain"
                               )
                             }
                             className="w-6 h-6"
@@ -860,15 +844,9 @@ const MedForm = () => {
                     <textarea
                       type="text"
                       name="initial_additional_note"
-                      value={
-                        medformData.subjective.initial_observation
-                          .additional_note
-                      }
+                      value={medformData.initial_observation.additional_note}
                       onChange={(e) =>
-                        handleChange(
-                          e,
-                          "subjective.initial_observation.additional_note"
-                        )
+                        handleChange(e, "initial_observation.additional_note")
                       }
                       className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
@@ -885,13 +863,12 @@ const MedForm = () => {
                             type="checkbox"
                             name="gen_health_hypertension"
                             checked={
-                              medformData.subjective.general_health_hx.option
-                                .hypertension
+                              medformData.general_health_hx.option.hypertension
                             }
                             onChange={(e) =>
                               handleChange(
                                 e,
-                                "subjective.general_health_hx.option.hypertension"
+                                "general_health_hx.option.hypertension"
                               )
                             }
                             className="w-6 h-6"
@@ -905,13 +882,13 @@ const MedForm = () => {
                             type="checkbox"
                             name="gen_health_cardiovascular_problem"
                             checked={
-                              medformData.subjective.general_health_hx.option
+                              medformData.general_health_hx.option
                                 .cardiovas_prob
                             }
                             onChange={(e) =>
                               handleChange(
                                 e,
-                                "subjective.general_health_hx.option.cardiovas_prob"
+                                "general_health_hx.option.cardiovas_prob"
                               )
                             }
                             className="w-6 h-6"
@@ -925,13 +902,12 @@ const MedForm = () => {
                             type="checkbox"
                             name="gen_health_diabetes"
                             checked={
-                              medformData.subjective.general_health_hx.option
-                                .diabetes
+                              medformData.general_health_hx.option.diabetes
                             }
                             onChange={(e) =>
                               handleChange(
                                 e,
-                                "subjective.general_health_hx.option.diabetes"
+                                "general_health_hx.option.diabetes"
                               )
                             }
                             className="w-6 h-6"
@@ -945,14 +921,10 @@ const MedForm = () => {
                             type="checkbox"
                             name="gen_health_asthma"
                             checked={
-                              medformData.subjective.general_health_hx.option
-                                .asthma
+                              medformData.general_health_hx.option.asthma
                             }
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "subjective.general_health_hx.option.asthma"
-                              )
+                              handleChange(e, "general_health_hx.option.asthma")
                             }
                             className="w-6 h-6"
                           />
@@ -970,14 +942,9 @@ const MedForm = () => {
                             type="date"
                             name="gen_health_gen_date"
                             max={new Date().toISOString().split("T")[0]}
-                            value={
-                              medformData.subjective.general_health_hx.last_exam
-                            }
+                            value={medformData.general_health_hx.last_exam}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "subjective.general_health_hx.last_exam"
-                              )
+                              handleChange(e, "general_health_hx.last_exam")
                             }
                             className="mt-1 w-fit h-fit px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           />
@@ -987,14 +954,9 @@ const MedForm = () => {
                     <textarea
                       type="text"
                       name="gen_health_additional_note"
-                      value={
-                        medformData.subjective.general_health_hx.additional_note
-                      }
+                      value={medformData.general_health_hx.additional_note}
                       onChange={(e) =>
-                        handleChange(
-                          e,
-                          "subjective.general_health_hx.additional_note"
-                        )
+                        handleChange(e, "general_health_hx.additional_note")
                       }
                       className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
@@ -1013,14 +975,10 @@ const MedForm = () => {
                             type="checkbox"
                             name="occhis_glaucoma"
                             checked={
-                              medformData.subjective.occular_history.option
-                                .glaucoma
+                              medformData.occular_history.option.glaucoma
                             }
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "subjective.occular_history.option.glaucoma"
-                              )
+                              handleChange(e, "occular_history.option.glaucoma")
                             }
                             className="w-6 h-6"
                           />
@@ -1033,14 +991,10 @@ const MedForm = () => {
                             type="checkbox"
                             name="occhis_cataract"
                             checked={
-                              medformData.subjective.occular_history.option
-                                .cataract
+                              medformData.occular_history.option.cataract
                             }
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "subjective.occular_history.option.cataract"
-                              )
+                              handleChange(e, "occular_history.option.cataract")
                             }
                             className="w-6 h-6"
                           />
@@ -1053,13 +1007,12 @@ const MedForm = () => {
                             type="checkbox"
                             name="occhis_stigmatism"
                             checked={
-                              medformData.subjective.occular_history.option
-                                .astigmatism
+                              medformData.occular_history.option.astigmatism
                             }
                             onChange={(e) =>
                               handleChange(
                                 e,
-                                "subjective.occular_history.option.astigmatism"
+                                "occular_history.option.astigmatism"
                               )
                             }
                             className="w-6 h-6"
@@ -1072,15 +1025,9 @@ const MedForm = () => {
                           <input
                             type="checkbox"
                             name="occhis_macular"
-                            checked={
-                              medformData.subjective.occular_history.option
-                                .macular
-                            }
+                            checked={medformData.occular_history.option.macular}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "subjective.occular_history.option.macular"
-                              )
+                              handleChange(e, "occular_history.option.macular")
                             }
                             className="w-6 h-6"
                           />
@@ -1098,14 +1045,9 @@ const MedForm = () => {
                             type="date"
                             name="occhis_date"
                             max={new Date().toISOString().split("T")[0]}
-                            value={
-                              medformData.subjective.occular_history.last_exam
-                            }
+                            value={medformData.occular_history.last_exam}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "subjective.occular_history.last_exam"
-                              )
+                              handleChange(e, "occular_history.last_exam")
                             }
                             className="mt-1 w-fit h-fit px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           />
@@ -1115,14 +1057,9 @@ const MedForm = () => {
                     <textarea
                       type="text"
                       name="occhis_additional_note"
-                      value={
-                        medformData.subjective.occular_history.additional_note
-                      }
+                      value={medformData.occular_history.additional_note}
                       onChange={(e) =>
-                        handleChange(
-                          e,
-                          "subjective.occular_history.additional_note"
-                        )
+                        handleChange(e, "occular_history.additional_note")
                       }
                       className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
@@ -1138,13 +1075,12 @@ const MedForm = () => {
                           type="checkbox"
                           name="fam_occhis_glaucoma"
                           checked={
-                            medformData.subjective.fam_occular_history.option
-                              .glaucoma
+                            medformData.fam_occular_history.option.glaucoma
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "subjective.fam_occular_history.option.glaucoma"
+                              "fam_occular_history.option.glaucoma"
                             )
                           }
                           className="w-6 h-6"
@@ -1158,13 +1094,12 @@ const MedForm = () => {
                           type="checkbox"
                           name="fam_occhis_cataract"
                           checked={
-                            medformData.subjective.fam_occular_history.option
-                              .cataract
+                            medformData.fam_occular_history.option.cataract
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "subjective.fam_occular_history.option.cataract"
+                              "fam_occular_history.option.cataract"
                             )
                           }
                           className="w-6 h-6"
@@ -1178,13 +1113,12 @@ const MedForm = () => {
                           type="checkbox"
                           name="fam_occhis_astigmatism"
                           checked={
-                            medformData.subjective.fam_occular_history.option
-                              .astigmatism
+                            medformData.fam_occular_history.option.astigmatism
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "subjective.fam_occular_history.option.astigmatism"
+                              "fam_occular_history.option.astigmatism"
                             )
                           }
                           className="w-6 h-6"
@@ -1198,13 +1132,12 @@ const MedForm = () => {
                           type="checkbox"
                           name="fam_occhis_macular"
                           checked={
-                            medformData.subjective.fam_occular_history.option
-                              .macular
+                            medformData.fam_occular_history.option.macular
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "subjective.fam_occular_history.option.macular"
+                              "fam_occular_history.option.macular"
                             )
                           }
                           className="w-6 h-6"
@@ -1217,15 +1150,9 @@ const MedForm = () => {
                     <textarea
                       type="text"
                       name="fam_occhis_additional_note"
-                      value={
-                        medformData.subjective.fam_occular_history
-                          .additional_note
-                      }
+                      value={medformData.fam_occular_history.additional_note}
                       onChange={(e) =>
-                        handleChange(
-                          e,
-                          "subjective.fam_occular_history.additional_note"
-                        )
+                        handleChange(e, "fam_occular_history.additional_note")
                       }
                       className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
@@ -1240,10 +1167,8 @@ const MedForm = () => {
                     <textarea
                       type="text"
                       name="current_medication"
-                      value={medformData.subjective.current_medication}
-                      onChange={(e) =>
-                        handleChange(e, "subjective.current_medication")
-                      }
+                      value={medformData.current_medication}
+                      onChange={(e) => handleChange(e, "current_medication")}
                       className="mt-5 h-52 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
                     />
@@ -1255,8 +1180,8 @@ const MedForm = () => {
                     <textarea
                       type="text"
                       name="lifestyle"
-                      value={medformData.subjective.lifestyle}
-                      onChange={(e) => handleChange(e, "subjective.lifestyle")}
+                      value={medformData.lifestyle}
+                      onChange={(e) => handleChange(e, "lifestyle")}
                       className="mt-5 h-52 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
                     />
@@ -1274,8 +1199,8 @@ const MedForm = () => {
                     <input
                       type="text"
                       name="bp"
-                      value={medformData.objective.bp}
-                      onChange={(e) => handleChange(e, "objective.bp")}
+                      value={medformData.bp}
+                      onChange={(e) => handleChange(e, "bp")}
                       className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     />
                   </div>
@@ -1286,8 +1211,8 @@ const MedForm = () => {
                     <input
                       type="text"
                       name="bg"
-                      value={medformData.objective.bg}
-                      onChange={(e) => handleChange(e, "objective.bg")}
+                      value={medformData.bg}
+                      onChange={(e) => handleChange(e, "bg")}
                       className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     />
                   </div>
@@ -1298,8 +1223,8 @@ const MedForm = () => {
                     <input
                       type="text"
                       name="hr"
-                      value={medformData.objective.hr}
-                      onChange={(e) => handleChange(e, "objective.hr")}
+                      value={medformData.hr}
+                      onChange={(e) => handleChange(e, "hr")}
                       className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     />
                   </div>
@@ -1310,10 +1235,8 @@ const MedForm = () => {
                     <input
                       type="text"
                       name="o2_saturation"
-                      value={medformData.objective.o2_saturation}
-                      onChange={(e) =>
-                        handleChange(e, "objective.o2_saturation")
-                      }
+                      value={medformData.o2_saturation}
+                      onChange={(e) => handleChange(e, "o2_saturation")}
                       className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     />
                   </div>
@@ -1324,8 +1247,8 @@ const MedForm = () => {
                     <input
                       type="text"
                       name="temperature"
-                      value={medformData.objective.temperature}
-                      onChange={(e) => handleChange(e, "objective.temperature")}
+                      value={medformData.temperature}
+                      onChange={(e) => handleChange(e, "temperature")}
                       className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     />
                   </div>
@@ -1346,14 +1269,9 @@ const MedForm = () => {
                           </p>
                           <select
                             name="habitual_od"
-                            value={
-                              medformData.objective.visual_acuity.habitual_va.od
-                            }
+                            value={medformData.visual_acuity.habitual_va.od}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.visual_acuity.habitual_va.od"
-                              )
+                              handleChange(e, "visual_acuity.habitual_va.od")
                             }
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
@@ -1373,14 +1291,9 @@ const MedForm = () => {
                           </p>
                           <select
                             name="habitual_os"
-                            value={
-                              medformData.objective.visual_acuity.habitual_va.os
-                            }
+                            value={medformData.visual_acuity.habitual_va.os}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.visual_acuity.habitual_va.os"
-                              )
+                              handleChange(e, "visual_acuity.habitual_va.os")
                             }
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
@@ -1400,14 +1313,9 @@ const MedForm = () => {
                           </p>
                           <select
                             name="habitual_ou"
-                            value={
-                              medformData.objective.visual_acuity.habitual_va.ou
-                            }
+                            value={medformData.visual_acuity.habitual_va.ou}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.visual_acuity.habitual_va.ou"
-                              )
+                              handleChange(e, "visual_acuity.habitual_va.ou")
                             }
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
@@ -1426,13 +1334,12 @@ const MedForm = () => {
                         type="text"
                         name="habitual_additional_note"
                         value={
-                          medformData.objective.visual_acuity.habitual_va
-                            .additional_note
+                          medformData.visual_acuity.habitual_va.additional_note
                         }
                         onChange={(e) =>
                           handleChange(
                             e,
-                            "objective.visual_acuity.habitual_va.additional_note"
+                            "visual_acuity.habitual_va.additional_note"
                           )
                         }
                         className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -1450,14 +1357,9 @@ const MedForm = () => {
                           </p>
                           <select
                             name="unaided_od"
-                            value={
-                              medformData.objective.visual_acuity.unaided_va.od
-                            }
+                            value={medformData.visual_acuity.unaided_va.od}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.visual_acuity.unaided_va.od"
-                              )
+                              handleChange(e, "visual_acuity.unaided_va.od")
                             }
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
@@ -1477,14 +1379,9 @@ const MedForm = () => {
                           </p>
                           <select
                             name="unaided_os"
-                            value={
-                              medformData.objective.visual_acuity.unaided_va.os
-                            }
+                            value={medformData.visual_acuity.unaided_va.os}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.visual_acuity.unaided_va.os"
-                              )
+                              handleChange(e, "visual_acuity.unaided_va.os")
                             }
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
@@ -1504,14 +1401,9 @@ const MedForm = () => {
                           </p>
                           <select
                             name="unaided_ou"
-                            value={
-                              medformData.objective.visual_acuity.unaided_va.ou
-                            }
+                            value={medformData.visual_acuity.unaided_va.ou}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.visual_acuity.unaided_va.ou"
-                              )
+                              handleChange(e, "visual_acuity.unaided_va.ou")
                             }
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
@@ -1530,13 +1422,12 @@ const MedForm = () => {
                         type="text"
                         name="unaided_additional_note"
                         value={
-                          medformData.objective.visual_acuity.unaided_va
-                            .additional_note
+                          medformData.visual_acuity.unaided_va.additional_note
                         }
                         onChange={(e) =>
                           handleChange(
                             e,
-                            "objective.visual_acuity.unaided_va.additional_note"
+                            "visual_acuity.unaided_va.additional_note"
                           )
                         }
                         className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -1554,14 +1445,9 @@ const MedForm = () => {
                           </p>
                           <select
                             name="pinhole_od"
-                            value={
-                              medformData.objective.visual_acuity.pinhole_va.od
-                            }
+                            value={medformData.visual_acuity.pinhole_va.od}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.visual_acuity.pinhole_va.od"
-                              )
+                              handleChange(e, "visual_acuity.pinhole_va.od")
                             }
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
@@ -1581,14 +1467,9 @@ const MedForm = () => {
                           </p>
                           <select
                             name="pinhole_os"
-                            value={
-                              medformData.objective.visual_acuity.pinhole_va.os
-                            }
+                            value={medformData.visual_acuity.pinhole_va.os}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.visual_acuity.pinhole_va.os"
-                              )
+                              handleChange(e, "visual_acuity.pinhole_va.os")
                             }
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
@@ -1607,13 +1488,12 @@ const MedForm = () => {
                         type="text"
                         name="pinhole_additional_note"
                         value={
-                          medformData.objective.visual_acuity.pinhole_va
-                            .additional_note
+                          medformData.visual_acuity.pinhole_va.additional_note
                         }
                         onChange={(e) =>
                           handleChange(
                             e,
-                            "objective.visual_acuity.pinhole_va.additional_note"
+                            "visual_acuity.pinhole_va.additional_note"
                           )
                         }
                         className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -1638,14 +1518,9 @@ const MedForm = () => {
                           </p>
                           <select
                             name="retinoscopy_w_od"
-                            value={
-                              medformData.objective.retinoscopy.with_drop.od
-                            }
+                            value={medformData.retinoscopy.with_drop.od}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.retinoscopy.with_drop.od"
-                              )
+                              handleChange(e, "retinoscopy.with_drop.od")
                             }
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
@@ -1665,14 +1540,9 @@ const MedForm = () => {
                           </p>
                           <select
                             name="retinoscopy_w_os"
-                            value={
-                              medformData.objective.retinoscopy.with_drop.os
-                            }
+                            value={medformData.retinoscopy.with_drop.os}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.retinoscopy.with_drop.os"
-                              )
+                              handleChange(e, "retinoscopy.with_drop.os")
                             }
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
@@ -1690,14 +1560,13 @@ const MedForm = () => {
                       <textarea
                         name="retinoscopy_w_additional_note"
                         value={
-                          medformData.objective.retinoscopy.with_drop
-                            .additional_note
+                          medformData.retinoscopy.with_drop.additional_note
                         }
                         onChange={
                           (e) =>
                             handleChange(
                               e,
-                              "objective.retinoscopy.with_drop.additional_note"
+                              "retinoscopy.with_drop.additional_note"
                             ) // Update this line for correct path
                         }
                         className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -1715,14 +1584,9 @@ const MedForm = () => {
                           </p>
                           <select
                             name="retinoscopy_wo_od"
-                            value={
-                              medformData.objective.retinoscopy.without_drop.od
-                            }
+                            value={medformData.retinoscopy.without_drop.od}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.retinoscopy.without_drop.od"
-                              )
+                              handleChange(e, "retinoscopy.without_drop.od")
                             }
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
@@ -1742,14 +1606,9 @@ const MedForm = () => {
                           </p>
                           <select
                             name="retinoscopy_wo_os"
-                            value={
-                              medformData.objective.retinoscopy.without_drop.os
-                            }
+                            value={medformData.retinoscopy.without_drop.os}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.retinoscopy.without_drop.os"
-                              )
+                              handleChange(e, "retinoscopy.without_drop.os")
                             }
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
@@ -1767,14 +1626,13 @@ const MedForm = () => {
                       <textarea
                         name="retinoscopy_wo_additional_note"
                         value={
-                          medformData.objective.retinoscopy.without_drop
-                            .additional_note
+                          medformData.retinoscopy.without_drop.additional_note
                         }
                         onChange={
                           (e) =>
                             handleChange(
                               e,
-                              "objective.retinoscopy.without_drop.additional_note"
+                              "retinoscopy.without_drop.additional_note"
                             ) // Update this line for correct path
                         }
                         className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -1800,8 +1658,7 @@ const MedForm = () => {
                               name="dominant_e_right"
                               value="right"
                               checked={
-                                medformData.objective.dominant_EH.dominant_eye
-                                  .right
+                                medformData.dominant_EH.dominant_eye.right
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -1809,7 +1666,7 @@ const MedForm = () => {
                                   objective: {
                                     ...prevData.objective,
                                     dominant_EH: {
-                                      ...prevData.objective.dominant_EH,
+                                      ...prevData.dominant_EH,
                                       dominant_eye: {
                                         right: true,
                                         left: false,
@@ -1830,8 +1687,7 @@ const MedForm = () => {
                               name="dominant_e_left"
                               value="left"
                               checked={
-                                medformData.objective.dominant_EH.dominant_eye
-                                  .left
+                                medformData.dominant_EH.dominant_eye.left
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -1839,7 +1695,7 @@ const MedForm = () => {
                                   objective: {
                                     ...prevData.objective,
                                     dominant_EH: {
-                                      ...prevData.objective.dominant_EH,
+                                      ...prevData.dominant_EH,
                                       dominant_eye: {
                                         right: false,
                                         left: true,
@@ -1867,8 +1723,7 @@ const MedForm = () => {
                               name="dominant_h_right"
                               value="right"
                               checked={
-                                medformData.objective.dominant_EH.dominant_hand
-                                  .right
+                                medformData.dominant_EH.dominant_hand.right
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -1876,7 +1731,7 @@ const MedForm = () => {
                                   objective: {
                                     ...prevData.objective,
                                     dominant_EH: {
-                                      ...prevData.objective.dominant_EH,
+                                      ...prevData.dominant_EH,
                                       dominant_hand: {
                                         right: true,
                                         left: false,
@@ -1897,8 +1752,7 @@ const MedForm = () => {
                               name="dominant_h_left"
                               value="left"
                               checked={
-                                medformData.objective.dominant_EH.dominant_hand
-                                  .left
+                                medformData.dominant_EH.dominant_hand.left
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -1906,7 +1760,7 @@ const MedForm = () => {
                                   objective: {
                                     ...prevData.objective,
                                     dominant_EH: {
-                                      ...prevData.objective.dominant_EH,
+                                      ...prevData.dominant_EH,
                                       dominant_hand: {
                                         right: false,
                                         left: true,
@@ -1927,9 +1781,9 @@ const MedForm = () => {
                     <textarea
                       type="text"
                       name="dominant_he_additional_note"
-                      value={medformData.objective.dominant_EH.additional_note}
+                      value={medformData.dominant_EH.additional_note}
                       onChange={(e) =>
-                        handleChange(e, "objective.dominant_EH.additional_note")
+                        handleChange(e, "dominant_EH.additional_note")
                       }
                       className="mt-4 h-36 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
@@ -1945,9 +1799,9 @@ const MedForm = () => {
                         <input
                           type="text"
                           name="pd_od"
-                          value={medformData.objective.pupillary_distance.od}
+                          value={medformData.pupillary_distance.od}
                           onChange={(e) =>
-                            handleChange(e, "objective.pupillary_distance.od")
+                            handleChange(e, "pupillary_distance.od")
                           }
                           className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
@@ -1957,9 +1811,9 @@ const MedForm = () => {
                         <input
                           type="text"
                           name="pd_os"
-                          value={medformData.objective.pupillary_distance.os}
+                          value={medformData.pupillary_distance.os}
                           onChange={(e) =>
-                            handleChange(e, "objective.pupillary_distance.os")
+                            handleChange(e, "pupillary_distance.os")
                           }
                           className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
@@ -1969,9 +1823,9 @@ const MedForm = () => {
                         <input
                           type="text"
                           name="pd_ou"
-                          value={medformData.objective.pupillary_distance.ou}
+                          value={medformData.pupillary_distance.ou}
                           onChange={(e) =>
-                            handleChange(e, "objective.pupillary_distance.ou")
+                            handleChange(e, "pupillary_distance.ou")
                           }
                           className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
@@ -1980,14 +1834,9 @@ const MedForm = () => {
                     <textarea
                       type="text"
                       name="pd_additional_note"
-                      value={
-                        medformData.objective.pupillary_distance.additional_note
-                      }
+                      value={medformData.pupillary_distance.additional_note}
                       onChange={(e) =>
-                        handleChange(
-                          e,
-                          "objective.pupillary_distance.additional_note"
-                        )
+                        handleChange(e, "pupillary_distance.additional_note")
                       }
                       className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
@@ -2012,15 +1861,9 @@ const MedForm = () => {
                                 type="checkbox"
                                 name="with_rx_near"
                                 value="near"
-                                checked={
-                                  medformData.objective.cover_test.od.with_rx
-                                    .near
-                                }
+                                checked={medformData.cover_test.od.with_rx.near}
                                 onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "objective.cover_test.od.with_rx.near"
-                                  )
+                                  handleChange(e, "cover_test.od.with_rx.near")
                                 }
                                 className="w-6 h-6"
                               />
@@ -2034,13 +1877,12 @@ const MedForm = () => {
                                 name="with_rx_distance"
                                 value="distance"
                                 checked={
-                                  medformData.objective.cover_test.od.with_rx
-                                    .distance
+                                  medformData.cover_test.od.with_rx.distance
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.cover_test.od.with_rx.distance"
+                                    "cover_test.od.with_rx.distance"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -2055,13 +1897,12 @@ const MedForm = () => {
                                 name="with_rx_tropia"
                                 value="tropia"
                                 checked={
-                                  medformData.objective.cover_test.od.with_rx
-                                    .tropia
+                                  medformData.cover_test.od.with_rx.tropia
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.cover_test.od.with_rx.tropia"
+                                    "cover_test.od.with_rx.tropia"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -2076,13 +1917,12 @@ const MedForm = () => {
                                 name="with_rx_phoria"
                                 value="phoria"
                                 checked={
-                                  medformData.objective.cover_test.od.with_rx
-                                    .phoria
+                                  medformData.cover_test.od.with_rx.phoria
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.cover_test.od.with_rx.phoria"
+                                    "cover_test.od.with_rx.phoria"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -2104,13 +1944,12 @@ const MedForm = () => {
                                 name="without_rx_near"
                                 value="near"
                                 checked={
-                                  medformData.objective.cover_test.od.without_rx
-                                    .near
+                                  medformData.cover_test.od.without_rx.near
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.cover_test.od.without_rx.near"
+                                    "cover_test.od.without_rx.near"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -2125,13 +1964,12 @@ const MedForm = () => {
                                 name="without_rx_distance"
                                 value="distance"
                                 checked={
-                                  medformData.objective.cover_test.od.without_rx
-                                    .distance
+                                  medformData.cover_test.od.without_rx.distance
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.cover_test.od.without_rx.distance"
+                                    "cover_test.od.without_rx.distance"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -2146,13 +1984,12 @@ const MedForm = () => {
                                 name="without_rx_tropia"
                                 value="tropia"
                                 checked={
-                                  medformData.objective.cover_test.od.without_rx
-                                    .tropia
+                                  medformData.cover_test.od.without_rx.tropia
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.cover_test.od.without_rx.tropia"
+                                    "cover_test.od.without_rx.tropia"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -2167,13 +2004,12 @@ const MedForm = () => {
                                 name="without_rx_phoria"
                                 value="phoria"
                                 checked={
-                                  medformData.objective.cover_test.od.without_rx
-                                    .phoria
+                                  medformData.cover_test.od.without_rx.phoria
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.cover_test.od.without_rx.phoria"
+                                    "cover_test.od.without_rx.phoria"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -2199,15 +2035,9 @@ const MedForm = () => {
                                 type="checkbox"
                                 name="with_rx_near"
                                 value="near"
-                                checked={
-                                  medformData.objective.cover_test.os.with_rx
-                                    .near
-                                }
+                                checked={medformData.cover_test.os.with_rx.near}
                                 onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "objective.cover_test.os.with_rx.near"
-                                  )
+                                  handleChange(e, "cover_test.os.with_rx.near")
                                 }
                                 className="w-6 h-6"
                               />
@@ -2221,13 +2051,12 @@ const MedForm = () => {
                                 name="with_rx_distance"
                                 value="distance"
                                 checked={
-                                  medformData.objective.cover_test.os.with_rx
-                                    .distance
+                                  medformData.cover_test.os.with_rx.distance
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.cover_test.os.with_rx.distance"
+                                    "cover_test.os.with_rx.distance"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -2242,13 +2071,12 @@ const MedForm = () => {
                                 name="with_rx_tropia"
                                 value="tropia"
                                 checked={
-                                  medformData.objective.cover_test.os.with_rx
-                                    .tropia
+                                  medformData.cover_test.os.with_rx.tropia
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.cover_test.os.with_rx.tropia"
+                                    "cover_test.os.with_rx.tropia"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -2263,13 +2091,12 @@ const MedForm = () => {
                                 name="with_rx_phoria"
                                 value="phoria"
                                 checked={
-                                  medformData.objective.cover_test.os.with_rx
-                                    .phoria
+                                  medformData.cover_test.os.with_rx.phoria
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.cover_test.os.with_rx.phoria"
+                                    "cover_test.os.with_rx.phoria"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -2291,13 +2118,12 @@ const MedForm = () => {
                                 name="without_rx_near"
                                 value="near"
                                 checked={
-                                  medformData.objective.cover_test.os.without_rx
-                                    .near
+                                  medformData.cover_test.os.without_rx.near
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.cover_test.os.without_rx.near"
+                                    "cover_test.os.without_rx.near"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -2312,13 +2138,12 @@ const MedForm = () => {
                                 name="without_rx_distance"
                                 value="distance"
                                 checked={
-                                  medformData.objective.cover_test.os.without_rx
-                                    .distance
+                                  medformData.cover_test.os.without_rx.distance
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.cover_test.os.without_rx.distance"
+                                    "cover_test.os.without_rx.distance"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -2333,13 +2158,12 @@ const MedForm = () => {
                                 name="without_rx_tropia"
                                 value="tropia"
                                 checked={
-                                  medformData.objective.cover_test.os.without_rx
-                                    .tropia
+                                  medformData.cover_test.os.without_rx.tropia
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.cover_test.os.without_rx.tropia"
+                                    "cover_test.os.without_rx.tropia"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -2354,13 +2178,12 @@ const MedForm = () => {
                                 name="without_rx_phoria"
                                 value="phoria"
                                 checked={
-                                  medformData.objective.cover_test.os.without_rx
-                                    .phoria
+                                  medformData.cover_test.os.without_rx.phoria
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.cover_test.os.without_rx.phoria"
+                                    "cover_test.os.without_rx.phoria"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -2377,9 +2200,9 @@ const MedForm = () => {
                   <textarea
                     type="text"
                     name="cover_test_additional_note"
-                    value={medformData.objective.cover_test.additional_note}
+                    value={medformData.cover_test.additional_note}
                     onChange={(e) =>
-                      handleChange(e, "objective.cover_test.additional_note")
+                      handleChange(e, "cover_test.additional_note")
                     }
                     className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
@@ -2399,9 +2222,9 @@ const MedForm = () => {
                           <textarea
                             type="text"
                             name="confrontation_test_od"
-                            value={medformData.objective.confrontation_test.od}
+                            value={medformData.confrontation_test.od}
                             onChange={(e) =>
-                              handleChange(e, "objective.confrontation_test.od")
+                              handleChange(e, "confrontation_test.od")
                             }
                             className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                             placeholder=""
@@ -2414,9 +2237,9 @@ const MedForm = () => {
                           <textarea
                             type="text"
                             name="confrontation_test_os"
-                            value={medformData.objective.confrontation_test.os}
+                            value={medformData.confrontation_test.os}
                             onChange={(e) =>
-                              handleChange(e, "objective.confrontation_test.os")
+                              handleChange(e, "confrontation_test.os")
                             }
                             className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                             placeholder=""
@@ -2451,15 +2274,9 @@ const MedForm = () => {
                           <input
                             type="text"
                             name="stereopsis_score_od"
-                            value={
-                              medformData.objective.stereopsis.stereopsis_score
-                                .od
-                            }
+                            value={medformData.stereopsis.stereopsis_score.od}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.stereopsis.stereopsis_score.od"
-                              )
+                              handleChange(e, "stereopsis.stereopsis_score.od")
                             }
                             className="mt-2 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           />
@@ -2471,15 +2288,9 @@ const MedForm = () => {
                           <input
                             type="text"
                             name="stereopsis_score_os"
-                            value={
-                              medformData.objective.stereopsis.stereopsis_score
-                                .os
-                            }
+                            value={medformData.stereopsis.stereopsis_score.os}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.stereopsis.stereopsis_score.os"
-                              )
+                              handleChange(e, "stereopsis.stereopsis_score.os")
                             }
                             className="mt-2 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           />
@@ -2499,8 +2310,7 @@ const MedForm = () => {
                               name="pdo_od_yes"
                               value="yes"
                               checked={
-                                medformData.objective.stereopsis.perceived_DO.od
-                                  .yes
+                                medformData.stereopsis.perceived_DO.od.yes
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -2508,10 +2318,9 @@ const MedForm = () => {
                                   objective: {
                                     ...prevData.objective,
                                     stereopsis: {
-                                      ...prevData.objective.stereopsis,
+                                      ...prevData.stereopsis,
                                       perceived_DO: {
-                                        ...prevData.objective.stereopsis
-                                          .perceived_DO,
+                                        ...prevData.stereopsis.perceived_DO,
                                         od: { yes: true, no: false },
                                       },
                                     },
@@ -2530,8 +2339,7 @@ const MedForm = () => {
                               name="pdo_od_no"
                               value="no"
                               checked={
-                                medformData.objective.stereopsis.perceived_DO.od
-                                  .no
+                                medformData.stereopsis.perceived_DO.od.no
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -2539,10 +2347,9 @@ const MedForm = () => {
                                   objective: {
                                     ...prevData.objective,
                                     stereopsis: {
-                                      ...prevData.objective.stereopsis,
+                                      ...prevData.stereopsis,
                                       perceived_DO: {
-                                        ...prevData.objective.stereopsis
-                                          .perceived_DO,
+                                        ...prevData.stereopsis.perceived_DO,
                                         od: { yes: false, no: true },
                                       },
                                     },
@@ -2563,8 +2370,7 @@ const MedForm = () => {
                               name="pdo_os_yes"
                               value="yes"
                               checked={
-                                medformData.objective.stereopsis.perceived_DO.os
-                                  .yes
+                                medformData.stereopsis.perceived_DO.os.yes
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -2572,10 +2378,9 @@ const MedForm = () => {
                                   objective: {
                                     ...prevData.objective,
                                     stereopsis: {
-                                      ...prevData.objective.stereopsis,
+                                      ...prevData.stereopsis,
                                       perceived_DO: {
-                                        ...prevData.objective.stereopsis
-                                          .perceived_DO,
+                                        ...prevData.stereopsis.perceived_DO,
                                         os: { yes: true, no: false },
                                       },
                                     },
@@ -2594,8 +2399,7 @@ const MedForm = () => {
                               name="pdo_os_no"
                               value="no"
                               checked={
-                                medformData.objective.stereopsis.perceived_DO.os
-                                  .no
+                                medformData.stereopsis.perceived_DO.os.no
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -2603,10 +2407,9 @@ const MedForm = () => {
                                   objective: {
                                     ...prevData.objective,
                                     stereopsis: {
-                                      ...prevData.objective.stereopsis,
+                                      ...prevData.stereopsis,
                                       perceived_DO: {
-                                        ...prevData.objective.stereopsis
-                                          .perceived_DO,
+                                        ...prevData.stereopsis.perceived_DO,
                                         os: { yes: false, no: true },
                                       },
                                     },
@@ -2625,9 +2428,9 @@ const MedForm = () => {
                     <textarea
                       type="text"
                       name="stereopsis_additional_note"
-                      value={medformData.objective.stereopsis.additional_note}
+                      value={medformData.stereopsis.additional_note}
                       onChange={(e) =>
-                        handleChange(e, "objective.stereopsis.additional_note")
+                        handleChange(e, "stereopsis.additional_note")
                       }
                       className="mt-4 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
@@ -2647,16 +2450,14 @@ const MedForm = () => {
                               type="radio"
                               name="diplopia_present"
                               value="present"
-                              checked={
-                                medformData.objective.diplopia_test.present
-                              }
+                              checked={medformData.diplopia_test.present}
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
                                   objective: {
                                     ...prevData.objective,
                                     diplopia_test: {
-                                      ...prevData.objective.diplopia_test,
+                                      ...prevData.diplopia_test,
                                       present: true,
                                       absent: false,
                                     },
@@ -2674,16 +2475,14 @@ const MedForm = () => {
                               type="radio"
                               name="diplopia_absent"
                               value="absent"
-                              checked={
-                                medformData.objective.diplopia_test.absent
-                              }
+                              checked={medformData.diplopia_test.absent}
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
                                   objective: {
                                     ...prevData.objective,
                                     diplopia_test: {
-                                      ...prevData.objective.diplopia_test,
+                                      ...prevData.diplopia_test,
                                       present: false,
                                       absent: true,
                                     },
@@ -2700,14 +2499,9 @@ const MedForm = () => {
                         <textarea
                           type="text"
                           name="diplopia_additional_note"
-                          value={
-                            medformData.objective.diplopia_test.additional_note
-                          }
+                          value={medformData.diplopia_test.additional_note}
                           onChange={(e) =>
-                            handleChange(
-                              e,
-                              "objective.diplopia_test.additional_note"
-                            )
+                            handleChange(e, "diplopia_test.additional_note")
                           }
                           className="w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
@@ -2729,8 +2523,7 @@ const MedForm = () => {
                                 name="corneal_od_present"
                                 value="present"
                                 checked={
-                                  medformData.objective.corneal_reflex_test.od
-                                    .present
+                                  medformData.corneal_reflex_test.od.present
                                 }
                                 onChange={() =>
                                   setMedformData((prevData) => ({
@@ -2757,8 +2550,7 @@ const MedForm = () => {
                                 name="corneal_od_absent"
                                 value="absent"
                                 checked={
-                                  medformData.objective.corneal_reflex_test.od
-                                    .absent
+                                  medformData.corneal_reflex_test.od.absent
                                 }
                                 onChange={() =>
                                   setMedformData((prevData) => ({
@@ -2792,8 +2584,7 @@ const MedForm = () => {
                                 name="corneal_os_present"
                                 value="present"
                                 checked={
-                                  medformData.objective.corneal_reflex_test.os
-                                    .present
+                                  medformData.corneal_reflex_test.os.present
                                 }
                                 onChange={() =>
                                   setMedformData((prevData) => ({
@@ -2820,8 +2611,7 @@ const MedForm = () => {
                                 name="corneal_os_absent"
                                 value="absent"
                                 checked={
-                                  medformData.objective.corneal_reflex_test.os
-                                    .absent
+                                  medformData.corneal_reflex_test.os.absent
                                 }
                                 onChange={() =>
                                   setMedformData((prevData) => ({
@@ -2848,15 +2638,9 @@ const MedForm = () => {
                       <textarea
                         type="text"
                         name="corneal_additional_note"
-                        value={
-                          medformData.objective.corneal_reflex_test
-                            .additional_note
-                        }
+                        value={medformData.corneal_reflex_test.additional_note}
                         onChange={(e) =>
-                          handleChange(
-                            e,
-                            "objective.corneal_reflex_test.additional_note"
-                          )
+                          handleChange(e, "corneal_reflex_test.additional_note")
                         }
                         className="mt-4 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         placeholder=""
@@ -2877,16 +2661,14 @@ const MedForm = () => {
                                 type="radio"
                                 name="motility_od_normal"
                                 value="normal"
-                                checked={
-                                  medformData.objective.motility_test.od.normal
-                                }
+                                checked={medformData.motility_test.od.normal}
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
                                     objective: {
                                       ...prevData.objective,
                                       motility_test: {
-                                        ...prevData.objective.motility_test,
+                                        ...prevData.motility_test,
                                         od: { normal: true, abnormal: false },
                                       },
                                     },
@@ -2903,17 +2685,14 @@ const MedForm = () => {
                                 type="radio"
                                 name="motility_od_abnormal"
                                 value="abnormal"
-                                checked={
-                                  medformData.objective.motility_test.od
-                                    .abnormal
-                                }
+                                checked={medformData.motility_test.od.abnormal}
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
                                     objective: {
                                       ...prevData.objective,
                                       motility_test: {
-                                        ...prevData.objective.motility_test,
+                                        ...prevData.motility_test,
                                         od: { normal: false, abnormal: true },
                                       },
                                     },
@@ -2937,16 +2716,14 @@ const MedForm = () => {
                                 type="radio"
                                 name="motility_os_normal"
                                 value="normal"
-                                checked={
-                                  medformData.objective.motility_test.os.normal
-                                }
+                                checked={medformData.motility_test.os.normal}
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
                                     objective: {
                                       ...prevData.objective,
                                       motility_test: {
-                                        ...prevData.objective.motility_test,
+                                        ...prevData.motility_test,
                                         os: { normal: true, abnormal: false },
                                       },
                                     },
@@ -2963,17 +2740,14 @@ const MedForm = () => {
                                 type="radio"
                                 name="motility_os_abnormal"
                                 value="abnormal"
-                                checked={
-                                  medformData.objective.motility_test.os
-                                    .abnormal
-                                }
+                                checked={medformData.motility_test.os.abnormal}
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
                                     objective: {
                                       ...prevData.objective,
                                       motility_test: {
-                                        ...prevData.objective.motility_test,
+                                        ...prevData.motility_test,
                                         os: { normal: false, abnormal: true },
                                       },
                                     },
@@ -2991,14 +2765,9 @@ const MedForm = () => {
                       <textarea
                         type="text"
                         name="motility_additional_note"
-                        value={
-                          medformData.objective.motility_test.additional_note
-                        }
+                        value={medformData.motility_test.additional_note}
                         onChange={(e) =>
-                          handleChange(
-                            e,
-                            "objective.motility_test.additional_note"
-                          )
+                          handleChange(e, "motility_test.additional_note")
                         }
                         className="mt-4 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         placeholder=""
@@ -3019,16 +2788,14 @@ const MedForm = () => {
                                 type="radio"
                                 name="saccadic_od_present"
                                 value="present"
-                                checked={
-                                  medformData.objective.saccadic_test.od.present
-                                }
+                                checked={medformData.saccadic_test.od.present}
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
                                     objective: {
                                       ...prevData.objective,
                                       saccadic_test: {
-                                        ...prevData.objective.saccadic_test,
+                                        ...prevData.saccadic_test,
                                         od: { present: true, absent: false },
                                       },
                                     },
@@ -3045,16 +2812,14 @@ const MedForm = () => {
                                 type="radio"
                                 name="saccadic_od_absent"
                                 value="absent"
-                                checked={
-                                  medformData.objective.saccadic_test.od.absent
-                                }
+                                checked={medformData.saccadic_test.od.absent}
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
                                     objective: {
                                       ...prevData.objective,
                                       saccadic_test: {
-                                        ...prevData.objective.saccadic_test,
+                                        ...prevData.saccadic_test,
                                         od: { present: false, absent: true },
                                       },
                                     },
@@ -3078,16 +2843,14 @@ const MedForm = () => {
                                 type="radio"
                                 name="saccadic_os_present"
                                 value="present"
-                                checked={
-                                  medformData.objective.saccadic_test.os.present
-                                }
+                                checked={medformData.saccadic_test.os.present}
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
                                     objective: {
                                       ...prevData.objective,
                                       saccadic_test: {
-                                        ...prevData.objective.saccadic_test,
+                                        ...prevData.saccadic_test,
                                         os: { present: true, absent: false },
                                       },
                                     },
@@ -3104,16 +2867,14 @@ const MedForm = () => {
                                 type="radio"
                                 name="saccadic_os_absent"
                                 value="absent"
-                                checked={
-                                  medformData.objective.saccadic_test.os.absent
-                                }
+                                checked={medformData.saccadic_test.os.absent}
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
                                     objective: {
                                       ...prevData.objective,
                                       saccadic_test: {
-                                        ...prevData.objective.saccadic_test,
+                                        ...prevData.saccadic_test,
                                         os: { present: false, absent: true },
                                       },
                                     },
@@ -3131,14 +2892,9 @@ const MedForm = () => {
                       <textarea
                         type="text"
                         name="saccadic_additional_note"
-                        value={
-                          medformData.objective.saccadic_test.additional_note
-                        }
+                        value={medformData.saccadic_test.additional_note}
                         onChange={(e) =>
-                          handleChange(
-                            e,
-                            "objective.saccadic_test.additional_note"
-                          )
+                          handleChange(e, "saccadic_test.additional_note")
                         }
                         className="mt-4 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         placeholder=""
@@ -3157,10 +2913,8 @@ const MedForm = () => {
                           </p>
                           <select
                             name="amsler_od"
-                            value={medformData.objective.amsler_grid.od}
-                            onChange={(e) =>
-                              handleChange(e, "objective.amsler_grid.od")
-                            }
+                            value={medformData.amsler_grid.od}
+                            onChange={(e) => handleChange(e, "amsler_grid.od")}
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
                             <option
@@ -3179,10 +2933,8 @@ const MedForm = () => {
                           </p>
                           <select
                             name="amsler_os"
-                            value={medformData.objective.amsler_grid.os}
-                            onChange={(e) =>
-                              handleChange(e, "objective.amsler_grid.os")
-                            }
+                            value={medformData.amsler_grid.os}
+                            onChange={(e) => handleChange(e, "amsler_grid.os")}
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
                             <option
@@ -3200,14 +2952,9 @@ const MedForm = () => {
                         <textarea
                           type="text"
                           name="amsler_additional_note"
-                          value={
-                            medformData.objective.amsler_grid.additional_note
-                          }
+                          value={medformData.amsler_grid.additional_note}
                           onChange={(e) =>
-                            handleChange(
-                              e,
-                              "objective.amsler_grid.additional_note"
-                            )
+                            handleChange(e, "amsler_grid.additional_note")
                           }
                           className="h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           placeholder=""
@@ -3236,10 +2983,8 @@ const MedForm = () => {
                           <textarea
                             type="text"
                             name="wfd_od"
-                            value={medformData.objective.worths_FD.od}
-                            onChange={(e) =>
-                              handleChange(e, "objective.worths_FD.od")
-                            }
+                            value={medformData.worths_FD.od}
+                            onChange={(e) => handleChange(e, "worths_FD.od")}
                             className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                             placeholder=""
                           />
@@ -3251,10 +2996,8 @@ const MedForm = () => {
                           <textarea
                             type="text"
                             name="wfd_os"
-                            value={medformData.objective.worths_FD.os}
-                            onChange={(e) =>
-                              handleChange(e, "objective.worths_FD.os")
-                            }
+                            value={medformData.worths_FD.os}
+                            onChange={(e) => handleChange(e, "worths_FD.os")}
                             className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                             placeholder=""
                           />
@@ -3273,9 +3016,9 @@ const MedForm = () => {
                           <textarea
                             type="text"
                             name="ishihara_od"
-                            value={medformData.objective.ishihara_test.od}
+                            value={medformData.ishihara_test.od}
                             onChange={(e) =>
-                              handleChange(e, "objective.ishihara_test.od")
+                              handleChange(e, "ishihara_test.od")
                             }
                             className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                             placeholder=""
@@ -3288,9 +3031,9 @@ const MedForm = () => {
                           <textarea
                             type="text"
                             name="ishihara_os"
-                            value={medformData.objective.ishihara_test.os}
+                            value={medformData.ishihara_test.os}
                             onChange={(e) =>
-                              handleChange(e, "objective.ishihara_test.os")
+                              handleChange(e, "ishihara_test.os")
                             }
                             className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                             placeholder=""
@@ -3310,9 +3053,9 @@ const MedForm = () => {
                           <textarea
                             type="text"
                             name="schirmer_od"
-                            value={medformData.objective.schirmer_test.od}
+                            value={medformData.schirmer_test.od}
                             onChange={(e) =>
-                              handleChange(e, "objective.schirmer_test.od")
+                              handleChange(e, "schirmer_test.od")
                             }
                             className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                             placeholder=""
@@ -3325,9 +3068,9 @@ const MedForm = () => {
                           <textarea
                             type="text"
                             name="schirmer_os"
-                            value={medformData.objective.schirmer_test.os}
+                            value={medformData.schirmer_test.os}
                             onChange={(e) =>
-                              handleChange(e, "objective.schirmer_test.os")
+                              handleChange(e, "schirmer_test.os")
                             }
                             className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                             placeholder=""
@@ -3381,8 +3124,8 @@ const MedForm = () => {
                         <input
                           type="text"
                           name="iop_od"
-                          value={medformData.objective.IOP.od}
-                          onChange={(e) => handleChange(e, "objective.IOP.od")}
+                          value={medformData.IOP.od}
+                          onChange={(e) => handleChange(e, "IOP.od")}
                           className="mt-2 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </div>
@@ -3391,8 +3134,8 @@ const MedForm = () => {
                         <input
                           type="text"
                           name="iop_os"
-                          value={medformData.objective.IOP.os}
-                          onChange={(e) => handleChange(e, "objective.IOP.os")}
+                          value={medformData.IOP.os}
+                          onChange={(e) => handleChange(e, "IOP.os")}
                           className="mt-2 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </div>
@@ -3433,13 +3176,12 @@ const MedForm = () => {
                           type="text"
                           name="cdr_od"
                           value={
-                            medformData.objective.internal_examination
-                              .cup_disc_ratio.od
+                            medformData.internal_examination.cup_disc_ratio.od
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.internal_examination.cup_disc_ratio.od"
+                              "internal_examination.cup_disc_ratio.od"
                             )
                           }
                           className="mt-2 w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -3451,13 +3193,12 @@ const MedForm = () => {
                           type="text"
                           name="cdr_os"
                           value={
-                            medformData.objective.internal_examination
-                              .cup_disc_ratio.os
+                            medformData.internal_examination.cup_disc_ratio.os
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.internal_examination.cup_disc_ratio.os"
+                              "internal_examination.cup_disc_ratio.os"
                             )
                           }
                           className="mt-2 w-2/3  p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -3467,15 +3208,9 @@ const MedForm = () => {
                         <input
                           type="text"
                           name="avr_od"
-                          value={
-                            medformData.objective.internal_examination.av_ratio
-                              .od
-                          }
+                          value={medformData.internal_examination.av_ratio.od}
                           onChange={(e) =>
-                            handleChange(
-                              e,
-                              "objective.internal_examination.av_ratio.od"
-                            )
+                            handleChange(e, "internal_examination.av_ratio.od")
                           }
                           className="mt-2 w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
@@ -3485,15 +3220,9 @@ const MedForm = () => {
                         <input
                           type="text"
                           name="avr_os"
-                          value={
-                            medformData.objective.internal_examination.av_ratio
-                              .os
-                          }
+                          value={medformData.internal_examination.av_ratio.os}
                           onChange={(e) =>
-                            handleChange(
-                              e,
-                              "objective.internal_examination.av_ratio.os"
-                            )
+                            handleChange(e, "internal_examination.av_ratio.os")
                           }
                           className="mt-2 w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
@@ -3501,14 +3230,9 @@ const MedForm = () => {
                       <div className="flex gap-3 items-center">
                         <select
                           name="macula_od"
-                          value={
-                            medformData.objective.internal_examination.macula.od
-                          }
+                          value={medformData.internal_examination.macula.od}
                           onChange={(e) =>
-                            handleChange(
-                              e,
-                              "objective.internal_examination.macula.od"
-                            )
+                            handleChange(e, "internal_examination.macula.od")
                           }
                           className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
@@ -3528,14 +3252,9 @@ const MedForm = () => {
                         </p>
                         <select
                           name="macula_os"
-                          value={
-                            medformData.objective.internal_examination.macula.os
-                          }
+                          value={medformData.internal_examination.macula.os}
                           onChange={(e) =>
-                            handleChange(
-                              e,
-                              "objective.internal_examination.macula.os"
-                            )
+                            handleChange(e, "internal_examination.macula.os")
                           }
                           className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
@@ -3554,15 +3273,9 @@ const MedForm = () => {
                       <div className="flex gap-3 items-center">
                         <select
                           name="virtreous_od"
-                          value={
-                            medformData.objective.internal_examination.virteous
-                              .od
-                          }
+                          value={medformData.internal_examination.virteous.od}
                           onChange={(e) =>
-                            handleChange(
-                              e,
-                              "objective.internal_examination.virteous.od"
-                            )
+                            handleChange(e, "internal_examination.virteous.od")
                           }
                           className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
@@ -3580,15 +3293,9 @@ const MedForm = () => {
                         </p>
                         <select
                           name="virtreous_os"
-                          value={
-                            medformData.objective.internal_examination.virteous
-                              .os
-                          }
+                          value={medformData.internal_examination.virteous.os}
                           onChange={(e) =>
-                            handleChange(
-                              e,
-                              "objective.internal_examination.virteous.os"
-                            )
+                            handleChange(e, "internal_examination.virteous.os")
                           }
                           className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
@@ -3610,8 +3317,8 @@ const MedForm = () => {
                               name="vessel_od_normal"
                               value="normal"
                               checked={
-                                medformData.objective.internal_examination
-                                  .vessel.od.normal
+                                medformData.internal_examination.vessel.od
+                                  .normal
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -3642,8 +3349,8 @@ const MedForm = () => {
                               name="vessel_od_abnormal"
                               value="abnormal"
                               checked={
-                                medformData.objective.internal_examination
-                                  .vessel.od.abnormal
+                                medformData.internal_examination.vessel.od
+                                  .abnormal
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -3679,8 +3386,8 @@ const MedForm = () => {
                               name="vessel_os_normal"
                               value="normal"
                               checked={
-                                medformData.objective.internal_examination
-                                  .vessel.os.normal
+                                medformData.internal_examination.vessel.os
+                                  .normal
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -3711,8 +3418,8 @@ const MedForm = () => {
                               name="vessel_os_abnormal"
                               value="abnormal"
                               checked={
-                                medformData.objective.internal_examination
-                                  .vessel.os.abnormal
+                                medformData.internal_examination.vessel.os
+                                  .abnormal
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -3747,8 +3454,8 @@ const MedForm = () => {
                               name="venous_od_normal"
                               value="normal"
                               checked={
-                                medformData.objective.internal_examination
-                                  .venous_pulse.od.normal
+                                medformData.internal_examination.venous_pulse.od
+                                  .normal
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -3779,8 +3486,8 @@ const MedForm = () => {
                               name="venous_od_abnormal"
                               value=""
                               checked={
-                                medformData.objective.internal_examination
-                                  .venous_pulse.od.abnormal
+                                medformData.internal_examination.venous_pulse.od
+                                  .abnormal
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -3816,8 +3523,8 @@ const MedForm = () => {
                               name="venous_os_normal"
                               value="normal"
                               checked={
-                                medformData.objective.internal_examination
-                                  .venous_pulse.os.normal
+                                medformData.internal_examination.venous_pulse.os
+                                  .normal
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -3848,8 +3555,8 @@ const MedForm = () => {
                               name="venous_os_abnormal"
                               value="abnormal"
                               checked={
-                                medformData.objective.internal_examination
-                                  .venous_pulse.os.abnormal
+                                medformData.internal_examination.venous_pulse.os
+                                  .abnormal
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -3884,8 +3591,8 @@ const MedForm = () => {
                               name="forveal_od_present"
                               value="present"
                               checked={
-                                medformData.objective.internal_examination
-                                  .forveal_reflex.od.present
+                                medformData.internal_examination.forveal_reflex
+                                  .od.present
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -3916,8 +3623,8 @@ const MedForm = () => {
                               name="forveal_od_absent"
                               value="absent"
                               checked={
-                                medformData.objective.internal_examination
-                                  .forveal_reflex.od.absent
+                                medformData.internal_examination.forveal_reflex
+                                  .od.absent
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -3953,8 +3660,8 @@ const MedForm = () => {
                               name="forveal_os_present"
                               value="present"
                               checked={
-                                medformData.objective.internal_examination
-                                  .forveal_reflex.os.present
+                                medformData.internal_examination.forveal_reflex
+                                  .os.present
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -3985,8 +3692,8 @@ const MedForm = () => {
                               name="forveal_os_absent"
                               value="absent"
                               checked={
-                                medformData.objective.internal_examination
-                                  .forveal_reflex.os.absent
+                                medformData.internal_examination.forveal_reflex
+                                  .os.absent
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -4021,8 +3728,8 @@ const MedForm = () => {
                               name="periphery_od_normal"
                               value="normal"
                               checked={
-                                medformData.objective.internal_examination
-                                  .periphery.od.normal
+                                medformData.internal_examination.periphery.od
+                                  .normal
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -4053,8 +3760,8 @@ const MedForm = () => {
                               name="periphery_od_abnormal"
                               value="abnormal"
                               checked={
-                                medformData.objective.internal_examination
-                                  .periphery.od.abnormal
+                                medformData.internal_examination.periphery.od
+                                  .abnormal
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -4090,8 +3797,8 @@ const MedForm = () => {
                               name="periphery_os_normal"
                               value="normal"
                               checked={
-                                medformData.objective.internal_examination
-                                  .periphery.os.normal
+                                medformData.internal_examination.periphery.os
+                                  .normal
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -4122,8 +3829,8 @@ const MedForm = () => {
                               name="periphery_os_abnormal"
                               value="abnormal"
                               checked={
-                                medformData.objective.internal_examination
-                                  .periphery.os.abnormal
+                                medformData.internal_examination.periphery.os
+                                  .abnormal
                               }
                               onChange={() =>
                                 setMedformData((prevData) => ({
@@ -4209,13 +3916,13 @@ const MedForm = () => {
                                 name="eyebrow_od_inflamation"
                                 value="Inflammation"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyebrow.od.options.inflamation
+                                  medformData.external_examination.eyebrow.od
+                                    .options.inflamation
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyebrow.od.options.inflamation"
+                                    "external_examination.eyebrow.od.options.inflamation"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4230,13 +3937,13 @@ const MedForm = () => {
                                 name="eyebrow_od_crust_formation"
                                 value="Crust formation"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyebrow.od.options.crust_formation
+                                  medformData.external_examination.eyebrow.od
+                                    .options.crust_formation
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyebrow.od.options.crust_formation"
+                                    "external_examination.eyebrow.od.options.crust_formation"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4253,13 +3960,13 @@ const MedForm = () => {
                                 name="eyebrow_od_dandruff"
                                 value="Dandruff"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyebrow.od.options.dandruff
+                                  medformData.external_examination.eyebrow.od
+                                    .options.dandruff
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyebrow.od.options.dandruff"
+                                    "external_examination.eyebrow.od.options.dandruff"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4274,13 +3981,13 @@ const MedForm = () => {
                                 name="eyebrow_od_foreign_body"
                                 value="Foreign Bodies"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyebrow.od.options.foreign_body
+                                  medformData.external_examination.eyebrow.od
+                                    .options.foreign_body
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyebrow.od.options.foreign_body"
+                                    "external_examination.eyebrow.od.options.foreign_body"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4295,13 +4002,13 @@ const MedForm = () => {
                           type="text"
                           name="eyebrow_od_additional_note"
                           value={
-                            medformData.objective.external_examination.eyebrow
-                              .od.additional_note
+                            medformData.external_examination.eyebrow.od
+                              .additional_note
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.external_examination.eyebrow.od.additional_note"
+                              "external_examination.eyebrow.od.additional_note"
                             )
                           }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -4319,13 +4026,13 @@ const MedForm = () => {
                                 name="eyebrow_os_inflamation"
                                 value="Inflammation"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyebrow.os.options.inflamation
+                                  medformData.external_examination.eyebrow.os
+                                    .options.inflamation
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyebrow.os.options.inflamation"
+                                    "external_examination.eyebrow.os.options.inflamation"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4340,13 +4047,13 @@ const MedForm = () => {
                                 name="eyebrow_os_crust_formation"
                                 value="Crust formation"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyebrow.os.options.crust_formation
+                                  medformData.external_examination.eyebrow.os
+                                    .options.crust_formation
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyebrow.os.options.crust_formation"
+                                    "external_examination.eyebrow.os.options.crust_formation"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4363,13 +4070,13 @@ const MedForm = () => {
                                 name="eyebrow_os_dandruff"
                                 value="Dandruff"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyebrow.os.options.dandruff
+                                  medformData.external_examination.eyebrow.os
+                                    .options.dandruff
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyebrow.os.options.dandruff"
+                                    "external_examination.eyebrow.os.options.dandruff"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4384,13 +4091,13 @@ const MedForm = () => {
                                 name="eyebrow_os_foreign_body"
                                 value="Foreign Bodies"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyebrow.os.options.foreign_body
+                                  medformData.external_examination.eyebrow.os
+                                    .options.foreign_body
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyebrow.os.options.foreign_body"
+                                    "external_examination.eyebrow.os.options.foreign_body"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4405,13 +4112,13 @@ const MedForm = () => {
                           type="text"
                           name="eyebrow_os_additional_note"
                           value={
-                            medformData.objective.external_examination.eyebrow
-                              .os.additional_note
+                            medformData.external_examination.eyebrow.os
+                              .additional_note
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.external_examination.eyebrow.os.additional_note"
+                              "external_examination.eyebrow.os.additional_note"
                             )
                           }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -4428,13 +4135,13 @@ const MedForm = () => {
                                 name="eyelashes_od_crusting"
                                 value="Crusting"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelashes.od.options.crusting
+                                  medformData.external_examination.eyelashes.od
+                                    .options.crusting
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelashes.od.options.crusting"
+                                    "external_examination.eyelashes.od.options.crusting"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4449,13 +4156,13 @@ const MedForm = () => {
                                 name="eyelashes_od_discharge"
                                 value="Discharge"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelashes.od.options.discharge
+                                  medformData.external_examination.eyelashes.od
+                                    .options.discharge
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelashes.od.options.discharge"
+                                    "external_examination.eyelashes.od.options.discharge"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4472,13 +4179,13 @@ const MedForm = () => {
                                 name="eyelashes_od_eyelash_lice"
                                 value="Eyelash Lice"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelashes.od.options.eyelash_lice
+                                  medformData.external_examination.eyelashes.od
+                                    .options.eyelash_lice
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelashes.od.options.eyelash_lice"
+                                    "external_examination.eyelashes.od.options.eyelash_lice"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4493,13 +4200,13 @@ const MedForm = () => {
                                 name="eyelashes_od_foreign_body"
                                 value="Foreign Bodies"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelashes.od.options.foreign_body
+                                  medformData.external_examination.eyelashes.od
+                                    .options.foreign_body
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelashes.od.options.foreign_body"
+                                    "external_examination.eyelashes.od.options.foreign_body"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4514,13 +4221,13 @@ const MedForm = () => {
                           type="text"
                           name="eyelashes_additional_note"
                           value={
-                            medformData.objective.external_examination.eyelashes
-                              .od.additional_note
+                            medformData.external_examination.eyelashes.od
+                              .additional_note
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.external_examination.eyelashes.od.additional_note"
+                              "external_examination.eyelashes.od.additional_note"
                             )
                           }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -4538,13 +4245,13 @@ const MedForm = () => {
                                 name="eyelashes_os_crusting"
                                 value="Crusting"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelashes.os.options.crusting
+                                  medformData.external_examination.eyelashes.os
+                                    .options.crusting
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelashes.os.options.crusting"
+                                    "external_examination.eyelashes.os.options.crusting"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4559,13 +4266,13 @@ const MedForm = () => {
                                 name="eyelashes_os_discharge"
                                 value="Discharge"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelashes.os.options.discharge
+                                  medformData.external_examination.eyelashes.os
+                                    .options.discharge
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelashes.os.options.discharge"
+                                    "external_examination.eyelashes.os.options.discharge"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4582,13 +4289,13 @@ const MedForm = () => {
                                 name="eyelashes_os_eyelash_lice"
                                 value="Eyelash Lice"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelashes.os.options.eyelash_lice
+                                  medformData.external_examination.eyelashes.os
+                                    .options.eyelash_lice
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelashes.os.options.eyelash_lice"
+                                    "external_examination.eyelashes.os.options.eyelash_lice"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4603,13 +4310,13 @@ const MedForm = () => {
                                 name="eyelashes_os_foreign_body"
                                 value="Foreign Bodies"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelashes.os.options.foreign_body
+                                  medformData.external_examination.eyelashes.os
+                                    .options.foreign_body
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelashes.os.options.foreign_body"
+                                    "external_examination.eyelashes.os.options.foreign_body"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4624,13 +4331,13 @@ const MedForm = () => {
                           type="text"
                           name="eyelashes_additional_note"
                           value={
-                            medformData.objective.external_examination.eyelashes
-                              .os.additional_note
+                            medformData.external_examination.eyelashes.os
+                              .additional_note
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.external_examination.eyelashes.os.additional_note"
+                              "external_examination.eyelashes.os.additional_note"
                             )
                           }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -4647,13 +4354,13 @@ const MedForm = () => {
                                 name="eyelids_od_blepharitis"
                                 value="Blepharitis"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelids.od.options.blepharitis
+                                  medformData.external_examination.eyelids.od
+                                    .options.blepharitis
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelids.od.options.blepharitis"
+                                    "external_examination.eyelids.od.options.blepharitis"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4668,13 +4375,13 @@ const MedForm = () => {
                                 name="eyelids_od_edema"
                                 value="Edema"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelids.od.options.edema
+                                  medformData.external_examination.eyelids.od
+                                    .options.edema
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelids.od.options.edema"
+                                    "external_examination.eyelids.od.options.edema"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4691,13 +4398,13 @@ const MedForm = () => {
                                 name="eyelids_od_chalazion"
                                 value="Chalazion"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelids.od.options.chalazion
+                                  medformData.external_examination.eyelids.od
+                                    .options.chalazion
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelids.od.options.chalazion"
+                                    "external_examination.eyelids.od.options.chalazion"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4712,13 +4419,13 @@ const MedForm = () => {
                                 name="eyelids_od_style"
                                 value="Stye(hordeolum)"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelids.od.options.stye
+                                  medformData.external_examination.eyelids.od
+                                    .options.stye
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelids.od.options.stye"
+                                    "external_examination.eyelids.od.options.stye"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4733,13 +4440,13 @@ const MedForm = () => {
                           type="text"
                           name="eyelids_od_additional_note"
                           value={
-                            medformData.objective.external_examination.eyelids
-                              .od.additional_note
+                            medformData.external_examination.eyelids.od
+                              .additional_note
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.external_examination.eyelids.od.additional_note"
+                              "external_examination.eyelids.od.additional_note"
                             )
                           }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -4757,13 +4464,13 @@ const MedForm = () => {
                                 name="eyelids_os_blepharitis"
                                 value="Blepharitis"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelids.os.options.blepharitis
+                                  medformData.external_examination.eyelids.os
+                                    .options.blepharitis
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelids.os.options.blepharitis"
+                                    "external_examination.eyelids.os.options.blepharitis"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4778,13 +4485,13 @@ const MedForm = () => {
                                 name="eyelids_os_edema"
                                 value="Edema"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelids.os.options.edema
+                                  medformData.external_examination.eyelids.os
+                                    .options.edema
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelids.os.options.edema"
+                                    "external_examination.eyelids.os.options.edema"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4801,13 +4508,13 @@ const MedForm = () => {
                                 name="eyelids_os_chalazion"
                                 value="Chalazion"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelids.os.options.chalazion
+                                  medformData.external_examination.eyelids.os
+                                    .options.chalazion
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelids.os.options.chalazion"
+                                    "external_examination.eyelids.os.options.chalazion"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4822,13 +4529,13 @@ const MedForm = () => {
                                 name="eyelids_os_style"
                                 value="Stye(hordeolum)"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .eyelids.os.options.stye
+                                  medformData.external_examination.eyelids.os
+                                    .options.stye
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.eyelids.os.options.stye"
+                                    "external_examination.eyelids.os.options.stye"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4843,13 +4550,13 @@ const MedForm = () => {
                           type="text"
                           name="eyelids_os_additional_note"
                           value={
-                            medformData.objective.external_examination.eyelids
-                              .os.additional_note
+                            medformData.external_examination.eyelids.os
+                              .additional_note
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.external_examination.eyelids.os.additional_note"
+                              "external_examination.eyelids.os.additional_note"
                             )
                           }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -4866,13 +4573,13 @@ const MedForm = () => {
                                 name="cornea_od_ca"
                                 value="Corneal abrasion"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .cornea.od.options.corneal_abrasion
+                                  medformData.external_examination.cornea.od
+                                    .options.corneal_abrasion
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.cornea.od.options.corneal_abrasion"
+                                    "external_examination.cornea.od.options.corneal_abrasion"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4887,13 +4594,13 @@ const MedForm = () => {
                                 name="cornea_od_keratis"
                                 value="Keratitis"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .cornea.od.options.keratitis
+                                  medformData.external_examination.cornea.od
+                                    .options.keratitis
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.cornea.od.options.keratitis"
+                                    "external_examination.cornea.od.options.keratitis"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4910,13 +4617,13 @@ const MedForm = () => {
                                 name="cornea_od_ptery"
                                 value="Pterygium"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .cornea.od.options.pterygium
+                                  medformData.external_examination.cornea.od
+                                    .options.pterygium
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.cornea.od.options.pterygium"
+                                    "external_examination.cornea.od.options.pterygium"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4931,13 +4638,13 @@ const MedForm = () => {
                                 name="cornea_od_cs"
                                 value="Corneal Scar"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .cornea.od.options.corneal_scar
+                                  medformData.external_examination.cornea.od
+                                    .options.corneal_scar
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.cornea.od.options.corneal_scar"
+                                    "external_examination.cornea.od.options.corneal_scar"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4952,13 +4659,13 @@ const MedForm = () => {
                           type="text"
                           name="cornea_od_additional_note"
                           value={
-                            medformData.objective.external_examination.cornea.od
+                            medformData.external_examination.cornea.od
                               .additional_note
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.external_examination.cornea.od.additional_note"
+                              "external_examination.cornea.od.additional_note"
                             )
                           }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -4976,13 +4683,13 @@ const MedForm = () => {
                                 name="cornea_os_ca"
                                 value="Corneal abrasion"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .cornea.os.options.corneal_abrasion
+                                  medformData.external_examination.cornea.os
+                                    .options.corneal_abrasion
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.cornea.os.options.corneal_abrasion"
+                                    "external_examination.cornea.os.options.corneal_abrasion"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -4997,13 +4704,13 @@ const MedForm = () => {
                                 name="cornea_os_keratis"
                                 value="Keratitis"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .cornea.os.options.keratitis
+                                  medformData.external_examination.cornea.os
+                                    .options.keratitis
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.cornea.os.options.keratitis"
+                                    "external_examination.cornea.os.options.keratitis"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5020,13 +4727,13 @@ const MedForm = () => {
                                 name="cornea_os_ptery"
                                 value="Pterygium"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .cornea.os.options.pterygium
+                                  medformData.external_examination.cornea.os
+                                    .options.pterygium
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.cornea.os.options.pterygium"
+                                    "external_examination.cornea.os.options.pterygium"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5041,13 +4748,13 @@ const MedForm = () => {
                                 name="cornea_os_cs"
                                 value="Corneal Scar"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .cornea.os.options.corneal_scar
+                                  medformData.external_examination.cornea.os
+                                    .options.corneal_scar
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.cornea.os.options.corneal_scar"
+                                    "external_examination.cornea.os.options.corneal_scar"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5060,15 +4767,15 @@ const MedForm = () => {
                         </div>
                         <input
                           type="text"
-                          name="objective.cornea_os_additional_note"
+                          name="cornea_os_additional_note"
                           value={
-                            medformData.objective.external_examination.cornea.os
+                            medformData.external_examination.cornea.os
                               .additional_note
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.external_examination.cornea.os.additional_note"
+                              "external_examination.cornea.os.additional_note"
                             )
                           }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -5085,13 +4792,13 @@ const MedForm = () => {
                                 name="limbus_od_pinguecula"
                                 value="Pinguecula"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .limbus.od.options.pinguecula
+                                  medformData.external_examination.limbus.od
+                                    .options.pinguecula
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.limbus.od.options.pinguecula"
+                                    "external_examination.limbus.od.options.pinguecula"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5106,13 +4813,13 @@ const MedForm = () => {
                                 name="limbus_od_melanosis"
                                 value="Melanosis"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .limbus.od.options.melanosis
+                                  medformData.external_examination.limbus.od
+                                    .options.melanosis
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.limbus.od.options.melanosis"
+                                    "external_examination.limbus.od.options.melanosis"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5129,13 +4836,13 @@ const MedForm = () => {
                                 name="limbus_od_scarring"
                                 value="Scarring"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .limbus.od.options.scarring
+                                  medformData.external_examination.limbus.od
+                                    .options.scarring
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.limbus.od.options.scarring"
+                                    "external_examination.limbus.od.options.scarring"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5150,13 +4857,13 @@ const MedForm = () => {
                                 name="limbus_od_foreign_debri"
                                 value="Foreign debris"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .limbus.od.options.foreign_debris
+                                  medformData.external_examination.limbus.od
+                                    .options.foreign_debris
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.limbus.od.options.foreign_debris"
+                                    "external_examination.limbus.od.options.foreign_debris"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5171,13 +4878,13 @@ const MedForm = () => {
                           type="text"
                           name="limbus_od_additional_note"
                           value={
-                            medformData.objective.external_examination.limbus.od
+                            medformData.external_examination.limbus.od
                               .additional_note
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.external_examination.limbus.od.additional_note"
+                              "external_examination.limbus.od.additional_note"
                             )
                           }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -5195,13 +4902,13 @@ const MedForm = () => {
                                 name="limbus_os_pinguecula"
                                 value="Pinguecula"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .limbus.os.options.pinguecula
+                                  medformData.external_examination.limbus.os
+                                    .options.pinguecula
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.limbus.os.options.pinguecula"
+                                    "external_examination.limbus.os.options.pinguecula"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5216,13 +4923,13 @@ const MedForm = () => {
                                 name="limbus_os_melanosis"
                                 value="Melanosis"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .limbus.os.options.melanosis
+                                  medformData.external_examination.limbus.os
+                                    .options.melanosis
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.limbus.os.options.melanosis"
+                                    "external_examination.limbus.os.options.melanosis"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5239,13 +4946,13 @@ const MedForm = () => {
                                 name="limbus_os_scarring"
                                 value="Scarring"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .limbus.os.options.scarring
+                                  medformData.external_examination.limbus.os
+                                    .options.scarring
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.limbus.os.options.scarring"
+                                    "external_examination.limbus.os.options.scarring"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5260,13 +4967,13 @@ const MedForm = () => {
                                 name="limbus_os_foreign_debri"
                                 value="Foreign debris"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .limbus.os.options.foreign_debris
+                                  medformData.external_examination.limbus.os
+                                    .options.foreign_debris
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.limbus.os.options.foreign_debris"
+                                    "external_examination.limbus.os.options.foreign_debris"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5281,13 +4988,13 @@ const MedForm = () => {
                           type="text"
                           name="limbus_os_additional_note"
                           value={
-                            medformData.objective.external_examination.limbus.os
+                            medformData.external_examination.limbus.os
                               .additional_note
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.external_examination.limbus.os.additional_note"
+                              "external_examination.limbus.os.additional_note"
                             )
                           }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -5304,13 +5011,13 @@ const MedForm = () => {
                                 name="pupil_od_miosis"
                                 value="Miosis or mydriasis"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .pupil.od.options.miosis_or_mydriasis
+                                  medformData.external_examination.pupil.od
+                                    .options.miosis_or_mydriasis
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.pupil.od.options.miosis_or_mydriasis"
+                                    "external_examination.pupil.od.options.miosis_or_mydriasis"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5325,13 +5032,13 @@ const MedForm = () => {
                                 name="pupil_od_IIS"
                                 value="Inflammation-induced synechiae"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .pupil.od.options.IIS
+                                  medformData.external_examination.pupil.od
+                                    .options.IIS
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.pupil.od.options.IIS"
+                                    "external_examination.pupil.od.options.IIS"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5348,13 +5055,13 @@ const MedForm = () => {
                                 name="pupil_od_distortion"
                                 value="Pupil distortion"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .pupil.od.options.pupil_distortion
+                                  medformData.external_examination.pupil.od
+                                    .options.pupil_distortion
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.pupil.od.options.pupil_distortion"
+                                    "external_examination.pupil.od.options.pupil_distortion"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5369,13 +5076,13 @@ const MedForm = () => {
                                 name="pupil_od_LRA"
                                 value="Light reflex abnormalities"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .pupil.od.options.LRA
+                                  medformData.external_examination.pupil.od
+                                    .options.LRA
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.pupil.od.options.LRA"
+                                    "external_examination.pupil.od.options.LRA"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5390,13 +5097,13 @@ const MedForm = () => {
                           type="text"
                           name="pupil_od_additional_note"
                           value={
-                            medformData.objective.external_examination.pupil.od
+                            medformData.external_examination.pupil.od
                               .additional_note
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.external_examination.pupil.od.additional_note"
+                              "external_examination.pupil.od.additional_note"
                             )
                           }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -5414,13 +5121,13 @@ const MedForm = () => {
                                 name="pupil_os_miosis"
                                 value="Miosis or mydriasis"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .pupil.os.options.miosis_or_mydriasis
+                                  medformData.external_examination.pupil.os
+                                    .options.miosis_or_mydriasis
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.pupil.os.options.miosis_or_mydriasis"
+                                    "external_examination.pupil.os.options.miosis_or_mydriasis"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5435,13 +5142,13 @@ const MedForm = () => {
                                 name="pupil_os_IIS"
                                 value="Inflammation-induced synechiae"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .pupil.os.options.IIS
+                                  medformData.external_examination.pupil.os
+                                    .options.IIS
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.pupil.os.options.IIS"
+                                    "external_examination.pupil.os.options.IIS"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5458,13 +5165,13 @@ const MedForm = () => {
                                 name="pupil_os_distortion"
                                 value="Pupil distortion"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .pupil.os.options.pupil_distortion
+                                  medformData.external_examination.pupil.os
+                                    .options.pupil_distortion
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.pupil.os.options.pupil_distortion"
+                                    "external_examination.pupil.os.options.pupil_distortion"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5479,13 +5186,13 @@ const MedForm = () => {
                                 name="pupil_os_LRA"
                                 value="Light reflex abnormalities"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .pupil.os.options.LRA
+                                  medformData.external_examination.pupil.os
+                                    .options.LRA
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.pupil.os.options.LRA"
+                                    "external_examination.pupil.os.options.LRA"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5500,13 +5207,13 @@ const MedForm = () => {
                           type="text"
                           name="pupil_os_additional_note"
                           value={
-                            medformData.objective.external_examination.pupil.os
+                            medformData.external_examination.pupil.os
                               .additional_note
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.external_examination.pupil.os.additional_note"
+                              "external_examination.pupil.os.additional_note"
                             )
                           }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -5523,13 +5230,13 @@ const MedForm = () => {
                                 name="iris_od_iris_neovascularization"
                                 value="Iris neovascularization"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .iris.od.options.iris_neovascularization
+                                  medformData.external_examination.iris.od
+                                    .options.iris_neovascularization
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.iris.od.options.iris_neovascularization"
+                                    "external_examination.iris.od.options.iris_neovascularization"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5544,13 +5251,13 @@ const MedForm = () => {
                                 name="iris_od_posterior_synechiae"
                                 value="Posterior synechiae"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .iris.od.options.posterior_synechiae
+                                  medformData.external_examination.iris.od
+                                    .options.posterior_synechiae
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.iris.od.options.posterior_synechiae"
+                                    "external_examination.iris.od.options.posterior_synechiae"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5567,13 +5274,13 @@ const MedForm = () => {
                                 name="iris_od_hyphema"
                                 value="Hyphema"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .iris.od.options.hyphema
+                                  medformData.external_examination.iris.od
+                                    .options.hyphema
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.iris.od.options.hyphema"
+                                    "external_examination.iris.od.options.hyphema"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5588,13 +5295,13 @@ const MedForm = () => {
                                 name="iris_od_inflammatory_deposit"
                                 value="Inflammatory deposits"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .iris.od.options.inflammatory_deposit
+                                  medformData.external_examination.iris.od
+                                    .options.inflammatory_deposit
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.iris.od.options.inflammatory_deposit"
+                                    "external_examination.iris.od.options.inflammatory_deposit"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5609,13 +5316,13 @@ const MedForm = () => {
                           type="text"
                           name="iris_od_additional_note"
                           value={
-                            medformData.objective.external_examination.iris.od
+                            medformData.external_examination.iris.od
                               .additional_note
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.external_examination.iris.od.additional_note"
+                              "external_examination.iris.od.additional_note"
                             )
                           }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -5633,13 +5340,13 @@ const MedForm = () => {
                                 name="iris_os_iris_neovascularization"
                                 value="Iris neovascularization"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .iris.os.options.iris_neovascularization
+                                  medformData.external_examination.iris.os
+                                    .options.iris_neovascularization
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.iris.os.options.iris_neovascularization"
+                                    "external_examination.iris.os.options.iris_neovascularization"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5654,13 +5361,13 @@ const MedForm = () => {
                                 name="iris_os_posterior_synechiae"
                                 value="Posterior synechiae"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .iris.os.options.posterior_synechiae
+                                  medformData.external_examination.iris.os
+                                    .options.posterior_synechiae
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.iris.os.options.posterior_synechiae"
+                                    "external_examination.iris.os.options.posterior_synechiae"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5677,13 +5384,13 @@ const MedForm = () => {
                                 name="iris_os_hyphema"
                                 value="Hyphema"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .iris.os.options.hyphema
+                                  medformData.external_examination.iris.os
+                                    .options.hyphema
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.iris.os.options.hyphema"
+                                    "external_examination.iris.os.options.hyphema"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5698,13 +5405,13 @@ const MedForm = () => {
                                 name="iris_os_inflammatory_deposit"
                                 value="Inflammatory deposits"
                                 checked={
-                                  medformData.objective.external_examination
-                                    .iris.os.options.inflammatory_deposit
+                                  medformData.external_examination.iris.os
+                                    .options.inflammatory_deposit
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "objective.external_examination.iris.os.options.inflammatory_deposit"
+                                    "external_examination.iris.os.options.inflammatory_deposit"
                                   )
                                 }
                                 className="w-6 h-6"
@@ -5719,13 +5426,13 @@ const MedForm = () => {
                           type="text"
                           name="iris_os_additional_note"
                           value={
-                            medformData.objective.external_examination.iris.os
+                            medformData.external_examination.iris.os
                               .additional_note
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "objective.external_examination.iris.os.additional_note"
+                              "external_examination.iris.os.additional_note"
                             )
                           }
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -5753,13 +5460,12 @@ const MedForm = () => {
                             name="hp_date"
                             max={new Date().toISOString().split("T")[0]}
                             value={
-                              medformData.objective.habitual_prescription
-                                .date_prescribed
+                              medformData.habitual_prescription.date_prescribed
                             }
                             onChange={(e) =>
                               handleChange(
                                 e,
-                                "objective.habitual_prescription.date_prescribed"
+                                "habitual_prescription.date_prescribed"
                               )
                             }
                             className="mt-1 w-fit h-fit px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -5774,14 +5480,9 @@ const MedForm = () => {
                           <textarea
                             type="text"
                             name="hp_od"
-                            value={
-                              medformData.objective.habitual_prescription.od
-                            }
+                            value={medformData.habitual_prescription.od}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.habitual_prescription.od"
-                              )
+                              handleChange(e, "habitual_prescription.od")
                             }
                             className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                             placeholder=""
@@ -5794,14 +5495,9 @@ const MedForm = () => {
                           <textarea
                             type="text"
                             name="hp_os"
-                            value={
-                              medformData.objective.habitual_prescription.os
-                            }
+                            value={medformData.habitual_prescription.os}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.habitual_prescription.os"
-                              )
+                              handleChange(e, "habitual_prescription.os")
                             }
                             className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                             placeholder=""
@@ -5823,13 +5519,13 @@ const MedForm = () => {
                             name="clp_date"
                             max={new Date().toISOString().split("T")[0]}
                             value={
-                              medformData.objective.contact_lens_prescription
+                              medformData.contact_lens_prescription
                                 .date_prescribed
                             }
                             onChange={(e) =>
                               handleChange(
                                 e,
-                                "objective.contact_lens_prescription.date_prescribed"
+                                "contact_lens_prescription.date_prescribed"
                               )
                             }
                             className="mt-1 w-fit h-fit px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
@@ -5844,14 +5540,9 @@ const MedForm = () => {
                           <textarea
                             type="text"
                             name="clp_od"
-                            value={
-                              medformData.objective.contact_lens_prescription.od
-                            }
+                            value={medformData.contact_lens_prescription.od}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.contact_lens_prescription.od"
-                              )
+                              handleChange(e, "contact_lens_prescription.od")
                             }
                             className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                             placeholder=""
@@ -5864,14 +5555,9 @@ const MedForm = () => {
                           <textarea
                             type="text"
                             name="clp_os"
-                            value={
-                              medformData.objective.contact_lens_prescription.os
-                            }
+                            value={medformData.contact_lens_prescription.os}
                             onChange={(e) =>
-                              handleChange(
-                                e,
-                                "objective.contact_lens_prescription.os"
-                              )
+                              handleChange(e, "contact_lens_prescription.os")
                             }
                             className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                             placeholder=""
@@ -5892,8 +5578,8 @@ const MedForm = () => {
                   <textarea
                     type="text"
                     name="diagnosis"
-                    value={medformData.assessment.diagnosis}
-                    onChange={(e) => handleChange(e, "assessment.diagnosis")}
+                    value={medformData.diagnosis}
+                    onChange={(e) => handleChange(e, "diagnosis")}
                     className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
                   />
@@ -5905,10 +5591,8 @@ const MedForm = () => {
                   <textarea
                     type="text"
                     name="refractive_error"
-                    value={medformData.assessment.refractive_error}
-                    onChange={(e) =>
-                      handleChange(e, "assessment.refractive_error")
-                    }
+                    value={medformData.refractive_error}
+                    onChange={(e) => handleChange(e, "refractive_error")}
                     className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                     placeholder="If option not available"
                   />
@@ -5925,10 +5609,8 @@ const MedForm = () => {
                     <textarea
                       type="text"
                       name="new_prescription_od"
-                      value={medformData.plan.new_prescription_od}
-                      onChange={(e) =>
-                        handleChange(e, "plan.new_prescription_od")
-                      }
+                      value={medformData.new_prescription_od}
+                      onChange={(e) => handleChange(e, "new_prescription_od")}
                       className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
                     />
@@ -5940,10 +5622,8 @@ const MedForm = () => {
                     <textarea
                       type="text"
                       name="new_prescription_os"
-                      value={medformData.plan.new_prescription_os}
-                      onChange={(e) =>
-                        handleChange(e, "plan.new_prescription_os")
-                      }
+                      value={medformData.new_prescription_os}
+                      onChange={(e) => handleChange(e, "new_prescription_os")}
                       className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
                     />
@@ -5957,8 +5637,8 @@ const MedForm = () => {
                     <textarea
                       type="text"
                       name="management"
-                      value={medformData.plan.management}
-                      onChange={(e) => handleChange(e, "plan.management")}
+                      value={medformData.management}
+                      onChange={(e) => handleChange(e, "management")}
                       className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
                     />
@@ -5970,8 +5650,8 @@ const MedForm = () => {
                     <textarea
                       type="text"
                       name="followup_care"
-                      value={medformData.plan.followup_care}
-                      onChange={(e) => handleChange(e, "plan.followup_care")}
+                      value={medformData.followup_care}
+                      onChange={(e) => handleChange(e, "followup_care")}
                       className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
                     />

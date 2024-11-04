@@ -14,6 +14,7 @@ const {
   generateUniqueId,
   removeNullValues,
   verifyFirebaseUid,
+  deepDecrypt,
 } = require("../Helper/Helper");
 const { pushNotification } = require("./notificationService");
 
@@ -247,52 +248,22 @@ const addNote = async (patientId, noteDetails, firebaseUid) => {
   }
 };
 
-const getNote = async (patientId, visitId, firebaseUid) => {
+const getNotes = async (patientId, firebaseUid) => {
   try {
-    const userRecord = await admin.auth().getUser(firebaseUid);
-    if (!userRecord) {
-      throw { status: 404, message: "User not found." };
-    }
-    const noteRef = patientCollection
-      .doc(patientId)
-      .collection("notes")
-      .doc(visitId);
+    await verifyFirebaseUid(firebaseUid);
 
-    const noteData = await noteRef.get();
+    const noteRef = noteCollection.doc(patientId).collection("notes");
 
-    if (!noteData.exists) {
-      throw new Error("Note not found");
+    const noteSnapshot = await noteRef.get();
+
+    if (noteSnapshot.empty) {
+      return [];
     }
 
-    const noteDetails = noteData.data();
-
-    const decryptValue = (key, value) => {
-      if (key === "noteId" || key === "createdAt") {
-        return value;
-      }
-      if (typeof value === "string" && isNaN(Date.parse(value))) {
-        return decryptData(value);
-      }
-      return value;
-    };
-
-    const deepDecrypt = (data) => {
-      const decryptedData = {};
-      for (const [key, value] of Object.entries(data)) {
-        if (
-          typeof value === "object" &&
-          value !== null &&
-          !Array.isArray(value)
-        ) {
-          decryptedData[key] = deepDecrypt(value);
-        } else {
-          decryptedData[key] = decryptValue(key, value);
-        }
-      }
-      return decryptedData;
-    };
-
-    const finalDecryptedData = deepDecrypt(noteDetails);
+    const finalDecryptedData = noteSnapshot.docs.map((doc) => {
+      const noteDetails = doc.data();
+      return deepDecrypt(noteDetails);
+    });
 
     return finalDecryptedData;
   } catch (error) {
@@ -305,7 +276,7 @@ const getNote = async (patientId, visitId, firebaseUid) => {
       };
     }
 
-    console.error("Error fetching note:", error);
+    console.error("Error fetching notes:", error);
     throw error;
   }
 };
@@ -374,7 +345,7 @@ module.exports = {
   deletePatient,
   retrievePatient,
   addNote,
-  getNote,
+  getNotes,
   addVisit,
   getVisits,
   // getPatientsByDoctor,

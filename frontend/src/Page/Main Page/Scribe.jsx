@@ -3,8 +3,11 @@ import { IoMdSearch } from "react-icons/io";
 import { FiFilter } from "react-icons/fi";
 import PatientScribeCard from "../../Component/ui/PatientScribeCard";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Sample from "../../assets/Image/3.png";
+import { getPatientNotes } from "../../Service/PatientService";
+import Cookies from "universal-cookie";
+import { setRawNotes } from "../../Slice/NoteSlice";
 
 const groupPatientsByInitial = (patients) => {
   if (!Array.isArray(patients) || patients.length === 0) {
@@ -28,8 +31,14 @@ const groupPatientsByInitial = (patients) => {
 };
 
 const Scribe = () => {
+  const cookies = new Cookies();
+  const accessToken = cookies.get("accessToken");
+  const refreshToken = cookies.get("refreshToken");
   const [hasSelected, setHasSelected] = useState(false);
+  const user = useSelector((state) => state.reducer.user.user);
   const patients = useSelector((state) => state.reducer.patient.patients);
+  const rawNotes = useSelector((state) => state.reducer.note.rawNotes);
+  const reduxDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const [sortOrder, setSortOrder] = useState("ascending");
@@ -46,7 +55,7 @@ const Scribe = () => {
     }
   }, [navigate]);
 
-  const handleClickPatient = (id) => {
+  const handleClickPatient = async (id) => {
     const clickedPatient = patients.find((patient) => patient.patientId === id);
     setHasSelected(true);
 
@@ -55,12 +64,29 @@ const Scribe = () => {
       sessionStorage.setItem("currentPatientId", id);
       sessionStorage.setItem("currentPath", newPath);
 
-      navigate(newPath);
+      if (rawNotes[id]) {
+        console.log("Using cached notes from Redux store");
+        navigate(newPath);
+      } else {
+        try {
+          const response = await getPatientNotes(
+            id,
+            user.firebaseUid,
+            accessToken,
+            refreshToken
+          );
+          if (response) {
+            reduxDispatch(setRawNotes({ [id]: response }));
+          }
+        } catch (error) {
+          console.log(error);
+        }
+        navigate(newPath);
+      }
     } else {
       console.error("Patient not found");
     }
   };
-
   useEffect(() => {
     if (location.pathname === "/scribe") {
       setHasSelected(false);

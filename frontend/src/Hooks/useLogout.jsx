@@ -13,7 +13,7 @@ import { clearAppointment } from "../Slice/AppointmentSlice";
 import { clearProducts, clearPurchases } from "../Slice/InventorySlice";
 import { clearNotifications } from "../Slice/NotificationSlice";
 import { clearVisits } from "../Slice/VisitSlice";
-import { clearNotes } from "../Slice/NoteSlice";
+import { clearMedicalScribeNotes, clearRawNotes } from "../Slice/NoteSlice";
 
 export const useLogout = () => {
   const { dispatch } = useAuthContext();
@@ -41,7 +41,8 @@ export const useLogout = () => {
       reduxDispatch(clearProducts());
       reduxDispatch(clearNotifications());
       reduxDispatch(clearVisits());
-      reduxDispatch(clearNotes());
+      reduxDispatch(clearRawNotes());
+      reduxDispatch(clearMedicalScribeNotes());
       reduxDispatch(clearPurchases());
       reduxDispatch(clearBranch());
       navigate("/login");

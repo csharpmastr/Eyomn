@@ -5,9 +5,9 @@ const {
   deletePatient,
   retrievePatient,
   addNote,
-  getNote,
   addVisit,
   getVisits,
+  getNotes,
 } = require("../Service/patientService");
 
 const addPatientHandler = async (req, res) => {
@@ -164,16 +164,14 @@ const addNoteHandler = async (req, res) => {
 
 const getPatientNoteHandler = async (req, res) => {
   try {
-    const patientId = req.params.patientId;
-    const { firebaseUid } = req.query;
-    const visitId = req.params.visitId;
+    const { firebaseUid, patientId } = req.query;
 
-    if (!patientId || !visitId) {
+    if (!patientId) {
       return res.status(400).json({
-        message: "Invalid request. Missing Patient ID or Visit ID.",
+        message: "Invalid request. Missing Patient ID.",
       });
     }
-    const note = await getNote(patientId, visitId, firebaseUid);
+    const note = await getNotes(patientId, firebaseUid);
     return res.status(200).json(note);
   } catch (error) {
     return res

@@ -177,3 +177,27 @@ export const addVisitService = async (
     throw error;
   }
 };
+
+export const getPatientNotes = async (
+  patientId,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.get(`${PATIENT_API_BASE_URL}/get-notes`, {
+      params: {
+        firebaseUid,
+        patientId,
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching patient notes: ", error);
+    throw error;
+  }
+};

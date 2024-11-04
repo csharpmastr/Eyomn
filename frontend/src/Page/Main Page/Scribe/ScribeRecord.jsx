@@ -12,6 +12,9 @@ const ScribeRecord = () => {
   const { patientId } = useParams();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const patients = useSelector((state) => state.reducer.patient.patients);
+  const rawNotes = useSelector(
+    (state) => state.reducer.note.rawNotes[patientId]
+  );
   const [currentPatient, setCurrentPatient] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,11 +24,7 @@ const ScribeRecord = () => {
     { id: 1, name: "Medical Scribe Record 1", date: "2024-01-01" },
     { id: 2, name: "Medical Scribe Record 2", date: "2024-01-02" },
   ];
-
-  const rawRecords = [
-    { id: 1, name: "Raw Record 1", date: "2024-01-01" },
-    { id: 2, name: "Raw Record 2", date: "2024-01-02" },
-  ];
+  console.log(rawNotes);
 
   const handleNewRecord = () => {
     navigate(`/scribe/new-record/${patientId}`);
@@ -153,20 +152,25 @@ const ScribeRecord = () => {
           )}
           {currentCardIndex === 1 && (
             <div className="w-full">
-              {rawRecords.map((record) => (
+              {rawNotes.map((note, index) => (
                 <div
-                  key={record.id}
-                  className="px-6 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white"
+                  key={note.id || index}
+                  className="px-6 py-4 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white"
                 >
                   <div className="flex items-center gap-3">
                     <input type="checkbox" className="w-6 h-6" />
-                    <p>{record.name}</p>
+                    <p>{note.name || `Raw Note ${index + 1}`}</p>
                   </div>
-                  <p>{record.date}</p>
+                  <p>
+                    {note.createdAt
+                      ? note.createdAt.split("T")[0]
+                      : "Unknown Date"}
+                  </p>
                 </div>
               ))}
             </div>
           )}
+
           {currentCardIndex === 2 && (
             <div className="w-full h-full pt-6 flex gap-2 md:gap-6">
               <div className="w-1/6">
