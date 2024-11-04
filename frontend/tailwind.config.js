@@ -29,8 +29,11 @@ export default {
         "c-gray3": "#9C9C9C",
         "c-primary": "#1E8282",
         "c-secondary": "#2C3E50",
+
         "bg-sb": "#EEF1F1",
         "bg-mc": "#F5F5F5",
+        "bg-sub": "#F8FBFC",
+
         "hover-c-secondary": "#506579",
         "pressed-c-secondary": "#162B41",
         "hover-c-primary": "#27AEAE",

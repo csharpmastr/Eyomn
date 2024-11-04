@@ -44,13 +44,13 @@ const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
   return (
     <>
       {filteredProducts.length > 0 ? (
-        <div className="overflow-y-scroll h-full text-p-rg">
+        <div className="h-full text-p-rg">
           {paginatedProducts.map((productDetail, index) => {
             const isOutOfStock = productDetail.quantity === 0;
             return (
               <section
-                className={`flex py-5 text-p-rg text-f-dark border-b cursor-pointer ${
-                  index % 2 === 0 ? "bg-[#F7F8F8]" : "bg-white"
+                className={`flex py-5 text-p-rg text-f-dark border-b cursor-pointer rounded-md ${
+                  index % 2 === 0 ? "bg-none border-none" : `bg-white border-b`
                 } ${isOutOfStock ? "opacity-50 cursor-not-allowed" : ""}`}
                 key={productDetail.productId}
                 onClick={() => !isOutOfStock && onProductSelect(productDetail)}

@@ -101,12 +101,12 @@ const Patient = () => {
           {isLoading && <Loader />}
           <div className="p-4 md:p-6 2xl:p-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between text-p-rg">
-              <p className="font-semibold text-f-dark">
+              <p className="font-semibold text-c-secondary text-p-lg">
                 {totalPatient}{" "}
-                <span className="text-f-gray2">Total patient</span>
+                <span className="text-f-gray2 font-medium">Total patient</span>
               </p>
               <div className="mt-2 md:mt-0 flex flex-row gap-3">
-                <div className="flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-f-light text-c-gray3 font-normal hover:cursor-pointer">
+                <div className="flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-bg-sub text-c-gray3 font-normal hover:cursor-pointer">
                   <select
                     className="hover:cursor-pointer focus:outline-none bg-f-light w-fit"
                     value={sortOption}
@@ -122,14 +122,14 @@ const Patient = () => {
                   </select>
                 </div>
                 <div
-                  className={`flex flex-row gap-2 border border-gray-300 bg-f-light px-4 rounded-md justify-center items-center w-full ${
+                  className={`flex flex-row gap-2 border border-gray-300 bg-bg-sub px-4 rounded-md justify-center items-center w-full ${
                     role === "0" ? `` : `md:w-80`
                   }`}
                 >
                   <IoMdSearch className="h-6 w-6 text-c-secondary" />
                   <input
                     type="text"
-                    className="w-full text-f-dark focus:outline-none placeholder-f-gray2 bg-f-light"
+                    className="w-full text-f-dark focus:outline-none placeholder-f-gray2 bg-bg-sub"
                     placeholder="Search patient name"
                     value={searchTerm}
                     onChange={handleSearchChange}
@@ -139,7 +139,7 @@ const Patient = () => {
                   ""
                 ) : (
                   <div
-                    className="h-fit flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+                    className="h-fit flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
                     onClick={openAddPatient}
                   >
                     <FiPlus className="h-5 w-5 md:mr-2" />

@@ -74,7 +74,7 @@ const OrgDashboard = () => {
 
   return (
     <>
-      <div className="flex w-full gap-6">
+      <div className="flex w-full gap-6 font-Poppins">
         {dummyData.map((data) =>
           data.title === "Number of Staffs" && user.role === "3" ? null : (
             <Suspense fallback={<div>Loading cards...</div>} key={data.title}>
@@ -88,13 +88,13 @@ const OrgDashboard = () => {
         )}
 
         {user.role === "0" && (
-          <div className="flex flex-col justify-between bg-white p-4 rounded-lg">
-            <div className="font-Poppins text-p-sm">
+          <div className="flex flex-col justify-between bg-white p-4 rounded-lg text-f-dark">
+            <div className="text-p-sm">
               <p>Date: {currentDateTime.date}</p>
               <p>Time: {currentDateTime.time}</p>
             </div>
             <select
-              className="hover:cursor-pointer h-fit w-fit focus:outline-none bg-[#E0EAEA] border border-c-primary text-c-primary px-2 py-1 rounded-md"
+              className="hover:cursor-pointer h-fit w-fit focus:outline-none bg-bg-sub border border-f-gray px-2 py-2 rounded-md font-medium"
               onChange={(e) => setSelectedBranch(e.target.value)}
             >
               <option value="">All Branches</option>
@@ -107,7 +107,7 @@ const OrgDashboard = () => {
           </div>
         )}
       </div>
-      <div className="flex w-full h-full gap-6">
+      <div className="flex w-full h-full gap-6 font-Poppins">
         <div className="w-1/3">
           <Suspense fallback={<div>Loading products...</div>}>
             <DbProduct filteredSales={filteredSales} />

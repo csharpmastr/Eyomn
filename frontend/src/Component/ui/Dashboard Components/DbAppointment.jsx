@@ -38,10 +38,12 @@ const DbAppointment = () => {
   return (
     <div className="rounded-lg h-[500px] bg-white text-f-dark font-poppins bordertext-p-rg py-4 overflow-clip shadow-sm">
       <header className="flex justify-between px-4 items-center">
-        <h1 className="font-medium text-nowrap">| Upcoming Appointment</h1>
+        <h1 className="font-medium text-nowrap text-c-secondary">
+          | Upcoming Appointment
+        </h1>
         <button
           onClick={viewAll}
-          className="px-2 py-1 border border-c-primary text-c-primary rounded-lg"
+          className="px-2 py-1 border border-c-primary text-c-primary rounded-md"
         >
           View All
         </button>
@@ -82,7 +84,7 @@ const DbAppointment = () => {
           })
         ) : (
           <div className="h-full flex justify-center items-center">
-            <p className="text-center text-gray-500">
+            <p className="text-center text-f-gray2">
               No upcoming appointments.
             </p>
           </div>

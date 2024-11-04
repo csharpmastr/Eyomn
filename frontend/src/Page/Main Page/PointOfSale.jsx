@@ -107,9 +107,9 @@ const PointOfSale = () => {
       <div className="text-f-dark font-Poppins flex flex-col md:flex-row h-full">
         <div className="flex flex-col md:w-3/4 w-full p-4 md:p-6 2xl:p-8">
           <div className="flex flex-row gap-3 mb-6">
-            <div className="flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-f-light text-c-gray3 font-normal hover:cursor-pointer">
+            <div className="flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-bg-sub text-c-gray3 font-normal hover:cursor-pointer">
               <select
-                className="hover:cursor-pointer focus:outline-none bg-f-light w-fit"
+                className="hover:cursor-pointer focus:outline-none bg-bg-sub w-fit"
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value)}
               >
@@ -122,18 +122,18 @@ const PointOfSale = () => {
                 <option value="price-h">High (Price)</option>
               </select>
             </div>
-            <div className="flex flex-row border border-f-gray bg-f-light px-4 rounded-md justify-center items-center w-full gap-2">
+            <div className="flex flex-row border border-f-gray bg-bg-sub px-4 rounded-md justify-center items-center w-full gap-2">
               <IoMdSearch className="h-8 w-8 text-c-secondary" />
               <input
                 type="text"
-                className="w-full focus:outline-none placeholder-f-gray2 bg-f-light text-p-rg"
+                className="w-full focus:outline-none placeholder-f-gray2 bg-bg-sub text-p-rg"
                 placeholder="Search product... "
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
-          <header className="flex text-p-rg font-semibold py-5 bg-f-light border border-b-f-gray rounded-t-lg sticky">
+          <header className="flex py-5 bg-white border-b rounded-md sticky">
             <div className="w-1/6 pl-4">Code</div>
             <div className="flex-1 pl-4">Product Name</div>
             <div className="flex-1 pl-4">Category</div>

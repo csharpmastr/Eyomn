@@ -43,21 +43,26 @@ const OrgStaff = () => {
 
   return (
     <>
-      <div className="w-full h-full flex flex-col items-center">
+      <div className="w-full h-full flex flex-col items-center font-Poppins text-f-dark">
         <div className="w-full flex justify-between">
-          <div
-            className="flex justify-center items-center font-Poppins cursor-pointer gap-2"
-            onClick={handleBackBranch}
-          >
-            <FiArrowLeft className="h-6 w-6" />
-            <h1>Go back</h1>
+          <div>
+            <div
+              className="flex items-center cursor-pointer gap-1 text-p-sm"
+              onClick={handleBackBranch}
+            >
+              <FiArrowLeft className="h-5 w-5" />
+              <h1>Go back</h1>
+            </div>
+            <h1 className="font-medium text-p-lg text-c-secondary">
+              Branch Staffs
+            </h1>
           </div>
           <div
-            className="h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+            className="h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
             onClick={handleOpenStaffModal}
           >
             <FiPlus className="h-5 w-5 mr-2" />
-            <h1>Add Staff</h1>
+            <h1>Add staff</h1>
           </div>
         </div>
 
@@ -72,16 +77,13 @@ const OrgStaff = () => {
               </div>
             ))
           ) : (
-            <p className="font-semibold text-3xl text-c-secondary">
+            <p className="font-medium text-xl text-f-gray2">
               No Active Staff found!
             </p>
           )}
         </div>
         {isModalOpen && (
-          <AddStaff
-            onClose={handleCloseStaffModal}
-            staffData={staffDetails} // Pass data if editing
-          />
+          <AddStaff onClose={handleCloseStaffModal} staffData={staffDetails} />
         )}
       </div>
     </>

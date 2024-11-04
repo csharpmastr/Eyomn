@@ -140,7 +140,7 @@ const TopbarButton = () => {
         }`}
         >
           <div
-            className="p-2"
+            className="p-2 font-normal"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="options-menu"
