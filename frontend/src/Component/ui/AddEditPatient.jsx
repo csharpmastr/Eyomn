@@ -35,6 +35,14 @@ const AddEditPatient = ({ onClose }) => {
   });
   const handleChangeBranch = (e) => {
     const branchId = e.target.value;
+
+    if (errors.branch) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        branch: "",
+      }));
+    }
+
     setSelectedBranchId(branchId);
   };
 
@@ -73,11 +81,10 @@ const AddEditPatient = ({ onClose }) => {
   };
 
   const handleNext = () => {
-    setCurrentCardIndex(currentCardIndex + 1);
-    // const isValid = validateForm();
-    // if (isValid) {
-    //   setCurrentCardIndex(currentCardIndex + 1);
-    // }
+    const isValid = validateForm();
+    if (isValid) {
+      setCurrentCardIndex(currentCardIndex + 1);
+    }
   };
 
   const handleBack = () => {
@@ -114,7 +121,7 @@ const AddEditPatient = ({ onClose }) => {
     let newErrors = {};
 
     if (currentCardIndex === 0) {
-      if (!selectedBranchId) newErrors.branch = "(Please select a branch)";
+      if (!selectedBranchId) newErrors.branch = "Please select a branch";
       if (
         !formData.first_name ||
         !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.first_name)
@@ -202,7 +209,11 @@ const AddEditPatient = ({ onClose }) => {
                           name="branchId"
                           value={selectedBranchId}
                           onChange={handleChangeBranch}
-                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 border-c-gray3 focus:outline-c-primary `}
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.branch
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
                         >
                           <option value="" disabled className="text-c-gray3">
                             Select Branch

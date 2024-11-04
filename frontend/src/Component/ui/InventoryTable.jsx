@@ -105,7 +105,7 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
       {filteredProducts.length > 0 ? (
         <>
           <div className="w-fit md:w-full text-f-dark overflow-x-auto font-poppins">
-            <header className="flex text-p-rg font-semibold py-8 border bg-white border-b-f-gray rounded-t-lg">
+            <header className="flex py-5 rounded-md border-b bg-white text-f-gray2">
               <div className="flex-1 pl-4">Product Name</div>
               <div className="flex-1 pl-4">Category</div>
               <div className="flex-1 pl-4">Prescription/Type</div>
@@ -122,13 +122,13 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
                 return (
                   <section
                     key={productDetail.productId}
-                    className={`${index % 2 === 0 ? "bg-bg-mc" : "bg-white"}`}
+                    className={`rounded-md ${
+                      index % 2 === 0
+                        ? "bg-none border-none"
+                        : `bg-white border-b`
+                    }`}
                   >
-                    <div
-                      className={`flex text-p-rg py-6 ${
-                        isCollapsed ? "border border-b-f-gray" : ""
-                      }`}
-                    >
+                    <div className="flex text-p-rg py-5">
                       <div className="flex-1 pl-4">
                         {productDetail.product_name}
                       </div>
@@ -194,18 +194,22 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
                       </div>
                     </div>
                     {!isCollapsed && (
-                      <div className={`py-5 flex border border-b-f-gray`}>
+                      <div className={`py-5 flex border-b`}>
                         <div className="flex-1 pl-4">
-                          <p className="text-p-sm">Other Info:</p>
-                          <p>Sample Info</p>
+                          <p className="text-p-sm">
+                            SKU: <span>{productDetail.productSKU}</span>
+                          </p>
                         </div>
                         <div className="flex-1 pl-4">
-                          <p className="text-p-sm">Other Info:</p>
-                          <p>Sample Info</p>
+                          <p className="text-p-sm">
+                            Expiration Date:{" "}
+                            <span>{productDetail.expirationDate}</span>
+                          </p>
                         </div>
                         <div className="flex-1 pl-4">
-                          <p className="text-p-sm">Other Info:</p>
-                          <p>Sample Info</p>
+                          <p className="text-p-sm">
+                            Material: <span>{productDetail.ct_material}</span>
+                          </p>
                         </div>
                       </div>
                     )}

@@ -29,27 +29,27 @@ const DbTable = () => {
   };
 
   return (
-    <div className="text-p-rg h-[500px] text-c-secondary rounded-lg bg-white p-4 overflow-clip shadow-sm">
-      <header className="flex justify-between items-center">
+    <div className="text-p-rg h-[500px] rounded-lg bg-white p-4 overflow-clip shadow-sm text-f-dark">
+      <header className="flex justify-between items-center text-c-secondary">
         <h1 className="font-medium text-nowrap">| Recent Patients</h1>
         <button
           onClick={viewAll}
-          className="px-2 py-1 border border-c-primary text-c-primary rounded-lg"
+          className="px-2 py-1 border border-c-primary text-c-primary rounded-md"
         >
           View All
         </button>
       </header>
-      <div className="text-left font-medium flex text-c-secondary py-2 bg-bg-mc rounded-t-md mt-6">
+      <div className="text-left flex py-4 bg-bg-mc rounded-md mt-6 mb-3 shadow-sm text-f-gray2">
         <div className="pl-8 w-1/4">Patient Name</div>
         <div className="w-1/4">Contact</div>
         <div className="w-1/4">Email</div>
         <div className="w-1/4 pl-2">Last Visit</div>
       </div>
-      <div className="h-full overflow-auto pb-24">
+      <div className="h-full overflow-auto pb-32 flex flex-col gap-3">
         {currentData.map((patientData, index) => (
           <div
             key={index}
-            className="border-b border-f-gray py-4 text-f-dark cursor-pointer flex bg-white"
+            className="py-4 cursor-pointer flex bg-f-light rounded-md shadow-sm"
           >
             <div className="pl-8 w-1/4">
               {patientData.first_name + " " + patientData.last_name}

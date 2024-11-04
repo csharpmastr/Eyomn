@@ -36,36 +36,36 @@ const Table = ({ data, handlePatientClick }) => {
       {currentData.length > 0 ? (
         <>
           <div>
-            <table className="w-full font-Poppins rounded-t-lg table-fixed bg-f-light  text-p-rg">
-              <thead className="w-full h-20">
-                <tr className="text-left font-medium text-c-secondary">
-                  <th className="pl-8 w-1/4">Patient Name</th>
-                  <th className="w-1/4">Contact</th>
-                  <th className="w-1/4">Email</th>
-                  <th className="w-1/4">Last Visit</th>
-                </tr>
-              </thead>
-              <tbody>
+            <div className="w-full font-Poppins rounded-t-lg text-p-rg">
+              <header className="w-full py-5 rounded-md flex border-b bg-white text-f-gray2">
+                <h1 className="pl-8 w-1/4">Patient Name</h1>
+                <h1 className="w-1/4">Contact</h1>
+                <h1 className="w-1/4">Email</h1>
+                <h1 className="w-1/4">Last Visit</h1>
+              </header>
+              <div>
                 {currentData.map((patientData, index) => (
-                  <tr
+                  <section
                     key={index}
-                    className={`border-b border-f-gray h-16 text-c-secondary cursor-pointer ${
-                      index % 2 === 0 ? "bg-bg-mc" : `bg-f-light`
+                    className={`py-5 text-f-dark cursor-pointer flex w-full rounded-md ${
+                      index % 2 === 0
+                        ? "bg-none border-none"
+                        : `bg-white border-b`
                     }`}
                     onClick={() => handlePatientClick(patientData.patientId)}
                   >
-                    <td className="pl-8">
+                    <h1 className="pl-8 w-1/4">
                       {patientData.first_name + " " + patientData.last_name}
-                    </td>
-                    <td>{patientData.contact_number}</td>
-                    <td className="max-w-[15vw] truncate">
-                      {patientData.email}
-                    </td>
-                    <td>{formatDate(patientData.createdAt)}</td>
-                  </tr>
+                    </h1>
+                    <h1 className="w-1/4">{patientData.contact_number}</h1>
+                    <h1 className="w-1/4 truncate">{patientData.email}</h1>
+                    <h1 className="w-1/4">
+                      {formatDate(patientData.createdAt)}
+                    </h1>
+                  </section>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </div>
           </div>
           <div className="flex justify-end mt-4">
             <button

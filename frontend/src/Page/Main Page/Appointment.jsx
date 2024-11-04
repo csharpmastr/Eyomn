@@ -99,7 +99,7 @@ const Appointment = () => {
           >
             &lt;
           </button>
-          <span className="mx-4 font-semibold">
+          <span className="mx-4 font-medium">
             {currentDate.format("MMMM YYYY")}
           </span>
           <button

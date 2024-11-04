@@ -32,9 +32,9 @@ const UserProfile = () => {
         </div>
       </header>
       <div className="w-full h-full flex flex-col justify-between gap-6">
-        <div className="w-full flex-1 text-f-dark rounded-md border border-f-gray shadow-md">
-          <header className="px-8 py-4 bg-white border border-b-f-gray rounded-t-md">
-            <h1 className="text-p-lg font-medium text-c-primary">
+        <div className="w-full flex-1 text-f-dark rounded-md shadow-md">
+          <header className="px-8 py-4 bg-white border-b rounded-t-md">
+            <h1 className="text-p-lg font-medium text-c-secondary">
               | Personal Information
             </h1>
           </header>
@@ -59,9 +59,9 @@ const UserProfile = () => {
             </section>
           </div>
         </div>
-        <div className="w-full flex-1 text-f-dark rounded-md border border-f-gray shadow-md">
-          <header className="px-8 py-4 bg-white border border-b-f-gray rounded-t-md">
-            <h1 className="text-p-lg font-medium text-c-primary">
+        <div className="w-full flex-1 text-f-dark rounded-md shadow-md">
+          <header className="px-8 py-4 bg-white border-b rounded-t-md">
+            <h1 className="text-p-lg font-medium text-c-secondary">
               | Contact Information
             </h1>
           </header>
@@ -90,9 +90,9 @@ const UserProfile = () => {
             </section>
           </div>
         </div>
-        <div className="w-full flex-1 text-f-dark rounded-md border border-f-gray shadow-md">
-          <header className="px-8 py-4 bg-white border border-b-f-gray rounded-t-md">
-            <h1 className="text-p-lg font-medium text-c-primary">
+        <div className="w-full flex-1 text-f-dark rounded-md shadow-md">
+          <header className="px-8 py-4 bg-white border-b rounded-t-md">
+            <h1 className="text-p-lg font-medium text-c-secondary">
               | Job Information
             </h1>
           </header>

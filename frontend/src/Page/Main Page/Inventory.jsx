@@ -9,6 +9,11 @@ import { useSelector } from "react-redux";
 import Cookies from "universal-cookie";
 
 const Inventory = () => {
+  const products = useSelector((state) => state.reducer.inventory.products);
+  const productCount = products.length;
+  const lowStockCount = products.filter(
+    (product) => product.quantity < 10
+  ).length;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("");
@@ -17,18 +22,23 @@ const Inventory = () => {
   return (
     <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppins">
       <nav className="flex flex-col gap-4 lg:gap-0 lg:flex-row justify-between mb-8">
-        <div>
-          <h1 className="text-p-lg">All Product</h1>
-          <p className="text-p-rg">
-            <span className="text-blue-500">28</span> Total Products |{"  "}
-            <span className="text-red-500">28</span> Out of Stock |{"  "}
-            <span className="text-green-500">28</span> In Stock{" "}
-          </p>
+        <div className="flex gap-3 items-center">
+          <h1 className="text-p-lg font-medium text-c-secondary">
+            All Product
+          </h1>
+          <section className="bg-bg-sub flex rounded-md h-fit w-fit p-3 border shadow-sm">
+            <p className="text-p-sm">
+              <span className="text-blue-500">{productCount}</span> Total
+              Products |{"  "}
+              <span className="text-red-500">{lowStockCount}</span> Low Stock
+              {"  "}
+            </p>
+          </section>
         </div>
         <div className="flex gap-3">
-          <div className="flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-f-light text-c-gray3 font-normal hover:cursor-pointer">
+          <div className="flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-bg-sub text-c-gray3 font-normal hover:cursor-pointer">
             <select
-              className="hover:cursor-pointer focus:outline-none bg-f-light w-fit"
+              className="hover:cursor-pointer focus:outline-none bg-bg-sub w-fit"
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
             >
@@ -41,11 +51,11 @@ const Inventory = () => {
               <option value="quantity-h">High (Stock)</option>
             </select>
           </div>
-          <div className="flex flex-row gap-2 border border-gray-300 bg-f-light px-4 rounded-md justify-center items-center w-full">
+          <div className="flex flex-row gap-2 border border-gray-300 bg-bg-sub px-4 rounded-md justify-center items-center w-full">
             <IoMdSearch className="h-6 w-6 text-c-secondary" />
             <input
               type="text"
-              className="w-full text-f-dark focus:outline-none placeholder-f-gray2 text-p-rg bg-f-light"
+              className="w-full text-f-dark focus:outline-none placeholder-f-gray2 text-p-rg bg-bg-sub"
               placeholder="Search product... "
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
