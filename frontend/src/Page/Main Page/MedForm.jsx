@@ -10,7 +10,7 @@ import FRONT from "../../assets/Image/FRONT.png";
 import { useAddNote } from "../../Hooks/useAddNote";
 import Loader from "../../Component/ui/Loader";
 import SuccessModal from "../../Component/ui/SuccessModal";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import Modal from "../../Component/ui/Modal";
 import { IoMdCloseCircleOutline } from "react-icons/io";
@@ -19,6 +19,10 @@ import { cleanData } from "../../Helper/Helper";
 
 const MedForm = () => {
   const { patientId } = useParams();
+  const { noteId } = useParams();
+  const rawNotes = useSelector(
+    (state) => state.reducer.note.rawNotes[patientId]
+  );
   const [currentPage, setCurrentPage] = useState(0);
   const pageTitles = ["Subjective", "Objective", "Assessment", "Plan"];
   const reduxDispatch = useDispatch();
@@ -29,6 +33,7 @@ const MedForm = () => {
   const { addNote, isLoading, error } = useAddNote();
   const [isSuccess, setIsSuccess] = useState();
   const [isError, setIsError] = useState(false);
+  const [formData, setFormData] = useState({});
   const [canvasImages, setCanvasImages] = useState({
     OD: "",
     OS: "",
@@ -514,8 +519,18 @@ const MedForm = () => {
     management: "",
     followup_care: "",
   };
-
   const [medformData, setMedformData] = useState(initialMedFormData);
+
+  useEffect(() => {
+    if (noteId && rawNotes) {
+      const rawNote = rawNotes.find((raw) => raw.noteId === noteId);
+      if (rawNote) {
+        setMedformData({ ...initialMedFormData, ...rawNote });
+      }
+    } else {
+      setMedformData(initialMedFormData);
+    }
+  }, [noteId, rawNotes]);
 
   useEffect(() => {
     const handleBeforeUnload = (event) => {
@@ -540,26 +555,26 @@ const MedForm = () => {
     console.log(transformedData);
 
     setHasUnsavedChanges(false);
-    // try {
-    //   const response = await addNote(medformData, patientId);
+    try {
+      const response = await addNote(medformData, patientId);
 
-    //   if (response) {
-    //     console.log(response);
-    //     reduxDispatch(
-    //       addNewRawNote({
-    //         [patientId]: {
-    //           ...medformData,
-    //           noteId: response.noteId,
-    //           createdAt: response.createdAt,
-    //         },
-    //       })
-    //     );
-    //     setIsSuccess(true);
-    //   }
-    // } catch (error) {
-    //   setIsError(true);
-    //   console.log(error);
-    // }
+      if (response) {
+        console.log(response);
+        reduxDispatch(
+          addNewRawNote({
+            [patientId]: {
+              ...medformData,
+              noteId: response.noteId,
+              createdAt: response.createdAt,
+            },
+          })
+        );
+        setIsSuccess(true);
+      }
+    } catch (error) {
+      setIsError(true);
+      console.log(error);
+    }
   };
   const navigateAfterSuccess = () => {
     navigate(`/scribe/${patientId}`);
@@ -5528,12 +5543,16 @@ const MedForm = () => {
             )}
           </div>
           {currentPage === 3 ? (
-            <button
-              className="py-4 rounded-md bg-c-primary font-semibold text-p-rg text-f-light w-full mt-5"
-              onClick={handleSubmitNote}
-            >
-              Dito muna submit button
-            </button>
+            <>
+              {(noteId === null || noteId === undefined) && (
+                <button
+                  className="py-4 rounded-md bg-c-primary font-semibold text-p-rg text-f-light w-full mt-5"
+                  onClick={handleSubmitNote}
+                >
+                  Dito muna submit button
+                </button>
+              )}
+            </>
           ) : (
             <div className="flex gap-4 justify-end">
               {currentPage !== 0 && (

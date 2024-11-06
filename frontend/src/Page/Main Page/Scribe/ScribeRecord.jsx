@@ -143,6 +143,13 @@ const ScribeRecord = () => {
     }
   }, [patientId, user.firebaseUid, accessToken, refreshToken]);
 
+  const handleClickRawNotes = (noteId) => {
+    navigate(`/scribe/raw-note/${patientId}/${noteId}`);
+    sessionStorage.setItem(
+      "currentPath",
+      `/scribe/raw-note/${patientId}/${noteId}`
+    );
+  };
   return (
     <>
       {isLoading && <Loader />}
@@ -220,11 +227,12 @@ const ScribeRecord = () => {
             </div>
           )}
           {currentCardIndex === 1 && (
-            <div className="w-full">
+            <div className="w-full cursor-pointer">
               {rawNotes.map((note, index) => (
                 <div
-                  key={note.id || index}
+                  key={note.noteId || index}
                   className="px-6 py-4 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white"
+                  onClick={() => handleClickRawNotes(note.noteId)}
                 >
                   <div className="flex items-center gap-3">
                     <input type="checkbox" className="w-6 h-6" />
@@ -239,7 +247,6 @@ const ScribeRecord = () => {
               ))}
             </div>
           )}
-
           {currentCardIndex === 2 && (
             <div className="w-full h-full pt-6 flex gap-2 md:gap-6">
               <div className="w-1/6">
