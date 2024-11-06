@@ -63,19 +63,28 @@ export const getProducts = async (
   }
 };
 
-export const deleteProduct = async (branchId, productId, firebaseUid) => {
+export const deleteProduct = async (
+  branchId,
+  productId,
+  isDeleted,
+  firebaseUid
+) => {
   try {
-    const response = await axios.delete(`${INVENTORY_API_BASE_URL}/delete`, {
-      params: {
-        branchId,
-        productId,
-        firebaseUid,
-      },
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "x-refresh-token": refreshToken,
-      },
-    });
+    const response = await axios.patch(
+      `${INVENTORY_API_BASE_URL}/delete`,
+      isDeleted,
+      {
+        params: {
+          branchId,
+          productId,
+          firebaseUid,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
     return response;
   } catch (error) {
     console.error("Error deleting product : ", error);

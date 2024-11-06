@@ -201,3 +201,64 @@ export const getPatientNotes = async (
     throw error;
   }
 };
+
+export const uploadImageArchive = async (
+  patientId,
+  image,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const formData = new FormData();
+    formData.append("image", image);
+
+    const response = await axios.post(
+      `${PATIENT_API_BASE_URL}/upload-image/${patientId}`,
+      formData,
+      {
+        params: {
+          firebaseUid,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading patient image:", error);
+
+    if (error.response && error.response.status === 401) {
+      throw new Error("Access token expired. Please re-authenticate.");
+    }
+
+    throw error;
+  }
+};
+
+export const getPatientImageArchive = async (
+  patientId,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.get(`${PATIENT_API_BASE_URL}/image-archive`, {
+      params: {
+        patientId,
+        firebaseUid,
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error getting patient images:", error);
+  }
+};
