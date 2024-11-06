@@ -4,7 +4,7 @@ import { FaEllipsisV } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import AddEditProduct from "../../Component/ui/AddEditProduct";
 import ConfirmationModal from "../../Component/ui/ConfirmationModal";
-import Sample from "../../assets/Image/3.png";
+import Nodatafound from "../../assets/Image/nodatafound.png";
 
 const InventoryTable = ({ searchTerm, sortOption }) => {
   const products = useSelector((state) => state.reducer.inventory.products);
@@ -275,8 +275,8 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
           </div>
         </>
       ) : (
-        <div className="w-full mt-24 flex flex-col items-center justify-center text-center text-c-primary text-p-lg font-medium gap-4">
-          <img src={Sample} alt="no data image" className="w-80" />
+        <div className="w-full mt-24 flex flex-col items-center justify-center text-center text-[#96B4B4] text-p-lg font-medium gap-4">
+          <img src={Nodatafound} alt="no data image" className="w-80" />
           <p>Oops! No products found.</p>
         </div>
       )}

@@ -139,7 +139,7 @@ const Patient = () => {
                   ""
                 ) : (
                   <div
-                    className="h-fit flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+                    className="h-fit flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light hover:cursor-pointer"
                     onClick={openAddPatient}
                   >
                     <FiPlus className="h-5 w-5 md:mr-2" />

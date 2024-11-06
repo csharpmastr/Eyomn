@@ -27,8 +27,11 @@ export default {
         "f-gray": "#C3C3C3",
         "f-gray2": "#A7A7A7",
         "c-gray3": "#9C9C9C",
+
+        "c-secondary": "#264653",
         "c-primary": "#1E8282",
-        "c-secondary": "#2C3E50",
+        "c-branch": "#4A90E2",
+        "c-staff": "#C79754",
 
         "bg-sb": "#EEF1F1",
         "bg-mc": "#F5F5F5",

@@ -539,7 +539,7 @@ const AddEditPatient = ({ onClose }) => {
               )}
               {currentCardIndex == 0 ? (
                 <button
-                  className="px-4 py-2 bg-c-secondary  text-f-light text-p-rg font-medium rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+                  className="px-4 py-2 bg-c-secondary  text-f-light text-p-rg font-medium rounded-md"
                   onClick={handleNext}
                   disabled={currentCardIndex === 1}
                 >
@@ -547,7 +547,7 @@ const AddEditPatient = ({ onClose }) => {
                 </button>
               ) : (
                 <button
-                  className="px-4 py-2 bg-c-secondary text-f-light text-p-rg font-medium rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+                  className="px-4 py-2 bg-c-secondary text-f-light text-p-rg font-medium rounded-md"
                   onClick={handleSubmit}
                   disabled={currentCardIndex !== 1}
                 >

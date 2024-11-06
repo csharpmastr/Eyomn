@@ -62,7 +62,7 @@ const Inventory = () => {
             />
           </div>
           <div
-            className="flex flex-row px-4 items-center rounded-md py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+            className="flex flex-row px-4 items-center rounded-md py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer"
             onClick={toggleModal}
           >
             <FiPlus className="h-5 w-5 md:mr-2" />

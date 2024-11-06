@@ -9,6 +9,7 @@ import SidebarLogo from "../../assets/Image/sidebar_logo.png";
 import Cookies from "universal-cookie";
 import { useAuthContext } from "../../Hooks/useAuthContext";
 import { useSelector } from "react-redux";
+import { BsLayoutSidebar } from "react-icons/bs";
 
 import { FiBox } from "react-icons/fi";
 import { FiCalendar } from "react-icons/fi";
@@ -75,13 +76,16 @@ const SideBar = () => {
           {isCollapsed ? (
             <GiHamburgerMenu className="text-f-dark mt-5 hidden xl:block " />
           ) : (
-            <IoMdClose className="text-f-dark hidden xl:block" />
+            <BsLayoutSidebar
+              className="text-f-dark hidden xl:block
+            "
+            />
           )}
         </button>
       </div>
 
       <div
-        className={`flex flex-col h-full justify-between xl:space-y-3 xl:px-6 xl:pt-10 xl:pb-5 transition-transform duration-300 ease-in-out border-r border-f-gray  ${
+        className={`flex flex-col justify-between h-full xl:space-y-3 xl:px-6 xl:pt-10 xl:pb-5 transition-transform duration-300 ease-in-out border-r border-f-gray  ${
           isMenuOpen
             ? "translate-x-0 max-h-screen h-full mt-2 md:mt-0 bg-bg-sb fixed xl:static w-3/4 md:w-1/3 lg:w-1/4 xl:w-auto"
             : "hidden xl:flex"
@@ -92,356 +96,290 @@ const SideBar = () => {
           {isCollapsed ? (
             ""
           ) : (
-            <h1 className="ml-5 text-p-sm font-medium text-c-primary mt-5 xl:mt-0">
-              MAIN MENU
+            <h1 className=" text-p-sm font-medium text-f-dark mt-5 xl:mt-0">
+              Main Menu
             </h1>
           )}
-          {(role === "0" || role === "1") && (
-            <>
-              <NavLink
-                className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-                  selected === "dashboard"
+          <NavLink
+            className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+              ${
+                role === "0"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "1"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "2"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "3" &&
+                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+              }
+              ${
+                selected === "dashboard"
+                  ? role === "0"
+                    ? "bg-c-secondary text-f-light font-semibold "
+                    : role === "1"
+                    ? "bg-c-branch text-f-light font-semibold "
+                    : role === "2"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : "text-f-dark font-medium"
-                }${
-                  isCollapsed
-                    ? " xl:justify-center xl:px-2 py-2 "
-                    : " xl:py-3 xl:px-4 "
-                }`}
-                onClick={() => setSelected("dashboard")}
-                to="dashboard"
-              >
-                <FiGrid
-                  className={`${
-                    isCollapsed
-                      ? " h-[26px] w-[26px] "
-                      : " h-[26px] w-[26px] xl:mr-3 "
-                  }`}
-                />
-                {!isCollapsed && (
-                  <span className="ml-2">{isCollapsed ? "" : "Dashboard"}</span>
-                )}
-              </NavLink>
-              {role === "0" ? (
-                <NavLink
-                  className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-                    selected === "organization"
-                      ? "bg-c-primary text-f-light font-semibold "
-                      : "text-f-dark font-medium "
-                  }${
-                    isCollapsed
-                      ? " xl:px-2 py-2 xl:justify-center "
-                      : " xl:py-3 xl:px-4 "
-                  }`}
-                  onClick={() => setSelected("organization")}
-                  to="organization"
-                >
-                  <FiUsers
-                    className={`${
-                      isCollapsed
-                        ? " h-[26px] w-[26px]"
-                        : " h-[26px] w-[26px] xl:mr-3"
-                    }`}
-                  />
-                  {!isCollapsed && <span className="ml-2">Organization</span>}
-                </NavLink>
-              ) : (
-                ""
-              )}
-              <NavLink
-                className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-                  selected === "patient"
+                    : role === "3" && "bg-c-staff text-f-light font-semibold "
+                  : "text-f-dark font-medium"
+              }
+              ${
+                isCollapsed
+                  ? "xl:justify-center xl:px-2 py-2"
+                  : "xl:py-3 xl:px-4"
+              } `}
+            onClick={() => setSelected("dashboard")}
+            to="dashboard"
+          >
+            <FiGrid
+              className={`${
+                isCollapsed ? "h-[26px] w-[26px]" : "h-[26px] w-[26px] xl:mr-3"
+              }`}
+            />
+            {!isCollapsed && (
+              <span className="ml-2">{isCollapsed ? "" : "Dashboard"}</span>
+            )}
+          </NavLink>
+          {role === "0" && (
+            <NavLink
+              className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+              ${
+                role === "0"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "1"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "2"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "3" &&
+                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+              }
+              ${
+                selected === "organization"
+                  ? role === "0"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : "text-f-dark font-medium"
-                }${
-                  isCollapsed
-                    ? " xl:px-2 py-2 xl:justify-center"
-                    : " xl:py-3 xl:px-4 "
-                }`}
-                onClick={() => setSelected("patient")}
-                to="patient"
-              >
-                <FiUser
-                  className={`${
-                    isCollapsed
-                      ? " h-[26px] w-[26px]"
-                      : " h-[26px] w-[26px] xl:mr-3"
-                  }`}
-                />
-                {!isCollapsed && <span className="ml-2">Patients</span>}
-              </NavLink>
-              <NavLink
-                className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-                  selected === "appointment"
+                    : role === "1"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : "text-f-dark font-medium "
-                }${
-                  isCollapsed
-                    ? " xl:px-2 py-2 justify-center "
-                    : " xl:py-3 xl:px-4 "
-                }`}
-                onClick={() => setSelected("appointment")}
-                to="appointment"
-              >
-                <FiCalendar
-                  className={`${
-                    isCollapsed
-                      ? " h-[26px] w-[26px]"
-                      : " h-[26px] w-[26px] xl:mr-3"
-                  }`}
-                />
-                {!isCollapsed && <span className="ml-2">Appointment</span>}
-              </NavLink>
-              <NavLink
-                className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-                  selected === "inventory"
+                    : role === "2"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : "text-f-dark font-medium "
-                }${
+                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                  : "text-f-dark font-medium"
+              }
+              ${
+                isCollapsed
+                  ? "xl:justify-center xl:px-2 py-2"
+                  : "xl:py-3 xl:px-4"
+              } `}
+              onClick={() => setSelected("organization")}
+              to="organization"
+            >
+              <FiUsers
+                className={`${
                   isCollapsed
-                    ? "xl:px-2 py-2 justify-center "
-                    : "xl:py-3 xl:px-4 "
+                    ? " h-[26px] w-[26px]"
+                    : " h-[26px] w-[26px] xl:mr-3"
                 }`}
-                onClick={() => setSelected("inventory")}
-                to="inventory"
-              >
-                <FiBox
-                  className={`${
-                    isCollapsed
-                      ? " h-[26px] w-[26px] "
-                      : " h-[26px] w-[26px] xl:mr-3 "
-                  }`}
-                />
-                {!isCollapsed && <span className="ml-2">Inventory</span>}
-              </NavLink>
-            </>
+              />
+              {!isCollapsed && <span className="ml-2">Organization</span>}
+            </NavLink>
           )}
           {role === "2" && (
-            <>
-              <NavLink
-                className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-                  selected === "dashboard"
+            <NavLink
+              className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+              ${
+                role === "0"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "1"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "2"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "3" &&
+                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+              }
+              ${
+                selected === "scribe"
+                  ? role === "0"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : "text-f-dark font-medium "
-                }${
-                  isCollapsed
-                    ? " xl:justify-center xl:px-2 py-2 "
-                    : " xl:py-3 xl:px-4 "
-                }`}
-                onClick={() => setSelected("dashboard")}
-                to="dashboard"
-              >
-                <FiGrid
-                  className={`${
-                    isCollapsed
-                      ? " h-[26px] w-[26px] "
-                      : " h-[26px] w-[26px] xl:mr-3 "
-                  }`}
-                />
-                {!isCollapsed && (
-                  <span className="ml-2">{isCollapsed ? "" : "Dashboard"}</span>
-                )}
-              </NavLink>
-              <NavLink
-                className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-                  selected === "scribe"
+                    : role === "1"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : "text-f-dark font-medium "
-                }${
-                  isCollapsed
-                    ? "xl:px-2 py-2 justify-center "
-                    : "xl:py-3 xl:px-4 "
-                }`}
-                onClick={() => setSelected("scribe")}
-                to="scribe"
-              >
-                <FiClipboard
-                  className={`${
-                    isCollapsed
-                      ? " h-[26px] w-[26px]"
-                      : " h-[26px] w-[26px] xl:mr-3"
-                  }`}
-                />
-                {!isCollapsed && <span className="ml-2">Scribe</span>}
-              </NavLink>
-              <NavLink
-                className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-                  selected === "patient"
+                    : role === "2"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : "text-f-dark font-medium "
-                }${
+                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                  : "text-f-dark font-medium"
+              }
+              ${
+                isCollapsed
+                  ? "xl:justify-center xl:px-2 py-2"
+                  : "xl:py-3 xl:px-4"
+              } `}
+              onClick={() => setSelected("scribe")}
+              to="scribe"
+            >
+              <FiClipboard
+                className={`${
                   isCollapsed
-                    ? " xl:px-2 py-2 justify-center "
-                    : " xl:py-3 xl:px-4 "
+                    ? " h-[26px] w-[26px]"
+                    : " h-[26px] w-[26px] xl:mr-3"
                 }`}
-                onClick={() => setSelected("patient")}
-                to="patient"
-              >
-                <FiUser
-                  className={`${
-                    isCollapsed
-                      ? " h-[26px] w-[26px]  justify-center"
-                      : " h-[26px] w-[26px] xl:mr-3"
-                  }`}
-                />
-                {!isCollapsed && <span className="ml-2">Patients</span>}
-              </NavLink>
-              <NavLink
-                className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-                  selected === "appointment"
-                    ? "bg-c-primary text-f-light font-semibold "
-                    : "text-f-dark font-medium "
-                }${
-                  isCollapsed
-                    ? "xl:px-2 py-2 justify-center "
-                    : "xl:py-3 xl:px-4 "
-                }`}
-                onClick={() => setSelected("appointment")}
-                to="appointment"
-              >
-                <FiCalendar
-                  className={`${
-                    isCollapsed
-                      ? " h-[26px] w-[26px]"
-                      : " h-[26px] w-[26px] xl:mr-3"
-                  }`}
-                />
-                {!isCollapsed && <span className="ml-2">Appointment</span>}
-              </NavLink>
-            </>
+              />
+              {!isCollapsed && <span className="ml-2">Scribe</span>}
+            </NavLink>
           )}
           {role === "3" && (
-            <>
-              <NavLink
-                className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
-                  selected === "dashboard"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : "text-f-dark font-medium "
-                }${
+            <NavLink
+              className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+              ${
+                role === "0"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "1"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "2"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "3" &&
+                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+              }
+              ${
+                selected === "add-patient"
+                  ? role === "0"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "1"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "2"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                  : "text-f-dark font-medium"
+              }
+              ${
+                isCollapsed
+                  ? "xl:justify-center xl:px-2 py-2"
+                  : "xl:py-3 xl:px-4"
+              } `}
+              onClick={() => setSelected("add-patient")}
+              to="add-patient"
+            >
+              <FiUserPlus
+                className={`${
                   isCollapsed
-                    ? " xl:justify-center xl:px-2 py-2 "
-                    : " xl:py-3 xl:px-4 "
+                    ? " h-[26px] w-[26px]  justify-center "
+                    : " h-[26px] w-[26px] xl:mr-3 "
                 }`}
-                onClick={() => setSelected("dashboard")}
-                to="dashboard"
-              >
-                <FiGrid
-                  className={`${
-                    isCollapsed
-                      ? " h-[26px] w-[26px] "
-                      : " h-[26px] w-[26px] xl:mr-3 "
-                  }`}
-                />
-                {!isCollapsed && (
-                  <span className="ml-2">{isCollapsed ? "" : "Dashboard"}</span>
-                )}
-              </NavLink>
-              <NavLink
-                className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
-                  selected === "add-patient"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : "text-f-dark font-medium"
-                }${
-                  isCollapsed
-                    ? " xl:px-2 py-2 justify-center"
-                    : " xl:py-3 xl:px-4 "
-                } `}
-                onClick={() => setSelected("add-patient")}
-                to="add-patient"
-              >
-                <FiUserPlus
-                  className={`${
-                    isCollapsed
-                      ? " h-[26px] w-[26px]  justify-center "
-                      : " h-[26px] w-[26px] xl:mr-3 "
-                  }`}
-                />
-                {!isCollapsed && <span className=" ml-2 ">Add Patient</span>}
-              </NavLink>
-              <NavLink
-                className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
-                  selected === "patient"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : "text-f-dark font-medium"
-                }${
-                  isCollapsed
-                    ? " xl:px-2 py-2 xl:justify-center"
-                    : " xl:py-3 xl:px-4 "
-                }`}
-                onClick={() => setSelected("patient")}
-                to="patient"
-              >
-                <FiUser
-                  className={`${
-                    isCollapsed
-                      ? " h-[26px] w-[26px]"
-                      : " h-[26px] w-[26px] xl:mr-3"
-                  }`}
-                />
-                {!isCollapsed && <span className="ml-2">Patients</span>}
-              </NavLink>
-              <NavLink
-                className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-secondary xl:active:bg-sb-pressed-secondary xl:focus:bg-c-secondary ${
-                  selected === "appointment"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : "text-f-dark font-medium "
-                }${
-                  isCollapsed
-                    ? "xl:px-2 py-2 justify-center"
-                    : "xl:py-3 xl:px-4 "
-                }`}
-                onClick={() => setSelected("appointment")}
-                to="appointment"
-              >
-                <FiCalendar
-                  className={`${
-                    isCollapsed
-                      ? " h-[26px] w-[26px] "
-                      : " h-[26px] w-[26px] xl:mr-3 "
-                  }`}
-                />
-                {!isCollapsed && <span className="ml-2">Appointment</span>}
-              </NavLink>
-              <NavLink
-                className={`  ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-                  selected === "inventory"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : "text-f-dark font-medium "
-                }${
-                  isCollapsed
-                    ? " xl:px-2 py-2 justify-center "
-                    : " xl:py-3 xl:px-4 "
-                }`}
-                onClick={() => setSelected("inventory")}
-                to="inventory"
-              >
-                <FiBox
-                  className={`${
-                    isCollapsed
-                      ? " h-[26px] w-[26px]"
-                      : " h-[26px] w-[26px] xl:mr-3"
-                  }`}
-                />
-                {!isCollapsed && <span className="ml-2">Inventory</span>}
-              </NavLink>
-            </>
+              />
+              {!isCollapsed && <span className=" ml-2 ">Add Patient</span>}
+            </NavLink>
           )}
-        </div>
-        <div className="flex flex-col gap-2 mr-4 xl:mr-0">
-          <hr class="border-0 xl:border-t border-f-gray" />
-          {role != "2" && (
-            <>
-              {role != "3" && (
+          <NavLink
+            className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+              ${
+                role === "0"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "1"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "2"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "3" &&
+                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+              }
+              ${
+                selected === "patient"
+                  ? role === "0"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "1"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "2"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                  : "text-f-dark font-medium"
+              }
+              ${
+                isCollapsed
+                  ? "xl:justify-center xl:px-2 py-2"
+                  : "xl:py-3 xl:px-4"
+              } `}
+            onClick={() => setSelected("patient")}
+            to="patient"
+          >
+            <FiUser
+              className={`${
+                isCollapsed
+                  ? " h-[26px] w-[26px]"
+                  : " h-[26px] w-[26px] xl:mr-3"
+              }`}
+            />
+            {!isCollapsed && <span className="ml-2">Patients</span>}
+          </NavLink>
+          <NavLink
+            className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+              ${
+                role === "0"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "1"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "2"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "3" &&
+                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+              }
+              ${
+                selected === "appointment"
+                  ? role === "0"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "1"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "2"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                  : "text-f-dark font-medium"
+              }
+              ${
+                isCollapsed
+                  ? "xl:justify-center xl:px-2 py-2"
+                  : "xl:py-3 xl:px-4"
+              } `}
+            onClick={() => setSelected("appointment")}
+            to="appointment"
+          >
+            <FiCalendar
+              className={`${
+                isCollapsed
+                  ? " h-[26px] w-[26px]"
+                  : " h-[26px] w-[26px] xl:mr-3"
+              }`}
+            />
+            {!isCollapsed && <span className="ml-2">Appointment</span>}
+          </NavLink>
+          {role != 2 && (
+            <div className="flex flex-col gap-2 mr-4 xl:mr-0 mt-4">
+              <h1 className=" text-p-sm font-medium text-f-dark mt-5 xl:mt-0">
+                Other
+              </h1>
+              {role != 3 && (
                 <NavLink
-                  className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-                    selected === "report"
-                      ? "bg-c-secondary text-f-light font-semibold "
-                      : "text-f-dark font-medium "
-                  }${
-                    isCollapsed
-                      ? "xl:px-2 py-2 justify-center"
-                      : "xl:py-3 xl:px-4 "
-                  }`}
+                  className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+              ${
+                role === "0"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "1"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "2"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "3" &&
+                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+              }
+              ${
+                selected === "report"
+                  ? role === "0"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "1"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "2"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                  : "text-f-dark font-medium"
+              }
+              ${
+                isCollapsed
+                  ? "xl:justify-center xl:px-2 py-2"
+                  : "xl:py-3 xl:px-4"
+              } `}
                   onClick={() => setSelected("report")}
                   to="report"
                 >
@@ -456,17 +394,75 @@ const SideBar = () => {
                 </NavLink>
               )}
               <NavLink
-                className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-                  selected === "pos"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : "text-f-dark font-medium "
-                }${
-                  isCollapsed
-                    ? "xl:px-2 py-2 justify-center"
-                    : "xl:py-3 xl:px-4 "
-                }`}
-                onClick={() => setSelected("pos")}
-                to="pos"
+                className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+              ${
+                role === "0"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "1"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "2"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "3" &&
+                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+              }
+              ${
+                selected === "inventory"
+                  ? role === "0"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "1"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "2"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                  : "text-f-dark font-medium"
+              }
+              ${
+                isCollapsed
+                  ? "xl:justify-center xl:px-2 py-2"
+                  : "xl:py-3 xl:px-4"
+              } `}
+                onClick={() => setSelected("inventory")}
+                to="inventory"
+              >
+                <FiBox
+                  className={`${
+                    isCollapsed
+                      ? " h-[26px] w-[26px]"
+                      : " h-[26px] w-[26px] xl:mr-3"
+                  }`}
+                />
+                {!isCollapsed && <span className="ml-2">Inventory</span>}
+              </NavLink>
+              <NavLink
+                className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+              ${
+                role === "0"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "1"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "2"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "3" &&
+                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+              }
+              ${
+                selected === "stock_checkout"
+                  ? role === "0"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "1"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "2"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                  : "text-f-dark font-medium"
+              }
+              ${
+                isCollapsed
+                  ? "xl:justify-center xl:px-2 py-2"
+                  : "xl:py-3 xl:px-4"
+              } `}
+                onClick={() => setSelected("stock_checkout")}
+                to="stock_checkout"
               >
                 <FiShoppingCart
                   className={`${
@@ -475,18 +471,40 @@ const SideBar = () => {
                       : " h-[26px] w-[26px] xl:mr-3"
                   }`}
                 />
-                {!isCollapsed && <span className="ml-2">Point of Sale</span>}
+                {!isCollapsed && <span className="ml-2">Stock Checkout</span>}
               </NavLink>
-            </>
+            </div>
           )}
+        </div>
+        <div className="flex flex-col gap-2 mr-4 xl:mr-0">
           <NavLink
-            className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-              selected === "manage-profile/:section"
-                ? "bg-c-secondary text-f-light font-semibold "
-                : "text-f-dark font-medium "
-            }${
-              isCollapsed ? "xl:px-2 py-2 justify-center" : "xl:py-3 xl:px-4 "
-            }`}
+            className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+              ${
+                role === "0"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "1"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "2"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "3" &&
+                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+              }
+              ${
+                selected === "manage-profile/:section"
+                  ? role === "0"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "1"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "2"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                  : "text-f-dark font-medium"
+              }
+              ${
+                isCollapsed
+                  ? "xl:justify-center xl:px-2 py-2"
+                  : "xl:py-3 xl:px-4"
+              } `}
             onClick={() => setSelected("manage-profile/:section")}
             to="manage-profile/:section"
           >
@@ -500,13 +518,33 @@ const SideBar = () => {
             {!isCollapsed && <span className="ml-2">Settings</span>}
           </NavLink>
           <NavLink
-            className={` ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary ${
-              selected === "help"
-                ? "bg-c-secondary text-f-light font-semibold "
-                : "text-f-dark font-medium "
-            }${
-              isCollapsed ? "xl:px-2 py-2 justify-center" : "xl:py-3 xl:px-4 "
-            }`}
+            className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+              ${
+                role === "0"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "1"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "2"
+                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  : role === "3" &&
+                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+              }
+              ${
+                selected === "help"
+                  ? role === "0"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "1"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "2"
+                    ? "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                  : "text-f-dark font-medium"
+              }
+              ${
+                isCollapsed
+                  ? "xl:justify-center xl:px-2 py-2"
+                  : "xl:py-3 xl:px-4"
+              } `}
             onClick={() => setSelected("help")}
             to="help"
           >
