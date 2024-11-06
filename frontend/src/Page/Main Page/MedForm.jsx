@@ -644,7 +644,9 @@ const MedForm = () => {
   };
   return (
     <>
-      {isLoading && <Loader />}
+      {isLoading && (
+        <Loader description={"Saving Patient Note, please wait..."} />
+      )}
       <div className="w-full p-4 md:p-6 2xl:p-8 bg-bg-mc">
         <header className="text-f-dark flex justify-between mb-6">
           <div className="flex gap-2 font-Poppins">

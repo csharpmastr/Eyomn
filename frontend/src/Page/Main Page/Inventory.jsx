@@ -10,10 +10,12 @@ import Cookies from "universal-cookie";
 
 const Inventory = () => {
   const products = useSelector((state) => state.reducer.inventory.products);
-  const productCount = products.length;
-  const lowStockCount = products.filter(
-    (product) => product.quantity < 10
+  const productCount = products.filter(
+    (product) => product.isDeleted === false
   ).length;
+  const lowStockCount = products
+    .filter((product) => product.isDeleted === false)
+    .filter((product) => product.quantity < 10).length;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("");

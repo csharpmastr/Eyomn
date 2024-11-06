@@ -25,8 +25,10 @@ const OrgDashboard = () => {
     : sales;
 
   const filteredProducts = selectedBranch
-    ? products.filter((product) => product.branchId === selectedBranch)
-    : products;
+    ? products
+        .filter((product) => product.isDeleted === false)
+        .filter((product) => product.branchId === selectedBranch)
+    : products.filter((product) => product.isDeleted === false);
 
   const patientCount = filteredPatients.length;
   const productCount = filteredProducts.length;

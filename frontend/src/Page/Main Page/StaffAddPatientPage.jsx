@@ -214,7 +214,9 @@ const StaffAddPatientPage = () => {
 
   return (
     <>
-      {isLoading && <Loader />}
+      {isLoading && (
+        <Loader description={"Saving Patient Information, please wait..."} />
+      )}
       <div className="h-full w-full flex justify-center bg-bg-mc overflow-auto p-4 md:p-12 font-Poppins">
         <div>
           <form className="flex flex-col h-auto w-auto" onSubmit={handleSubmit}>

@@ -103,7 +103,9 @@ const PointOfSale = () => {
 
   return (
     <>
-      {isLoading && <Loader />}
+      {isLoading && (
+        <Loader description={"Saving Purchase Information, please wait..."} />
+      )}
       <div className="text-f-dark font-Poppins flex flex-col md:flex-row h-full">
         <div className="flex flex-col md:w-3/4 w-full p-4 md:p-6 2xl:p-8">
           <div className="flex flex-row gap-3 mb-6">

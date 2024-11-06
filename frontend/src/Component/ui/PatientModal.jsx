@@ -44,7 +44,9 @@ const PatientModal = ({ onClose, tab }) => {
 
   return (
     <>
-      {isLoading && <Loader />}
+      {isLoading && (
+        <Loader description={"Saving Patient Information, please wait..."} />
+      )}
       <div className="w-[85vw] h-[60vh] md:h-[55vh] md:w-[60vw] lg:w-[50vw] lg:h-[50vh] xl:h-[70vh] xl:w-[40vw] p-4 border-2 border-[#C8C8C8] rounded-lg shadow-lg font-poppins">
         <div className="flex flex-row justify-between mx-auto h-auto">
           <h1 className="flex justify-center items-center text-black pl-2">

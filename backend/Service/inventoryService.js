@@ -222,6 +222,7 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
             "price",
             "productSKU",
             "productId",
+            "isDeleted",
           ]);
 
           if (decryptedProductData.quantity < product.quantity) {
@@ -256,7 +257,14 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
 
           const updatedProductData = encryptDocument(
             { ...decryptedProductData, quantity: updatedQuantity },
-            ["quantity", "expirationDate", "price", "productSKU", "productId"]
+            [
+              "quantity",
+              "expirationDate",
+              "price",
+              "productSKU",
+              "productId",
+              "isDeleted",
+            ]
           );
 
           transaction.update(productRef, updatedProductData);
