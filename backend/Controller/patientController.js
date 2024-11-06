@@ -4,10 +4,12 @@ const {
   updatePatientDetails,
   deletePatient,
   retrievePatient,
-  addNote,
   addVisit,
   getVisits,
   getNotes,
+  addRawNote,
+  addImageArchive,
+  getImagesForPatient,
 } = require("../Service/patientService");
 
 const addPatientHandler = async (req, res) => {
@@ -149,7 +151,7 @@ const addNoteHandler = async (req, res) => {
         message: "Invalid request. Missing Patient ID.",
       });
     }
-    const { noteId, createdAt } = await addNote(
+    const { noteId, createdAt } = await addRawNote(
       patientId,
       noteDetails,
       firebaseUid
@@ -240,7 +242,39 @@ const addVisitHandler = async (req, res) => {
       .json({ message: "Failed to add visit: " + error.message });
   }
 };
+const uploadImageArchiveHandler = async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+    const { firebaseUid } = req.query;
+    const imageFile = req.file;
 
+    if (!imageFile) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const fileUrl = await addImageArchive(imageFile, patientId, firebaseUid);
+    res
+      .status(200)
+      .json({ message: "Image uploaded successfully", url: fileUrl });
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    res
+      .status(500)
+      .json({ message: "Error uploading image", error: error.message });
+  }
+};
+const getImages = async (req, res) => {
+  const { firebaseUid, patientId } = req.query;
+
+  try {
+    const imageUrls = await getImagesForPatient(patientId, firebaseUid);
+
+    return res.status(200).json({ imageUrls });
+  } catch (error) {
+    console.error("Error in image controller:", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
 module.exports = {
   addPatientHandler,
   getPatientsByDoctorHandler,
@@ -252,4 +286,6 @@ module.exports = {
   getPatientNoteHandler,
   getPatientVisitsHandler,
   addVisitHandler,
+  uploadImageArchiveHandler,
+  getImages,
 };

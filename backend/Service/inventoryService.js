@@ -35,7 +35,7 @@ const addProduct = async (branchId, productDetails, firebaseUid) => {
     const querySnapshot = await productsCollectionRef.get();
 
     let productExists = false;
-    querySnapshot.forEach((doc) => {
+    for (const doc of querySnapshot.docs) {
       const productData = doc.data();
 
       if (productData.product_name) {
@@ -46,9 +46,10 @@ const addProduct = async (branchId, productDetails, firebaseUid) => {
           decryptedProductBrand === productDetails.brand
         ) {
           productExists = true;
+          break;
         }
       }
-    });
+    }
 
     if (productExists) {
       throw { status: 400, message: "The product already exists." };
@@ -59,11 +60,12 @@ const addProduct = async (branchId, productDetails, firebaseUid) => {
     const productRef = productsCollectionRef.doc(productId);
     productDetails = removeNullValues(productDetails);
     console.log(productDetails);
-
+    productDetails.isDeleted = false;
     const encryptedProduct = encryptDocument(productDetails, [
       "quantity",
       "price",
       "expirationDate",
+      "isDeleted",
     ]);
 
     await productRef.set({ ...encryptedProduct, productId, productSKU });
@@ -95,6 +97,7 @@ const getProducts = async (branchId, firebaseUid) => {
         "productSKU",
         "price",
         "quantity",
+        "isDeleted",
       ]);
       return {
         ...decryptedData,
@@ -108,7 +111,7 @@ const getProducts = async (branchId, firebaseUid) => {
   }
 };
 
-const deleteProduct = async (branchId, productId) => {
+const deleteProduct = async (branchId, productId, isDeleted) => {
   try {
     const productRef = inventoryCollection
       .doc(branchId)
@@ -119,12 +122,16 @@ const deleteProduct = async (branchId, productId) => {
     if (!docSnapshot.exists) {
       throw new Error("Document does not exist");
     }
-    await productRef.delete();
+
+    await productRef.update({
+      isDeleted,
+    });
   } catch (error) {
-    console.error("Error deleting product: ", error);
+    console.error("Error marking product as deleted: ", error);
     throw error;
   }
 };
+
 const updateProduct = async (branchId, productId, productDetails) => {
   try {
     const productsCollectionRef = inventoryCollection
@@ -314,6 +321,7 @@ const getOrgProductSales = async (organizationId, firebaseUid) => {
           "quantity",
           "productId",
           "productSKU",
+          "isDeleted",
         ]);
       });
 

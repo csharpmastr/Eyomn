@@ -7,6 +7,7 @@ const {
   branchCollection,
   visitCollection,
   noteCollection,
+  bucket,
 } = require("../Config/FirebaseConfig");
 const {
   encryptDocument,
@@ -202,13 +203,13 @@ const addVisit = async (
   }
 };
 
-const addNote = async (patientId, noteDetails, firebaseUid) => {
+const addRawNote = async (patientId, noteDetails, firebaseUid) => {
   try {
     await verifyFirebaseUid(firebaseUid);
     const noteId = await generateUniqueId(
-      patientCollection.doc(patientId).collection("notes")
+      patientCollection.doc(patientId).collection("rawNotes")
     );
-    const noteCol = noteCollection.doc(patientId).collection("notes");
+    const noteCol = noteCollection.doc(patientId).collection("rawNotes");
     const cleanedNote = removeNullValues(noteDetails);
 
     const encryptValue = (value) => {
@@ -337,6 +338,53 @@ const getVisits = async (patientId, firebaseUid) => {
     throw new Error("Error fetching visits: " + error.message);
   }
 };
+const addImageArchive = async (imageFile, patientId, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const filePath = `patients/${patientId}/${Date.now()}_${
+      imageFile.originalname
+    }`;
+
+    const file = bucket.file(filePath);
+
+    await file.save(imageFile.buffer, {
+      metadata: { contentType: imageFile.mimetype },
+      public: true,
+    });
+    await file.makePublic();
+    const fileUrl = `https://storage.googleapis.com/${bucket.name}/${filePath}`;
+    return fileUrl;
+  } catch (error) {
+    console.log("Error in addImageArchive:", error);
+    throw error;
+  }
+};
+
+const getImagesForPatient = async (patientId, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const [files] = await bucket.getFiles({ prefix: `patients/${patientId}/` });
+
+    if (files.length === 0) {
+      return [];
+    }
+    const imageUrls = await Promise.all(
+      files.map(async (file) => {
+        const [url] = await file.getSignedUrl({
+          action: "read",
+          expires: "03-09-2491",
+        });
+        return url;
+      })
+    );
+
+    return imageUrls;
+  } catch (error) {
+    throw new Error(`Error fetching images: ${error.message}`);
+  }
+};
 
 module.exports = {
   addPatient,
@@ -344,10 +392,12 @@ module.exports = {
   updatePatientDetails,
   deletePatient,
   retrievePatient,
-  addNote,
+  addRawNote,
   getNotes,
   addVisit,
   getVisits,
+  addImageArchive,
+  getImagesForPatient,
   // getPatientsByDoctor,
   // getPatients,
 };

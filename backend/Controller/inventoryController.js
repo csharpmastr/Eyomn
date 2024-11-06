@@ -64,11 +64,11 @@ const getProductsHandler = async (req, res) => {
 const deleteProductHandler = async (req, res) => {
   try {
     const { branchId, productId } = req.query;
-
+    const { isDeleted } = req.body;
     if (!branchId || !productId) {
       return res.status(401).json({ message: "No Branch/Product ID provided" });
     }
-    await deleteProduct(branchId, productId);
+    await deleteProduct(branchId, productId, isDeleted);
     return res.status(201).json({ message: "Product deleted successfully." });
   } catch (error) {
     res

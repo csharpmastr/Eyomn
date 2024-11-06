@@ -5,6 +5,7 @@ const serviceAccount = require("./eyomn-2d9c7-firebase-adminsdk-zjlyg-4c6fd6c764
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`,
+  storageBucket: `gs://${process.env.FIREBASE_STORAGE_BUCKET}`,
 });
 
 const db = admin.firestore();
@@ -19,6 +20,7 @@ const appointmentCollection = db.collection("apppointment");
 const notificationCollection = db.collection("notification");
 const visitCollection = db.collection("visit");
 const noteCollection = db.collection("note");
+const bucket = admin.storage().bucket();
 module.exports = {
   db,
   organizationCollection,
@@ -31,4 +33,5 @@ module.exports = {
   notificationCollection,
   visitCollection,
   noteCollection,
+  bucket,
 };
