@@ -17,9 +17,14 @@ const inventorySlice = createSlice({
     },
 
     removeProduct: (state, action) => {
-      state.products = state.products.filter(
-        (product) => product.productId !== action.payload
+      const productIdToRemove = action.payload;
+      const productIndex = state.products.findIndex(
+        (product) => product.productId === productIdToRemove
       );
+
+      if (productIndex !== -1) {
+        state.products[productIndex].isDeleted = true;
+      }
     },
 
     updateProduct: (state, action) => {
