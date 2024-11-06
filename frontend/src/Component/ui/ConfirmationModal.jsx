@@ -21,6 +21,7 @@ const ConfirmationModal = ({ productId, onClose }) => {
       const response = await deleteProduct(
         branchId,
         productId,
+        { isDeleted: true },
         user.firebaseUid
       );
       if (response) {

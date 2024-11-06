@@ -4,13 +4,7 @@ import { FaTrash } from "react-icons/fa";
 
 const EnlargeImg = ({ imageUrl, onClose, fileName }) => {
   const handleImgDownload = () => {
-    const ImgName = fileName;
-    const link = document.createElement("a");
-    link.href = imageUrl;
-    link.download = `${ImgName}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    window.open(imageUrl, "_blank");
   };
 
   return (
@@ -18,13 +12,13 @@ const EnlargeImg = ({ imageUrl, onClose, fileName }) => {
       <div className="h-fit w-fit bg-white text-white text-3xl rounded-lg relative">
         <div className="flex gap-4 absolute top-4 right-4 items-center text-f-dark">
           <button
-            className="p-4 rounded-full bg-gray-200"
+            className="p-4  rounded-full bg-gray-200"
             onClick={handleImgDownload}
           >
-            <HiOutlineDownload className="w-7 h-7 " />
+            <HiOutlineDownload className="w-5 h-5 " />
           </button>
           <button
-            className="py-3 px-5 rounded-full bg-gray-200"
+            className="py-1 px-3 rounded-full bg-gray-200 flex items-center justify-center"
             onClick={onClose}
           >
             &times;
@@ -33,7 +27,7 @@ const EnlargeImg = ({ imageUrl, onClose, fileName }) => {
         <img
           src={imageUrl}
           alt="Enlarged"
-          className="w-full h-full object-cover rounded-lg"
+          className="w-[400px] h-[400px] md:w-[600px] md:h-[600px] xl:w-[800px] xl:h-[800px] object-fill rounded-lg"
         />
       </div>
     </div>
