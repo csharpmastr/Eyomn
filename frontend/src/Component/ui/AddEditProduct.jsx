@@ -33,6 +33,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
   const initialFormData = {
     category: "",
     product_name: "",
+    retail_price: "",
     price: "",
     quantity: "",
     brand: "",
@@ -118,6 +119,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
     setFormData({
       category: "",
       product_name: "",
+      retail_price: "",
       price: "",
       quantity: "",
       brand: "",
@@ -147,6 +149,10 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
 
     if (!formData.product_name || formData.product_name.trim() === "") {
       newErrors.product_name = "(Product name is required)";
+    }
+
+    if (!formData.retail_price || formData.retail_price <= 0) {
+      newErrors.retail_price = "(Retail Price is required)";
     }
 
     if (!formData.price || formData.price <= 0) {
@@ -762,6 +768,34 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                         </div>
                         <div className="w-1/2">
                           <label
+                            htmlFor="retail_price"
+                            className="text-p-sm text-c-gray3 font-medium"
+                          >
+                            Retail Price{" "}
+                            <span className="text-red-400">
+                              {(formData.retail_price === "" ||
+                                errors.retail_price) &&
+                                errors.retail_price}
+                            </span>
+                          </label>
+                          <input
+                            type="number"
+                            name="retail_price"
+                            min={0}
+                            value={formData.retail_price}
+                            onChange={handleChange}
+                            className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                              errors.retail_price
+                                ? "border-red-400 focus:outline-red-400"
+                                : "border-c-gray3 focus:outline-c-primary"
+                            }`}
+                            placeholder="Enter retail price"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="w-1/4">
+                          <label
                             htmlFor="quantity"
                             className="text-p-sm text-c-gray3 font-medium"
                           >
@@ -782,34 +816,34 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                                 ? "border-red-400 focus:outline-red-400"
                                 : "border-c-gray3 focus:outline-c-primary"
                             }`}
-                            placeholder="Enter quantity"
+                            placeholder="0"
+                          />
+                        </div>
+                        <div className="w-3/4">
+                          <label
+                            htmlFor="eye_brand"
+                            className="text-p-sm text-c-gray3 font-medium"
+                          >
+                            Brand{" "}
+                            <span className="text-red-400">
+                              {(formData.brand === "" || errors.brand) &&
+                                errors.brand}
+                            </span>
+                          </label>
+                          <input
+                            type="text"
+                            name="brand"
+                            value={formData.brand}
+                            onChange={handleChange}
+                            className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                              errors.brand
+                                ? "border-red-400 focus:outline-red-400"
+                                : "border-c-gray3 focus:outline-c-primary"
+                            }`}
+                            placeholder="Enter brand"
                           />
                         </div>
                       </div>
-                      <section>
-                        <label
-                          htmlFor="eye_brand"
-                          className="text-p-sm text-c-gray3 font-medium"
-                        >
-                          Brand{" "}
-                          <span className="text-red-400">
-                            {(formData.brand === "" || errors.brand) &&
-                              errors.brand}
-                          </span>
-                        </label>
-                        <input
-                          type="text"
-                          name="brand"
-                          value={formData.brand}
-                          onChange={handleChange}
-                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                            errors.brand
-                              ? "border-red-400 focus:outline-red-400"
-                              : "border-c-gray3 focus:outline-c-primary"
-                          }`}
-                          placeholder="Enter brand"
-                        />
-                      </section>
                     </>
                   )}
                 </div>

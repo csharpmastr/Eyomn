@@ -1,12 +1,24 @@
 import React from "react";
-import DotLoader from "react-spinners/DotLoader";
+import ReactDOM from "react-dom";
+import PuffLoader from "react-spinners/PuffLoader";
+import BounceLoader from "react-spinners/BounceLoader";
 
 const Loader = () => {
-  return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="absolute inset-0 bg-gray-900 opacity-50 backdrop-blur-md"></div>
-      <DotLoader speedMultiplier={0.5} />
-    </div>
+  return ReactDOM.createPortal(
+    <div className="fixed inset-0 flex items-center justify-center z-50 h-screen w-screen bg-black bg-opacity-50 font-Poppins text-f-light text-p-rg font-medium p-10 md:p-0">
+      <div className="text-center relative max-w-md w-fit mx-auto h-fit rounded-xl">
+        <div className="flex justify-center items-center h-fit relative">
+          <PuffLoader color="#40E3C4" loading={true} size={300} />
+          <div className="absolute opacity-20">
+            <BounceLoader color="#CEF9F0" loading={true} size={280} />
+          </div>
+          <h1 className="absolute text-wrap p-10">
+            Saving Patient Information, please wait...
+          </h1>
+        </div>
+      </div>
+    </div>,
+    document.body
   );
 };
 
