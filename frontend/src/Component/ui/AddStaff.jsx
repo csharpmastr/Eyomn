@@ -681,22 +681,6 @@ const AddStaff = ({ onClose, staffData }) => {
                       <div className="flex flex-col gap-2">
                         {isMonOn ? (
                           <>
-                            <div className="flex gap-2">
-                              <input
-                                type="time"
-                                step="1800"
-                                name="monday_in"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                              <input
-                                type="time"
-                                step="1800"
-                                name="monday_out"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                            </div>
                             {branchAssignment === "rotational" && (
                               <select
                                 name="branch_select"
@@ -716,6 +700,22 @@ const AddStaff = ({ onClose, staffData }) => {
                                 ))}
                               </select>
                             )}
+                            <div className="flex gap-2">
+                              <input
+                                type="time"
+                                step="1800"
+                                name="monday_in"
+                                onChange={handleChange}
+                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                              />
+                              <input
+                                type="time"
+                                step="1800"
+                                name="monday_out"
+                                onChange={handleChange}
+                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                              />
+                            </div>
                           </>
                         ) : (
                           <span className="text-p-rg text-c-gray3">
@@ -748,22 +748,6 @@ const AddStaff = ({ onClose, staffData }) => {
                       <div className="flex flex-col gap-2">
                         {isTueOn ? (
                           <>
-                            <div className="flex gap-2">
-                              <input
-                                type="time"
-                                step="1800"
-                                name="tuesday_in"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                              <input
-                                type="time"
-                                step="1800"
-                                name="tuesday_out"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                            </div>
                             {branchAssignment === "rotational" && (
                               <select
                                 name="branch_select"
@@ -780,6 +764,22 @@ const AddStaff = ({ onClose, staffData }) => {
                                 ))}
                               </select>
                             )}
+                            <div className="flex gap-2">
+                              <input
+                                type="time"
+                                step="1800"
+                                name="tuesday_in"
+                                onChange={handleChange}
+                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                              />
+                              <input
+                                type="time"
+                                step="1800"
+                                name="tuesday_out"
+                                onChange={handleChange}
+                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                              />
+                            </div>
                           </>
                         ) : (
                           <span className="text-p-rg text-c-gray3">
@@ -812,20 +812,6 @@ const AddStaff = ({ onClose, staffData }) => {
                       <div className="flex flex-col gap-2">
                         {isWedOn ? (
                           <>
-                            <div className="flex gap-2">
-                              <input
-                                type="time"
-                                name="wednesday_in"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                              <input
-                                type="time"
-                                name="wednesday_out"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                            </div>
                             {branchAssignment === "rotational" && (
                               <select
                                 name="branch_select"
@@ -845,6 +831,20 @@ const AddStaff = ({ onClose, staffData }) => {
                                 ))}
                               </select>
                             )}
+                            <div className="flex gap-2">
+                              <input
+                                type="time"
+                                name="wednesday_in"
+                                onChange={handleChange}
+                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                              />
+                              <input
+                                type="time"
+                                name="wednesday_out"
+                                onChange={handleChange}
+                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                              />
+                            </div>
                           </>
                         ) : (
                           <span className="text-p-rg text-c-gray3">
@@ -877,20 +877,6 @@ const AddStaff = ({ onClose, staffData }) => {
                       <div className="flex flex-col gap-2">
                         {isThuOn ? (
                           <>
-                            <div className="flex gap-2">
-                              <input
-                                type="time"
-                                name="thursday_in"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                              <input
-                                type="time"
-                                name="thursday_out"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                            </div>
                             {branchAssignment === "rotational" && (
                               <select
                                 name="branch_select"
@@ -910,6 +896,20 @@ const AddStaff = ({ onClose, staffData }) => {
                                 ))}
                               </select>
                             )}
+                            <div className="flex gap-2">
+                              <input
+                                type="time"
+                                name="thursday_in"
+                                onChange={handleChange}
+                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                              />
+                              <input
+                                type="time"
+                                name="thursday_out"
+                                onChange={handleChange}
+                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                              />
+                            </div>
                           </>
                         ) : (
                           <span className="text-p-rg text-c-gray3">
@@ -942,20 +942,6 @@ const AddStaff = ({ onClose, staffData }) => {
                       <div className="flex flex-col gap-2">
                         {isFriOn ? (
                           <>
-                            <div className="flex gap-2">
-                              <input
-                                type="time"
-                                name="friday_in"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                              <input
-                                type="time"
-                                name="friday_out"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                            </div>
                             {branchAssignment === "rotational" && (
                               <select
                                 name="branch_select"
@@ -975,6 +961,20 @@ const AddStaff = ({ onClose, staffData }) => {
                                 ))}
                               </select>
                             )}
+                            <div className="flex gap-2">
+                              <input
+                                type="time"
+                                name="friday_in"
+                                onChange={handleChange}
+                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                              />
+                              <input
+                                type="time"
+                                name="friday_out"
+                                onChange={handleChange}
+                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                              />
+                            </div>
                           </>
                         ) : (
                           <span className="text-p-rg text-c-gray3">
@@ -1007,20 +1007,6 @@ const AddStaff = ({ onClose, staffData }) => {
                       <div className="flex flex-col gap-2">
                         {isSatOn ? (
                           <>
-                            <div className="flex gap-2">
-                              <input
-                                type="time"
-                                name="saturday_in"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                              <input
-                                type="time"
-                                name="saturday_out"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                            </div>
                             {branchAssignment === "rotational" && (
                               <select
                                 name="branch_select"
@@ -1040,6 +1026,20 @@ const AddStaff = ({ onClose, staffData }) => {
                                 ))}
                               </select>
                             )}
+                            <div className="flex gap-2">
+                              <input
+                                type="time"
+                                name="saturday_in"
+                                onChange={handleChange}
+                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                              />
+                              <input
+                                type="time"
+                                name="saturday_out"
+                                onChange={handleChange}
+                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                              />
+                            </div>
                           </>
                         ) : (
                           <span className="text-p-rg text-c-gray3">
@@ -1072,20 +1072,6 @@ const AddStaff = ({ onClose, staffData }) => {
                       <div className="flex flex-col gap-2">
                         {isSunOn ? (
                           <>
-                            <div className="flex gap-2">
-                              <input
-                                type="time"
-                                name="sunday_in"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                              <input
-                                type="time"
-                                name="sunday_out"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                            </div>
                             {branchAssignment === "rotational" && (
                               <select
                                 name="branch_select"
@@ -1105,6 +1091,20 @@ const AddStaff = ({ onClose, staffData }) => {
                                 ))}
                               </select>
                             )}
+                            <div className="flex gap-2">
+                              <input
+                                type="time"
+                                name="sunday_in"
+                                onChange={handleChange}
+                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                              />
+                              <input
+                                type="time"
+                                name="sunday_out"
+                                onChange={handleChange}
+                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                              />
+                            </div>
                           </>
                         ) : (
                           <span className="text-p-rg text-c-gray3">
