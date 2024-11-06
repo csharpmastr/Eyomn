@@ -7,19 +7,35 @@ import { FileUploader } from "react-drag-drop-files";
 import EnlargeImg from "../../../Component/ui/EnlargeImg";
 import SampleImage from "../../../assets/Image/eyomn_logoS1-2-06.jpg";
 import { AiOutlineArrowLeft } from "react-icons/ai";
+import {
+  getPatientImageArchive,
+  uploadImageArchive,
+} from "../../../Service/PatientService";
+import Cookies from "universal-cookie";
+import Loader from "../../../Component/ui/Loader";
+import SuccessModal from "../../../Component/ui/SuccessModal";
 
 const ScribeRecord = () => {
   const { patientId } = useParams();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const patients = useSelector((state) => state.reducer.patient.patients);
+  const user = useSelector((state) => state.reducer.user.user);
+  const [patientImages, setPatientImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const rawNotes = useSelector(
     (state) => state.reducer.note.rawNotes[patientId]
   );
+  const cookies = new Cookies();
+  const accessToken = cookies.get("accessToken", { path: "/" });
+  const refreshToken = cookies.get("refreshToken", { path: "/" });
+  const [selectImgOpen, setSelectImgOpen] = useState(null);
+  const images = Array.from({ length: 13 }).map(() => SampleImage);
   const [currentPatient, setCurrentPatient] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const [image, setImage] = useState(null);
-
+  const [isSuccess, setIsSuccess] = useState(false);
   const medicalRecords = [
     { id: 1, name: "Medical Scribe Record 1", date: "2024-01-01" },
     { id: 2, name: "Medical Scribe Record 2", date: "2024-01-02" },
@@ -29,7 +45,7 @@ const ScribeRecord = () => {
   const handleNewRecord = () => {
     navigate(`/scribe/new-record/${patientId}`);
   };
-
+  const handleCloseSuccess = () => setIsSuccess(false);
   useEffect(() => {
     sessionStorage.setItem("currentPath", location.pathname);
     if (patients.length > 0) {
@@ -40,21 +56,16 @@ const ScribeRecord = () => {
 
   const handleImageUpload = (file) => {
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const fileData = reader.result;
-        setImage(fileData);
-      };
-      reader.readAsDataURL(file);
+      setImageFile(file);
+
+      const imageUrl = URL.createObjectURL(file);
+      setImage(imageUrl);
     }
   };
 
   const handleRemoveImage = () => {
     setImage(null);
   };
-
-  const [selectImgOpen, setSelectImgOpen] = useState(null);
-  const images = Array.from({ length: 13 }).map(() => SampleImage);
 
   const handleOpenImg = (imageUrl) => {
     setSelectImgOpen(imageUrl);
@@ -75,8 +86,66 @@ const ScribeRecord = () => {
       setHasSelected(false);
     }
   }, [location]);
+
+  const handleUploadImage = async () => {
+    setIsLoading(true);
+    try {
+      const response = await uploadImageArchive(
+        patientId,
+        imageFile,
+        user.firebaseUid,
+        accessToken,
+        refreshToken
+      );
+      if (response) {
+        setIsSuccess(true);
+        setImageFile(null);
+        setImage(null);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getPatientImageArchive(
+          patientId,
+          user.firebaseUid,
+          accessToken,
+          refreshToken
+        );
+        console.log(response);
+
+        if (
+          response &&
+          response.imageUrls &&
+          Array.isArray(response.imageUrls)
+        ) {
+          setIsLoading(false);
+          setPatientImages(response.imageUrls);
+        } else {
+          console.log("No images found");
+        }
+      } catch (error) {
+        console.log("Error fetching images:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (patientId && user.firebaseUid) {
+      fetchImages();
+    }
+  }, [patientId, user.firebaseUid, accessToken, refreshToken]);
+
   return (
     <>
+      {isLoading && <Loader />}
       <div className="p-4 md:p-6 lg:p-8 h-full font-Poppins">
         <div className="flex justify-between mb-8">
           <div className="flex flex-col gap-2">
@@ -212,21 +281,35 @@ const ScribeRecord = () => {
                   )}
                 </div>
                 {image && (
-                  <button className="bg-c-primary text-f-light text-p-rg rounded-md font-semibold py-1 md:py-3 w-full mt-3">
+                  <button
+                    className="bg-c-primary text-f-light text-p-rg rounded-md font-semibold py-1 md:py-3 w-full mt-3"
+                    onClick={handleUploadImage}
+                  >
                     Save
                   </button>
                 )}
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-8 w-full h-full overflow-y-auto">
-                {images.map((image, index) => (
-                  <img
-                    key={index}
-                    src={image}
-                    alt={`Image ${index + 1}`}
-                    className="cursor-pointer rounded-md"
-                    onClick={() => handleOpenImg(image)}
-                  />
-                ))}
+
+              <div className="w-full h-full overflow-y-auto">
+                {patientImages.length > 0 ? (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-8 ">
+                    {patientImages.map((imageUrl, index) => (
+                      <img
+                        key={index}
+                        src={imageUrl}
+                        alt={`Patient Image ${index + 1}`}
+                        className="cursor-pointer rounded-md h-[250px] w-[400px]"
+                        onClick={() => handleOpenImg(imageUrl)}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="">
+                    <p className="text-center">
+                      No images found for this patient.
+                    </p>
+                  </div>
+                )}
                 {selectImgOpen !== null && (
                   <EnlargeImg
                     imageUrl={selectImgOpen}
@@ -239,6 +322,14 @@ const ScribeRecord = () => {
           )}
         </div>
       </div>
+      <SuccessModal
+        title={"Image Uploaded Successfully!"}
+        description={
+          "Your image has been uploaded successfully. You can now view it in the gallery."
+        }
+        isOpen={isSuccess}
+        onClose={handleCloseSuccess}
+      />
     </>
   );
 };

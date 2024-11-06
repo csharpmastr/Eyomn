@@ -15,6 +15,7 @@ import { useDispatch } from "react-redux";
 import Modal from "../../Component/ui/Modal";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { addNewRawNote } from "../../Slice/NoteSlice";
+import { cleanData } from "../../Helper/Helper";
 
 const MedForm = () => {
   const { patientId } = useParams();
@@ -535,28 +536,30 @@ const MedForm = () => {
 
   const handleSubmitNote = async (e) => {
     e.preventDefault();
+    const transformedData = cleanData(medformData);
+    console.log(transformedData);
+
     setHasUnsavedChanges(false);
-    try {
-      const response = await addNote(medformData, patientId);
+    // try {
+    //   const response = await addNote(medformData, patientId);
 
-      if (response) {
-        console.log(response);
-        reduxDispatch(
-          addNewRawNote({
-            [patientId]: {
-              ...medformData,
-              noteId: response.noteId,
-              createdAt: response.createdAt,
-            },
-          })
-        );
-
-        setIsSuccess(true);
-      }
-    } catch (error) {
-      setIsError(true);
-      console.log(error);
-    }
+    //   if (response) {
+    //     console.log(response);
+    //     reduxDispatch(
+    //       addNewRawNote({
+    //         [patientId]: {
+    //           ...medformData,
+    //           noteId: response.noteId,
+    //           createdAt: response.createdAt,
+    //         },
+    //       })
+    //     );
+    //     setIsSuccess(true);
+    //   }
+    // } catch (error) {
+    //   setIsError(true);
+    //   console.log(error);
+    // }
   };
   const navigateAfterSuccess = () => {
     navigate(`/scribe/${patientId}`);
@@ -1663,14 +1666,11 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    dominant_EH: {
-                                      ...prevData.dominant_EH,
-                                      dominant_eye: {
-                                        right: true,
-                                        left: false,
-                                      },
+                                  dominant_EH: {
+                                    ...prevData.dominant_EH,
+                                    dominant_eye: {
+                                      right: true,
+                                      left: false,
                                     },
                                   },
                                 }))
@@ -1692,14 +1692,11 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    dominant_EH: {
-                                      ...prevData.dominant_EH,
-                                      dominant_eye: {
-                                        right: false,
-                                        left: true,
-                                      },
+                                  dominant_EH: {
+                                    ...prevData.dominant_EH,
+                                    dominant_eye: {
+                                      right: false,
+                                      left: true,
                                     },
                                   },
                                 }))
@@ -1728,14 +1725,11 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    dominant_EH: {
-                                      ...prevData.dominant_EH,
-                                      dominant_hand: {
-                                        right: true,
-                                        left: false,
-                                      },
+                                  dominant_EH: {
+                                    ...prevData.dominant_EH,
+                                    dominant_hand: {
+                                      right: true,
+                                      left: false,
                                     },
                                   },
                                 }))
@@ -1757,14 +1751,11 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    dominant_EH: {
-                                      ...prevData.dominant_EH,
-                                      dominant_hand: {
-                                        right: false,
-                                        left: true,
-                                      },
+                                  dominant_EH: {
+                                    ...prevData.dominant_EH,
+                                    dominant_hand: {
+                                      right: false,
+                                      left: true,
                                     },
                                   },
                                 }))
@@ -2315,14 +2306,11 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    stereopsis: {
-                                      ...prevData.stereopsis,
-                                      perceived_DO: {
-                                        ...prevData.stereopsis.perceived_DO,
-                                        od: { yes: true, no: false },
-                                      },
+                                  stereopsis: {
+                                    ...prevData.stereopsis,
+                                    perceived_DO: {
+                                      ...prevData.stereopsis.perceived_DO,
+                                      od: { yes: true, no: false },
                                     },
                                   },
                                 }))
@@ -2344,14 +2332,11 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    stereopsis: {
-                                      ...prevData.stereopsis,
-                                      perceived_DO: {
-                                        ...prevData.stereopsis.perceived_DO,
-                                        od: { yes: false, no: true },
-                                      },
+                                  stereopsis: {
+                                    ...prevData.stereopsis,
+                                    perceived_DO: {
+                                      ...prevData.stereopsis.perceived_DO,
+                                      od: { yes: false, no: true },
                                     },
                                   },
                                 }))
@@ -2375,14 +2360,11 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    stereopsis: {
-                                      ...prevData.stereopsis,
-                                      perceived_DO: {
-                                        ...prevData.stereopsis.perceived_DO,
-                                        os: { yes: true, no: false },
-                                      },
+                                  stereopsis: {
+                                    ...prevData.stereopsis,
+                                    perceived_DO: {
+                                      ...prevData.stereopsis.perceived_DO,
+                                      os: { yes: true, no: false },
                                     },
                                   },
                                 }))
@@ -2404,14 +2386,11 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    stereopsis: {
-                                      ...prevData.stereopsis,
-                                      perceived_DO: {
-                                        ...prevData.stereopsis.perceived_DO,
-                                        os: { yes: false, no: true },
-                                      },
+                                  stereopsis: {
+                                    ...prevData.stereopsis,
+                                    perceived_DO: {
+                                      ...prevData.stereopsis.perceived_DO,
+                                      os: { yes: false, no: true },
                                     },
                                   },
                                 }))
@@ -2454,13 +2433,10 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    diplopia_test: {
-                                      ...prevData.diplopia_test,
-                                      present: true,
-                                      absent: false,
-                                    },
+                                  diplopia_test: {
+                                    ...prevData.diplopia_test,
+                                    present: true,
+                                    absent: false,
                                   },
                                 }))
                               }
@@ -2479,13 +2455,10 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    diplopia_test: {
-                                      ...prevData.diplopia_test,
-                                      present: false,
-                                      absent: true,
-                                    },
+                                  diplopia_test: {
+                                    ...prevData.diplopia_test,
+                                    present: false,
+                                    absent: true,
                                   },
                                 }))
                               }
@@ -2528,13 +2501,9 @@ const MedForm = () => {
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
-                                    objective: {
-                                      ...prevData.objective,
-                                      corneal_reflex_test: {
-                                        ...prevData.objective
-                                          .corneal_reflex_test,
-                                        od: { present: true, absent: false },
-                                      },
+                                    corneal_reflex_test: {
+                                      ...prevData.corneal_reflex_test,
+                                      od: { present: true, absent: false },
                                     },
                                   }))
                                 }
@@ -2555,13 +2524,9 @@ const MedForm = () => {
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
-                                    objective: {
-                                      ...prevData.objective,
-                                      corneal_reflex_test: {
-                                        ...prevData.objective
-                                          .corneal_reflex_test,
-                                        od: { present: false, absent: true },
-                                      },
+                                    corneal_reflex_test: {
+                                      ...prevData.corneal_reflex_test,
+                                      od: { present: false, absent: true },
                                     },
                                   }))
                                 }
@@ -2589,13 +2554,9 @@ const MedForm = () => {
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
-                                    objective: {
-                                      ...prevData.objective,
-                                      corneal_reflex_test: {
-                                        ...prevData.objective
-                                          .corneal_reflex_test,
-                                        os: { present: true, absent: false },
-                                      },
+                                    corneal_reflex_test: {
+                                      ...prevData.corneal_reflex_test,
+                                      os: { present: true, absent: false },
                                     },
                                   }))
                                 }
@@ -2616,13 +2577,9 @@ const MedForm = () => {
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
-                                    objective: {
-                                      ...prevData.objective,
-                                      corneal_reflex_test: {
-                                        ...prevData.objective
-                                          .corneal_reflex_test,
-                                        os: { present: false, absent: true },
-                                      },
+                                    corneal_reflex_test: {
+                                      ...prevData.corneal_reflex_test,
+                                      os: { present: false, absent: true },
                                     },
                                   }))
                                 }
@@ -2665,12 +2622,9 @@ const MedForm = () => {
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
-                                    objective: {
-                                      ...prevData.objective,
-                                      motility_test: {
-                                        ...prevData.motility_test,
-                                        od: { normal: true, abnormal: false },
-                                      },
+                                    motility_test: {
+                                      ...prevData.motility_test,
+                                      od: { normal: true, abnormal: false },
                                     },
                                   }))
                                 }
@@ -2689,12 +2643,9 @@ const MedForm = () => {
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
-                                    objective: {
-                                      ...prevData.objective,
-                                      motility_test: {
-                                        ...prevData.motility_test,
-                                        od: { normal: false, abnormal: true },
-                                      },
+                                    motility_test: {
+                                      ...prevData.motility_test,
+                                      od: { normal: false, abnormal: true },
                                     },
                                   }))
                                 }
@@ -2720,12 +2671,9 @@ const MedForm = () => {
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
-                                    objective: {
-                                      ...prevData.objective,
-                                      motility_test: {
-                                        ...prevData.motility_test,
-                                        os: { normal: true, abnormal: false },
-                                      },
+                                    motility_test: {
+                                      ...prevData.motility_test,
+                                      os: { normal: true, abnormal: false },
                                     },
                                   }))
                                 }
@@ -2744,12 +2692,9 @@ const MedForm = () => {
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
-                                    objective: {
-                                      ...prevData.objective,
-                                      motility_test: {
-                                        ...prevData.motility_test,
-                                        os: { normal: false, abnormal: true },
-                                      },
+                                    motility_test: {
+                                      ...prevData.motility_test,
+                                      os: { normal: false, abnormal: true },
                                     },
                                   }))
                                 }
@@ -2792,12 +2737,9 @@ const MedForm = () => {
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
-                                    objective: {
-                                      ...prevData.objective,
-                                      saccadic_test: {
-                                        ...prevData.saccadic_test,
-                                        od: { present: true, absent: false },
-                                      },
+                                    saccadic_test: {
+                                      ...prevData.saccadic_test,
+                                      od: { present: true, absent: false },
                                     },
                                   }))
                                 }
@@ -2816,12 +2758,9 @@ const MedForm = () => {
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
-                                    objective: {
-                                      ...prevData.objective,
-                                      saccadic_test: {
-                                        ...prevData.saccadic_test,
-                                        od: { present: false, absent: true },
-                                      },
+                                    saccadic_test: {
+                                      ...prevData.saccadic_test,
+                                      od: { present: false, absent: true },
                                     },
                                   }))
                                 }
@@ -2847,12 +2786,9 @@ const MedForm = () => {
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
-                                    objective: {
-                                      ...prevData.objective,
-                                      saccadic_test: {
-                                        ...prevData.saccadic_test,
-                                        os: { present: true, absent: false },
-                                      },
+                                    saccadic_test: {
+                                      ...prevData.saccadic_test,
+                                      os: { present: true, absent: false },
                                     },
                                   }))
                                 }
@@ -2871,12 +2807,9 @@ const MedForm = () => {
                                 onChange={() =>
                                   setMedformData((prevData) => ({
                                     ...prevData,
-                                    objective: {
-                                      ...prevData.objective,
-                                      saccadic_test: {
-                                        ...prevData.saccadic_test,
-                                        os: { present: false, absent: true },
-                                      },
+                                    saccadic_test: {
+                                      ...prevData.saccadic_test,
+                                      os: { present: false, absent: true },
                                     },
                                   }))
                                 }
@@ -3323,16 +3256,11 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      vessel: {
-                                        ...prevData.objective
-                                          .internal_examination.vessel,
-                                        od: { normal: true, abnormal: false },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    vessel: {
+                                      ...prevData.internal_examination.vessel,
+                                      od: { normal: true, abnormal: false },
                                     },
                                   },
                                 }))
@@ -3355,16 +3283,11 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      vessel: {
-                                        ...prevData.objective
-                                          .internal_examination.vessel,
-                                        od: { normal: false, abnormal: true },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    vessel: {
+                                      ...prevData.internal_examination.vessel,
+                                      od: { normal: false, abnormal: true },
                                     },
                                   },
                                 }))
@@ -3392,16 +3315,11 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      vessel: {
-                                        ...prevData.objective
-                                          .internal_examination.vessel,
-                                        os: { normal: true, abnormal: false },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    vessel: {
+                                      ...prevData.internal_examination.vessel,
+                                      os: { normal: true, abnormal: false },
                                     },
                                   },
                                 }))
@@ -3424,16 +3342,11 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      vessel: {
-                                        ...prevData.objective
-                                          .internal_examination.vessel,
-                                        os: { normal: false, abnormal: true },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    vessel: {
+                                      ...prevData.internal_examination.vessel,
+                                      os: { normal: false, abnormal: true },
                                     },
                                   },
                                 }))
@@ -3460,16 +3373,12 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      venous_pulse: {
-                                        ...prevData.objective
-                                          .internal_examination.venous_pulse,
-                                        od: { normal: true, abnormal: false },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    venous_pulse: {
+                                      ...prevData.internal_examination
+                                        .venous_pulse,
+                                      od: { normal: true, abnormal: false },
                                     },
                                   },
                                 }))
@@ -3492,16 +3401,12 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      venous_pulse: {
-                                        ...prevData.objective
-                                          .internal_examination.venous_pulse,
-                                        od: { normal: false, abnormal: true },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    venous_pulse: {
+                                      ...prevData.internal_examination
+                                        .venous_pulse,
+                                      od: { normal: false, abnormal: true },
                                     },
                                   },
                                 }))
@@ -3529,16 +3434,12 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      venous_pulse: {
-                                        ...prevData.objective
-                                          .internal_examination.venous_pulse,
-                                        os: { normal: true, abnormal: false },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    venous_pulse: {
+                                      ...prevData.internal_examination
+                                        .venous_pulse,
+                                      os: { normal: true, abnormal: false },
                                     },
                                   },
                                 }))
@@ -3561,16 +3462,12 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      venous_pulse: {
-                                        ...prevData.objective
-                                          .internal_examination.venous_pulse,
-                                        os: { normal: false, abnormal: true },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    venous_pulse: {
+                                      ...prevData.internal_examination
+                                        .venous_pulse,
+                                      os: { normal: false, abnormal: true },
                                     },
                                   },
                                 }))
@@ -3597,16 +3494,12 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      forveal_reflex: {
-                                        ...prevData.objective
-                                          .internal_examination.forveal_reflex,
-                                        od: { present: true, absent: false },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    forveal_reflex: {
+                                      ...prevData.internal_examination
+                                        .forveal_reflex,
+                                      od: { present: true, absent: false },
                                     },
                                   },
                                 }))
@@ -3629,16 +3522,12 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      forveal_reflex: {
-                                        ...prevData.objective
-                                          .internal_examination.forveal_reflex,
-                                        od: { present: false, absent: true },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    forveal_reflex: {
+                                      ...prevData.internal_examination
+                                        .forveal_reflex,
+                                      od: { present: false, absent: true },
                                     },
                                   },
                                 }))
@@ -3666,16 +3555,12 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      forveal_reflex: {
-                                        ...prevData.objective
-                                          .internal_examination.forveal_reflex,
-                                        os: { present: true, absent: false },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    forveal_reflex: {
+                                      ...prevData.internal_examination
+                                        .forveal_reflex,
+                                      os: { present: true, absent: false },
                                     },
                                   },
                                 }))
@@ -3698,16 +3583,12 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      forveal_reflex: {
-                                        ...prevData.objective
-                                          .internal_examination.forveal_reflex,
-                                        os: { present: false, absent: true },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    forveal_reflex: {
+                                      ...prevData.internal_examination
+                                        .forveal_reflex,
+                                      os: { present: false, absent: true },
                                     },
                                   },
                                 }))
@@ -3734,16 +3615,12 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      periphery: {
-                                        ...prevData.objective
-                                          .internal_examination.periphery,
-                                        od: { normal: true, abnormal: false },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    periphery: {
+                                      ...prevData.internal_examination
+                                        .periphery,
+                                      od: { normal: true, abnormal: false },
                                     },
                                   },
                                 }))
@@ -3766,16 +3643,12 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      periphery: {
-                                        ...prevData.objective
-                                          .internal_examination.periphery,
-                                        od: { normal: false, abnormal: true },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    periphery: {
+                                      ...prevData.internal_examination
+                                        .periphery,
+                                      od: { normal: false, abnormal: true },
                                     },
                                   },
                                 }))
@@ -3803,16 +3676,12 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      periphery: {
-                                        ...prevData.objective
-                                          .internal_examination.periphery,
-                                        os: { normal: true, abnormal: false },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    periphery: {
+                                      ...prevData.internal_examination
+                                        .periphery,
+                                      os: { normal: true, abnormal: false },
                                     },
                                   },
                                 }))
@@ -3835,16 +3704,12 @@ const MedForm = () => {
                               onChange={() =>
                                 setMedformData((prevData) => ({
                                   ...prevData,
-                                  objective: {
-                                    ...prevData.objective,
-                                    internal_examination: {
-                                      ...prevData.objective
-                                        .internal_examination,
-                                      periphery: {
-                                        ...prevData.objective
-                                          .internal_examination.periphery,
-                                        os: { normal: false, abnormal: true },
-                                      },
+                                  internal_examination: {
+                                    ...prevData.internal_examination,
+                                    periphery: {
+                                      ...prevData.internal_examination
+                                        .periphery,
+                                      os: { normal: false, abnormal: true },
                                     },
                                   },
                                 }))
