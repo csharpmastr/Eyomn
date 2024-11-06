@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import Cookies from "universal-cookie";
 
 const Inventory = () => {
+  const user = useSelector((state) => state.reducer.user.user);
   const products = useSelector((state) => state.reducer.inventory.products);
   const productCount = products.filter(
     (product) => product.isDeleted === false
@@ -63,13 +64,15 @@ const Inventory = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div
-            className="flex flex-row px-4 items-center rounded-md py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
-            onClick={toggleModal}
-          >
-            <FiPlus className="h-5 w-5 md:mr-2" />
-            <h1 className="hidden md:block text-nowrap">Add Product</h1>
-          </div>
+          {user.role !== "0" && (
+            <div
+              className="flex flex-row px-4 items-center rounded-md py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+              onClick={toggleModal}
+            >
+              <FiPlus className="h-5 w-5 md:mr-2" />
+              <h1 className="hidden md:block text-nowrap">Add Product</h1>
+            </div>
+          )}
         </div>
       </nav>
       <main className="overflow-x-auto">

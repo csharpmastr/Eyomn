@@ -254,7 +254,14 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
 
           const productId = response.data.productId;
           const productSKU = response.data.productSKU;
-          reduxDispatch(addProduct({ ...cleanedData, productId, productSKU }));
+          reduxDispatch(
+            addProduct({
+              ...cleanedData,
+              productId,
+              isDeleted: false,
+              productSKU,
+            })
+          );
         }
       } else {
         console.log(cleanedData);
