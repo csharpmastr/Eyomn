@@ -1,9 +1,12 @@
 require("dotenv").config();
 const admin = require("firebase-admin");
-const serviceAccount = require("./eyomn-2d9c7-firebase-adminsdk-zjlyg-4c6fd6c764.json");
+
+const firebaseCredentials = JSON.parse(
+  Buffer.from(process.env.FIREBASE_ADMIN_SDK, "base64").toString()
+);
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert(firebaseCredentials),
   databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`,
   storageBucket: `gs://${process.env.FIREBASE_STORAGE_BUCKET}`,
 });
