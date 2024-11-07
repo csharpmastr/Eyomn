@@ -104,13 +104,13 @@ const SideBar = () => {
             className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
               ${
                 role === "0"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
                   : role === "1"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
                   : role === "2"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
                   : role === "3" &&
-                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                    " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
               }
               ${
                 selected === "dashboard"
@@ -145,23 +145,23 @@ const SideBar = () => {
               className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
               ${
                 role === "0"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
                   : role === "1"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
                   : role === "2"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
                   : role === "3" &&
-                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                    " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
               }
               ${
                 selected === "organization"
                   ? role === "0"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-secondary text-f-light font-semibold "
                     : role === "1"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-branch text-f-light font-semibold "
                     : role === "2"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-staff text-f-light font-semibold "
                   : "text-f-dark font-medium"
               }
               ${
@@ -187,23 +187,23 @@ const SideBar = () => {
               className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
               ${
                 role === "0"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
                   : role === "1"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
                   : role === "2"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
                   : role === "3" &&
-                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                    " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
               }
               ${
                 selected === "scribe"
                   ? role === "0"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-secondary text-f-light font-semibold "
                     : role === "1"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-branch text-f-light font-semibold "
                     : role === "2"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-staff text-f-light font-semibold "
                   : "text-f-dark font-medium"
               }
               ${
@@ -227,25 +227,25 @@ const SideBar = () => {
           {role === "3" && (
             <NavLink
               className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-              ${
-                role === "0"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-                  : role === "1"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-                  : role === "2"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-                  : role === "3" &&
-                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-              }
+             ${
+               role === "0"
+                 ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
+                 : role === "1"
+                 ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
+                 : role === "2"
+                 ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
+                 : role === "3" &&
+                   " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
+             }
               ${
                 selected === "add-patient"
                   ? role === "0"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-secondary text-f-light font-semibold "
                     : role === "1"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-branch text-f-light font-semibold "
                     : role === "2"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-staff text-f-light font-semibold "
                   : "text-f-dark font-medium"
               }
               ${
@@ -268,25 +268,25 @@ const SideBar = () => {
           )}
           <NavLink
             className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-              ${
-                role === "0"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-                  : role === "1"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-                  : role === "2"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-                  : role === "3" &&
-                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-              }
+             ${
+               role === "0"
+                 ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
+                 : role === "1"
+                 ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
+                 : role === "2"
+                 ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
+                 : role === "3" &&
+                   " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
+             }
               ${
                 selected === "patient"
                   ? role === "0"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-secondary text-f-light font-semibold "
                     : role === "1"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-branch text-f-light font-semibold "
                     : role === "2"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-staff text-f-light font-semibold "
                   : "text-f-dark font-medium"
               }
               ${
@@ -308,25 +308,25 @@ const SideBar = () => {
           </NavLink>
           <NavLink
             className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-              ${
-                role === "0"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-                  : role === "1"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-                  : role === "2"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-                  : role === "3" &&
-                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-              }
+             ${
+               role === "0"
+                 ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
+                 : role === "1"
+                 ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
+                 : role === "2"
+                 ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
+                 : role === "3" &&
+                   " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
+             }
               ${
                 selected === "appointment"
                   ? role === "0"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-secondary text-f-light font-semibold "
                     : role === "1"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-branch text-f-light font-semibold "
                     : role === "2"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-staff text-f-light font-semibold "
                   : "text-f-dark font-medium"
               }
               ${
@@ -354,25 +354,25 @@ const SideBar = () => {
               {role != 3 && (
                 <NavLink
                   className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-              ${
-                role === "0"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-                  : role === "1"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-                  : role === "2"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-                  : role === "3" &&
-                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-              }
+             ${
+               role === "0"
+                 ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
+                 : role === "1"
+                 ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
+                 : role === "2"
+                 ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
+                 : role === "3" &&
+                   " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
+             }
               ${
                 selected === "report"
                   ? role === "0"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-secondary text-f-light font-semibold "
                     : role === "1"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-branch text-f-light font-semibold "
                     : role === "2"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-staff text-f-light font-semibold "
                   : "text-f-dark font-medium"
               }
               ${
@@ -397,23 +397,23 @@ const SideBar = () => {
                 className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
               ${
                 role === "0"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
                   : role === "1"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
                   : role === "2"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
                   : role === "3" &&
-                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                    " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
               }
               ${
                 selected === "inventory"
                   ? role === "0"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-secondary text-f-light font-semibold "
                     : role === "1"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-branch text-f-light font-semibold "
                     : role === "2"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-staff text-f-light font-semibold "
                   : "text-f-dark font-medium"
               }
               ${
@@ -437,23 +437,23 @@ const SideBar = () => {
                 className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
               ${
                 role === "0"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
                   : role === "1"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
                   : role === "2"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
                   : role === "3" &&
-                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                    " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
               }
               ${
                 selected === "stock_checkout"
                   ? role === "0"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-secondary text-f-light font-semibold "
                     : role === "1"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-branch text-f-light font-semibold "
                     : role === "2"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-staff text-f-light font-semibold "
                   : "text-f-dark font-medium"
               }
               ${
@@ -481,23 +481,23 @@ const SideBar = () => {
             className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
               ${
                 role === "0"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
                   : role === "1"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
                   : role === "2"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                  ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
                   : role === "3" &&
-                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
+                    " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
               }
               ${
                 selected === "manage-profile/:section"
                   ? role === "0"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-secondary text-f-light font-semibold "
                     : role === "1"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-branch text-f-light font-semibold "
                     : role === "2"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-staff text-f-light font-semibold "
                   : "text-f-dark font-medium"
               }
               ${
@@ -519,25 +519,25 @@ const SideBar = () => {
           </NavLink>
           <NavLink
             className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-              ${
-                role === "0"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-                  : role === "1"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-                  : role === "2"
-                  ? " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-                  : role === "3" &&
-                    " xl:hover:bg-sb-hover-prime xl:active:bg-sb-pressed-prime xl:focus:bg-c-primary "
-              }
+             ${
+               role === "0"
+                 ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
+                 : role === "1"
+                 ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
+                 : role === "2"
+                 ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
+                 : role === "3" &&
+                   " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
+             }
               ${
                 selected === "help"
                   ? role === "0"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-secondary text-f-light font-semibold "
                     : role === "1"
-                    ? "bg-c-primary text-f-light font-semibold "
+                    ? "bg-c-branch text-f-light font-semibold "
                     : role === "2"
                     ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-primary text-f-light font-semibold "
+                    : role === "3" && "bg-c-staff text-f-light font-semibold "
                   : "text-f-dark font-medium"
               }
               ${
