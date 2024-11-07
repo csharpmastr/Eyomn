@@ -356,7 +356,7 @@ const AddStaff = ({ onClose, staffData }) => {
   return ReactDOM.createPortal(
     <>
       {isLoading ? (
-        <Loader />
+        <Loader description={"Saving Staff Information, please wait..."} />
       ) : (
         <div className="fixed p-4 top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
           <div className="w-[500px] md:w-[600px] md:mr-8">

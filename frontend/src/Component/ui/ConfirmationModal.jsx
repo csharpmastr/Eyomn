@@ -44,7 +44,7 @@ const ConfirmationModal = ({ productId, onClose }) => {
   return (
     <>
       {isLoading ? (
-        <Loader />
+        <Loader description={"Deleting Product, please wait..."} />
       ) : (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-10">
           <div className="bg-white rounded-lg shadow-lg font-Poppins w-[400px]">

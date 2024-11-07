@@ -104,6 +104,7 @@ const AppRoutes = () => {
         >
           <Route path=":patientId" element={<ScribeRecord />} />
           <Route path="new-record/:patientId" element={<MedForm />} />
+          <Route path="raw-note/:patientId/:noteId" element={<MedForm />} />
         </Route>
 
         <Route path="patient" element={<Patient />}>

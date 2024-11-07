@@ -254,7 +254,14 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
 
           const productId = response.data.productId;
           const productSKU = response.data.productSKU;
-          reduxDispatch(addProduct({ ...cleanedData, productId, productSKU }));
+          reduxDispatch(
+            addProduct({
+              ...cleanedData,
+              productId,
+              isDeleted: false,
+              productSKU,
+            })
+          );
         }
       } else {
         console.log(cleanedData);
@@ -295,7 +302,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
   return ReactDOM.createPortal(
     <>
       {isLoading ? (
-        <Loader />
+        <Loader description={"Saving Product Information, please wait..."} />
       ) : (
         <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
           <div className="w-[380px] md:w-[600px] md:mr-8">

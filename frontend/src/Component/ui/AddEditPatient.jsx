@@ -178,7 +178,7 @@ const AddEditPatient = ({ onClose }) => {
   return (
     <>
       {isLoading ? (
-        <Loader />
+        <Loader description={"Saving Patient Information, please wait..."} />
       ) : (
         <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
           <div className="w-[380px] md:w-[600px]">
