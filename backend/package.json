@@ -1,12 +1,25 @@
 {
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "firebase": "^10.13.1",
+    "firebase-admin": "^12.5.0",
     "google-auth-library": "^9.14.0",
-    "googleapis": "^142.0.0"
+    "googleapis": "^142.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^10.0.0",
+    "websocket": "^1.0.35",
+    "ws": "^8.18.0"
   },
   "scripts": {
     "start": "node server.js"
+  },
+  "devDependencies": {
+    "@types/websocket": "^1.0.10"
   }
 }

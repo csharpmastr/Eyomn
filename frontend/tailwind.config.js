@@ -21,6 +21,41 @@ export default {
         "faq-bg": "#446E86",
         "contact-bg": "#2C3E50",
         "span-col": "#A9A9A9",
+
+        "f-dark": "#26282A",
+        "f-light": "#FBFCF8",
+        "f-gray": "#C3C3C3",
+        "f-gray2": "#A7A7A7",
+        "c-gray3": "#9C9C9C",
+
+        //Nav button colors
+        "c-secondary": "#264653",
+        "c-primary": "#1E8282",
+        "c-branch": "#4A90E2",
+        "c-staff": "#C79754",
+
+        //Nav button hover state
+        "hover-org": "#ABB2B9",
+        "hover-branch": "#B7D3F3",
+        "hover-doctor": "#A5CDCD",
+        "hover-staff": "#E8D5BA",
+
+        //Nav button active state
+        "pressed-org": "#1A343E",
+        "pressed-branch": "#3A72C1",
+        "pressed-doctor": "#176565",
+        "pressed-staff": "#A97842",
+
+        "bg-sb": "#EEF1F1",
+        "bg-mc": "#F5F5F5",
+        "bg-sub": "#F8FBFC",
+      },
+      fontSize: {
+        "p-sm": "13.33px",
+        "p-rg": "16px",
+        "p-lg": "19.2px",
+        "h-h6": "23.04px",
+        "h-h4": "33.18px",
       },
       animation: {
         soundwave: "soundwave 1.3s infinite",

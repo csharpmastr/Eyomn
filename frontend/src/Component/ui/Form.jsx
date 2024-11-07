@@ -53,31 +53,30 @@ const Form = ({ formFields = [], handleSubmit, disabled }) => {
       {Array.isArray(formFields) &&
         formFields.map((field) => (
           <div key={field.name} className="">
-            <label htmlFor={field.name} className="">
-              {field.label}
-            </label>
-            <input
-              id={field.name}
-              type={field.type}
-              name={field.name}
-              placeholder={field.placeholder}
-              value={formData[field.name]}
-              onChange={handleChange}
-              className="w-full p-2 border-2 rounded-md mt-5 font-Poppins"
-              disabled={disabled}
-              pattern={field.pattern}
-            />
-            {errors[field.name] && (
-              <p className="text-red-500 text-sm font-Poppins pl-2 pt-2">
-                {errors[field.name]}
-              </p>
-            )}
+            <div className="mb-5">
+              <input
+                id={field.name}
+                type={field.type}
+                name={field.name}
+                placeholder={field.placeholder}
+                value={formData[field.name]}
+                onChange={handleChange}
+                className="w-full p-2 border-2 rounded-md font-Poppins"
+                disabled={disabled}
+                pattern={field.pattern}
+              />
+              {errors[field.name] && (
+                <p className="text-red-500 text-sm font-Poppins pl-2">
+                  {errors[field.name]}
+                </p>
+              )}
+            </div>
           </div>
         ))}
       <button
         type="submit"
         disabled={disabled}
-        className="flex justify-center gap-2 items-center mt-6 border-2 border-solid border-gray-400 w-full h-10 shadow-lg hover:cursor-pointer 
+        className="flex justify-center gap-2 items-center rounded-md border-2 border-solid border-gray-400 w-full h-10 shadow-lg hover:cursor-pointer 
               transition-transform ease-in-out duration-300 
             hover:bg-gray-400 hover:bg-opacity-25 text-lg
               hover:shadow-xl hover:scale-105 tracking-wide  text-paragraph  font-Poppins font-bold  "

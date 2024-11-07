@@ -63,3 +63,5 @@ build/
 
 # MacOS files
 ._*
+
+/backend/Config/*.json
