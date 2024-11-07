@@ -16,6 +16,5 @@ router.get("/get-staffs", getStaffsHandler);
 router.get("/get-doctors", getDoctorsListHandler);
 router.post("/add-branch/:organizationId", addBranchHandler);
 router.get("/get-branch-data/:organizationId", getBranchDataHandler);
-router.get("/get-product-sales", getOrgProductSalesHandler);
 
 module.exports = router;
