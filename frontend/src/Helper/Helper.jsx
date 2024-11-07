@@ -46,3 +46,19 @@ const removeNullValues = (obj) => {
       .map(([key, value]) => [key, removeNullValues(value)])
   );
 };
+export const mergeDeep = (target, source) => {
+  for (const key in target) {
+    if (source && source[key] !== undefined) {
+      if (
+        typeof source[key] === "object" &&
+        !Array.isArray(source[key]) &&
+        source[key] !== null
+      ) {
+        target[key] = mergeDeep(target[key], source[key]);
+      } else if (source[key] !== "") {
+        target[key] = source[key];
+      }
+    }
+  }
+  return target;
+};

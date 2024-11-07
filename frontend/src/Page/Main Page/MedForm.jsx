@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Modal from "../../Component/ui/Modal";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { addNewRawNote } from "../../Slice/NoteSlice";
-import { cleanData } from "../../Helper/Helper";
+import { cleanData, mergeDeep } from "../../Helper/Helper";
 
 const MedForm = () => {
   const { patientId } = useParams();
@@ -525,7 +525,11 @@ const MedForm = () => {
     if (noteId && rawNotes) {
       const rawNote = rawNotes.find((raw) => raw.noteId === noteId);
       if (rawNote) {
-        setMedformData({ ...rawNote });
+        setMedformData((prevData) => {
+          const updatedData = { ...prevData };
+
+          return mergeDeep(updatedData, rawNote);
+        });
       }
     } else {
       setMedformData(initialMedFormData);
@@ -655,8 +659,11 @@ const MedForm = () => {
   };
   const handleBack = () => {
     navigate(`/scribe/${patientId}`);
+    console.log(medformData);
+
     sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
   };
+
   return (
     <>
       {isLoading && (
