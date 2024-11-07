@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import Chart from "react-apexcharts";
 import dayjs from "dayjs";
 import { useSelector } from "react-redux";
+import RoleColor from "../../../assets/Util/RoleColor";
 
 const DbGraph = ({ patients, sales }) => {
   const user = useSelector((state) => state.reducer.user.user);
@@ -9,6 +10,8 @@ const DbGraph = ({ patients, sales }) => {
   const [selectedDataType, setSelectedDataType] = useState(
     user.role === "3" ? "sales" : "patients"
   );
+
+  const { graphColor } = RoleColor();
 
   useEffect(() => {
     if (["0", "1", "3"].includes(user.role)) {
@@ -134,7 +137,7 @@ const DbGraph = ({ patients, sales }) => {
     xaxis: { categories: xAxisCategories },
     stroke: { curve: "smooth" },
     dataLabels: { enabled: false },
-    colors: ["#3FB59D"],
+    colors: [graphColor],
     markers: { size: 0 },
   };
 
@@ -148,7 +151,7 @@ const DbGraph = ({ patients, sales }) => {
   return (
     <div className="text-p-rg h-[500px] text-f-dark rounded-lg bg-white p-4 border">
       <header className="flex justify-between h-fit w-full items-center mb-4">
-        <h1 className="font-medium text-c-secondary">
+        <h1 className="font-medium text-nowrap text-c-secondary">
           {user.role !== "2"
             ? selectedDataType === "sales"
               ? "| Inventory Graph"

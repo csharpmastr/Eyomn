@@ -22,7 +22,7 @@ export default {
         "contact-bg": "#2C3E50",
         "span-col": "#A9A9A9",
 
-        "f-dark": "#26282A",
+        "f-dark": "#202427",
         "f-light": "#FBFCF8",
         "f-gray": "#C3C3C3",
         "f-gray2": "#A7A7A7",
@@ -30,8 +30,8 @@ export default {
 
         //Nav button colors
         "c-secondary": "#264653",
-        "c-primary": "#1E8282",
         "c-branch": "#4A90E2",
+        "c-primary": "#1E8282",
         "c-staff": "#C79754",
 
         //Nav button hover state
@@ -46,9 +46,15 @@ export default {
         "pressed-doctor": "#176565",
         "pressed-staff": "#A97842",
 
-        "bg-sb": "#EEF1F1",
+        //Sidebar background
+        "sb-org": "#F8F8FC",
+        "sb-branch": "#FBFDFF",
+        "bg-sb": "#F3F4F6",
+        "sb-staff": "#F9F7F4",
+
         "bg-mc": "#F5F5F5",
         "bg-sub": "#F8FBFC",
+        "bg-con": "#4A90E2",
       },
       fontSize: {
         "p-sm": "13.33px",

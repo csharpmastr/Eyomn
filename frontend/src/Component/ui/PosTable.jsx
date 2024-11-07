@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import Nodatafound from "../../assets/Image/nodatafound.png";
+import RoleColor from "../../assets/Util/RoleColor";
 
 const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
   const products = useSelector((state) => state.reducer.inventory.products);
@@ -42,6 +43,8 @@ const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
 
   const startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
   const endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+
+  const { btnContentColor } = RoleColor();
 
   return (
     <>
@@ -85,7 +88,7 @@ const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
                 onClick={() => handlePageChange(startPage + index)}
                 className={`px-4 py-2 mx-1 rounded ${
                   currentPage === startPage + index
-                    ? "bg-c-secondary text-f-light"
+                    ? `${btnContentColor} text-f-light`
                     : "bg-gray-200 text-f-gray2"
                 }`}
               >

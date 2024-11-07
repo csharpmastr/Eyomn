@@ -6,11 +6,9 @@ import { FiUser } from "react-icons/fi";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
 import SidebarLogo from "../../assets/Image/sidebar_logo.png";
-import Cookies from "universal-cookie";
-import { useAuthContext } from "../../Hooks/useAuthContext";
 import { useSelector } from "react-redux";
 import { BsLayoutSidebar } from "react-icons/bs";
-
+import RoleColor from "../../assets/Util/RoleColor";
 import { FiBox } from "react-icons/fi";
 import { FiCalendar } from "react-icons/fi";
 import { FiShoppingCart } from "react-icons/fi";
@@ -44,9 +42,12 @@ const SideBar = () => {
     const current = sessionStorage.getItem("selectedTab");
     setSelected(current);
   }, [selected]);
+
+  const { roleSbColor, btnHoverColor, btnBgColor } = RoleColor();
+
   return (
     <div
-      className={`h-16 w-full xl:h-screen z-50 font-Poppins bg-c-primary xl:bg-bg-sb  transition-all duration-300 ease-in-out ${
+      className={`h-16 w-full xl:h-screen z-50 font-Poppins ${btnBgColor}  transition-all duration-300 ease-in-out  ${roleSbColor} ${
         isCollapsed ? "xl:w-24" : "xl:w-64"
       }`}
     >
@@ -85,10 +86,10 @@ const SideBar = () => {
       </div>
 
       <div
-        className={`flex flex-col justify-between h-full xl:space-y-3 xl:px-6 xl:pt-10 xl:pb-5 transition-transform duration-300 ease-in-out border-r border-f-gray  ${
+        className={`flex flex-col justify-between h-full xl:space-y-3 xl:px-6 xl:pt-10 xl:pb-5 transition-transform duration-300 ease-in-out border-r border-f-gray ${roleSbColor}  ${
           isMenuOpen
-            ? "translate-x-0 max-h-screen h-full mt-2 md:mt-0 bg-bg-sb fixed xl:static w-3/4 md:w-1/3 lg:w-1/4 xl:w-auto"
-            : "hidden xl:flex"
+            ? " translate-x-0 max-h-screen h-full mt-2 md:mt-0 fixed xl:static w-3/4 md:w-1/3 lg:w-1/4 xl:w-auto bg-bg-sb "
+            : " hidden xl:flex "
         }`}
         style={{ maxHeight: "calc(100vh - 64px)" }}
       >
@@ -96,31 +97,16 @@ const SideBar = () => {
           {isCollapsed ? (
             ""
           ) : (
-            <h1 className=" text-p-sm font-medium text-f-dark mt-5 xl:mt-0">
+            <h1 className=" text-p-sm font-medium text-c-gray3 mt-5 xl:mt-0 ml-5">
               Main Menu
             </h1>
           )}
           <NavLink
             className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-              ${
-                role === "0"
-                  ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
-                  : role === "1"
-                  ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
-                  : role === "2"
-                  ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
-                  : role === "3" &&
-                    " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
-              }
+              ${btnHoverColor}
               ${
                 selected === "dashboard"
-                  ? role === "0"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : role === "1"
-                    ? "bg-c-branch text-f-light font-semibold "
-                    : role === "2"
-                    ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-staff text-f-light font-semibold "
+                  ? btnBgColor
                   : "text-f-dark font-medium"
               }
               ${
@@ -143,25 +129,10 @@ const SideBar = () => {
           {role === "0" && (
             <NavLink
               className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-              ${
-                role === "0"
-                  ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
-                  : role === "1"
-                  ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
-                  : role === "2"
-                  ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
-                  : role === "3" &&
-                    " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
-              }
+              ${btnHoverColor}
               ${
                 selected === "organization"
-                  ? role === "0"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : role === "1"
-                    ? "bg-c-branch text-f-light font-semibold "
-                    : role === "2"
-                    ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-staff text-f-light font-semibold "
+                  ? btnBgColor
                   : "text-f-dark font-medium"
               }
               ${
@@ -185,27 +156,8 @@ const SideBar = () => {
           {role === "2" && (
             <NavLink
               className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-              ${
-                role === "0"
-                  ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
-                  : role === "1"
-                  ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
-                  : role === "2"
-                  ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
-                  : role === "3" &&
-                    " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
-              }
-              ${
-                selected === "scribe"
-                  ? role === "0"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : role === "1"
-                    ? "bg-c-branch text-f-light font-semibold "
-                    : role === "2"
-                    ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-staff text-f-light font-semibold "
-                  : "text-f-dark font-medium"
-              }
+             ${btnHoverColor}
+              ${selected === "scribe" ? btnBgColor : "text-f-dark font-medium"}
               ${
                 isCollapsed
                   ? "xl:justify-center xl:px-2 py-2"
@@ -227,25 +179,10 @@ const SideBar = () => {
           {role === "3" && (
             <NavLink
               className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-             ${
-               role === "0"
-                 ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
-                 : role === "1"
-                 ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
-                 : role === "2"
-                 ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
-                 : role === "3" &&
-                   " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
-             }
+            ${btnHoverColor}
               ${
                 selected === "add-patient"
-                  ? role === "0"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : role === "1"
-                    ? "bg-c-branch text-f-light font-semibold "
-                    : role === "2"
-                    ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-staff text-f-light font-semibold "
+                  ? btnBgColor
                   : "text-f-dark font-medium"
               }
               ${
@@ -268,27 +205,8 @@ const SideBar = () => {
           )}
           <NavLink
             className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-             ${
-               role === "0"
-                 ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
-                 : role === "1"
-                 ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
-                 : role === "2"
-                 ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
-                 : role === "3" &&
-                   " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
-             }
-              ${
-                selected === "patient"
-                  ? role === "0"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : role === "1"
-                    ? "bg-c-branch text-f-light font-semibold "
-                    : role === "2"
-                    ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-staff text-f-light font-semibold "
-                  : "text-f-dark font-medium"
-              }
+             ${btnHoverColor}
+              ${selected === "patient" ? btnBgColor : "text-f-dark font-medium"}
               ${
                 isCollapsed
                   ? "xl:justify-center xl:px-2 py-2"
@@ -308,25 +226,10 @@ const SideBar = () => {
           </NavLink>
           <NavLink
             className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-             ${
-               role === "0"
-                 ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
-                 : role === "1"
-                 ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
-                 : role === "2"
-                 ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
-                 : role === "3" &&
-                   " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
-             }
+             ${btnHoverColor}
               ${
                 selected === "appointment"
-                  ? role === "0"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : role === "1"
-                    ? "bg-c-branch text-f-light font-semibold "
-                    : role === "2"
-                    ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-staff text-f-light font-semibold "
+                  ? btnBgColor
                   : "text-f-dark font-medium"
               }
               ${
@@ -348,33 +251,19 @@ const SideBar = () => {
           </NavLink>
           {role != 2 && (
             <div className="flex flex-col gap-2 mr-4 xl:mr-0 mt-4">
-              <h1 className=" text-p-sm font-medium text-f-dark mt-5 xl:mt-0">
-                Other
-              </h1>
+              <hr className="mb-4 border-f-gray" />
+              {isCollapsed ? (
+                ""
+              ) : (
+                <h1 className=" text-p-sm font-medium text-c-gray3 mt-5 xl:mt-0 ml-5">
+                  Other
+                </h1>
+              )}
               {role != 3 && (
                 <NavLink
                   className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-             ${
-               role === "0"
-                 ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
-                 : role === "1"
-                 ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
-                 : role === "2"
-                 ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
-                 : role === "3" &&
-                   " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
-             }
-              ${
-                selected === "report"
-                  ? role === "0"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : role === "1"
-                    ? "bg-c-branch text-f-light font-semibold "
-                    : role === "2"
-                    ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-staff text-f-light font-semibold "
-                  : "text-f-dark font-medium"
-              }
+            ${btnHoverColor}
+              ${selected === "report" ? btnBgColor : "text-f-dark font-medium"}
               ${
                 isCollapsed
                   ? "xl:justify-center xl:px-2 py-2"
@@ -395,25 +284,10 @@ const SideBar = () => {
               )}
               <NavLink
                 className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-              ${
-                role === "0"
-                  ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
-                  : role === "1"
-                  ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
-                  : role === "2"
-                  ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
-                  : role === "3" &&
-                    " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
-              }
+              ${btnHoverColor}
               ${
                 selected === "inventory"
-                  ? role === "0"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : role === "1"
-                    ? "bg-c-branch text-f-light font-semibold "
-                    : role === "2"
-                    ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-staff text-f-light font-semibold "
+                  ? btnBgColor
                   : "text-f-dark font-medium"
               }
               ${
@@ -435,25 +309,10 @@ const SideBar = () => {
               </NavLink>
               <NavLink
                 className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-              ${
-                role === "0"
-                  ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
-                  : role === "1"
-                  ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
-                  : role === "2"
-                  ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
-                  : role === "3" &&
-                    " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
-              }
+              ${btnHoverColor}
               ${
                 selected === "stock_checkout"
-                  ? role === "0"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : role === "1"
-                    ? "bg-c-branch text-f-light font-semibold "
-                    : role === "2"
-                    ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-staff text-f-light font-semibold "
+                  ? btnBgColor
                   : "text-f-dark font-medium"
               }
               ${
@@ -479,25 +338,10 @@ const SideBar = () => {
         <div className="flex flex-col gap-2 mr-4 xl:mr-0">
           <NavLink
             className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-              ${
-                role === "0"
-                  ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
-                  : role === "1"
-                  ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
-                  : role === "2"
-                  ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
-                  : role === "3" &&
-                    " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
-              }
+             ${btnHoverColor}
               ${
                 selected === "manage-profile/:section"
-                  ? role === "0"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : role === "1"
-                    ? "bg-c-branch text-f-light font-semibold "
-                    : role === "2"
-                    ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-staff text-f-light font-semibold "
+                  ? btnBgColor
                   : "text-f-dark font-medium"
               }
               ${
@@ -519,27 +363,8 @@ const SideBar = () => {
           </NavLink>
           <NavLink
             className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
-             ${
-               role === "0"
-                 ? " xl:hover:bg-hover-org active:bg-pressed-org xl:focus:bg-c-secondary"
-                 : role === "1"
-                 ? " xl:hover:bg-hover-branch xl:active:bg-pressed-branch xl:focus:bg-c-branch "
-                 : role === "2"
-                 ? " xl:hover:bg-hover-doctor xl:active:bg-pressed-doctor xl:focus:bg-c-primary "
-                 : role === "3" &&
-                   " xl:hover:bg-hover-staff xl:active:bg-pressed-staff xl:focus:bg-c-staff "
-             }
-              ${
-                selected === "help"
-                  ? role === "0"
-                    ? "bg-c-secondary text-f-light font-semibold "
-                    : role === "1"
-                    ? "bg-c-branch text-f-light font-semibold "
-                    : role === "2"
-                    ? "bg-c-primary text-f-light font-semibold "
-                    : role === "3" && "bg-c-staff text-f-light font-semibold "
-                  : "text-f-dark font-medium"
-              }
+            ${btnHoverColor}
+              ${selected === "help" ? btnBgColor : "text-f-dark font-medium"}
               ${
                 isCollapsed
                   ? "xl:justify-center xl:px-2 py-2"

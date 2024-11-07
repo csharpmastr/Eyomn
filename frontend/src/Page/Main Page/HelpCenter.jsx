@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import HelpSections from "../../Component/ui/HelpSections";
+import RoleColor from "../../assets/Util/RoleColor";
 
 const HelpCenter = () => {
   const [selected, setSelected] = useState("Getting Started");
@@ -20,6 +21,8 @@ const HelpCenter = () => {
       ?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const { helpBtn } = RoleColor();
+
   return (
     <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppins h-full gap-6 overflow-clip">
       <nav className="w-full flex gap-4 overflow-x-auto pb-2 ">
@@ -35,7 +38,7 @@ const HelpCenter = () => {
             key={section}
             className={`h-auto flex items-center rounded-full px-4 py-2 cursor-pointer text-nowrap ${
               selected === section
-                ? "bg-[#E0EAEA] text-c-primary border border-c-primary font-semibold"
+                ? helpBtn
                 : "text-f-dark font-medium border  bg-white"
             }`}
             onClick={() => handleSelected(section)}
