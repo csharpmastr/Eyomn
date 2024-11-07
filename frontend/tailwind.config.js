@@ -27,21 +27,28 @@ export default {
         "f-gray": "#C3C3C3",
         "f-gray2": "#A7A7A7",
         "c-gray3": "#9C9C9C",
+
+        //Nav button colors
+        "c-secondary": "#264653",
         "c-primary": "#1E8282",
-        "c-secondary": "#2C3E50",
+        "c-branch": "#4A90E2",
+        "c-staff": "#C79754",
+
+        //Nav button hover state
+        "hover-org": "#ABB2B9",
+        "hover-branch": "#B7D3F3",
+        "hover-doctor": "#A5CDCD",
+        "hover-staff": "#E8D5BA",
+
+        //Nav button active state
+        "pressed-org": "#1A343E",
+        "pressed-branch": "#3A72C1",
+        "pressed-doctor": "#176565",
+        "pressed-staff": "#A97842",
 
         "bg-sb": "#EEF1F1",
         "bg-mc": "#F5F5F5",
         "bg-sub": "#F8FBFC",
-
-        "hover-c-secondary": "#506579",
-        "pressed-c-secondary": "#162B41",
-        "hover-c-primary": "#27AEAE",
-        "pressed-c-primary": "#0C6969",
-        "sb-hover-prime": "#C7E1E1",
-        "sb-pressed-prime": "#0C6969",
-        "sb-hover-secondary": "#D5E4F3",
-        "sb-pressed-secondary": "#1D364F",
       },
       fontSize: {
         "p-sm": "13.33px",

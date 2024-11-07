@@ -208,27 +208,12 @@ const PointOfSale = () => {
             ))}
           </div>
           <div className="mt-auto">
-            <div className="rounded-lg bg-bg-sb p-6 mx-6 mb-6 shadow-gray-300 shadow-md">
-              <div className="flex justify-between mb-2 text-rg">
-                <p className="text-f-gray2">Total</p>
+            <div className="rounded-lg bg-bg-sb p-6 mx-6 mb-4 shadow-md">
+              <div className="flex justify-between text-rg">
+                <p className="text-c-gray3">Total</p>
                 <p className="font-semibold text-f-dark">
                   Php. {calculateTotalPrice()}
                 </p>
-              </div>
-              <div className="flex justify-between items-center mb-5">
-                <p className="text-f-gray2">Cash Tendered</p>
-                <input
-                  type="text"
-                  name="price"
-                  //value={formData.price}
-                  //onChange={handleChange}
-                  className="w-28 h-10 border text-end px-2 border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                />
-              </div>
-              <hr className="border-f-gray text-rg" />
-              <div className="flex justify-between mt-5">
-                <p className="text-f-gray2">Change</p>
-                <p className="font-semibold text-f-dark">Php. 0.00</p>
               </div>
             </div>
             <div className="px-6 pb-6">

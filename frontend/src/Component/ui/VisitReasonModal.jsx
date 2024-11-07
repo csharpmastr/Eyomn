@@ -129,7 +129,7 @@ const VisitReasonModal = ({ onClose }) => {
                 Cancel
               </button>
               <button
-                className="px-7 py-2 bg-[#3B7CF9] text-f-light text-p-rg font-semibold rounded-md hover:bg-[#77a0ec] active:bg-bg-[#2c4c86]"
+                className="px-7 py-2 bg-[#3B7CF9] text-f-light text-p-rg font-semibold rounded-md"
                 onClick={handleAddVisit}
               >
                 Save

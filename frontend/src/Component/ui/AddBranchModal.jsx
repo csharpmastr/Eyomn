@@ -314,7 +314,7 @@ const AddBranchModal = ({ onClose }) => {
                 Cancel
               </button>
               <button
-                className="py-2 px-4 bg-[#3B7CF9] text-f-light text-p-rg font-semibold rounded-md hover:bg-[#77a0ec] active:bg-bg-[#2c4c86]"
+                className="py-2 px-4 bg-[#3B7CF9] text-f-light text-p-rg font-semibold rounded-md"
                 onClick={handleSubmit}
               >
                 Add Branch

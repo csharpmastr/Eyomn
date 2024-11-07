@@ -141,7 +141,7 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="pos"
+          path="stock_checkout"
           element={
             <ProtectedRoute restrictedRole={"2"}>
               <PointOfSale />

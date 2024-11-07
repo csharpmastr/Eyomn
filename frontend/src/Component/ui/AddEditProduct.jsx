@@ -858,7 +858,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
             </div>
             <footer className="flex justify-end px-3 py-6 bg-white border border-t-f-gray rounded-b-lg">
               <button
-                className="ml-2 px-8 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+                className="ml-2 px-8 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md"
                 type="submit"
                 onClick={handleAddEditProduct}
               >

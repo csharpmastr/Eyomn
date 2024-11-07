@@ -1236,7 +1236,7 @@ const AddStaff = ({ onClose, staffData }) => {
 
               {currentCardIndex < 2 && (
                 <button
-                  className="px-4 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+                  className="px-4 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md"
                   onClick={handleNext}
                 >
                   Continue
@@ -1245,7 +1245,7 @@ const AddStaff = ({ onClose, staffData }) => {
 
               {currentCardIndex === 2 && (
                 <button
-                  className="px-4 py-2 bg-c-primary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+                  className="px-4 py-2 bg-c-primary text-f-light text-p-rg font-semibold rounded-md"
                   onClick={handleSubmitStaff}
                 >
                   Add Staff

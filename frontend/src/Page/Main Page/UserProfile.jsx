@@ -25,7 +25,7 @@ const UserProfile = () => {
           </div>
         </section>
         <div
-          className="h-fit flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+          className="h-fit flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer"
           onClick={edit}
         >
           <h1>Manage Profile</h1>

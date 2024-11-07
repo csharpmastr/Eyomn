@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Sample from "../../assets/Image/3.png";
+import Nodatafound from "../../assets/Image/nodatafound.png";
 
 const capitalizeFirstLetter = (string) => {
   if (!string) return "";
@@ -106,8 +106,8 @@ const Table = ({ data, handlePatientClick }) => {
           </div>
         </>
       ) : (
-        <div className="w-full mt-40 flex flex-col items-center justify-center text-center text-c-primary text-p-lg font-medium gap-4">
-          <img src={Sample} alt="no data image" className="w-80" />
+        <div className="w-full mt-40 flex flex-col items-center justify-center text-center text-[#96B4B4] text-p-lg font-medium gap-4">
+          <img src={Nodatafound} alt="no data image" className="w-80" />
           <p>
             We couldn't find any patients. Check your spelling
             <br />

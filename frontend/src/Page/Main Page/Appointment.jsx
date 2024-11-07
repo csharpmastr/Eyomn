@@ -110,7 +110,7 @@ const Appointment = () => {
           </button>
         </div>
         <div
-          className="ml-2 h-fit flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+          className="ml-2 h-fit flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer"
           onClick={handleOpenSetApp}
         >
           <FiPlus className="h-5 w-5 md:mr-2" />

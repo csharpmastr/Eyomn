@@ -234,7 +234,7 @@ const ProfileSettingSection = ({ selected }) => {
             )}
             {isEditable && (
               <div
-                className="h-fit flex justify-center items-center w-40 py-3 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+                className="h-fit flex justify-center items-center w-40 py-3 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md"
                 onClick={() => setIsEditable(!isEditable)} // Add Save function
               >
                 <h1>Save</h1>
@@ -523,7 +523,7 @@ const ProfileSettingSection = ({ selected }) => {
                   </button>
                 </div>
               </div>
-              <button className="px-5 py-3 mt-5 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary">
+              <button className="px-5 py-3 mt-5 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md">
                 Save Password
               </button>
             </div>
@@ -536,7 +536,7 @@ const ProfileSettingSection = ({ selected }) => {
               Once you delete your account, there is no going back. Please be
               certain.
             </p>
-            <button className="px-5 w-fit py-3 mt-8 bg-red-50 border-2 border-red-400 text-red-400 text-p-rg font-semibold rounded-md hover:bg-red-200 active:bg-pressed-c-secondary">
+            <button className="px-5 w-fit py-3 mt-8 bg-red-50 border-2 border-red-400 text-red-400 text-p-rg font-semibold rounded-md">
               Delete Account
             </button>
           </div>

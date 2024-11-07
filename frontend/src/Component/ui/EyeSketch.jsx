@@ -123,7 +123,7 @@ const EyeSketch = ({ onClose, onSave, backgroundImage }) => {
         <div className="p-4 mt-4 flex justify-end gap-4 w-full border border-t-f-gray">
           <button
             onClick={handleSave}
-            className="px-4 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md hover:bg-hover-c-secondary active:bg-pressed-c-secondary"
+            className="px-4 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md"
           >
             Save Sketch
           </button>
