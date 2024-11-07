@@ -4,7 +4,7 @@ const {
   addUserHandler,
   loginUserHandler,
   getNewAccessToken,
-} = require("../Controller/UserController");
+} = require("../Controller/userController");
 
 router.post("/add", addUserHandler);
 router.post("/login", loginUserHandler);
