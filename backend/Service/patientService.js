@@ -207,7 +207,7 @@ const addRawNote = async (patientId, noteDetails, firebaseUid) => {
   try {
     await verifyFirebaseUid(firebaseUid);
     const noteId = await generateUniqueId(
-      patientCollection.doc(patientId).collection("rawNotes")
+      noteCollection.doc(patientId).collection("rawNotes")
     );
     const noteCol = noteCollection.doc(patientId).collection("rawNotes");
     const cleanedNote = removeNullValues(noteDetails);
@@ -253,10 +253,9 @@ const getNotes = async (patientId, firebaseUid) => {
   try {
     await verifyFirebaseUid(firebaseUid);
 
-    const noteRef = noteCollection.doc(patientId).collection("notes");
+    const noteRef = noteCollection.doc(patientId).collection("rawNotes");
 
     const noteSnapshot = await noteRef.get();
-
     if (noteSnapshot.empty) {
       return [];
     }
