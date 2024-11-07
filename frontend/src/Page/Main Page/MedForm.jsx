@@ -525,7 +525,7 @@ const MedForm = () => {
     if (noteId && rawNotes) {
       const rawNote = rawNotes.find((raw) => raw.noteId === noteId);
       if (rawNote) {
-        setMedformData({ ...initialMedFormData, ...rawNote });
+        setMedformData({ ...rawNote });
       }
     } else {
       setMedformData(initialMedFormData);

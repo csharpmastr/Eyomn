@@ -1,13 +1,22 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/Image/3.png";
+import { useSelector } from "react-redux";
+import { calculateAge } from "../../Helper/Helper";
 
 const UserProfile = () => {
   const navigate = useNavigate();
-
+  const user = useSelector((state) => state.reducer.user.user);
+  const branches = user.branches || [];
   const edit = () => {
     navigate(`/manage-profile/My Profile`);
   };
+  console.log(branches);
+
+  const workingDaysCount = branches.reduce((uniqueDays, branch) => {
+    branch.schedule.forEach(({ day }) => uniqueDays.add(day));
+    return uniqueDays;
+  }, new Set()).size;
 
   return (
     <div className="w-full h-full text-f-dark p-4 md:p-10 font-Poppins flex flex-col gap-4 md:gap-6">
@@ -19,9 +28,9 @@ const UserProfile = () => {
             alt="Profile Image"
           />
           <div>
-            <h1 className="text-p-lg font-semibold mb-2">Modest Mouse</h1>
-            <h3 className="text-p-rg text-f-gray">Optometrist</h3>
-            <h3 className="text-p-rg text-f-gray">Pila Laguna, Philippines</h3>
+            <h1 className="text-p-lg font-semibold mb-2">{`${user.first_name} ${user.last_name}`}</h1>
+            <h3 className="text-p-rg text-f-gray">{user.position}</h3>
+            <h3 className="text-p-rg text-f-gray">{`${user.municipality} ${user.province}`}</h3>
           </div>
         </section>
         <div
@@ -43,19 +52,23 @@ const UserProfile = () => {
               <p className="text-f-gray mb-1 text-p-sm font-normal">
                 Firstname
               </p>
-              <p>Modest</p>
+              <p> {user.first_name}</p>
             </section>
             <section className="flex-1 text-p-rg font-medium">
               <p className="text-f-gray mb-1 text-p-sm font-normal">Lastname</p>
-              <p>Mouse</p>
+              <p> {user.last_name}</p>
             </section>
             <section className="flex-1 text-p-rg font-medium">
               <p className="text-f-gray mb-1 text-p-sm font-normal">Birthday</p>
-              <p>October 9, 1986</p>
+              <p> {user.birthdate}</p>
             </section>
             <section className="flex-1 text-p-rg font-medium">
               <p className="text-f-gray mb-1 text-p-sm font-normal">Age</p>
-              <p>38 Years Old</p>
+              <p>
+                {user.age
+                  ? calculateAge(user.birthdate)
+                  : calculateAge(user.birthdate)}
+              </p>
             </section>
           </div>
         </div>
@@ -70,23 +83,23 @@ const UserProfile = () => {
               <p className="text-f-gray mb-1 text-p-sm font-normal">
                 Municipality
               </p>
-              <p>Pila</p>
+              <p> {user.municipality}</p>
             </section>
             <section className="flex-1 text-p-rg font-medium">
               <p className="text-f-gray mb-1 text-p-sm font-normal">Province</p>
-              <p>Laguna</p>
+              <p> {user.province}</p>
             </section>
             <section className="flex-1 text-p-rg font-medium">
               <p className="text-f-gray mb-1 text-p-sm font-normal">
                 Contact Number
               </p>
-              <p>09715378246</p>
+              <p> {user.contact_number || user.contact}</p>
             </section>
             <section className="flex-1 text-p-rg font-medium">
               <p className="text-f-gray mb-1 text-p-sm font-normal">
                 Email Address
               </p>
-              <p>modestmousey@gmail.com</p>
+              <p> {user.email}</p>
             </section>
           </div>
         </div>
@@ -99,7 +112,7 @@ const UserProfile = () => {
           <div className="w-full flex flex-wrap p-8 gap-8 md:gap-0 md:flex-none">
             <section className="flex-1 text-p-rg font-medium">
               <p className="text-f-gray mb-1 text-p-sm font-normal">Job/Role</p>
-              <p>Optometrist</p>
+              <p>{user.position}</p>
             </section>
             <section className="flex-1 text-p-rg font-medium">
               <p className="text-f-gray mb-1 text-p-sm font-normal">
@@ -111,13 +124,13 @@ const UserProfile = () => {
               <p className="text-f-gray mb-1 text-p-sm font-normal">
                 Branch Assignment
               </p>
-              <p>Rotational</p>
+              <p>{branches.length > 1 ? `Rotational` : `Stationary`}</p>
             </section>
             <section className="flex-1 text-p-rg font-medium">
               <p className="text-f-gray mb-1 text-p-sm font-normal">
                 No. Working Days
               </p>
-              <p>5 Working Days</p>
+              <p>{user.branches ? workingDaysCount : "N/A"} </p>
             </section>
           </div>
         </div>

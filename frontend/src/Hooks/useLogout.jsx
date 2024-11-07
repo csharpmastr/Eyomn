@@ -50,6 +50,7 @@ export const useLogout = () => {
       reduxDispatch(clearPurchases());
       reduxDispatch(clearBranch());
       reduxDispatch(clearImages());
+      reduxDispatch(clearRawNotes());
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred during logout.");

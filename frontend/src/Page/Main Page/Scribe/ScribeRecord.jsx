@@ -102,6 +102,7 @@ const ScribeRecord = () => {
         refreshToken
       );
       if (response) {
+        setPatientImages((prevData) => [...patientImages, response.url]);
         reduxDispatch(
           addNewImageArchive({
             [patientId]: response.url,
@@ -157,14 +158,7 @@ const ScribeRecord = () => {
     if (patientId && user.firebaseUid) {
       fetchImages();
     }
-  }, [
-    patientId,
-    user.firebaseUid,
-    accessToken,
-    refreshToken,
-    imagesUrl,
-    reduxDispatch,
-  ]);
+  }, [patientId]);
 
   const handleClickRawNotes = (noteId) => {
     navigate(`/scribe/raw-note/${patientId}/${noteId}`);
