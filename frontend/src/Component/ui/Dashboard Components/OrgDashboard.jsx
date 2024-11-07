@@ -74,6 +74,12 @@ const OrgDashboard = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  const roleColor = {
+    0: "#BCB8D4, #F8F8FC, #BCB8D4",
+    1: "#B8C1D4, #FBFDFF, #B8C1D4",
+    3: "#D4CAB8, #F9F7F4, #D4CAB8",
+  };
+
   return (
     <>
       <div className="flex w-full gap-6 font-Poppins">
@@ -84,6 +90,7 @@ const OrgDashboard = () => {
                 title={data.title}
                 value={data.value}
                 percentageChange={data.percentageChange}
+                color={roleColor[parseInt(user.role)] || "#000000"}
               />
             </Suspense>
           )

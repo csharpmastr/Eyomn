@@ -300,7 +300,7 @@ const SetAppointment = ({ onClose }) => {
               <button
                 onClick={handleSubmitAppointment}
                 type="submit"
-                className="px-4 py-2 bg-c-primary rounded-md text-f-light text-p-rg font-medium"
+                className="px-4 py-2 bg-bg-con rounded-md text-f-light text-p-rg font-medium"
               >
                 Schedule
               </button>

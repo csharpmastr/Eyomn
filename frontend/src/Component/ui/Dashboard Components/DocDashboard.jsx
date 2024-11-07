@@ -36,6 +36,7 @@ const DocDashboard = () => {
                 title={data.title}
                 value={data.value}
                 percentageChange={data.percentageChange}
+                color={"#B8D4D4, #EEF1F1, #B8D4D4"}
               />
             </Suspense>
           )

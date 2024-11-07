@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import AddEditProduct from "../../Component/ui/AddEditProduct";
 import ConfirmationModal from "../../Component/ui/ConfirmationModal";
 import Nodatafound from "../../assets/Image/nodatafound.png";
+import RoleColor from "../../assets/Util/RoleColor";
 
 const InventoryTable = ({ searchTerm, sortOption }) => {
   const products = useSelector((state) => state.reducer.inventory.products);
@@ -101,6 +102,8 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isMenuOpen]);
+
+  const { btnContentColor } = RoleColor();
 
   return (
     <>
@@ -254,7 +257,7 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
                 onClick={() => handlePageChange(startPage + index)}
                 className={`px-4 py-2 mx-1 rounded ${
                   currentPage === startPage + index
-                    ? "bg-c-secondary text-f-light"
+                    ? `${btnContentColor} text-f-light`
                     : "bg-gray-200 text-f-gray2"
                 }`}
               >

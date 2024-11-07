@@ -218,10 +218,10 @@ const PointOfSale = () => {
             </div>
             <div className="px-6 pb-6">
               <button
-                className="w-full h-12 bg-[#31d19c] text-f-light text-p-rg font-semibold rounded-lg"
+                className="w-full h-12 bg-bg-con text-f-light text-p-rg font-semibold rounded-md"
                 onClick={handlePurchase}
               >
-                Process Purchase
+                Process Checkout
               </button>
             </div>
           </div>

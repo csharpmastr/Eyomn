@@ -4,6 +4,7 @@ import { FiPlus } from "react-icons/fi";
 import SetAppointment from "../../Component/ui/SetAppointment";
 import ViewSchedule from "../../Component/ui/ViewSchedule";
 import { useSelector } from "react-redux";
+import RoleColor from "../../assets/Util/RoleColor";
 
 const Appointment = () => {
   const [isModalSetApp, setIsModalSetApp] = useState(false);
@@ -89,6 +90,8 @@ const Appointment = () => {
     return days;
   };
 
+  const { btnContentColor } = RoleColor();
+
   return (
     <div className="p-4 md:p-6 2xl:p-8 text-c-secondary text-p-rg font-Poppins">
       <div className="flex justify-between items-center">
@@ -110,7 +113,7 @@ const Appointment = () => {
           </button>
         </div>
         <div
-          className="ml-2 h-fit flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer"
+          className={`ml-2 h-fit flex justify-center items-center rounded-md px-4 py-3 text-f-light font-md hover:cursor-pointer  ${btnContentColor} `}
           onClick={handleOpenSetApp}
         >
           <FiPlus className="h-5 w-5 md:mr-2" />

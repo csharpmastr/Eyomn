@@ -221,7 +221,7 @@ const StaffAddPatientPage = () => {
         <div>
           <form className="flex flex-col h-auto w-auto" onSubmit={handleSubmit}>
             <div className="p-8 w-full lg:w-[660px] rounded-lg bg-white mb-6">
-              <label className="text-p-lg font-semibold text-c-primary">
+              <label className="text-p-lg font-medium text-c-primary">
                 | Personal Information
               </label>
               <div className="mt-3 text-c-gray3">
@@ -343,7 +343,7 @@ const StaffAddPatientPage = () => {
               </div>
             </div>
             <div className="p-8  w-full lg:w-[660px] rounded-lg bg-white mb-6">
-              <label className="text-p-lg font-semibold text-c-primary">
+              <label className="text-p-lg font-medium text-c-primary">
                 | Status Infomation
               </label>
               <div className="mt-3 text-c-gray3">
@@ -394,7 +394,7 @@ const StaffAddPatientPage = () => {
               </div>
             </div>
             <div className="p-8 w-full lg:w-[660px] rounded-lg bg-white mb-6">
-              <label className="text-p-lg font-semibold text-c-primary">
+              <label className="text-p-lg font-medium text-c-primary">
                 | Contact Information
               </label>
               <div className="mt-3 text-c-gray3">
@@ -470,7 +470,7 @@ const StaffAddPatientPage = () => {
               </div>
             </div>
             <div className="p-8  w-full lg:w-[660px] rounded-lg bg-white mb-6">
-              <label className="text-p-lg font-semibold text-c-primary">
+              <label className="text-p-lg font-medium text-c-primary">
                 | Appoint a Doctor
               </label>
               <div className="mt-3 text-c-gray3">

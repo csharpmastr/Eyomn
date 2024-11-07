@@ -1,13 +1,13 @@
 import React from "react";
 import { FiUser } from "react-icons/fi";
 
-const DbCard = ({ title, value, percentageChange }) => {
+const DbCard = ({ title, value, percentageChange, color }) => {
   return (
     <>
       <div
         className="p-4 w-full rounded-xl text-f-dark font-Poppins border border-white text-p-rg shadow-sm"
         style={{
-          background: "linear-gradient(to top, #EEF1F1, #B8D4D4, #EEF1F1)",
+          background: `linear-gradient(to top, ${color})`,
         }}
       >
         <div className="flex items-center w-full justify-between">

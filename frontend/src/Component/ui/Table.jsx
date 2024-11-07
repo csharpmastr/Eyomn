@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Nodatafound from "../../assets/Image/nodatafound.png";
+import RoleColor from "../../assets/Util/RoleColor";
 
 const capitalizeFirstLetter = (string) => {
   if (!string) return "";
@@ -30,6 +31,8 @@ const Table = ({ data, handlePatientClick }) => {
 
   const startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
   const endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+
+  const { btnContentColor } = RoleColor();
 
   return (
     <>
@@ -85,7 +88,7 @@ const Table = ({ data, handlePatientClick }) => {
                 onClick={() => handlePageChange(startPage + index)}
                 className={`px-4 py-2 mx-1 rounded ${
                   currentPage === startPage + index
-                    ? "bg-c-secondary text-f-light"
+                    ? `${btnContentColor} text-f-light`
                     : "bg-gray-200 text-f-gray2"
                 }`}
               >

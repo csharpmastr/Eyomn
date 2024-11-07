@@ -58,7 +58,7 @@ const OrgStaff = () => {
             </h1>
           </div>
           <div
-            className="h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light hover:cursor-pointer"
+            className="h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-branch text-f-light hover:cursor-pointer"
             onClick={handleOpenStaffModal}
           >
             <FiPlus className="h-5 w-5 mr-2" />
