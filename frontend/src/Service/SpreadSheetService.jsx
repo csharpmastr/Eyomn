@@ -6,7 +6,6 @@ const AddUserToWaitlist = async (data) => {
       "https://eyomn.vercel.app/api/sheet/submit",
       data
     );
-    console.log(res);
     return res.data;
   } catch (err) {
     console.error(

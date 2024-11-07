@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import Logo from "../../assets/Image/eyomn_logoS1-2-06.jpg";
-
+import { MdAttachEmail } from "react-icons/md";
 import { FaFacebookSquare } from "react-icons/fa";
-import { AiFillInstagram } from "react-icons/ai";
 import Modal from "../ui/Modal";
 import Privacy from "./Privacy";
 
@@ -45,8 +44,13 @@ const Footer = () => {
               >
                 <FaFacebookSquare className="h-10 w-10 lg:h-9" />
               </a>
-              <a className="font-Poppins hover:text-paragraph cursor-pointer">
-                <AiFillInstagram className="h-10 w-10 lg:h-10 " />{" "}
+              <a
+                className="font-Poppins hover:text-paragraph cursor-pointer"
+                href="mailto:info@eyomn.com"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <MdAttachEmail className="h-10 w-10 lg:h-9" />
               </a>
             </div>
           </div>
@@ -61,7 +65,8 @@ const Footer = () => {
           isOpen={isModalOpen}
           onClose={closeModal}
           title="Privacy Policy"
-          className="w-[600px] h-[500px] overflow-y-scroll p-4 lg:pl-10"
+          className="w-[600px] h-[500px] p-4 lg:pl-10"
+          overlayDivDesc={"h-[390px] overflow-y-scroll"}
           overlayClassName=""
           description={<Privacy />}
         ></Modal>

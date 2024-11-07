@@ -12,6 +12,7 @@ const Introduction = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -21,6 +22,10 @@ const Introduction = () => {
 
   const openErrorModal = () => setIsErrorModalOpen(true);
   const closeErrorModal = () => setIsErrorModalOpen(false);
+
+  const openErrorFetchModal = () => setIsError(true);
+  const closeErrorFetchModal = () => setIsError(false);
+
   const formFields = [
     {
       name: "given_name",
@@ -41,11 +46,18 @@ const Introduction = () => {
     setIsLoading(true);
     try {
       const response = await AddUserToWaitlist(formData);
-      if (response) {
+      const { status, data } = response;
+
+      if (status === 200) {
+        SubmitButton;
         openSuccessModal();
+      } else if (status === 400) {
+        openErrorModal(data);
+      } else {
+        openErrorFetchModal();
       }
     } catch (error) {
-      openErrorModal();
+      openErrorFetchModal();
     } finally {
       setIsLoading(false);
     }
@@ -57,29 +69,30 @@ const Introduction = () => {
       const token = credentialResponse.credential;
       if (token) {
         const decodedToken = jwtDecode(token);
-        const given_name = decodedToken.given_name;
-        const family_name = decodedToken.family_name;
-        const email = decodedToken.email;
+        const { given_name, family_name, email } = decodedToken;
 
-        const data = {
-          given_name: given_name,
-          family_name: family_name,
-          email: email,
-        };
+        const data = { given_name, family_name, email };
 
-        const res = await AddUserToWaitlist(data);
-        if (res) {
+        const response = await AddUserToWaitlist(data);
+        const { status, data: errorMessage } = response;
+
+        if (status === 200) {
           openSuccessModal();
+        } else if (status === 400) {
+          openErrorModal(errorMessage);
+        } else {
+          openErrorFetchModal();
         }
       } else {
         console.error("Token is missing from the response.");
       }
-    } catch (err) {
-      openErrorModal();
+    } catch (error) {
+      openErrorFetchModal();
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
     <div className="h-[92vh] flex flex-col justify-center items-center p-4 bg-bg-prob2">
       {isLoading && <Loader />}
@@ -90,7 +103,7 @@ const Introduction = () => {
         <p className="mt-2 lg:mt-5 text-[14px] lg:text-[18px] xl:text-[20px] text-center px-2 font-Poppins text-paragraph md:px-32">
           Get{" "}
           <span className=" underline underline-offset-4 text-[#1ABC9C] font-bold">
-            6 Months Free Access
+            3 Months Free Access
           </span>{" "}
           if you Join our Waitlist Today!
         </p>
@@ -138,6 +151,16 @@ const Introduction = () => {
           }
         ></SuccessModal>
         <Modal
+          isOpen={isError}
+          onClose={closeErrorFetchModal}
+          title="Joining Unavailable"
+          className="w-[600px] h-auto p-4"
+          overlayDescriptionClassName={
+            "text-center font-Poppins pt-5 text-black text-[18px]"
+          }
+          description={"Email is already on the waitlist"}
+        ></Modal>
+        <Modal
           isOpen={isErrorModalOpen}
           onClose={closeErrorModal}
           title="Joining Unavailable"
@@ -145,7 +168,7 @@ const Introduction = () => {
           overlayDescriptionClassName={
             "text-center font-Poppins pt-5 text-black text-[18px]"
           }
-          description={"Email is already on the waitlist"}
+          description={"We can't process your request right now"}
         ></Modal>
       </div>
     </div>
