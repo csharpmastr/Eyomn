@@ -52,7 +52,7 @@ async function appendToSheet(data) {
     [filteredData.given_name, filteredData.family_name, filteredData.email],
   ];
   const range = "Sheet1";
-  const valueInputOption = "USER_ENTERED";
+  const valueInputOption = "USER_ENTERED"; // Automatically format the input as needed
   const resource = { values };
 
   try {
