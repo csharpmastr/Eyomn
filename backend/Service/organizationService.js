@@ -13,7 +13,7 @@ const {
   hashPassword,
   decryptData,
 } = require("../Security/DataHashing");
-const { EmailAlreadyExistsError } = require("./UserService");
+
 const {
   getStaffs,
   getPatients,
@@ -21,6 +21,7 @@ const {
   verifyFirebaseUid,
 } = require("../Helper/Helper");
 const { getAppointments } = require("./appointmentService");
+const { EmailAlreadyExistsError } = require("./userService");
 
 const addStaff = async (organizationId, staffData, firebaseUid) => {
   try {
