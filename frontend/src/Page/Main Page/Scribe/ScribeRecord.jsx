@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { TiUpload } from "react-icons/ti";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FileUploader } from "react-drag-drop-files";
 import EnlargeImg from "../../../Component/ui/EnlargeImg";
@@ -14,6 +14,7 @@ import {
 import Cookies from "universal-cookie";
 import Loader from "../../../Component/ui/Loader";
 import SuccessModal from "../../../Component/ui/SuccessModal";
+import { addNewImageArchive, setImagesArchive } from "../../../Slice/NoteSlice";
 
 const ScribeRecord = () => {
   const { patientId } = useParams();
@@ -24,6 +25,9 @@ const ScribeRecord = () => {
   const [isLoading, setIsLoading] = useState(false);
   const rawNotes = useSelector(
     (state) => state.reducer.note.rawNotes[patientId]
+  );
+  const imagesUrl = useSelector(
+    (state) => state.reducer.note.images[patientId]
   );
   const cookies = new Cookies();
   const accessToken = cookies.get("accessToken", { path: "/" });
@@ -36,11 +40,11 @@ const ScribeRecord = () => {
   const location = useLocation();
   const [image, setImage] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
+  const reduxDispatch = useDispatch();
   const medicalRecords = [
     { id: 1, name: "Medical Scribe Record 1", date: "2024-01-01" },
     { id: 2, name: "Medical Scribe Record 2", date: "2024-01-02" },
   ];
-  console.log(rawNotes);
 
   const handleNewRecord = () => {
     navigate(`/scribe/new-record/${patientId}`);
@@ -98,6 +102,11 @@ const ScribeRecord = () => {
         refreshToken
       );
       if (response) {
+        reduxDispatch(
+          addNewImageArchive({
+            [patientId]: response.url,
+          })
+        );
         setIsSuccess(true);
         setImageFile(null);
         setImage(null);
@@ -113,23 +122,30 @@ const ScribeRecord = () => {
     const fetchImages = async () => {
       setIsLoading(true);
       try {
-        const response = await getPatientImageArchive(
-          patientId,
-          user.firebaseUid,
-          accessToken,
-          refreshToken
-        );
-        console.log(response);
-
-        if (
-          response &&
-          response.imageUrls &&
-          Array.isArray(response.imageUrls)
-        ) {
-          setIsLoading(false);
-          setPatientImages(response.imageUrls);
+        if (imagesUrl && imagesUrl.length > 0) {
+          setPatientImages(imagesUrl);
         } else {
-          console.log("No images found");
+          const response = await getPatientImageArchive(
+            patientId,
+            user.firebaseUid,
+            accessToken,
+            refreshToken
+          );
+          console.log(response);
+
+          if (
+            response &&
+            response.imageUrls &&
+            Array.isArray(response.imageUrls)
+          ) {
+            setIsLoading(false);
+            setPatientImages(response.imageUrls);
+            reduxDispatch(
+              setImagesArchive({ [patientId]: response.imageUrls })
+            );
+          } else {
+            console.log("No images found");
+          }
         }
       } catch (error) {
         console.log("Error fetching images:", error);
@@ -141,7 +157,14 @@ const ScribeRecord = () => {
     if (patientId && user.firebaseUid) {
       fetchImages();
     }
-  }, [patientId, user.firebaseUid, accessToken, refreshToken]);
+  }, [
+    patientId,
+    user.firebaseUid,
+    accessToken,
+    refreshToken,
+    imagesUrl,
+    reduxDispatch,
+  ]);
 
   const handleClickRawNotes = (noteId) => {
     navigate(`/scribe/raw-note/${patientId}/${noteId}`);

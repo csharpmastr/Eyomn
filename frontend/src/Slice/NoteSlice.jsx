@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   rawNotes: {},
   medicalScribeNotes: [],
+  images: {},
 };
 
 const noteSlice = createSlice({
@@ -46,6 +47,32 @@ const noteSlice = createSlice({
     addNewMedicalScribeNote: (state, action) => {
       state.medicalScribeNotes.push(action.payload);
     },
+    setImagesArchive: (state, action) => {
+      const newImages = action.payload;
+      const patientId = Object.keys(newImages)[0];
+
+      state.images[patientId] = state.images[patientId] || [];
+
+      state.images[patientId] = [
+        ...state.images[patientId],
+        ...newImages[patientId],
+      ];
+    },
+
+    clearImages: (state) => {
+      state.images = {};
+    },
+
+    addNewImageArchive: (state, action) => {
+      const patientId = Object.keys(action.payload)[0];
+      const imageUrl = action.payload[patientId];
+
+      if (!state.images[patientId]) {
+        state.images[patientId] = [];
+      }
+
+      state.images[patientId].push(imageUrl);
+    },
   },
 });
 
@@ -56,6 +83,9 @@ export const {
   setMedicalScribeNotes,
   clearMedicalScribeNotes,
   addNewMedicalScribeNote,
+  setImagesArchive,
+  addNewImageArchive,
+  clearImages,
 } = noteSlice.actions;
 
 export default noteSlice.reducer;
