@@ -41,23 +41,37 @@ const RoloColor = () => {
 
     barColor: {
       0: ["#2A9D8F", "#E9C46A", "#F4A261"],
-      1: ["#50A5F7", "#FD166", "#EF476F"],
+      1: ["#50A5F7", "#7f995b", "#EF476F"],
       2: ["#2E9C9C", "#F4A896", "#FFC482"],
       3: ["#84B0B0", "#F4A261", "#8ECAE6"],
     },
 
     btnContentColor: {
-      0: " bg-c-branch  ",
-      1: " bg-c-staff  ",
-      2: " bg-c-secondary  ",
-      3: " bg-c-primary  ",
+      0: " bg-c-secondary ",
+      1: " bg-c-branch ",
+      2: " bg-c-primary ",
+      3: " bg-c-staff ",
+    },
+
+    settingBtn: {
+      0: " text-c-secondary border border-c-secondary bg-sb-org font-medium ",
+      1: " text-c-branch border border-c-branch bg-sb-branch font-medium ",
+      2: " text-c-primary border border-c-primary bg-sb-doctor font-medium ",
+      3: " text-c-staff border border-c-staff bg-sb-staff font-medium ",
     },
 
     helpBtn: {
-      0: " text-c-branch border border-c-branch bg-sb-branch font-medium ",
-      1: " text-c-staff border border-c-staff bg-sb-staff font-medium ",
-      2: " text-c-secondary border border-c-secondary bg-sb-org font-medium ",
-      3: " text-c-primary border border-c-primary bg-sb-doctor font-medium ",
+      0: " text-c-secondary border border-c-secondary bg-sb-org font-medium ",
+      1: " text-c-branch border border-c-branch bg-sb-branch font-medium ",
+      2: " text-c-primary border border-c-primary bg-sb-doctor font-medium ",
+      3: " text-c-staff border border-c-staff bg-sb-staff font-medium ",
+    },
+
+    helpSection: {
+      0: " border-c-secondary text-c-secondary ",
+      1: " border-c-branch text-c-branch ",
+      2: " border-c-primary text-c-primary ",
+      3: " border-c-staff text-c-staff ",
     },
   };
 
@@ -79,7 +93,9 @@ const RoloColor = () => {
     ],
     btnContentColor:
       ColorRoles.btnContentColor[validRoleIndex] || "bg-c-primary",
+    settingBtn: ColorRoles.settingBtn[validRoleIndex] || "",
     helpBtn: ColorRoles.helpBtn[validRoleIndex] || "",
+    helpSection: ColorRoles.helpSection[validRoleIndex] || "",
   };
 };
 

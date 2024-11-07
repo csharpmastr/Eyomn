@@ -21,7 +21,7 @@ const HelpCenter = () => {
       ?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const { helpBtn } = RoleColor();
+  const { helpBtn, helpSection } = RoleColor();
 
   return (
     <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppins h-full gap-6 overflow-clip">
@@ -39,7 +39,7 @@ const HelpCenter = () => {
             className={`h-auto flex items-center rounded-full px-4 py-2 cursor-pointer text-nowrap ${
               selected === section
                 ? helpBtn
-                : "text-f-dark font-medium border  bg-white"
+                : "text-f-gray2 font-medium border bg-f-light"
             }`}
             onClick={() => handleSelected(section)}
           >
@@ -67,8 +67,8 @@ const HelpCenter = () => {
                       key={section_part}
                       className={`w-fit pl-2 py-2  cursor-pointer ${
                         selectedPart === section_part
-                          ? " border-l-2 border-c-primary font-semibold text-c-primary"
-                          : " border-l-2 border-f-gray font-medium text-c-gray3"
+                          ? ` border-l-2 font-medium ${helpSection} `
+                          : " border-l-2 border-f-gray font-medium text-f-gray2"
                       }`}
                       onClick={() => handleSectionPart(section_part)}
                     >
