@@ -1,5 +1,5 @@
-const { addUser, loginUser } = require("../Service/UserService");
 const jwt = require("jsonwebtoken");
+const { addUser, loginUser } = require("../Service/userService");
 
 const generateToken = (id, secret, duration) => {
   return jwt.sign({ id }, secret, { expiresIn: duration });
