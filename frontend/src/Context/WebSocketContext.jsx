@@ -62,7 +62,7 @@ export const WebSocketProvider = ({ children }) => {
       return;
     }
 
-    const wsUrl = `ws://localhost:8080/${organizationId}/${branchId}/${doctorId}/?token=${accessToken}`;
+    const wsUrl = `wss://eyomn.vercel.app/${organizationId}/${branchId}/${doctorId}/?token=${accessToken}`;
 
     ws.current = new WebSocket(wsUrl);
 
