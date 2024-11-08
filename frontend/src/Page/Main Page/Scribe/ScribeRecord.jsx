@@ -42,8 +42,8 @@ const ScribeRecord = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const reduxDispatch = useDispatch();
   const medicalRecords = [
-    { id: 1, name: "Medical Scribe Record 1", date: "2024-01-01" },
-    { id: 2, name: "Medical Scribe Record 2", date: "2024-01-02" },
+    { id: 1, name: "Medical s Record 1", date: "2024-01-01" },
+    { id: 2, name: "Medical b Record 2", date: "2024-01-02" },
   ];
 
   const handleNewRecord = () => {
@@ -167,19 +167,25 @@ const ScribeRecord = () => {
       `/scribe/raw-note/${patientId}/${noteId}`
     );
   };
+
+  const handleClickSoap = (patientId) => {
+    navigate(`/scribe/soap-record/${patientId}`);
+    sessionStorage.setItem("currentPath", `/scribe/soap-record/${patientId}`);
+  };
+
   return (
     <>
       {isLoading && <Loader />}
-      <div className="p-4 md:p-6 lg:p-8 h-full font-Poppins">
+      <div className="p-4 md:p-6 lg:p-8 h-full font-Poppins text-f-dark">
         <div className="flex justify-between mb-8">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col">
             <p
-              className="flex gap-2 text-p-rg  hover:cursor-pointer"
+              className="flex gap-2 text-p-sm  hover:cursor-pointer"
               onClick={handleBack}
             >
-              <AiOutlineArrowLeft className="h-6 w-6" /> Back
+              <AiOutlineArrowLeft className="h-5 w-5" /> Back
             </p>
-            <h1 className="text-p-lg font-semibold flex justify-center items-center">
+            <h1 className="text-p-rg font-medium flex justify-center items-center">
               {currentPatient
                 ? `${currentPatient.first_name} ${currentPatient.last_name}`
                 : "Loading..."}
@@ -228,11 +234,12 @@ const ScribeRecord = () => {
             </button>
           </nav>
           {currentCardIndex === 0 && (
-            <div className="w-full">
+            <div className="w-full cursor-pointer">
               {medicalRecords.map((record) => (
                 <div
                   key={record.id}
-                  className="px-6 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white"
+                  className="px-6 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white hover:bg-bg-sub"
+                  onClick={() => handleClickSoap(patientId)}
                 >
                   <div className="flex items-center gap-3">
                     <input type="checkbox" className="w-6 h-6" />
@@ -248,7 +255,7 @@ const ScribeRecord = () => {
               {rawNotes.map((note, index) => (
                 <div
                   key={note.noteId || index}
-                  className="px-6 py-4 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white"
+                  className="px-6 py-4 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white hover:bg-bg-sub"
                   onClick={() => handleClickRawNotes(note.noteId)}
                 >
                   <div className="flex items-center gap-3">

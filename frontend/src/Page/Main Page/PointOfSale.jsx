@@ -154,7 +154,9 @@ const PointOfSale = () => {
         </div>
         <div className="w-full md:w-2/5 h-full border border-l-f-gray bg-white flex flex-col">
           <header className="p-6">
-            <h1 className="text-p-lg font-semibold text-f-dark">Order List</h1>
+            <h1 className="text-p-lg font-semibold text-f-dark">
+              Checkout List
+            </h1>
           </header>
           <div className="h-full overflow-y-scroll">
             {selectedProducts.map((product) => (

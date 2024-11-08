@@ -677,9 +677,10 @@ const MedForm = () => {
                 className="flex gap-2 text-p-rg  hover:cursor-pointer"
                 onClick={handleBack}
               >
-                <AiOutlineArrowLeft className="h-6 w-6" /> Back
+                <AiOutlineArrowLeft className="h-5 w-5" />
+                Back
               </p>
-              <h1 className="font-Poppins text-p-lg font-semibold">
+              <h1 className="font-Poppins text-p-rg font-semibold">
                 Patient Medical Records
               </h1>
             </div>

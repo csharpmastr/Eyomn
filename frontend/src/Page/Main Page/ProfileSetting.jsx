@@ -1,11 +1,14 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FiUserCheck } from "react-icons/fi";
 import { FiUser } from "react-icons/fi";
+import { FiBox } from "react-icons/fi";
 import ProfileSettingSection from "../../Component/ui/ProfileSettingSection";
 import RoleColor from "../../assets/Util/RoleColor";
 
 const ProfileSetting = () => {
+  const role = useSelector((state) => state.reducer.user.user.role);
   const [selected, setSelected] = useState("My Profile");
 
   const navigate = useNavigate();
@@ -43,10 +46,27 @@ const ProfileSetting = () => {
             <FiUserCheck className="h-6 w-6 md:mr-2" />
             <h1>Account</h1>
           </div>
+          {role !== "2" && (
+            <div
+              className={`h-auto flex items-center rounded-full px-4 py-2 cursor-pointer text-nowrap ${
+                selected === "Product Archive"
+                  ? settingBtn
+                  : "text-f-gray2 font-medium border bg-f-light"
+              }`}
+              onClick={() => handleSelected("Product Archive")}
+            >
+              <FiBox className="h-6 w-6 md:mr-2" />
+              <h1>Product Archive</h1>
+            </div>
+          )}
         </div>
       </nav>
-      <div className="w-full flex justify-center overflow-y-scroll">
-        <div className="lg:w-3/5 w-full">
+      <div className="w-full h-full flex justify-center overflow-y-scroll">
+        <div
+          className={` w-full ${
+            selected === "Product Archive" ? " lg:w-4/5 " : " lg:w-3/5 "
+          }`}
+        >
           {selected && <ProfileSettingSection selected={selected} />}
         </div>
       </div>

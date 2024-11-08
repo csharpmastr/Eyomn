@@ -5,6 +5,7 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 import Select from "react-select";
 import PhList from "../../assets/Data/location_list.json";
 import { useSelector } from "react-redux";
+import ArchiveTable from "./ArchiveTable";
 
 const ProfileSettingSection = ({ selected }) => {
   const [image, setImage] = useState(null);
@@ -542,6 +543,7 @@ const ProfileSettingSection = ({ selected }) => {
           </div>
         </div>
       )}
+      {selected === "Product Archive" && <ArchiveTable />}
     </>
   );
 };
