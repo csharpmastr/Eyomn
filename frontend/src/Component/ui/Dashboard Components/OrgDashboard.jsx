@@ -75,7 +75,7 @@ const OrgDashboard = () => {
   }, []);
 
   const roleColor = {
-    0: "#BCB8D4, #F8F8FC, #BCB8D4",
+    0: "#DCD9EF, #F8F8FC, #DCD9EF",
     1: "#B8C1D4, #FBFDFF, #B8C1D4",
     3: "#D4CAB8, #F9F7F4, #D4CAB8",
   };

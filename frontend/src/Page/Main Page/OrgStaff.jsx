@@ -53,7 +53,7 @@ const OrgStaff = () => {
               <FiArrowLeft className="h-5 w-5" />
               <h1>Go back</h1>
             </div>
-            <h1 className="font-medium text-p-lg text-c-secondary">
+            <h1 className="font-medium text-p-rg text-c-secondary">
               Branch Staffs
             </h1>
           </div>

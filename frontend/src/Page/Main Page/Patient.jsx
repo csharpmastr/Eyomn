@@ -150,7 +150,7 @@ const Patient = () => {
                 )}
               </div>
             </div>
-            <div className="mt-4 md:mt-6">
+            <div className="mt-4 md:mt-6 overflow-x-auto">
               <Table
                 data={filteredPatients}
                 handlePatientClick={handlePatientClick}

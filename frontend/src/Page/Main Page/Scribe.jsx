@@ -158,7 +158,7 @@ const Scribe = () => {
                   <h2 className="text-p-rg text-f-gray2 font-medium mb-4">
                     {initial}
                   </h2>
-                  <div className="grid grid-cols-5 gap-8 px-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-8 px-4">
                     {filteredGroupedPatients[initial].map((patient, index) => (
                       <PatientScribeCard
                         key={index}

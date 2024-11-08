@@ -107,7 +107,7 @@ const PointOfSale = () => {
         <Loader description={"Saving Purchase Information, please wait..."} />
       )}
       <div className="text-f-dark font-Poppins flex flex-col md:flex-row h-full">
-        <div className="flex flex-col md:w-3/4 w-full p-4 md:p-6 2xl:p-8">
+        <div className="flex flex-col w-full md:w-3/4 p-4 md:p-6 2xl:p-8">
           <div className="flex flex-row gap-3 mb-6">
             <div className="flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-bg-sub text-c-gray3 font-normal hover:cursor-pointer">
               <select
@@ -135,21 +135,12 @@ const PointOfSale = () => {
               />
             </div>
           </div>
-          <header className="flex py-5 bg-white border-b rounded-md sticky">
-            <div className="w-1/6 pl-4">Code</div>
-            <div className="flex-1 pl-4">Product Name</div>
-            <div className="flex-1 pl-4">Category</div>
-            <div className="w-1/6 pl-4">Price</div>
-            <div className="w-1/6 pl-4">Quantity</div>
-          </header>
-          <div className="overflow-y-scroll">
-            <div className="rounded-lg">
-              <PosTable
-                onProductSelect={handleProductSelect}
-                searchTerm={searchTerm}
-                sortOption={sortOption}
-              />
-            </div>
+          <div className="overflow-auto w-full">
+            <PosTable
+              onProductSelect={handleProductSelect}
+              searchTerm={searchTerm}
+              sortOption={sortOption}
+            />
           </div>
         </div>
         <div className="w-full md:w-2/5 h-full border border-l-f-gray bg-white flex flex-col">

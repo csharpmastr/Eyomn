@@ -148,7 +148,7 @@ const AddBranchModal = ({ onClose }) => {
         <div className="fixed top-0 left-0 flex items-center p-4 justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
           <div className="w-[600px]">
             <header className="px-4 py-3 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-              <h1 className="text-p-lg text-c-secondary font-semibold">
+              <h1 className="text-p-lg text-c-secondary font-medium">
                 Add Branch
               </h1>
               <button onClick={onClose}> &times; </button>

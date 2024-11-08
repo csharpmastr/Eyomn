@@ -1,6 +1,8 @@
 import React from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import DocumentSoap from "../../Component/ui/PDF/DocumentSoap";
 
 const SoapRecord = () => {
   const navigate = useNavigate();
@@ -11,6 +13,21 @@ const SoapRecord = () => {
 
     sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
   };
+
+  const patientData = {
+    name: "John Doe",
+    age: 65,
+    gender: "Male",
+    date: "11/07/2024",
+    subjective:
+      "Patient reports blurred vision in the left eye for the past two weeks, worse at night. Denies eye pain, redness, or discharge. No recent trauma or changes in medication. Family history of glaucoma and macular degeneration.",
+    objective:
+      "Visual Acuity (uncorrected): Right Eye (OD): 20/25, Left Eye (OS): 20/50. Intraocular Pressure (IOP): OD: 18 mmHg, OS: 22 mmHg. External Exam: Eyelids: Normal, Conjunctiva: Clear, Sclera: White. Slit Lamp Exam: Cornea: Clear, Anterior Chamber: Deep and quiet, Lens: Mild nuclear sclerosis bilaterally.",
+    assessment:
+      "1. Age-related macular degeneration (dry) 2. Suspected glaucoma in the left eye",
+    plan: "1. Monitoring: Schedule follow-up in 6 months for IOP check and optic nerve evaluation. 2. OCT: Obtain optical coherence tomography to assess retinal layers and optic nerve head. 3. Lifestyle Counseling: Encourage UV-protective eyewear and smoking cessation. 4. Referrals: Refer to a glaucoma specialist for further evaluation if IOP or optic nerve findings worsen. 5. Education: Discussed importance of monitoring changes in vision and advised to report any worsening symptoms.",
+  };
+
   return (
     <div className="p-4 md:p-6 lg:p-8 h-full font-Poppins text-f-dark overflow-y-auto">
       <div className="flex justify-between mb-8">
@@ -24,9 +41,14 @@ const SoapRecord = () => {
           </p>
           <h1 className="text-p-rg font-medium">Standardize Medical Record</h1>
         </div>
-        <button className="rounded-md bg-c-branch font-medium text-f-light px-6">
-          Export
-        </button>
+        <PDFDownloadLink
+          document={<DocumentSoap patientData={patientData} />}
+          fileName={`${patientData.name} Medical Record.pdf`}
+        >
+          <button className="rounded-md bg-c-branch font-medium text-f-light px-6 py-2">
+            Export
+          </button>
+        </PDFDownloadLink>
       </div>
       <div className="w-full h-auto rounded-md border border-f-gray">
         <div className="p-4 bg-bg-sub border-b border-f-gray flex justify-between rounded-t-md">

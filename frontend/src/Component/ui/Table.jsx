@@ -38,36 +38,32 @@ const Table = ({ data, handlePatientClick }) => {
     <>
       {currentData.length > 0 ? (
         <>
-          <div>
-            <div className="w-full font-Poppins rounded-t-lg text-p-rg">
-              <header className="w-full py-5 rounded-md flex border-b bg-white text-f-gray2">
-                <h1 className="pl-8 w-1/4">Patient Name</h1>
-                <h1 className="w-1/4">Contact</h1>
-                <h1 className="w-1/4">Email</h1>
-                <h1 className="w-1/4">Last Visit</h1>
-              </header>
-              <div>
-                {currentData.map((patientData, index) => (
-                  <section
-                    key={index}
-                    className={`py-5 text-f-dark cursor-pointer flex w-full rounded-md ${
-                      index % 2 === 0
-                        ? "bg-none border-none"
-                        : `bg-white border-b`
-                    }`}
-                    onClick={() => handlePatientClick(patientData.patientId)}
-                  >
-                    <h1 className="pl-8 w-1/4">
-                      {patientData.first_name + " " + patientData.last_name}
-                    </h1>
-                    <h1 className="w-1/4">{patientData.contact_number}</h1>
-                    <h1 className="w-1/4 truncate">{patientData.email}</h1>
-                    <h1 className="w-1/4">
-                      {formatDate(patientData.createdAt)}
-                    </h1>
-                  </section>
-                ))}
-              </div>
+          <div className="w-fit md:w-full text-f-dark overflow-x-auto font-Poppins rounded-t-lg text-p-rg">
+            <header className="w-full py-5 rounded-md flex border-b bg-white text-f-gray2">
+              <h1 className="pl-8 w-1/4">Patient Name</h1>
+              <h1 className="w-1/4">Contact</h1>
+              <h1 className="w-1/4">Email</h1>
+              <h1 className="w-1/4">Last Visit</h1>
+            </header>
+            <div>
+              {currentData.map((patientData, index) => (
+                <section
+                  key={index}
+                  className={`py-5 cursor-pointer flex w-full rounded-md ${
+                    index % 2 === 0
+                      ? "bg-none border-none"
+                      : `bg-white border-b`
+                  }`}
+                  onClick={() => handlePatientClick(patientData.patientId)}
+                >
+                  <h1 className="pl-8 w-1/4">
+                    {patientData.first_name + " " + patientData.last_name}
+                  </h1>
+                  <h1 className="w-1/4">{patientData.contact_number}</h1>
+                  <h1 className="w-1/4 truncate">{patientData.email}</h1>
+                  <h1 className="w-1/4">{formatDate(patientData.createdAt)}</h1>
+                </section>
+              ))}
             </div>
           </div>
           <div className="flex justify-end mt-4">
