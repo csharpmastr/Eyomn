@@ -6,8 +6,12 @@ const StaffCard = ({ staffData, showImage = true, onClick }) => {
       className="min-w-[350px] rounded-lg overflow-hidden shadow-sm hover:cursor-pointer font-Poppins text-f-dark"
       onClick={onClick}
     >
-      <div className="bg-[#BBD8C5] h-fit p-3">
-        <h1 className="text-p-sm text-f-dark font-medium">
+      <div
+        className={` h-fit p-3 ${
+          staffData.position !== "Staff" ? "bg-c-primary" : "bg-c-staff"
+        }`}
+      >
+        <h1 className="text-p-sm text-f-light font-medium">
           {staffData.position}
         </h1>
       </div>

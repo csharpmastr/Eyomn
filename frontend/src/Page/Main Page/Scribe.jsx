@@ -123,7 +123,7 @@ const Scribe = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between text-p-rg ">
             <p className="font-semibold text-f-dark">
               {patients.length || 0}{" "}
-              <span className="text-f-gray2">Total patient</span>
+              <span className="text-f-gray2 font-medium">Total patient</span>
             </p>
             <div className="mt-8 md:mt-0 flex flex-row gap-3">
               <div className="h-auto flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-f-light text-c-gray3 font-normal hover:cursor-pointer">
@@ -139,14 +139,14 @@ const Scribe = () => {
                   <option value="descending">Descending</option>
                 </select>
               </div>
-              <div className="w-full flex flex-row gap-2 border border-f-gray bg-f-light px-4 rounded-md justify-center items-center md:w-fit">
+              <div className="w-full flex flex-row gap-2 border border-f-gray  px-4 rounded-md justify-center items-center md:w-fit">
                 <IoMdSearch className="h-6 w-6 text-c-secondary" />
                 <input
                   type="text"
                   placeholder="Search patient name"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full text-f-dark focus:outline-none placeholder-c-gray3 bg-f-light"
+                  className="w-full text-f-dark focus:outline-none placeholder-c-gray3 bg-bg-mc"
                 />
               </div>
             </div>
@@ -158,7 +158,7 @@ const Scribe = () => {
                   <h2 className="text-p-rg text-f-gray2 font-medium mb-4">
                     {initial}
                   </h2>
-                  <div className="grid grid-cols-5 gap-8 px-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-8 px-4">
                     {filteredGroupedPatients[initial].map((patient, index) => (
                       <PatientScribeCard
                         key={index}

@@ -103,7 +103,7 @@ const Patient = () => {
           {isLoading && <Loader />}
           <div className="p-4 md:p-6 2xl:p-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between text-p-rg">
-              <p className="font-semibold text-c-secondary text-p-lg">
+              <p className="font-semibold text-f-dark">
                 {totalPatient}{" "}
                 <span className="text-f-gray2 font-medium">Total patient</span>
               </p>
@@ -150,7 +150,7 @@ const Patient = () => {
                 )}
               </div>
             </div>
-            <div className="mt-4 md:mt-6">
+            <div className="mt-4 md:mt-6 overflow-x-auto">
               <Table
                 data={filteredPatients}
                 handlePatientClick={handlePatientClick}
