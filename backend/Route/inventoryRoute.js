@@ -8,6 +8,7 @@ const {
   addPurchaseHandler,
   getPurchasesHandler,
   getOrgProductSalesHandler,
+  retrieveProductHandler,
 } = require("../Controller/inventoryController");
 
 router.post("/add/:branchId", addProductHandler);
@@ -17,4 +18,5 @@ router.put("/update/:branchId/:productId", updateProductHandler);
 router.post("/add-purchase/:branchId/:staffId", addPurchaseHandler);
 router.get("/get-purchases", getPurchasesHandler);
 router.get("/get-product-sales", getOrgProductSalesHandler);
+router.patch("/retrieve-product/:branchId", retrieveProductHandler);
 module.exports = router;

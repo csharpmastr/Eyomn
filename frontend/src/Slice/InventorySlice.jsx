@@ -26,6 +26,18 @@ const inventorySlice = createSlice({
         state.products[productIndex].isDeleted = true;
       }
     },
+    retrieveProduct: (state, action) => {
+      const productIdsToRetrieve = action.payload;
+      productIdsToRetrieve.forEach((productId) => {
+        const productIndex = state.products.findIndex(
+          (product) => product.productId === productId
+        );
+
+        if (productIndex !== -1) {
+          state.products[productIndex].isDeleted = false;
+        }
+      });
+    },
 
     updateProduct: (state, action) => {
       const index = state.products.findIndex(
@@ -96,6 +108,7 @@ export const {
   addPurchase,
   setPurchases,
   clearPurchases,
+  retrieveProduct,
 } = inventorySlice.actions;
 
 export default inventorySlice.reducer;

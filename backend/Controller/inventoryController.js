@@ -6,6 +6,7 @@ const {
   addPurchase,
   getPurchases,
   getOrgProductSales,
+  retrieveProduct,
 } = require("../Service/inventoryService");
 
 const addProductHandler = async (req, res) => {
@@ -148,6 +149,20 @@ const getOrgProductSalesHandler = async (req, res) => {
       .json({ message: "Server error while fetching data." + error });
   }
 };
+const retrieveProductHandler = async (req, res) => {
+  try {
+    const { firebaseUid } = req.query;
+    const branchId = req.params.branchId;
+    const products = req.body.products;
+
+    await retrieveProduct(branchId, products, firebaseUid);
+    return res.status(200).json({ message: "Product retrieved" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Server error while retrieving data." + error });
+  }
+};
 
 module.exports = {
   addProductHandler,
@@ -157,4 +172,5 @@ module.exports = {
   addPurchaseHandler,
   getPurchasesHandler,
   getOrgProductSalesHandler,
+  retrieveProductHandler,
 };

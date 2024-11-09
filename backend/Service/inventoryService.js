@@ -98,6 +98,7 @@ const getProducts = async (branchId, firebaseUid) => {
         "price",
         "quantity",
         "isDeleted",
+        "retail_price",
       ]);
       return {
         ...decryptedData,
@@ -175,6 +176,8 @@ const updateProduct = async (branchId, productId, productDetails) => {
       "price",
       "quantity",
       "expirationDate",
+      "retail_price",
+      "isDeleted",
     ]);
 
     await productRef.update(encryptedProductDetails);
@@ -330,6 +333,7 @@ const getOrgProductSales = async (organizationId, firebaseUid) => {
           "productId",
           "productSKU",
           "isDeleted",
+          "retail_price",
         ]);
       });
 
@@ -345,6 +349,25 @@ const getOrgProductSales = async (organizationId, firebaseUid) => {
     throw new Error("Error fetching product sales data: " + error.message);
   }
 };
+const retrieveProduct = async (branchId, products, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const productRef = inventoryCollection.doc(branchId).collection("products");
+
+    await Promise.all(
+      products.map(async (productId) => {
+        const productDocRef = productRef.doc(productId);
+
+        await productDocRef.update({ isDeleted: false });
+      })
+    );
+    console.log("Products marked as deleted successfully.");
+  } catch (error) {
+    console.error("Error retrieving product:", error);
+    throw new Error("Error retrieving product: " + error.message);
+  }
+};
 
 module.exports = {
   addProduct,
@@ -354,4 +377,5 @@ module.exports = {
   addPurchase,
   getPurchases,
   getOrgProductSales,
+  retrieveProduct,
 };
