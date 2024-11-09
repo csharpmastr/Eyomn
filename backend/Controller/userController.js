@@ -1,4 +1,8 @@
-const { addUser, loginUser } = require("../Service/UserService");
+const {
+  addUser,
+  loginUser,
+  changeUserPassword,
+} = require("../Service/UserService");
 const jwt = require("jsonwebtoken");
 
 const generateToken = (id, secret, duration) => {
@@ -154,5 +158,61 @@ const getNewAccessToken = (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+const changeUserPasswordHandler = async (req, res) => {
+  const {
+    organizationId,
+    branchId,
+    staffId,
+    role,
+    firebaseUid,
+    password,
+    newPassword,
+  } = req.body;
+  let userId;
+  try {
+    if (!password || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "Current password and new password are required." });
+    }
 
-module.exports = { addUserHandler, loginUserHandler, getNewAccessToken };
+    if (organizationId) {
+      userId = organizationId;
+    } else if (branchId) {
+      userId = branchId;
+    } else if (staffId) {
+      userId = staffId;
+    } else {
+      return res.status(400).json({
+        message:
+          "Either organizationId, branchId, or staffId must be provided.",
+      });
+    }
+    await changeUserPassword(
+      organizationId,
+      branchId,
+      staffId,
+      role,
+      firebaseUid,
+      password,
+      newPassword
+    );
+
+    return res.status(200).json({ message: "Password updated successfully." });
+  } catch (error) {
+    console.error("Error changing password:", error);
+    if (error.status === 400) {
+      return res.status(400).json({ message: error.message });
+    }
+    return res
+      .status(500)
+      .json({ message: "Server error, please try again later." });
+  }
+};
+
+module.exports = {
+  addUserHandler,
+  loginUserHandler,
+  getNewAccessToken,
+  changeUserPasswordHandler,
+};

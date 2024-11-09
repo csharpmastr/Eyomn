@@ -8,6 +8,7 @@ const {
   getVisit,
   getPatients,
   getBranchName,
+  verifyFirebaseUid,
 } = require("../Helper/Helper");
 const { v4: uuidv4 } = require("uuid");
 
@@ -242,4 +243,81 @@ const loginUser = async (userData) => {
   }
 };
 
-module.exports = { addUser, loginUser, EmailAlreadyExistsError };
+const changeUserPassword = async (
+  organizationId,
+  branchId,
+  staffId,
+  role,
+  firebaseUid,
+  password,
+  newPassword
+) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+    let targetRef;
+    console.log(
+      organizationId,
+      branchId,
+      staffId,
+      role,
+      firebaseUid,
+      password,
+      newPassword
+    );
+
+    // Set the query based on available parameters
+    if (organizationId) {
+      targetRef = userCollection.where("id", "==", organizationId);
+    } else if (branchId) {
+      targetRef = userCollection
+        .where("branchId", "==", branchId)
+        .where("role", "==", role);
+    } else if (staffId) {
+      targetRef = userCollection.where("staffId", "==", staffId);
+    }
+
+    // Execute the query
+    const querySnapshot = await targetRef.get();
+
+    // Check if no documents were found
+    if (querySnapshot.empty) {
+      throw new Error("User not found.");
+    }
+
+    // Retrieve the first document from the query
+    const userDoc = querySnapshot.docs[0];
+    const userDocData = userDoc.data(); // Access the document data
+
+    console.log(userDocData);
+
+    // Compare the password from the request with the stored password
+    const isPasswordValid = await comparePassword(
+      password,
+      userDocData.password
+    );
+    if (!isPasswordValid) {
+      throw {
+        status: 400,
+        message: "Password does not match.",
+      };
+    }
+
+    // Hash the new password and update it in Firestore
+    const hashedPassword = await hashPassword(newPassword);
+    await userDoc.ref.update({
+      password: hashedPassword,
+    });
+
+    console.log("Password updated successfully.");
+  } catch (error) {
+    console.error("Error updating password:", error.message);
+    throw error;
+  }
+};
+
+module.exports = {
+  addUser,
+  loginUser,
+  EmailAlreadyExistsError,
+  changeUserPassword,
+};

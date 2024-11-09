@@ -19,6 +19,7 @@ const {
   getPatients,
   decryptDocument,
   verifyFirebaseUid,
+  generateUniqueId,
 } = require("../Helper/Helper");
 const { getAppointments } = require("./appointmentService");
 
@@ -39,7 +40,7 @@ const addStaff = async (organizationId, staffData, firebaseUid) => {
       displayName: `${staffData.firstName} ${staffData.lastName}`,
     });
 
-    const staffId = uuidv4();
+    const staffId = generateUniqueId(staffCollection);
     const encryptedStaffData = {
       staffId,
       organizationId,
