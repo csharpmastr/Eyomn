@@ -3,11 +3,13 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import DocumentSoap from "../../Component/ui/PDF/DocumentSoap";
+import { useSelector } from "react-redux";
 
 const SoapRecord = () => {
   const navigate = useNavigate();
   const { patientId } = useParams();
-
+  const patients = useSelector((state) => state.reducer.patient.patients);
+  const patient = patients.find((patient) => patient.patientId === patientId);
   const handleBack = () => {
     navigate(`/scribe/${patientId}`);
 
@@ -53,10 +55,10 @@ const SoapRecord = () => {
       <div className="w-full h-auto rounded-md border border-f-gray">
         <div className="p-4 bg-bg-sub border-b border-f-gray flex justify-between rounded-t-md">
           <article>
-            <h6>John Doe</h6>
-            <p className="text-p-sm">65 Years Old | Male</p>
+            <h6>{`${patient.first_name} ${patient.last_name}`}</h6>
+            <p className="text-p-sm">{`${patient.age} years  old | ${patient.sex}`}</p>
           </article>
-          <h6>11/07/2024</h6>
+          <h6>{patient.birthdate}</h6>
         </div>
         <div className="w-full text-p-rg bg-white font-light">
           <div className="w-full flex">
