@@ -55,7 +55,7 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
               </section>
               <section className="flex-1 text-p-rg font-medium">
                 <p className="text-f-gray mb-1 text-p-sm font-normal">Sex</p>
-                <p>{patient.sex}</p>
+                <p>{patient.sex || "Not Indicated"}</p>
               </section>
             </div>
           </div>
