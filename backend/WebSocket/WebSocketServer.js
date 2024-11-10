@@ -8,6 +8,7 @@ const {
   onSnapshot,
   collection,
   doc,
+  or,
 } = require("firebase/firestore");
 const {
   patientCol,
@@ -50,7 +51,13 @@ const startWebSocketServer = () => {
     const sentPatientIds = new Set();
 
     try {
-      const patientQuery = query(patientCol, where("doctorId", "==", staffId));
+      const patientQuery = query(
+        patientCol,
+        or(
+          where("doctorId", "==", staffId),
+          where("authorizedDoctor", "array-contains", staffId)
+        )
+      );
 
       unsubscribePatients = onSnapshot(patientQuery, (snapshot) => {
         try {
@@ -59,7 +66,7 @@ const startWebSocketServer = () => {
           snapshot.docChanges().forEach((change) => {
             const patientId = change.doc.id;
 
-            if (change.type === "added") {
+            if (change.type === "added" || change.type === "modified") {
               const newPatient = change.doc.data();
               const decryptedPatientData = decryptDocument(newPatient, [
                 "patientId",
@@ -68,6 +75,7 @@ const startWebSocketServer = () => {
                 "organizationId",
                 "createdAt",
                 "isDeleted",
+                "authorizedDoctor",
               ]);
               if (!sentPatientIds.has(patientId)) {
                 patients.push(decryptedPatientData);

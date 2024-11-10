@@ -43,6 +43,17 @@ const pushNotification = async (userId, type, data) => {
         patientId: data.patientId,
       };
     }
+    if (type === "sharedPatient") {
+      const message = `Patient ${data.patientName} has been shared to you by Dr.${data.doctorName}`;
+      const encryptedMessage = encryptData(message);
+      notificationData = {
+        ...notificationData,
+        type: "sharedPatient",
+        message: encryptedMessage,
+        doctorId: data.doctorId,
+        patientId: data.patientId,
+      };
+    }
     await notificationCol.doc(notificationId).set(notificationData);
     console.log(`Notification of type "${type}" added for user ${userId}`);
   } catch (error) {

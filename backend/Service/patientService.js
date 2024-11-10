@@ -126,6 +126,7 @@ const getPatients = async (
         "organizationId",
         "createdAt",
         "isDeleted",
+        "authorizedDoctor",
       ]);
 
       return decryptedPatientData;
@@ -393,14 +394,13 @@ const getDoctorPatient = async (organizationId, doctorId, firebaseUid) => {
     if (!doctorSnapshot.exists) {
       throw new Error("Doctor not found");
     }
-    const doctorData = doctorSnapshot.data();
 
+    const doctorData = doctorSnapshot.data();
     const branches = doctorData.branches;
 
-    const allPatients = await Promise.all(
+    const allBranchPatients = await Promise.all(
       branches.map(async (branch) => {
         const branchId = branch.branchId;
-
         return await getPatients(
           organizationId,
           branchId,
@@ -410,10 +410,103 @@ const getDoctorPatient = async (organizationId, doctorId, firebaseUid) => {
         );
       })
     );
-    const patients = allPatients.flat();
+
+    const branchPatients = allBranchPatients.flat();
+
+    const authorizedDoctorPatients = await getPatientsWithAuthorizedDoctor(
+      doctorId
+    );
+
+    const allPatients = [...branchPatients, ...authorizedDoctorPatients];
+
+    const uniquePatients = Array.from(
+      new Map(
+        allPatients.map((patient) => [patient.patientId, patient])
+      ).values()
+    );
+
+    return uniquePatients;
+  } catch (error) {
+    console.error(
+      "Error fetching doctor patients with authorized doctors:",
+      error
+    );
+    throw error;
+  }
+};
+
+const sharePatient = async (
+  authorizedDoctor,
+  doctorId,
+  patientId,
+  firebaseUid
+) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const patientRef = patientCollection.doc(patientId);
+    const patientSnapshot = await patientCollection.doc(patientId).get();
+    const doctorSnapshot = await staffCollection.doc(doctorId).get();
+
+    let doctorName = "";
+    let patientName = "";
+
+    if (patientSnapshot.exists) {
+      const patientData = patientSnapshot.data();
+      const firstName = decryptData(patientData.first_name);
+      const lastName = decryptData(patientData.last_name);
+      patientName = `${firstName} ${lastName}`;
+    }
+
+    if (doctorSnapshot.exists) {
+      const doctorData = doctorSnapshot.data();
+      const firstName = decryptData(doctorData.first_name);
+      const lastName = decryptData(doctorData.last_name);
+      doctorName = `${firstName} ${lastName}`;
+    }
+
+    await patientRef.set({ authorizedDoctor }, { merge: true });
+
+    for (const authorizedDoctorId of authorizedDoctor) {
+      await pushNotification(authorizedDoctorId, "sharedPatient", {
+        doctorId: authorizedDoctorId,
+        patientId,
+        doctorName,
+        patientName,
+      });
+    }
+  } catch (error) {
+    console.error("Error sharing patient:", error.message);
+    throw error; // Rethrow to be caught in the handler
+  }
+};
+const getPatientsWithAuthorizedDoctor = async (doctorId) => {
+  try {
+    const patientsSnapshot = await patientCollection
+      .where("authorizedDoctor", "array-contains", doctorId)
+      .get();
+
+    const patients = patientsSnapshot.docs.map((doc) => {
+      const patientData = doc.data();
+
+      const decryptedPatientData = decryptDocument(patientData, [
+        "patientId",
+        "branchId",
+        "doctorId",
+        "organizationId",
+        "createdAt",
+        "isDeleted",
+        "authorizedDoctor",
+      ]);
+
+      return decryptedPatientData;
+    });
 
     return patients;
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error fetching patients with authorized doctor:", error);
+    throw error;
+  }
 };
 
 module.exports = {
@@ -431,4 +524,5 @@ module.exports = {
   // getPatientsByDoctor,
   // getPatients,
   getDoctorPatient,
+  sharePatient,
 };

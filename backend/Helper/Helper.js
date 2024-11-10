@@ -74,6 +74,7 @@ const getPatients = async (
         "organizationId",
         "createdAt",
         "isDeleted",
+        "authorizedDoctors",
       ]);
 
       return decryptedPatientData;
