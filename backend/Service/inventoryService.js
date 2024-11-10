@@ -226,6 +226,7 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
             "productSKU",
             "productId",
             "isDeleted",
+            "retail_price",
           ]);
 
           if (decryptedProductData.quantity < product.quantity) {
