@@ -7,6 +7,7 @@ import Loader from "../../Component/ui/Loader";
 import AddEditPatient from "../../Component/ui/AddEditPatient";
 import Table from "../../Component/ui/Table";
 import { FiPlus } from "react-icons/fi";
+import SharePatientModal from "../../Component/ui/SharePatientModal";
 
 const Patient = () => {
   const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
@@ -15,7 +16,10 @@ const Patient = () => {
   const [sortOption, setSortOption] = useState("");
   const role = useSelector((state) => state.reducer.user.user.role);
   const [isLoading, setIsLoading] = useState(false);
+  const [openSharePatient, setIsOpenSharePatient] = useState(false);
+  const [selectedPatientId, setSelectedPatientId] = useState(null);
   const patients = useSelector((state) => state.reducer.patient.patients);
+  const [attendingDoctor, setAttendingDoctor] = useState(null);
   const totalPatient = patients.length;
   const navigate = useNavigate();
   const location = useLocation();
@@ -74,7 +78,11 @@ const Patient = () => {
     sessionStorage.setItem("currentPatient", patientId);
     navigate(`/patient/${patientId}`);
   };
-
+  const handleSharePatientClick = (patientId, doctorId) => {
+    setAttendingDoctor(doctorId);
+    setSelectedPatientId(patientId);
+    setIsOpenSharePatient(true);
+  };
   useEffect(() => {
     if (location.pathname === "/patient") {
       setHasSelected(false);
@@ -154,12 +162,21 @@ const Patient = () => {
               <Table
                 data={filteredPatients}
                 handlePatientClick={handlePatientClick}
+                handleSharePatientClick={handleSharePatientClick}
               />
             </div>
           </div>
         </>
       )}
       {isAddPatientModalOpen && <AddEditPatient onClose={closeAddPatient} />}
+      {openSharePatient && (
+        <SharePatientModal
+          patientId={selectedPatientId}
+          currentDoctor={attendingDoctor}
+          onClose={() => setIsOpenSharePatient(false)}
+          title={"Share Patient"}
+        />
+      )}
     </div>
   );
 };

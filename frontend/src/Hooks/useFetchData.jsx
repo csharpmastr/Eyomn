@@ -145,6 +145,17 @@ export const useFetchData = () => {
               ),
             type: "appointments",
           },
+          {
+            call: () =>
+              getDoctorList(
+                organizationId,
+                branchId,
+                accessToken,
+                refreshToken,
+                firebaseUid
+              ),
+            type: "doctors",
+          },
         ];
       default:
         return [];
