@@ -37,11 +37,11 @@ const Organization = () => {
       {!hasSelectedBranch ? (
         <>
           <div className="w-full flex items-center justify-between">
-            <h1 className="text-c-secondary font-medium text-p-lg">
+            <h1 className="text-c-secondary font-medium text-p-rg md:text-p-lg">
               Organization Branches
             </h1>
             <div
-              className="h-fit flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light hover:cursor-pointer"
+              className="h-fit flex justify-center text-p-sm md:text-p-rg items-center rounded-md px-4 py-3 bg-c-secondary text-f-light hover:cursor-pointer hover:bg-opacity-75"
               onClick={handleOpenStaffModal}
             >
               <FiPlus className="h-5 w-5 mr-2" />

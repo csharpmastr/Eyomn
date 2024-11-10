@@ -166,7 +166,7 @@ const SetAppointment = ({ onClose }) => {
         <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
           <div className="w-[380px] md:w-1/2 xl:w-[500px] h-auto ">
             <header className="p-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-              <h1 className="text-p-lg text-c-secondary font-semibold">
+              <h1 className="text-p-rg md:text-p-lg text-c-secondary font-semibold">
                 Set Appointment
               </h1>
               <button onClick={onClose}> &times; </button>
@@ -175,7 +175,7 @@ const SetAppointment = ({ onClose }) => {
               <section>
                 <label
                   htmlFor="patient_name"
-                  className="text-p-sm text-c-gray3 font-medium"
+                  className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                 >
                   Patient Name{" "}
                   <span className="text-red-400">
@@ -196,7 +196,7 @@ const SetAppointment = ({ onClose }) => {
                 <div className="w-1/2">
                   <label
                     htmlFor="date"
-                    className="text-p-sm text-c-gray3 font-medium"
+                    className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                   >
                     Date{" "}
                     <span className="text-red-400">
@@ -215,7 +215,7 @@ const SetAppointment = ({ onClose }) => {
                 <div className="w-1/2">
                   <label
                     htmlFor="time"
-                    className="text-p-sm text-c-gray3 font-medium"
+                    className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                   >
                     Time{" "}
                     <span className="text-red-400">
@@ -242,7 +242,7 @@ const SetAppointment = ({ onClose }) => {
               <section>
                 <label
                   htmlFor="reason"
-                  className="text-p-sm text-c-gray3 font-medium"
+                  className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                 >
                   Reason{" "}
                   <span className="text-red-400">
@@ -265,7 +265,7 @@ const SetAppointment = ({ onClose }) => {
               <section>
                 <label
                   htmlFor="doctor"
-                  className="text-p-sm text-c-gray3 font-medium"
+                  className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                 >
                   Appoint a Doctor{" "}
                   <span className="text-red-400">
@@ -292,7 +292,7 @@ const SetAppointment = ({ onClose }) => {
             <div className="border border-t-f-gray bg-white rounded-b-lg flex gap-4 justify-end p-4">
               <button
                 type="button"
-                className="px-4 py-2 text-f-dark text-p-rg font-medium border border-c-gray3 rounded-md"
+                className="px-4 py-2 text-f-dark text-p-sm md:text-p-rg font-medium border border-c-gray3 rounded-md hover:bg-sb-org"
                 onClick={onClose}
               >
                 Cancel
@@ -300,7 +300,7 @@ const SetAppointment = ({ onClose }) => {
               <button
                 onClick={handleSubmitAppointment}
                 type="submit"
-                className="px-4 py-2 bg-bg-con rounded-md text-f-light text-p-rg font-medium"
+                className="px-4 py-2 bg-bg-con rounded-md text-f-light text-p-sm md:text-p-rg font-medium hover:bg-opacity-75"
               >
                 Schedule
               </button>

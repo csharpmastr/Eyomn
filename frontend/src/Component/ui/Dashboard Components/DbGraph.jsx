@@ -149,7 +149,7 @@ const DbGraph = ({ patients, sales }) => {
   ];
 
   return (
-    <div className="text-p-rg h-[500px] text-f-dark rounded-lg bg-white p-4 border">
+    <div className="text-p-sm md:text-p-rg h-[500px] text-f-dark rounded-lg bg-white p-4 border">
       <header className="flex justify-between h-fit w-full items-center mb-4">
         <h1 className="font-medium text-nowrap text-c-secondary">
           {user.role !== "2"

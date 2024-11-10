@@ -202,7 +202,7 @@ const ProfileSettingSection = ({ selected }) => {
                 <div className="flex gap-2 items-center mb-2">
                   <button
                     type="button"
-                    className="text-blue-400 text-p-lg font-medium"
+                    className="text-blue-400 text-p-rg md:text-p-lg font-medium"
                     onClick={() =>
                       document.getElementById("imageUpload").click()
                     }
@@ -212,7 +212,7 @@ const ProfileSettingSection = ({ selected }) => {
                   <span className="text-gray-400">|</span>
                   <button
                     type="button"
-                    className="text-red-400 text-p-lg font-medium"
+                    className="text-red-400 text-p-rg md:text-p-lg font-medium"
                     onClick={handleRemoveImage}
                     disabled={!image}
                   >
@@ -235,7 +235,7 @@ const ProfileSettingSection = ({ selected }) => {
             )}
             {isEditable && (
               <div
-                className="h-fit flex justify-center items-center w-40 py-3 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md"
+                className="h-fit flex justify-center items-center w-40 py-3 bg-c-secondary text-f-light text-p-sm md:text-p-rg font-semibold rounded-md"
                 onClick={() => setIsEditable(!isEditable)} // Add Save function
               >
                 <h1>Save</h1>
@@ -243,11 +243,11 @@ const ProfileSettingSection = ({ selected }) => {
             )}
           </div>
           <div className="w-full border border-f-gray bg-white rounded-lg p-10 h-full flex flex-col justify-between">
-            <label className="text-p-lg font-semibold text-c-secondary">
+            <label className="text-p-rg md:text-p-lg font-semibold text-c-secondary">
               | Personal Information
             </label>
             <div className="mt-3 text-c-gray3">
-              <label htmlFor="first_name" className="text-p-sm">
+              <label htmlFor="first_name" className="text-p-sc md:text-p-sm">
                 First Name{" "}
                 <span className="text-red-400">
                   {(userForm.first_name === "" || errors.first_name) &&
@@ -263,7 +263,7 @@ const ProfileSettingSection = ({ selected }) => {
                 placeholder="Enter first name"
                 disabled={!isEditable}
               />
-              <label htmlFor="last_name" className="text-p-sm">
+              <label htmlFor="last_name" className="text-p-sc md:text-p-sm">
                 Last Name{" "}
                 <span className="text-red-400">
                   {(userForm.last_name === "" || errors.last_name) &&
@@ -279,7 +279,7 @@ const ProfileSettingSection = ({ selected }) => {
                 placeholder="Enter last name"
                 disabled={!isEditable}
               />
-              <label htmlFor="birthdate" className="text-p-sm">
+              <label htmlFor="birthdate" className="text-p-sc md:text-p-sm">
                 Date of Birth{" "}
                 <span className="text-red-400">
                   {(userForm.birthdate === "" || errors.birthdate) &&
@@ -297,13 +297,16 @@ const ProfileSettingSection = ({ selected }) => {
             </div>
           </div>
           <div className="w-full border border-f-gray bg-white rounded-lg p-10 h-full flex flex-col justify-between">
-            <label className="text-p-lg font-semibold text-c-secondary">
+            <label className="text-p-rg md:text-p-lg font-semibold text-c-secondary">
               | Contact Information
             </label>
             <div className="mt-3 text-c-gray3">
               <div className="flex gap-4 mb-4">
                 <div className="w-1/2">
-                  <label htmlFor="province" className="block text-p-sm mb-1">
+                  <label
+                    htmlFor="province"
+                    className="block text-p-sc md:text-p-sm mb-1"
+                  >
                     Province
                   </label>
                   <Select
@@ -318,7 +321,7 @@ const ProfileSettingSection = ({ selected }) => {
                 <div className="w-1/2">
                   <label
                     htmlFor="municipality"
-                    className="block text-p-sm mb-1"
+                    className="block text-p-sc md:text-p-sm mb-1"
                   >
                     Municipality
                   </label>
@@ -333,7 +336,10 @@ const ProfileSettingSection = ({ selected }) => {
                   />
                 </div>
               </div>
-              <label htmlFor="contact_number" className="text-p-sm">
+              <label
+                htmlFor="contact_number"
+                className="text-p-sc md:text-p-sm"
+              >
                 Contact Number{" "}
                 <span className="text-red-400">
                   {(userForm.contact_number === "" || errors.contact_number) &&
@@ -349,7 +355,7 @@ const ProfileSettingSection = ({ selected }) => {
                 placeholder="Enter contact number"
                 disabled={!isEditable}
               />
-              <label htmlFor="email" className="text-p-sm">
+              <label htmlFor="email" className="text-p-sc md:text-p-sm">
                 Email Address{" "}
                 <span className="text-red-400">
                   {(userForm.email === "" || errors.email) && errors.email}
@@ -370,16 +376,16 @@ const ProfileSettingSection = ({ selected }) => {
             ""
           ) : (
             <div className="w-full border border-f-gray bg-white rounded-lg p-10 h-full flex flex-col justify-between">
-              <label className="text-p-lg font-semibold text-c-secondary">
+              <label className="text-p-rg md:text-p-lg font-semibold text-c-secondary">
                 | Job Information
               </label>
               <div className="mt-3 text-c-gray3">
                 <div className="flex mb-5 gap-5">
                   <div className="flex-1">
-                    <label htmlFor="role" className="text-p-sm">
+                    <label htmlFor="role" className="text-p-sc md:text-p-sm">
                       Job / Role
                     </label>
-                    <h1 className="mt-1 text-f-dark font-medium text-p-rg">
+                    <h1 className="mt-1 text-f-dark font-medium text-p-sm md:text-p-rg">
                       {user.position === "Optometrist" ||
                       user.position === "Ophthalmologist"
                         ? `Doctor/${user.position}`
@@ -387,33 +393,39 @@ const ProfileSettingSection = ({ selected }) => {
                     </h1>
                   </div>
                   <div className="flex-1">
-                    <label htmlFor="contract" className="text-p-sm">
+                    <label
+                      htmlFor="contract"
+                      className="text-p-sc md:text-p-sm"
+                    >
                       Contract
                     </label>
-                    <h1 className="mt-1 text-f-dark font-medium text-p-rg">
+                    <h1 className="mt-1 text-f-dark font-medium text-p-sm md:text-p-rg">
                       {user.emp_type === "fulltime" ? `Full Time` : "Part Time"}
                     </h1>
                   </div>
                 </div>
                 <div className="flex gap-5">
                   <div className="flex-1">
-                    <label htmlFor="work_hour" className="text-p-sm">
+                    <label
+                      htmlFor="work_hour"
+                      className="text-p-sc md:text-p-sm"
+                    >
                       Working Hours
                     </label>
-                    <h1 className="mt-1 text-f-dark font-medium text-p-rg">
+                    <h1 className="mt-1 text-f-dark font-medium text-p-sm md:text-p-rg">
                       09:00 am - 05:00 pm
                     </h1>
                   </div>
                   <div className="flex-1">
-                    <label htmlFor="dayOff" className="text-p-sm">
+                    <label htmlFor="dayOff" className="text-p-sc md:text-p-sm">
                       Day’s Off
                     </label>
-                    <h1 className="mt-1 text-f-dark font-medium text-p-rg">
+                    <h1 className="mt-1 text-f-dark font-medium text-p-sm md:text-p-rg">
                       Saturday & Sunday
                     </h1>
                   </div>
                 </div>
-                <h1 className="text-p-lg mt-10 text-center md:text-start">
+                <h1 className="text-p-rg md:text-p-lg mt-10 text-center md:text-start">
                   Contact Organization Manager for schedule changes
                 </h1>
               </div>
@@ -424,14 +436,14 @@ const ProfileSettingSection = ({ selected }) => {
       {selected === "Account" && (
         <div className="flex flex-col w-full h-full gap-4 md:gap-8 font-Poppins">
           <div className="w-full border border-f-gray bg-white rounded-lg p-10 h-fit flex flex-col justify-between">
-            <label className="text-p-lg font-semibold text-c-secondary">
+            <label className="text-p-rg md:text-p-lg font-semibold text-c-secondary">
               | Change Password
             </label>
             <div className="mt-3 text-c-gray3 flex flex-col items-end">
               <div className="w-full">
                 <label
                   htmlFor="password"
-                  className="text-p-sm text-c-gray3 font-medium"
+                  className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                 >
                   Current Password{" "}
                   <span className="text-red-400">
@@ -462,7 +474,7 @@ const ProfileSettingSection = ({ selected }) => {
                 </div>
                 <label
                   htmlFor="newpassword"
-                  className="text-p-sm text-c-gray3 font-medium"
+                  className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                 >
                   New Password{" "}
                   <span className="text-red-400">
@@ -493,7 +505,7 @@ const ProfileSettingSection = ({ selected }) => {
                 </div>
                 <label
                   htmlFor="confirmpassword"
-                  className="text-p-sm text-c-gray3 font-medium"
+                  className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                 >
                   Confirm Password{" "}
                   <span className="text-red-400">
@@ -524,20 +536,20 @@ const ProfileSettingSection = ({ selected }) => {
                   </button>
                 </div>
               </div>
-              <button className="px-5 py-3 mt-5 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md">
+              <button className="px-5 py-3 mt-5 bg-c-secondary text-f-light text-p-sm md:text-p-rg font-semibold rounded-md">
                 Save Password
               </button>
             </div>
           </div>
           <div className="w-full border border-red-400 bg-white rounded-lg p-10 h-fit flex flex-col justify-between">
-            <label className="text-p-lg font-semibold text-c-secondary">
+            <label className="text-p-rg md:text-p-lg font-semibold text-c-secondary">
               | Delete Account
             </label>
-            <p className="text-p-rg font-medium text-c-secondary">
+            <p className="text-p-sm md:text-p-rg font-medium text-c-secondary">
               Once you delete your account, there is no going back. Please be
               certain.
             </p>
-            <button className="px-5 w-fit py-3 mt-8 bg-red-50 border-2 border-red-400 text-red-400 text-p-rg font-semibold rounded-md">
+            <button className="px-5 w-fit py-3 mt-8 bg-red-50 border-2 border-red-400 text-red-400 text-p-sm md:text-p-rg font-semibold rounded-md">
               Delete Account
             </button>
           </div>

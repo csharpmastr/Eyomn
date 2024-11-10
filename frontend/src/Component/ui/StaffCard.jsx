@@ -11,7 +11,7 @@ const StaffCard = ({ staffData, showImage = true, onClick }) => {
           staffData.position !== "Staff" ? "bg-c-primary" : "bg-c-staff"
         }`}
       >
-        <h1 className="text-p-sm text-f-light font-medium">
+        <h1 className="text-p-sc md:text-p-sm text-f-light font-medium">
           {staffData.position}
         </h1>
       </div>
@@ -28,10 +28,10 @@ const StaffCard = ({ staffData, showImage = true, onClick }) => {
           />
         )}
         <div>
-          <h3 className="text-p-lg font-semibold text-f-dark">
+          <h3 className="text-p-rg md:text-p-lg font-semibold text-f-dark">
             {staffData.first_name + " " + staffData.last_name}
           </h3>
-          <p className="text-p-rg">{staffData.email}</p>
+          <p className="text-p-sm md:text-p-rg">{staffData.email}</p>
         </div>
       </div>
     </div>

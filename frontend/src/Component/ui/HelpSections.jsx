@@ -13,7 +13,9 @@ const HelpSections = ({ selected }) => {
     <div className="w-full h-full flex flex-col gap-8 font-Poppins">
       {selected === "Getting Started" && (
         <div className="w-full border border-f-gray bg-white rounded-lg px-10 h-52 flex flex-col justify-center items-center">
-          <h1 className="font-semibold text-p-lg">Getting Started</h1>
+          <h1 className="font-semibold text-p-rg md:text-p-lg">
+            Getting Started
+          </h1>
         </div>
       )}
       {selected === "Account" && (
@@ -23,7 +25,9 @@ const HelpSections = ({ selected }) => {
             id="Creating an Account"
             className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark "
           >
-            <h1 className="font-medium text-p-lg">1. Creating an Account</h1>
+            <h1 className="font-medium text-p-rg md:text-p-lg">
+              1. Creating an Account
+            </h1>
             <article className=" mt-4">
               <h6 className="font-medium">Who can create an account?</h6>
               <ul className="list-disc ml-10 mt-2">
@@ -63,7 +67,9 @@ const HelpSections = ({ selected }) => {
             id="Logging In and Out"
             className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark"
           >
-            <h1 className="font-medium text-p-lg">2. Logging In and Out</h1>
+            <h1 className="font-medium text-p-rg md:text-p-lg">
+              2. Logging In and Out
+            </h1>
             <article className=" mt-4">
               <h6 className="font-medium ">How do I log into my account?</h6>
               <ol className="list-decimal ml-10 flex flex-col gap-2 mt-2">
@@ -89,7 +95,9 @@ const HelpSections = ({ selected }) => {
             id="Password Management"
             className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark"
           >
-            <h1 className="font-medium text-p-lg">3. Password Management</h1>
+            <h1 className="font-medium text-p-rg md:text-p-lg">
+              3. Password Management
+            </h1>
             <article className=" mt-4">
               <h6 className="font-medium ">
                 I forgot my password. How do I reset it?
@@ -119,7 +127,9 @@ const HelpSections = ({ selected }) => {
             id="Profile Management"
             className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark"
           >
-            <h1 className="font-medium text-p-lg">4. Profile Management</h1>
+            <h1 className="font-medium text-p-rg md:text-p-lg">
+              4. Profile Management
+            </h1>
             <article className=" mt-4">
               <h6 className="font-medium ">
                 How do I update my profile information?
@@ -154,7 +164,9 @@ const HelpSections = ({ selected }) => {
             id="Deleting Your Account"
             className="w-full h-fit border border-f-gray bg-white rounded-xl p-10 flex flex-col text-f-dark"
           >
-            <h1 className="font-medium text-p-lg">5. Deleting Your Account</h1>
+            <h1 className="font-medium text-p-rg md:text-p-lg">
+              5. Deleting Your Account
+            </h1>
             <article className=" mt-4">
               <h6 className="font-medium ">
                 How do I permanently delete my account?
@@ -178,22 +190,22 @@ const HelpSections = ({ selected }) => {
       )}
       {selected === "Billing" && (
         <div className="w-full border border-f-gray bg-white rounded-lg px-10 h-52 flex flex-col justify-center items-center">
-          <h1 className="font-semibold text-p-lg">Billing</h1>
+          <h1 className="font-semibold text-p-rg md:text-p-lg">Billing</h1>
         </div>
       )}
       {selected === "FAQ's" && (
         <div className="w-full border border-f-gray bg-white rounded-lg px-10 h-52 flex flex-col justify-center items-center">
-          <h1 className="font-semibold text-p-lg">FAQ's</h1>
+          <h1 className="font-semibold text-p-rg md:text-p-lg">FAQ's</h1>
         </div>
       )}
       {selected === "Features" && (
         <div className="w-full border border-f-gray bg-white rounded-lg px-10 h-52 flex flex-col justify-center items-center">
-          <h1 className="font-semibold text-p-lg">Features</h1>
+          <h1 className="font-semibold text-p-rg md:text-p-lg">Features</h1>
         </div>
       )}
       {selected === "Changelog" && (
         <div className="w-full h-full border border-f-gray bg-white rounded-lg px-10 flex flex-col justify-center items-center">
-          <h1 className="font-semibold text-p-lg">
+          <h1 className="font-semibold text-p-rg md:text-p-lg">
             No changes have been made so far.
           </h1>
         </div>

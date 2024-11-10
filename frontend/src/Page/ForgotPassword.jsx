@@ -61,13 +61,15 @@ const ForgotPassword = () => {
             <div className="flex flex-col gap-8">
               <article className="flex flex-col text-center">
                 <h1 className="text-h-h4 font-semibold">Forgot Password?</h1>
-                <p className="text-p-rg text-f-gray2">
+                <p className="text-p-sm md:text-p-rg text-f-gray2">
                   No worries, well help you reset your password
                 </p>
               </article>
               <div className="flex flex-col gap-8 items-center">
                 <section className="w-full">
-                  <label className="text-p-rg font-medium">Email Address</label>
+                  <label className="text-p-sm md:text-p-rg font-medium">
+                    Email Address
+                  </label>
                   <div className="relative">
                     <MdOutlineEmail className="w-6 h-6 absolute top-5 left-4 text-c-gray3" />
                     <input
@@ -81,7 +83,7 @@ const ForgotPassword = () => {
                   </div>
                 </section>
                 <button
-                  className="text-center py-3 rounded-md text-p-lg text-f-light font-semibold bg-c-primary w-full"
+                  className="text-center py-3 rounded-md text-p-rg md:text-p-lg text-f-light font-semibold bg-c-primary w-full"
                   onClick={handleNext}
                 >
                   Send an OTP
@@ -93,7 +95,7 @@ const ForgotPassword = () => {
             <div className="flex flex-col gap-8">
               <article className="flex flex-col text-center">
                 <h1 className="text-h-h4 font-semibold">Confirm Your Code</h1>
-                <p className="text-p-rg text-f-gray2">
+                <p className="text-p-sm md:text-p-rg text-f-gray2">
                   Please enter the 6-digit code we sent to your email.
                 </p>
               </article>
@@ -114,12 +116,12 @@ const ForgotPassword = () => {
                   ))}
                 </div>
                 <button
-                  className="text-center py-3 rounded-md text-p-lg text-f-light font-semibold bg-c-primary w-full"
+                  className="text-center py-3 rounded-md text-p-rg md:text-p-lg text-f-light font-semibold bg-c-primary w-full"
                   onClick={handleNext}
                 >
                   Confirm OTP
                 </button>
-                <p className="text-p-sm font-medium text-center w-full">
+                <p className="text-p-sc md:text-p-sm font-medium text-center w-full">
                   Didn't receive the email?{" "}
                   <span className="text-c-secondary font-bold">
                     Click to resend
@@ -134,13 +136,15 @@ const ForgotPassword = () => {
                 <h1 className="text-h-h4 font-semibold">
                   Create a New Password
                 </h1>
-                <p className="text-p-rg text-f-gray2">
+                <p className="text-p-sm md:text-p-rg text-f-gray2">
                   Create a new password to secure your account.
                 </p>
               </article>
               <div className="flex flex-col gap-8 items-center">
                 <section className="w-full">
-                  <label className="text-p-rg font-medium">New Password</label>
+                  <label className="text-p-sm md:text-p-rg font-medium">
+                    New Password
+                  </label>
                   <div className="relative">
                     <MdOutlineLock className="w-6 h-6 absolute top-5 left-4 text-c-gray3" />
                     <input
@@ -165,7 +169,7 @@ const ForgotPassword = () => {
                   </div>
                 </section>
                 <section className="w-full">
-                  <label className="text-p-rg font-medium">
+                  <label className="text-p-sm md:text-p-rg font-medium">
                     Confirm Password
                   </label>
                   <div className="relative">
@@ -192,7 +196,7 @@ const ForgotPassword = () => {
                   </div>
                 </section>
                 <button
-                  className="text-center py-3 rounded-md text-p-lg text-f-light font-semibold bg-c-primary w-full"
+                  className="text-center py-3 rounded-md text-p-rg md:text-p-lg text-f-light font-semibold bg-c-primary w-full"
                   onClick={handleNext}
                 >
                   Reset Password
@@ -206,13 +210,13 @@ const ForgotPassword = () => {
                 <h1 className="text-h-h4 font-semibold">
                   Password Reset Successful!
                 </h1>
-                <p className="text-p-rg text-f-gray2">
+                <p className="text-p-sm md:text-p-rg text-f-gray2">
                   Success! Your password has been updated. You can now log in
                   using your new password.
                 </p>
               </article>
               <button
-                className="text-center py-3 rounded-md text-p-lg text-f-light font-semibold bg-c-primary w-full"
+                className="text-center py-3 rounded-md text-p-rg md:text-p-lg text-f-light font-semibold bg-c-primary w-full"
                 onClick={() => navigate("/")}
               >
                 Go to Login
@@ -225,7 +229,9 @@ const ForgotPassword = () => {
               onClick={() => navigate("/")}
             >
               <FaArrowLeft className="h-auto w-6" />
-              <p className="text-p-sm font-medium">Back to login</p>
+              <p className="text-p-sc md:text-p-sm font-medium">
+                Back to login
+              </p>
             </div>
           )}
         </div>

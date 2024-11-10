@@ -102,7 +102,7 @@ const Patient = () => {
         <>
           {isLoading && <Loader />}
           <div className="p-4 md:p-6 2xl:p-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between text-p-rg">
+            <div className="flex flex-col md:flex-row md:items-center justify-between text-p-sm md:text-p-rg">
               <p className="font-semibold text-f-dark">
                 {totalPatient}{" "}
                 <span className="text-f-gray2 font-medium">Total patient</span>
@@ -141,7 +141,7 @@ const Patient = () => {
                   ""
                 ) : (
                   <div
-                    className={`h-fit flex justify-center items-center rounded-md px-4 py-3 text-f-light hover:cursor-pointer  ${btnContentColor} `}
+                    className={`h-fit flex justify-center items-center rounded-md px-4 py-3 text-f-light hover:cursor-pointer hover:bg-opacity-75  ${btnContentColor} `}
                     onClick={openAddPatient}
                   >
                     <FiPlus className="h-5 w-5 md:mr-2" />

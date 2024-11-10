@@ -79,10 +79,12 @@ const HelpCenter = () => {
               )}
             </section>
           </div>
-          <div className="w-2/3 h-fit bg-c-primary rounded-lg px-4 py-4  text-f-light text-p-rg">
+          <div className="w-2/3 h-fit bg-c-primary rounded-lg px-4 py-4  text-f-light text-p-sm md:text-p-rg">
             <section>
               <h1 className="font-semibold">Do you still need our help?</h1>
-              <p className="text-p-sm">Send you request via email.</p>
+              <p className="text-p-sc md:text-p-sm">
+                Send you request via email.
+              </p>
             </section>
             <div className="h-fit w-fit items-center justify-center rounded-md px-4 py-2 font-md bg-f-light text-f-dark font-semibold mt-4">
               <a

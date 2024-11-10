@@ -33,13 +33,15 @@ const SoapRecord = () => {
       <div className="flex justify-between mb-8">
         <div className="flex flex-col">
           <p
-            className="flex gap-2 text-p-sm  hover:cursor-pointer"
+            className="flex gap-2 text-p-sc md:text-p-sm  hover:cursor-pointer"
             onClick={handleBack}
           >
             <AiOutlineArrowLeft className="h-5 w-5" />
             Back
           </p>
-          <h1 className="text-p-rg font-medium">Standardize Medical Record</h1>
+          <h1 className="text-p-sm md:text-p-rg font-medium">
+            Standardize Medical Record
+          </h1>
         </div>
         <PDFDownloadLink
           document={<DocumentSoap patientData={patientData} />}
@@ -54,11 +56,11 @@ const SoapRecord = () => {
         <div className="p-4 bg-bg-sub border-b border-f-gray flex justify-between rounded-t-md">
           <article>
             <h6>John Doe</h6>
-            <p className="text-p-sm">65 Years Old | Male</p>
+            <p className="text-p-sc md:text-p-sm">65 Years Old | Male</p>
           </article>
           <h6>11/07/2024</h6>
         </div>
-        <div className="w-full text-p-rg bg-white font-light">
+        <div className="w-full text-p-sm md:text-p-rg bg-white font-light">
           <div className="w-full flex">
             <div className="w-1/2 border p-4 flex flex-col gap-5">
               <h1 className="text-c-primary font-semibold">| Subjective (S)</h1>

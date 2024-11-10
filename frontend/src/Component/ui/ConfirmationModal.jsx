@@ -49,7 +49,9 @@ const ConfirmationModal = ({ productId, onClose }) => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-10">
           <div className="bg-white rounded-lg shadow-lg font-Poppins w-[400px]">
             <header className="p-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-              <h3 className="text-p-rg font-medium">Delete Product</h3>
+              <h3 className="text-p-sm md:text-p-rg font-medium">
+                Delete Product
+              </h3>
               <button onClick={onClose}>&times;</button>
             </header>
             <p className="my-8 ml-4">This can't be undone</p>

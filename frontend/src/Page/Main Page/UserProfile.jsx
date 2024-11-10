@@ -28,9 +28,11 @@ const UserProfile = () => {
             alt="Profile Image"
           />
           <div>
-            <h1 className="text-p-lg font-semibold mb-2">{`${user.first_name} ${user.last_name}`}</h1>
-            <h3 className="text-p-rg text-f-gray">{user.position}</h3>
-            <h3 className="text-p-rg text-f-gray">{`${user.municipality} ${user.province}`}</h3>
+            <h1 className="text-p-rg md:text-p-lg font-semibold mb-2">{`${user.first_name} ${user.last_name}`}</h1>
+            <h3 className="text-p-sm md:text-p-rg text-f-gray">
+              {user.position}
+            </h3>
+            <h3 className="text-p-sm md:text-p-rg text-f-gray">{`${user.municipality} ${user.province}`}</h3>
           </div>
         </section>
         <div
@@ -43,27 +45,33 @@ const UserProfile = () => {
       <div className="w-full h-full flex flex-col justify-between gap-6">
         <div className="w-full flex-1 text-f-dark rounded-md shadow-md">
           <header className="px-8 py-4 bg-white border-b rounded-t-md">
-            <h1 className="text-p-lg font-medium text-c-secondary">
+            <h1 className="text-p-rg md:text-p-lg font-medium text-c-secondary">
               | Personal Information
             </h1>
           </header>
           <div className="w-full flex flex-wrap p-8 gap-8 md:gap-0 md:flex-none">
-            <section className="flex-1 text-p-rg font-medium">
-              <p className="text-f-gray mb-1 text-p-sm font-normal">
+            <section className="flex-1 text-p-sm md:text-p-rg font-medium">
+              <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
                 Firstname
               </p>
               <p> {user.first_name}</p>
             </section>
-            <section className="flex-1 text-p-rg font-medium">
-              <p className="text-f-gray mb-1 text-p-sm font-normal">Lastname</p>
+            <section className="flex-1 text-p-sm md:text-p-rg font-medium">
+              <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
+                Lastname
+              </p>
               <p> {user.last_name}</p>
             </section>
-            <section className="flex-1 text-p-rg font-medium">
-              <p className="text-f-gray mb-1 text-p-sm font-normal">Birthday</p>
+            <section className="flex-1 text-p-sm md:text-p-rg font-medium">
+              <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
+                Birthday
+              </p>
               <p> {user.birthdate}</p>
             </section>
-            <section className="flex-1 text-p-rg font-medium">
-              <p className="text-f-gray mb-1 text-p-sm font-normal">Age</p>
+            <section className="flex-1 text-p-sm md:text-p-rg font-medium">
+              <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
+                Age
+              </p>
               <p>
                 {user.age
                   ? calculateAge(user.birthdate)
@@ -74,29 +82,31 @@ const UserProfile = () => {
         </div>
         <div className="w-full flex-1 text-f-dark rounded-md shadow-md">
           <header className="px-8 py-4 bg-white border-b rounded-t-md">
-            <h1 className="text-p-lg font-medium text-c-secondary">
+            <h1 className="text-p-rg md:text-p-lg font-medium text-c-secondary">
               | Contact Information
             </h1>
           </header>
           <div className="w-full flex flex-wrap p-8 gap-8 md:gap-0 md:flex-none">
-            <section className="flex-1 text-p-rg font-medium">
-              <p className="text-f-gray mb-1 text-p-sm font-normal">
+            <section className="flex-1 text-p-sm md:text-p-rg font-medium">
+              <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
                 Municipality
               </p>
               <p> {user.municipality}</p>
             </section>
-            <section className="flex-1 text-p-rg font-medium">
-              <p className="text-f-gray mb-1 text-p-sm font-normal">Province</p>
+            <section className="flex-1 text-p-sm md:text-p-rg font-medium">
+              <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
+                Province
+              </p>
               <p> {user.province}</p>
             </section>
-            <section className="flex-1 text-p-rg font-medium">
-              <p className="text-f-gray mb-1 text-p-sm font-normal">
+            <section className="flex-1 text-p-sm md:text-p-rg font-medium">
+              <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
                 Contact Number
               </p>
               <p> {user.contact_number || user.contact}</p>
             </section>
-            <section className="flex-1 text-p-rg font-medium">
-              <p className="text-f-gray mb-1 text-p-sm font-normal">
+            <section className="flex-1 text-p-sm md:text-p-rg font-medium">
+              <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
                 Email Address
               </p>
               <p> {user.email}</p>
@@ -105,29 +115,31 @@ const UserProfile = () => {
         </div>
         <div className="w-full flex-1 text-f-dark rounded-md shadow-md">
           <header className="px-8 py-4 bg-white border-b rounded-t-md">
-            <h1 className="text-p-lg font-medium text-c-secondary">
+            <h1 className="text-p-rg md:text-p-lg font-medium text-c-secondary">
               | Job Information
             </h1>
           </header>
           <div className="w-full flex flex-wrap p-8 gap-8 md:gap-0 md:flex-none">
-            <section className="flex-1 text-p-rg font-medium">
-              <p className="text-f-gray mb-1 text-p-sm font-normal">Job/Role</p>
+            <section className="flex-1 text-p-sm md:text-p-rg font-medium">
+              <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
+                Job/Role
+              </p>
               <p>{user.position}</p>
             </section>
-            <section className="flex-1 text-p-rg font-medium">
-              <p className="text-f-gray mb-1 text-p-sm font-normal">
+            <section className="flex-1 text-p-sm md:text-p-rg font-medium">
+              <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
                 Assigned Branch
               </p>
               <p>Santa Cruz</p>
             </section>
-            <section className="flex-1 text-p-rg font-medium">
-              <p className="text-f-gray mb-1 text-p-sm font-normal">
+            <section className="flex-1 text-p-sm md:text-p-rg font-medium">
+              <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
                 Branch Assignment
               </p>
               <p>{branches.length > 1 ? `Rotational` : `Stationary`}</p>
             </section>
-            <section className="flex-1 text-p-rg font-medium">
-              <p className="text-f-gray mb-1 text-p-sm font-normal">
+            <section className="flex-1 text-p-sm md:text-p-rg font-medium">
+              <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
                 No. Working Days
               </p>
               <p>{user.branches ? workingDaysCount : "N/A"} </p>

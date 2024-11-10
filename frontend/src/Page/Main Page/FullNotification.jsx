@@ -19,7 +19,7 @@ const FullNotification = () => {
 
   return (
     <div className="w-full h-full flex items-center justify-center p-4 gap-4 md:p-0 md:py-8 flex-col md:gap-6 font-Poppins">
-      <div className="p-8 rounded-lg w-full md:w-2/3 bg-white shadow-sm text-p-lg font-semibold text-f-dark flex items-center gap-4">
+      <div className="p-8 rounded-lg w-full md:w-2/3 bg-white shadow-sm text-p-rg md:text-p-lg font-semibold text-f-dark flex items-center gap-4">
         <FiBell className="w-8 h-8" />
         <h1>All Notification ({notification.length})</h1>
       </div>

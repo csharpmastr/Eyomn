@@ -91,7 +91,7 @@ const DbProduct = ({ filteredSales }) => {
   };
 
   return (
-    <div className="rounded-lg h-[500px] bg-white text-f-dark font-poppins border text-p-rg py-4 overflow-clip shadow-sm p-4">
+    <div className="rounded-lg h-[500px] bg-white text-f-dark font-poppins border text-p-sm md:text-p-rg py-4 overflow-clip shadow-sm p-4">
       <header className="flex justify-between px-4 pt-2 mb-4 text-c-secondary">
         <h1 className="font-medium text-nowrap text-c-secondary">
           | Top Selling Products

@@ -81,7 +81,7 @@ const PatientProfile = () => {
         onClick={handleBack}
       >
         <AiOutlineArrowLeft className="h-6 w-6" />
-        <button className="text-p-rg font-medium">Back</button>
+        <button className="text-p-sm md:text-p-rg font-medium">Back</button>
       </div>
       {currentPatient ? (
         role === "2" ? (

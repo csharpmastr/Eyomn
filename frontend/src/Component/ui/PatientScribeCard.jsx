@@ -7,7 +7,7 @@ const PatientScribeCard = ({ name, tab, onClick }) => {
       onClick={onClick}
     >
       <div className="absolute -top-5 left-0 w-28 h-6 bg-[#FFE9B2] rounded-t-lg transition-colors  group-hover:bg-[#ffe299]"></div>
-      <span className="text-f-dark font-Poppins text-p-rg text-center font-medium px-4">
+      <span className="text-f-dark font-Poppins text-p-sm md:text-p-rg text-center font-medium px-4">
         {name}
       </span>
     </div>

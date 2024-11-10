@@ -61,7 +61,7 @@ const Report = () => {
           </button>
         </nav>
       </div>
-      <div className="w-full h-full flex flex-col p-5 gap-5 rounded-b-xl rounded-tr-xl border border-f-gray bg-white text-f-dark text-p-rg">
+      <div className="w-full h-full flex flex-col p-5 gap-5 rounded-b-xl rounded-tr-xl border border-f-gray bg-white text-f-dark text-p-sm md:text-p-rg">
         <div className="w-full flex justify-between">
           <div className="flex gap-5 w-3/5">
             <select
@@ -79,7 +79,7 @@ const Report = () => {
               <IoMdSearch className="h-6 w-6 text-c-secondary" />
               <input
                 type="text"
-                className="w-full text-f-dark focus:outline-none placeholder-f-gray2 text-p-rg"
+                className="w-full text-f-dark focus:outline-none placeholder-f-gray2 text-p-sm md:text-p-rg"
                 placeholder="Search "
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

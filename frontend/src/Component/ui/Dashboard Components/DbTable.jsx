@@ -29,7 +29,7 @@ const DbTable = () => {
   };
 
   return (
-    <div className="text-p-rg h-[500px] rounded-lg bg-white p-4 overflow-clip shadow-sm text-f-dark">
+    <div className="text-p-sm md:text-p-rg h-[500px] rounded-lg bg-white p-4 overflow-clip shadow-sm text-f-dark">
       <header className="flex justify-between items-center text-c-secondary">
         <h1 className="font-medium text-nowrap text-c-secondary">
           | Recent Patients

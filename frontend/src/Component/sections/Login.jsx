@@ -116,7 +116,9 @@ const Login = () => {
           <SubmitButton
             value={"Sign In"}
             disabled={isLoading}
-            style={"bg-[#1ABC9C] font-font-Raleway"}
+            style={
+              "bg-c-primary hover:bg-opacity-80 active:bg-pressed-doctor font-font-Raleway"
+            }
           />
         </div>
       </form>
