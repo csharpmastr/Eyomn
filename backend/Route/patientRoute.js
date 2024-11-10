@@ -22,7 +22,7 @@ router.post(
   "/add-patient/:organizationId/:branchId/:doctorId",
   addPatientHandler
 );
-router.get("/patients-doctor", validateToken, getPatientsByDoctorHandler);
+router.get("/patients-doctor", getPatientsByDoctorHandler);
 router.get("/get-patients", validateToken, getPatientsHandler);
 router.put("/update/:patientId", updatePatientHandler);
 router.put("/delete/:patientId", deletePatientHandler);

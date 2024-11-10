@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
-import { getPatients } from "../Service/PatientService";
+import { getPatients, getPatientsByDoctor } from "../Service/PatientService";
 import { useDispatch, useSelector } from "react-redux";
 import { setPatients } from "../Slice/PatientSlice";
 import { setDoctor } from "../Slice/doctorSlice";
@@ -29,11 +29,13 @@ export const useFetchData = () => {
   const cookies = new Cookies();
   const accessToken = cookies.get("accessToken");
   const refreshToken = cookies.get("refreshToken");
-
+  const [fetching, setFetching] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const buildApiCalls = () => {
     let organizationId = user.role === "0" ? user.userId : user.organizationId;
+    let staffId = user.staffId || user.userId;
+
     let branchId =
       (user.branches &&
         user.branches.length > 0 &&
@@ -156,6 +158,17 @@ export const useFetchData = () => {
               ),
             type: "doctors",
           },
+          {
+            call: () =>
+              getPatientsByDoctor(
+                organizationId,
+                staffId,
+                firebaseUid,
+                accessToken,
+                refreshToken
+              ),
+            type: "patients",
+          },
         ];
       default:
         return [];
@@ -172,6 +185,7 @@ export const useFetchData = () => {
             const result = await apiCall.call();
             switch (apiCall.type) {
               case "patients":
+                console.log(result);
                 reduxDispatch(setPatients(result));
                 break;
               case "appointments":

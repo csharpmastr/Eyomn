@@ -10,6 +10,7 @@ const {
   addRawNote,
   addImageArchive,
   getImagesForPatient,
+  getDoctorPatient,
 } = require("../Service/patientService");
 
 const addPatientHandler = async (req, res) => {
@@ -53,17 +54,20 @@ const addPatientHandler = async (req, res) => {
 };
 const getPatientsByDoctorHandler = async (req, res) => {
   try {
-    const { clinicId, doctorId } = req.query;
-    if (!clinicId) {
-      return res.status(400).json({ message: "Clinic ID is required." });
-    }
-    const patients = await getPatientsByDoctor(clinicId, doctorId);
+    const { organizationId, staffId, firebaseUid } = req.query;
+    console.log(organizationId, staffId, firebaseUid);
+
+    const patients = await getDoctorPatient(
+      organizationId,
+      staffId,
+      firebaseUid
+    );
+
     return res.status(200).json(patients);
   } catch (error) {
-    console.error("Error fetching patients: ", error);
-    return res
+    res
       .status(500)
-      .json({ message: "Error fetching patients.", error: error.message });
+      .json({ message: "Error fetching patient.", error: error.message });
   }
 };
 

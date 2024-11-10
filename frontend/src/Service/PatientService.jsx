@@ -38,8 +38,9 @@ export const addPatientService = async (
 };
 
 export const getPatientsByDoctor = async (
-  clinicId,
-  doctorId,
+  organizationId,
+  staffId,
+  firebaseUid,
   accessToken,
   refreshToken
 ) => {
@@ -48,8 +49,9 @@ export const getPatientsByDoctor = async (
       `${PATIENT_API_BASE_URL}/patients-doctor`,
       {
         params: {
-          clinicId,
-          doctorId,
+          organizationId,
+          staffId,
+          firebaseUid,
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,

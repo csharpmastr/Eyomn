@@ -8,6 +8,7 @@ const {
   visitCollection,
   noteCollection,
   bucket,
+  staffCollection,
 } = require("../Config/FirebaseConfig");
 const {
   encryptDocument,
@@ -384,6 +385,36 @@ const getImagesForPatient = async (patientId, firebaseUid) => {
     throw new Error(`Error fetching images: ${error.message}`);
   }
 };
+const getDoctorPatient = async (organizationId, doctorId, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const doctorSnapshot = await staffCollection.doc(doctorId).get();
+    if (!doctorSnapshot.exists) {
+      throw new Error("Doctor not found");
+    }
+    const doctorData = doctorSnapshot.data();
+
+    const branches = doctorData.branches;
+
+    const allPatients = await Promise.all(
+      branches.map(async (branch) => {
+        const branchId = branch.branchId;
+
+        return await getPatients(
+          organizationId,
+          branchId,
+          doctorId,
+          doctorData.role,
+          firebaseUid
+        );
+      })
+    );
+    const patients = allPatients.flat();
+
+    return patients;
+  } catch (error) {}
+};
 
 module.exports = {
   addPatient,
@@ -399,4 +430,5 @@ module.exports = {
   getImagesForPatient,
   // getPatientsByDoctor,
   // getPatients,
+  getDoctorPatient,
 };

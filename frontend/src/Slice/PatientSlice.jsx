@@ -12,7 +12,6 @@ const patientSlice = createSlice({
       if (!Array.isArray(state.patients)) {
         state.patients = [];
       }
-
       const existingPatient = state.patients.find(
         (patient) => patient.patientId === action.payload.patientId
       );
