@@ -199,3 +199,29 @@ export const getProductsSales = async (
     throw error;
   }
 };
+
+export const retrieveProductService = async (
+  branchId,
+  products,
+  firebaseUid
+) => {
+  try {
+    const response = await axios.patch(
+      `${INVENTORY_API_BASE_URL}/retrieve-product/${branchId}`,
+      { products },
+      {
+        params: {
+          firebaseUid,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error retrieving product: ", error);
+    throw error;
+  }
+};

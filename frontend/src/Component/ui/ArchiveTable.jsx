@@ -2,19 +2,29 @@ import React, { useState, useEffect } from "react";
 import { FaEllipsisV } from "react-icons/fa";
 import Nodatafound from "../../assets/Image/nodatafound.png";
 import RoleColor from "../../assets/Util/RoleColor";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FiTrash } from "react-icons/fi";
 import { FiRefreshCcw } from "react-icons/fi";
+import { retrieveProductService } from "../../Service/InventoryService";
+import Loader from "./Loader";
+import SuccessModal from "./SuccessModal";
+import { retrieveProduct } from "../../Slice/InventorySlice";
 
 const ArchiveTable = () => {
   const products = useSelector((state) => state.reducer.inventory.products);
+  const user = useSelector((state) => state.reducer.user.user);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
   const maxPageButtons = 4;
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const [isMenuOpen, setIsMenuOpen] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const reduxDispatch = useDispatch();
   const [selectedProducts, setSelectedProducts] = useState([]);
-
+  let branchId =
+    (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
+    user.userId;
   const toggleOpen = (productId) => {
     setIsMenuOpen((prevState) => ({
       ...prevState,
@@ -39,10 +49,9 @@ const ArchiveTable = () => {
     };
   }, [isMenuOpen]);
 
-  const paginatedProducts = products.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const paginatedProducts = products
+    .filter((product) => product.isDeleted === true)
+    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -62,9 +71,66 @@ const ArchiveTable = () => {
       }
     });
   };
+  const handleRetrieveProduct = async (productId) => {
+    setIsLoading(true);
+    try {
+      setSelectedProducts((prevSelected) => {
+        const updatedSelected = [...prevSelected];
+        if (!updatedSelected.includes(productId)) {
+          updatedSelected.push(productId);
+        }
+
+        const response = retrieveProductService(
+          branchId,
+          updatedSelected,
+          user.firebaseUid
+        );
+
+        if (response) {
+          console.log(response);
+          setIsSuccess(true);
+          reduxDispatch(retrieveProduct(updatedSelected));
+        }
+        return updatedSelected;
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleRetrieveMultipleProducts = async () => {
+    setIsLoading(true);
+    try {
+      if (selectedProducts.length === 0) {
+        console.log("No products selected.");
+        return;
+      }
+
+      const response = await retrieveProductService(
+        branchId,
+        selectedProducts,
+        user.firebaseUid
+      );
+
+      if (response) {
+        console.log(response);
+        setIsSuccess(true);
+        reduxDispatch(retrieveProduct(selectedProducts));
+        setSelectedProducts([]);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
+      {isLoading && (
+        <Loader description={"Retrieving Product. Please wait..."} />
+      )}
       {products.length > 0 ? (
         <div className="flex flex-col w-full h-full font-Poppins">
           <header className="flex py-5 rounded-md border-b bg-white text-f-gray2">
@@ -134,6 +200,9 @@ const ArchiveTable = () => {
                           <a
                             className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
                             role="menuitem"
+                            onClick={() =>
+                              handleRetrieveProduct(productDetail.productId)
+                            }
                           >
                             Retrieve
                           </a>
@@ -159,7 +228,10 @@ const ArchiveTable = () => {
                     <FiTrash className="w-5 h-5" />
                     <p className="text-p-sm">Delete</p>
                   </div>
-                  <div className="flex flex-col items-center gap-2 hover:text-blue-400 cursor-pointer text-f-gray2">
+                  <div
+                    className="flex flex-col items-center gap-2 hover:text-blue-400 cursor-pointer text-f-gray2"
+                    onClick={handleRetrieveMultipleProducts}
+                  >
                     <FiRefreshCcw className="w-5 h-5" />
                     <p className="text-p-sm">Retrieve</p>
                   </div>
@@ -211,6 +283,14 @@ const ArchiveTable = () => {
           <p>Oops! No products found.</p>
         </div>
       )}
+      <SuccessModal
+        title={"Product Retrieved"}
+        description={
+          "Product has been retrieved. You can now view it in the inventory"
+        }
+        isOpen={isSuccess}
+        onClose={() => setIsSuccess(false)}
+      />
     </>
   );
 };

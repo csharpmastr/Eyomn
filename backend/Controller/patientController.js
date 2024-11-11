@@ -10,6 +10,8 @@ const {
   addRawNote,
   addImageArchive,
   getImagesForPatient,
+  getDoctorPatient,
+  sharePatient,
 } = require("../Service/patientService");
 
 const addPatientHandler = async (req, res) => {
@@ -53,17 +55,20 @@ const addPatientHandler = async (req, res) => {
 };
 const getPatientsByDoctorHandler = async (req, res) => {
   try {
-    const { clinicId, doctorId } = req.query;
-    if (!clinicId) {
-      return res.status(400).json({ message: "Clinic ID is required." });
-    }
-    const patients = await getPatientsByDoctor(clinicId, doctorId);
+    const { organizationId, staffId, firebaseUid } = req.query;
+    console.log(organizationId, staffId, firebaseUid);
+
+    const patients = await getDoctorPatient(
+      organizationId,
+      staffId,
+      firebaseUid
+    );
+
     return res.status(200).json(patients);
   } catch (error) {
-    console.error("Error fetching patients: ", error);
-    return res
+    res
       .status(500)
-      .json({ message: "Error fetching patients.", error: error.message });
+      .json({ message: "Error fetching patient.", error: error.message });
   }
 };
 
@@ -275,6 +280,32 @@ const getImages = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+const sharePatientHandler = async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+    const { firebaseUid, doctorId } = req.query;
+    const authorizedDoctor = req.body.authorizedDoctor;
+
+    // Validation
+    if (!Array.isArray(authorizedDoctor) || authorizedDoctor.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "At least one doctor must be selected." });
+    }
+    if (!firebaseUid || !doctorId) {
+      return res.status(400).json({
+        message: "Missing required parameters (firebaseUid, doctorId).",
+      });
+    }
+
+    await sharePatient(authorizedDoctor, doctorId, patientId, firebaseUid);
+    return res.status(200).json({ message: "Patient shared successfully" });
+  } catch (error) {
+    console.error("Error sharing patient:", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
 module.exports = {
   addPatientHandler,
   getPatientsByDoctorHandler,
@@ -288,4 +319,5 @@ module.exports = {
   addVisitHandler,
   uploadImageArchiveHandler,
   getImages,
+  sharePatientHandler,
 };
