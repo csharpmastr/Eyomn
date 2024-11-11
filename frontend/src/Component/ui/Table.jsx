@@ -68,7 +68,7 @@ const Table = ({ data, handlePatientClick, handleSharePatientClick }) => {
   return (
     <>
       {currentData.length > 0 ? (
-        <div className="w-full text-f-dark overflow-x-auto font-Poppins rounded-t-lg text-p-rg">
+        <div className="w-fit md:w-full text-f-dark overflow-x-auto font-Poppins rounded-t-lg text-p-sm md:text-p-rg">
           <header className="flex py-5 rounded-md border-b bg-white text-f-gray2">
             <div className="flex-1 pl-8">Patient Name</div>
             <div className="flex-1">Contact</div>
@@ -189,7 +189,7 @@ const Table = ({ data, handlePatientClick, handleSharePatientClick }) => {
           </div>
         </div>
       ) : (
-        <div className="w-full mt-40 flex flex-col items-center justify-center text-center text-[#96B4B4] text-p-lg font-medium gap-4">
+        <div className="w-full mt-40 flex flex-col items-center justify-center text-center text-[#96B4B4] text-p-rg md:text-p-lg font-medium gap-4">
           <img src={Nodatafound} alt="no data image" className="w-80" />
           <p>
             We couldn't find any patients. Check your spelling

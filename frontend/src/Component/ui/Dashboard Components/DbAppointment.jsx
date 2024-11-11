@@ -36,7 +36,7 @@ const DbAppointment = () => {
   };
 
   return (
-    <div className="rounded-lg h-[500px] bg-white text-f-dark font-poppins bordertext-p-rg py-4 overflow-clip shadow-sm">
+    <div className="rounded-lg h-[500px] bg-white text-f-dark font-poppins border text-p-sm md:text-p-rg py-4 overflow-clip shadow-sm">
       <header className="flex justify-between px-4 items-center">
         <h1 className="font-medium text-nowrap text-c-secondary">
           | Upcoming Appointment

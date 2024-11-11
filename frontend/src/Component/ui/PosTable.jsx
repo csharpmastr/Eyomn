@@ -50,7 +50,7 @@ const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
     <>
       {filteredProducts.length > 0 ? (
         <>
-          <div className="w-fit md:w-full text-f-dark overflow-x-auto font-Poppins text-p-rg">
+          <div className="w-fit md:w-full text-f-dark overflow-x-auto font-Poppins text-p-sm md:text-p-rg">
             <header className="w-full py-5 rounded-md flex border-b bg-white text-f-gray2">
               <div className="w-1/5 pl-4">Code</div>
               <div className="w-1/5 pl-4">Product Name</div>
@@ -128,7 +128,7 @@ const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
           </div>
         </>
       ) : (
-        <div className="w-full mt-24 flex flex-col items-center justify-center text-center text-[#96B4B4] text-p-lg font-medium gap-4">
+        <div className="w-full mt-24 flex flex-col items-center justify-center text-center text-[#96B4B4] text-p-rg md:text-p-lg font-medium gap-4">
           <img src={Nodatafound} alt="no data image" className="w-80" />
           <p>Oops! No products found.</p>
         </div>

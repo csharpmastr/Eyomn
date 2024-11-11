@@ -98,7 +98,7 @@ const OrgDashboard = () => {
 
         {user.role === "0" && (
           <div className="flex flex-col justify-between bg-white p-4 rounded-lg text-f-dark">
-            <div className="text-p-sm">
+            <div className="text-p-sc md:text-p-sm">
               <p>Date: {currentDateTime.date}</p>
               <p>Time: {currentDateTime.time}</p>
             </div>

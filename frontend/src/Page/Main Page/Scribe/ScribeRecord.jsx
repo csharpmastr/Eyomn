@@ -180,12 +180,12 @@ const ScribeRecord = () => {
         <div className="flex justify-between mb-8">
           <div className="flex flex-col">
             <p
-              className="flex gap-2 text-p-sm  hover:cursor-pointer"
+              className="flex gap-2 text-p-sc md:text-p-sm  hover:cursor-pointer"
               onClick={handleBack}
             >
               <AiOutlineArrowLeft className="h-5 w-5" /> Back
             </p>
-            <h1 className="text-p-rg font-medium flex justify-center items-center">
+            <h1 className="text-p-sm md:text-p-rg font-medium flex justify-center items-center">
               {currentPatient
                 ? `${currentPatient.first_name} ${currentPatient.last_name}`
                 : "Loading..."}
@@ -205,8 +205,8 @@ const ScribeRecord = () => {
             <button
               className={`w-44 flex items-center justify-center rounded-t-lg transition-all duration-300 ease-in-out font-medium ${
                 currentCardIndex === 0
-                  ? `h-12 bg-[#FFF8DF] text-p-rg`
-                  : `h-8 bg-[#D2D2D2] text-p-sm opacity-70`
+                  ? `h-12 bg-[#FFF8DF] text-p-sm md:text-p-rg`
+                  : `h-8 bg-[#D2D2D2] text-p-sc md:text-p-sm opacity-70`
               }`}
               onClick={() => setCurrentCardIndex(0)}
             >
@@ -215,8 +215,8 @@ const ScribeRecord = () => {
             <button
               className={`w-44 flex items-center justify-center rounded-t-lg transition-all duration-300 ease-in-out font-medium ${
                 currentCardIndex === 1
-                  ? `h-12 bg-[#FFF8DF] text-p-rg`
-                  : `h-8 bg-[#D2D2D2] text-p-sm opacity-70`
+                  ? `h-12 bg-[#FFF8DF] text-p-sm md:text-p-rg`
+                  : `h-8 bg-[#D2D2D2] text-p-sc md:text-p-sm opacity-70`
               }`}
               onClick={() => setCurrentCardIndex(1)}
             >
@@ -225,8 +225,8 @@ const ScribeRecord = () => {
             <button
               className={`w-44 flex items-center justify-center rounded-t-lg transition-all duration-300 ease-in-out font-medium ${
                 currentCardIndex === 2
-                  ? `h-12 bg-[#FFF8DF] text-p-rg`
-                  : `h-8 bg-[#D2D2D2] text-p-sm opacity-70`
+                  ? `h-12 bg-[#FFF8DF] text-p-sm md:text-p-rg`
+                  : `h-8 bg-[#D2D2D2] text-p-sc md:text-p-sm opacity-70`
               }`}
               onClick={() => setCurrentCardIndex(2)}
             >
@@ -290,7 +290,7 @@ const ScribeRecord = () => {
                     >
                       <div className="flex flex-col justify-center items-center w-full h-full text-c-gray3 gap-2">
                         <TiUpload className="h-10 w-10" />
-                        <h1 className="text-p-rg text-center hidden md:block">
+                        <h1 className="text-p-sm md:text-p-rg text-center hidden md:block">
                           Upload an Image
                         </h1>
                       </div>
@@ -313,7 +313,7 @@ const ScribeRecord = () => {
                 </div>
                 {image && (
                   <button
-                    className="bg-c-primary text-f-light text-p-rg rounded-md font-semibold py-1 md:py-3 w-full mt-3"
+                    className="bg-c-primary text-f-light text-p-sm md:text-p-rg rounded-md font-semibold py-1 md:py-3 w-full mt-3"
                     onClick={handleUploadImage}
                   >
                     Save

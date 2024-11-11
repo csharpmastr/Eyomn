@@ -79,13 +79,13 @@ const VisitReasonModal = ({ onClose }) => {
         <div className="fixed px-5 top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
           <div className="w-[600px]">
             <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-              <h1 className="text-p-lg text-c-secondary font-semibold">
+              <h1 className="text-p-rg md:text-p-lg text-c-secondary font-semibold">
                 Visitation Reason
               </h1>
               <button onClick={onClose}> &times; </button>
             </header>
             <div className="py-6 px-6 h-fit bg-white">
-              <label htmlFor="reason_visit" className="text-p-sm">
+              <label htmlFor="reason_visit" className="text-p-sc md:text-p-sm">
                 Reason for Visit
               </label>
               <select
@@ -101,7 +101,7 @@ const VisitReasonModal = ({ onClose }) => {
                 <option value="consultation">Consultation</option>
               </select>
               <div className="mt-3 text-c-gray3">
-                <label htmlFor="doctorId" className="text-p-sm">
+                <label htmlFor="doctorId" className="text-p-sc md:text-p-sm">
                   Attending Doctor
                 </label>
                 <select
@@ -123,13 +123,13 @@ const VisitReasonModal = ({ onClose }) => {
             </div>
             <footer className="border border-t-f-gray bg-white rounded-b-lg flex gap-4 justify-end p-4">
               <button
-                className="px-4 py-2 text-f-dark text-p-rg font-medium rounded-md border border-c-gray3"
+                className="px-4 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border border-c-gray3"
                 onClick={onClose}
               >
                 Cancel
               </button>
               <button
-                className="px-7 py-2 bg-[#3B7CF9] text-f-light text-p-rg font-semibold rounded-md"
+                className="px-7 py-2 bg-[#3B7CF9] text-f-light text-p-sm md:text-p-rg font-semibold rounded-md"
                 onClick={handleAddVisit}
               >
                 Save

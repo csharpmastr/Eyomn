@@ -133,7 +133,7 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
                         : `bg-white border-b`
                     }`}
                   >
-                    <div className="flex text-p-rg py-5">
+                    <div className="flex text-p-sm md:text-p-rg py-5">
                       <div className="flex-1 pl-4">
                         {productDetail.product_name}
                       </div>
@@ -176,7 +176,7 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
                               aria-labelledby="options-menu"
                             >
                               <a
-                                className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
+                                className="block px-4 py-2 text-p-sc md:text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
                                 role="menuitem"
                                 onClick={() =>
                                   handleEditProduct(productDetail.productId)
@@ -185,7 +185,7 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
                                 Edit
                               </a>
                               <a
-                                className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-red-500 hover:text-f-light rounded-md cursor-pointer"
+                                className="block px-4 py-2 text-p-sc md:text-p-sm text-f-gray2 hover:bg-red-500 hover:text-f-light rounded-md cursor-pointer"
                                 role="menuitem"
                                 onClick={() =>
                                   handleDeleteProduct(productDetail.productId)
@@ -201,18 +201,18 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
                     {!isCollapsed && (
                       <div className={`py-5 flex border-b`}>
                         <div className="flex-1 pl-4">
-                          <p className="text-p-sm">
+                          <p className="text-p-sc md:text-p-sm">
                             SKU: <span>{productDetail.productSKU}</span>
                           </p>
                         </div>
                         <div className="flex-1 pl-4">
-                          <p className="text-p-sm">
+                          <p className="text-p-sc md:text-p-sm">
                             Expiration Date:{" "}
                             <span>{productDetail.expirationDate}</span>
                           </p>
                         </div>
                         <div className="flex-1 pl-4">
-                          <p className="text-p-sm">
+                          <p className="text-p-sc md:text-p-sm">
                             Material: <span>{productDetail.ct_material}</span>
                           </p>
                         </div>
@@ -278,7 +278,7 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
           </div>
         </>
       ) : (
-        <div className="w-full mt-24 flex flex-col items-center justify-center text-center text-[#96B4B4] text-p-lg font-medium gap-4">
+        <div className="w-full mt-24 flex flex-col items-center justify-center text-center text-[#96B4B4] text-p-rg md:text-p-lg font-medium gap-4">
           <img src={Nodatafound} alt="no data image" className="w-80" />
           <p>Oops! No products found.</p>
         </div>

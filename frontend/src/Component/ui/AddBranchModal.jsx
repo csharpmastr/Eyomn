@@ -148,7 +148,7 @@ const AddBranchModal = ({ onClose }) => {
         <div className="fixed top-0 left-0 flex items-center p-4 justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
           <div className="w-[600px]">
             <header className="px-4 py-3 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-              <h1 className="text-p-lg text-c-secondary font-medium">
+              <h1 className="text-p-rg md:text-p-lg text-c-secondary font-medium">
                 Add Branch
               </h1>
               <button onClick={onClose}> &times; </button>
@@ -156,14 +156,14 @@ const AddBranchModal = ({ onClose }) => {
             <div className="py-6 px-6 h-[400px] md:h-[500px] bg-white overflow-y-scroll">
               <div>
                 <header>
-                  <h1 className="text-p-rg font-medium text-c-secondary mb-4">
+                  <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-4">
                     | Branch Details
                   </h1>
                 </header>
                 <section>
                   <label
                     htmlFor="name"
-                    className="text-p-sm text-c-gray3 font-medium"
+                    className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                   >
                     Branch Name:{" "}
                     <span className="text-red-400">
@@ -183,7 +183,7 @@ const AddBranchModal = ({ onClose }) => {
                   <div className="w-1/2">
                     <label
                       htmlFor="province"
-                      className="text-p-sm text-c-gray3 font-medium"
+                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                     >
                       Province
                     </label>
@@ -198,7 +198,7 @@ const AddBranchModal = ({ onClose }) => {
                   <div className="w-1/2">
                     <label
                       htmlFor="municipality"
-                      className="text-p-sm text-c-gray3 font-medium"
+                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                     >
                       Municipality
                     </label>
@@ -215,14 +215,14 @@ const AddBranchModal = ({ onClose }) => {
                 </div>
                 <div>
                   <header>
-                    <h1 className="text-p-rg font-medium text-c-secondary mb-4">
+                    <h1 className="text-p-sc md:text-p-rg font-medium text-c-secondary mb-4">
                       | Login Credentials
                     </h1>
                   </header>
                   <section>
                     <label
                       htmlFor="email"
-                      className="text-p-sm text-c-gray3 font-medium"
+                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                     >
                       Email Address:{" "}
                       <span className="text-red-400">
@@ -242,7 +242,7 @@ const AddBranchModal = ({ onClose }) => {
                   <section>
                     <label
                       htmlFor="password"
-                      className="text-p-sm text-c-gray3 font-medium"
+                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                     >
                       Password:{" "}
                       <span className="text-red-400">
@@ -274,7 +274,7 @@ const AddBranchModal = ({ onClose }) => {
                   <section>
                     <label
                       htmlFor="confirmpassword"
-                      className="text-p-sm text-c-gray3 font-medium"
+                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                     >
                       Confirm Password:{" "}
                       <span className="text-red-400">
@@ -308,13 +308,13 @@ const AddBranchModal = ({ onClose }) => {
             </div>
             <footer className="border border-t-f-gray bg-white rounded-b-lg flex gap-4 justify-end py-3 px-4">
               <button
-                className="px-4 py-2 text-f-dark text-p-rg font-medium rounded-md border border-c-gray3"
+                className="px-4 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border border-c-gray3 hover:bg-sb-org"
                 onClick={onClose}
               >
                 Cancel
               </button>
               <button
-                className="py-2 px-4 bg-bg-con text-f-light text-p-rg font-semibold rounded-md"
+                className="py-2 px-4 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md hover:bg-opacity-75"
                 onClick={handleSubmit}
               >
                 Add Branch

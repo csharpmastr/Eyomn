@@ -26,11 +26,11 @@ const Inventory = () => {
     <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppins">
       <nav className="flex flex-col gap-4 lg:gap-0 lg:flex-row justify-between mb-8">
         <div className="flex gap-3 items-center">
-          <h1 className="text-p-lg font-medium text-c-secondary">
+          <h1 className="text-p-rg md:text-p-lg font-medium text-c-secondary">
             All Product
           </h1>
           <section className="bg-white flex rounded-md h-fit w-fit p-3 border shadow-sm">
-            <p className="text-p-sm">
+            <p className="text-p-sc md:text-p-sm">
               <span className="text-blue-500">{productCount}</span> Total
               Products |{"  "}
               <span className="text-red-500">{lowStockCount}</span> Low Stock
@@ -58,7 +58,7 @@ const Inventory = () => {
             <IoMdSearch className="h-6 w-6 text-c-secondary" />
             <input
               type="text"
-              className="w-full text-f-dark focus:outline-none placeholder-f-gray2 text-p-rg bg-bg-mc"
+              className="w-full text-f-dark focus:outline-none placeholder-f-gray2 text-p-sm md:text-p-rg bg-bg-mc"
               placeholder="Search product... "
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -66,7 +66,7 @@ const Inventory = () => {
           </div>
           {user.role !== "0" && (
             <div
-              className={`flex flex-row px-4 items-center rounded-md py-3 text-f-light font-md hover:cursor-pointer ${btnContentColor} `}
+              className={`flex flex-row px-4 items-center rounded-md py-3 text-f-light font-md hover:cursor-pointer hover:bg-opacity-75 ${btnContentColor} `}
               onClick={toggleModal}
             >
               <FiPlus className="h-5 w-5 md:mr-2" />

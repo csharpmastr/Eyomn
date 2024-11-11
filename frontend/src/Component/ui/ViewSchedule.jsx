@@ -20,7 +20,7 @@ const ViewSchedule = ({ onClose, appointments }) => {
     <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
       <div className="w-[380px] h-[480px] md:w-[500px] md:h-[600px]">
         <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-          <h1 className="text-p-lg text-c-secondary font-semibold">
+          <h1 className="text-p-rg md:text-p-lg text-c-secondary font-semibold">
             Appointment Schedules
           </h1>
           <button onClick={onClose}> &times; </button>
@@ -35,17 +35,17 @@ const ViewSchedule = ({ onClose, appointments }) => {
                     borderColors[index % borderColors.length]
                   }`}
                 >
-                  <div className="flex justify-between text-p-rg mb-2">
+                  <div className="flex justify-between text-p-sm md:text-p-rg mb-2">
                     <p>{appointment.patient_name}</p>
                     <p>Dr. {appointment.doctor}</p>
                   </div>
                   <div className="flex items-center gap-1 justify-between">
-                    <p className="text-p-sm text-c-gray3">
+                    <p className="text-p-sc md:text-p-sm text-c-gray3">
                       {appointment.reason}
                     </p>
                     <div className="flex gap-2">
                       <FiClock className="h-4 w-4 text-c-gray3" />
-                      <p className="text-p-sm text-c-gray3">
+                      <p className="text-p-sc md:text-p-sm text-c-gray3">
                         {dayjs(appointment.scheduledTime).format("h:mm A")}
                       </p>
                     </div>

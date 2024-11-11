@@ -22,17 +22,17 @@ const ReasonVisitCard = ({ reasonData }) => {
     <div>
       <article className="w-full h-fit py-4 px-4  bg-bg-sb rounded-md">
         <div className="flex justify-between">
-          <div className="ml-2 px-4 py-4 h-full bg-white rounded-full border border-c-primary text-p-rg text-c-primary">
+          <div className="ml-2 px-4 py-4 h-full bg-white rounded-full border border-c-primary text-p-sm md:text-p-rg text-c-primary">
             {reasonData.reason_visit}
           </div>
           <section className="flex flex-col gap-2">
             <div className="flex items-center gap-1">
               <FiCalendar className="h-6 w-6 md:mr-2 text-c-gray3" />
-              <p className="text-p-sm text-f-dark">{date}</p>
+              <p className="text-p-sc md:text-p-sm text-f-dark">{date}</p>
             </div>
             <div className="flex items-center gap-1">
               <FiClock className="h-6 w-6 md:mr-2 text-c-gray3" />
-              <p className="text-p-sm text-f-dark">{time}</p>
+              <p className="text-p-sc md:text-p-sm text-f-dark">{time}</p>
             </div>
           </section>
         </div>

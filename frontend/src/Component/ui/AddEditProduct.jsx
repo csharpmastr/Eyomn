@@ -307,7 +307,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
         <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
           <div className="w-[380px] md:w-[600px] md:mr-8">
             <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-              <h1 className="text-p-lg text-c-secondary font-semibold">
+              <h1 className="text-p-rg md:text-p-lg text-c-secondary font-semibold">
                 {title}
               </h1>
               <button onClick={onClose}>&times;</button>
@@ -316,11 +316,11 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
               <div className="p-3 md:p-8">
                 <section>
                   <header>
-                    <h1 className="text-p-rg font-semibold text-c-secondary">
+                    <h1 className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
                       | Product Category
                     </h1>
                   </header>
-                  <span className="text-red-400 text-p-sm">
+                  <span className="text-red-400 text-p-sc md:text-p-sm">
                     {(formData.first_name === "" || errors.first_name) &&
                       errors.first_name}
                   </span>
@@ -344,14 +344,14 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                   {selectedCategory === "Eye Glass" && (
                     <div>
                       <header>
-                        <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
+                        <h1 className="text-p-sm md:text-p-rg font-semibold text-c-secondary mb-5">
                           | Eye Glass Details
                         </h1>
                       </header>
                       <section>
                         <label
                           htmlFor="product_name"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Product Name{" "}
                           <span className="text-red-400">
@@ -376,7 +376,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                       <section>
                         <label
                           htmlFor="eyeglass_category"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Eye Glass Category{" "}
                           <span className="text-red-400">
@@ -405,7 +405,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                       <section>
                         <label
                           htmlFor="len_type"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Lens Type{" "}
                           <span className="text-red-400">
@@ -429,7 +429,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                       <section>
                         <label
                           htmlFor="color_material"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Color/Material{" "}
                           <span className="text-red-400">
@@ -456,14 +456,14 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                   {selectedCategory === "Medication" && (
                     <div>
                       <header>
-                        <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
+                        <h1 className="text-p-sm md:text-p-rg font-semibold text-c-secondary mb-5">
                           | Medication Product Details
                         </h1>
                       </header>
                       <section>
                         <label
                           htmlFor="product_name"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Product Name{" "}
                           <span className="text-red-400">
@@ -488,7 +488,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                       <section>
                         <label
                           htmlFor="prescrip_otc"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Prescription or OTC{" "}
                           <span className="text-red-400">
@@ -517,7 +517,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                       <section>
                         <label
                           htmlFor="md_form"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Medicine Form{" "}
                           <span className="text-red-400">
@@ -545,7 +545,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                       <section>
                         <label
                           htmlFor="dosage"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Dosage and Strength{" "}
                           <span className="text-red-400">
@@ -571,14 +571,14 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                   {selectedCategory === "Contact Lens" && (
                     <div>
                       <header>
-                        <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
+                        <h1 className="text-p-sm md:text-p-rg font-semibold text-c-secondary mb-5">
                           | Contact Lens Details
                         </h1>
                       </header>
                       <section>
                         <label
                           htmlFor="product_name"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Product Name{" "}
                           <span className="text-red-400">
@@ -603,7 +603,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                       <section>
                         <label
                           htmlFor="ct_type"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Type of Lens{" "}
                           <span className="text-red-400">
@@ -632,7 +632,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                       <section>
                         <label
                           htmlFor="ct_material"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Lens Material{" "}
                           <span className="text-red-400">
@@ -659,14 +659,14 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                   {selectedCategory === "Other" && (
                     <div>
                       <header>
-                        <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
+                        <h1 className="text-p-sm md:text-p-rg font-semibold text-c-secondary mb-5">
                           | Product Details
                         </h1>
                       </header>
                       <section>
                         <label
                           htmlFor="product_name"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Product Name{" "}
                           <span className="text-red-400">
@@ -691,7 +691,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                       <section>
                         <label
                           htmlFor="other_description"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Product Description{" "}
                           <span className="text-red-400">
@@ -722,7 +722,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                         <section>
                           <label
                             htmlFor="expirationDate"
-                            className="text-p-sm text-c-gray3 font-medium"
+                            className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                           >
                             Expiration Date{" "}
                             <span className="text-red-400">
@@ -751,7 +751,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                         <div className="w-1/2">
                           <label
                             htmlFor="price"
-                            className="text-p-sm text-c-gray3 font-medium"
+                            className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                           >
                             Price{" "}
                             <span className="text-red-400">
@@ -776,7 +776,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                         <div className="w-1/2">
                           <label
                             htmlFor="retail_price"
-                            className="text-p-sm text-c-gray3 font-medium"
+                            className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                           >
                             Retail Price{" "}
                             <span className="text-red-400">
@@ -804,7 +804,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                         <div className="w-1/4">
                           <label
                             htmlFor="quantity"
-                            className="text-p-sm text-c-gray3 font-medium"
+                            className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                           >
                             Quantity{" "}
                             <span className="text-red-400">
@@ -829,7 +829,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                         <div className="w-3/4">
                           <label
                             htmlFor="eye_brand"
-                            className="text-p-sm text-c-gray3 font-medium"
+                            className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                           >
                             Brand{" "}
                             <span className="text-red-400">
@@ -858,7 +858,13 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
             </div>
             <footer className="flex justify-end px-3 py-6 bg-white border border-t-f-gray rounded-b-lg">
               <button
-                className="ml-2 px-8 py-2 bg-bg-con text-f-light text-p-rg font-semibold rounded-md"
+                className="px-4 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border border-c-gray3 hover:bg-sb-org"
+                onClick={onClose}
+              >
+                Cancel
+              </button>
+              <button
+                className="ml-2 px-8 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md hover:bg-opacity-75"
                 type="submit"
                 onClick={handleAddEditProduct}
               >

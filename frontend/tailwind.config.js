@@ -57,6 +57,7 @@ export default {
         "bg-con": "#4A90E2",
       },
       fontSize: {
+        "p-sc": "12px",
         "p-sm": "13.33px",
         "p-rg": "16px",
         "p-lg": "19.2px",

@@ -46,7 +46,7 @@ const Notification = ({ data, setNotifOpen }) => {
   return (
     <div className="origin-top-right mt-2 absolute left-0 w-full z-50 rounded-md shadow-lg ring-1 ring-f-gray font-Poppins">
       <header className="border-b border-f-gray bg-bg-sb p-4 flex justify-between items-center">
-        <h1 className="text-p-rg font-semibold text-c-secondary">
+        <h1 className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
           Notification ({data.length})
         </h1>
       </header>
@@ -58,7 +58,7 @@ const Notification = ({ data, setNotifOpen }) => {
       </div>
       <footer className="border-t border-f-gray bg-bg-sb p-4">
         <button
-          className="text-p-rg font-medium flex justify-between w-full"
+          className="text-p-sm md:text-p-rg font-medium flex justify-between w-full"
           onClick={handleViewFull}
         >
           <h1>See all notifications</h1>

@@ -97,12 +97,12 @@ const SideBar = () => {
           {isCollapsed ? (
             ""
           ) : (
-            <h1 className=" text-p-sm font-medium text-c-gray3 mt-5 xl:mt-0 ml-5">
+            <h1 className=" text-p-sc md:text-p-sm font-medium text-c-gray3 mt-5 xl:mt-0 ml-5">
               Main Menu
             </h1>
           )}
           <NavLink
-            className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+            className={`ml-4 xl:ml-0 flex items-center text-p-sm md:text-p-rg py-3 px-4 text-f-dark rounded-md 
               ${btnHoverColor}
               ${
                 selected === "dashboard"
@@ -128,7 +128,7 @@ const SideBar = () => {
           </NavLink>
           {role === "0" && (
             <NavLink
-              className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+              className={`ml-4 xl:ml-0 flex items-center text-p-sm md:text-p-rg py-3 px-4 text-f-dark rounded-md 
               ${btnHoverColor}
               ${
                 selected === "organization"
@@ -155,7 +155,7 @@ const SideBar = () => {
           )}
           {role === "2" && (
             <NavLink
-              className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+              className={`ml-4 xl:ml-0 flex items-center text-p-sm md:text-p-rg py-3 px-4 text-f-dark rounded-md 
              ${btnHoverColor}
               ${selected === "scribe" ? btnBgColor : "text-f-dark font-medium"}
               ${
@@ -178,7 +178,7 @@ const SideBar = () => {
           )}
           {role === "3" && (
             <NavLink
-              className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+              className={`ml-4 xl:ml-0 flex items-center text-p-sm md:text-p-rg py-3 px-4 text-f-dark rounded-md 
             ${btnHoverColor}
               ${
                 selected === "add-patient"
@@ -204,7 +204,7 @@ const SideBar = () => {
             </NavLink>
           )}
           <NavLink
-            className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+            className={`ml-4 xl:ml-0 flex items-center text-p-sm md:text-p-rg py-3 px-4 text-f-dark rounded-md 
              ${btnHoverColor}
               ${selected === "patient" ? btnBgColor : "text-f-dark font-medium"}
               ${
@@ -225,7 +225,7 @@ const SideBar = () => {
             {!isCollapsed && <span className="ml-2">Patients</span>}
           </NavLink>
           <NavLink
-            className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+            className={`ml-4 xl:ml-0 flex items-center text-p-sm md:text-p-rg py-3 px-4 text-f-dark rounded-md 
              ${btnHoverColor}
               ${
                 selected === "appointment"
@@ -255,13 +255,13 @@ const SideBar = () => {
               {isCollapsed ? (
                 ""
               ) : (
-                <h1 className=" text-p-sm font-medium text-c-gray3 mt-5 xl:mt-0 ml-5">
+                <h1 className=" text-p-sc md:text-p-sm font-medium text-c-gray3 mt-5 xl:mt-0 ml-5">
                   Other
                 </h1>
               )}
               {role != 3 && (
                 <NavLink
-                  className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+                  className={`ml-4 xl:ml-0 flex items-center text-p-sm md:text-p-rg py-3 px-4 text-f-dark rounded-md 
             ${btnHoverColor}
               ${selected === "report" ? btnBgColor : "text-f-dark font-medium"}
               ${
@@ -283,7 +283,7 @@ const SideBar = () => {
                 </NavLink>
               )}
               <NavLink
-                className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+                className={`ml-4 xl:ml-0 flex items-center text-p-sm md:text-p-rg py-3 px-4 text-f-dark rounded-md 
               ${btnHoverColor}
               ${
                 selected === "inventory"
@@ -308,7 +308,7 @@ const SideBar = () => {
                 {!isCollapsed && <span className="ml-2">Inventory</span>}
               </NavLink>
               <NavLink
-                className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+                className={`ml-4 xl:ml-0 flex items-center text-p-sm md:text-p-rg py-3 px-4 text-f-dark rounded-md 
               ${btnHoverColor}
               ${
                 selected === "stock_checkout"
@@ -337,7 +337,7 @@ const SideBar = () => {
         </div>
         <div className="flex flex-col gap-2 mr-4 xl:mr-0">
           <NavLink
-            className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+            className={`ml-4 xl:ml-0 flex items-center text-p-sm md:text-p-rg py-3 px-4 text-f-dark rounded-md 
              ${btnHoverColor}
               ${
                 selected === "manage-profile/:section"
@@ -362,7 +362,7 @@ const SideBar = () => {
             {!isCollapsed && <span className="ml-2">Settings</span>}
           </NavLink>
           <NavLink
-            className={`ml-4 xl:ml-0 flex items-center text-p-rg py-3 px-4 text-f-dark rounded-md 
+            className={`ml-4 xl:ml-0 flex items-center text-p-sm md:text-p-rg py-3 px-4 text-f-dark rounded-md 
             ${btnHoverColor}
               ${selected === "help" ? btnBgColor : "text-f-dark font-medium"}
               ${

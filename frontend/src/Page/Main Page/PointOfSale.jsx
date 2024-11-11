@@ -128,7 +128,7 @@ const PointOfSale = () => {
               <IoMdSearch className="h-8 w-8 text-c-secondary" />
               <input
                 type="text"
-                className="w-full focus:outline-none placeholder-f-gray2 bg-bg-sub text-p-rg"
+                className="w-full focus:outline-none placeholder-f-gray2 bg-bg-sub text-p-sm md:text-p-rg"
                 placeholder="Search product... "
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -145,7 +145,7 @@ const PointOfSale = () => {
         </div>
         <div className="w-full md:w-2/5 h-full border border-l-f-gray bg-white flex flex-col">
           <header className="p-6">
-            <h1 className="text-p-lg font-semibold text-f-dark">
+            <h1 className="text-p-rg md:text-p-lg font-semibold text-f-dark">
               Checkout List
             </h1>
           </header>
@@ -163,7 +163,7 @@ const PointOfSale = () => {
                 </button>
                 <div className="w-full">
                   <div className="flex justify-between">
-                    <h1 className="text-p-rg font-semibold">
+                    <h1 className="text-p-sm md:text-p-rg font-semibold">
                       {product.product_name}
                     </h1>
                     <div className="flex items-center gap-2">
@@ -211,7 +211,7 @@ const PointOfSale = () => {
             </div>
             <div className="px-6 pb-6">
               <button
-                className="w-full h-12 bg-bg-con text-f-light text-p-rg font-semibold rounded-md"
+                className="w-full h-12 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md"
                 onClick={handlePurchase}
               >
                 Process Checkout

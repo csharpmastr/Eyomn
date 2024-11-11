@@ -73,7 +73,7 @@ const TopbarButton = () => {
               {unreadNotif === 0 ? (
                 ""
               ) : (
-                <div className="absolute -top-2 -right-2 h-5 w-5 text-p-sm font-normal rounded-full bg-red-500 text-f-light flex items-center justify-center overflow-hidden">
+                <div className="absolute -top-2 -right-2 h-5 w-5 text-p-sc md:text-p-sm font-normal rounded-full bg-red-500 text-f-light flex items-center justify-center overflow-hidden">
                   <span>{unreadNotif}</span>
                 </div>
               )}
@@ -86,7 +86,7 @@ const TopbarButton = () => {
             <div className="h-10 border-l border-f-gray"></div>
           </section>
           <div className="flex justify-between w-full gap-4">
-            <section className="flex items-center gap-4 xl:ml-4">
+            <section className="flex items-center gap-4 xl:ml-4 text-f-dark">
               <img
                 //src={image}
                 alt="Profile"
@@ -95,24 +95,30 @@ const TopbarButton = () => {
               <div className="flex flex-col">
                 {role === "2" || role === "3" ? (
                   <>
-                    <h1 className="text-p-rg font-medium">
+                    <h1 className="text-p-sm md:text-p-rg font-medium">
                       {user.first_name + " " + user.last_name}
                     </h1>
-                    <p className="text-p-sm font-normal">{user.position}</p>
+                    <p className="text-p-sc md:text-p-sm font-normal">
+                      {user.position}
+                    </p>
                   </>
                 ) : role === "0" ? (
                   <>
-                    <h1 className="text-p-rg font-medium">
+                    <h1 className="text-p-sm md:text-p-rg font-medium">
                       {user.organization}
                     </h1>
-                    <p className="text-p-sm font-normal">
+                    <p className="text-p-sc md:text-p-sm font-normal">
                       {"Organizational Account"}
                     </p>
                   </>
                 ) : (
                   <>
-                    <h1 className="text-p-rg font-medium">{user.name}</h1>
-                    <p className="text-p-sm font-normal">{"Branch Account"}</p>
+                    <h1 className="text-p-sm md:text-p-rg font-medium">
+                      {user.name}
+                    </h1>
+                    <p className="text-p-sc md:text-p-sm font-normal">
+                      {"Branch Account"}
+                    </p>
                   </>
                 )}
               </div>
@@ -146,7 +152,7 @@ const TopbarButton = () => {
             aria-labelledby="options-menu"
           >
             <a
-              className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
+              className="block px-4 py-2 text-p-sc md:text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
               role="menuitem"
               onClick={profile}
             >
@@ -156,7 +162,7 @@ const TopbarButton = () => {
               ""
             ) : (
               <a
-                className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
+                className="block px-4 py-2 text-p-sc md:text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
                 role="menuitem"
                 onClick={handleViewFull}
               >
@@ -164,7 +170,7 @@ const TopbarButton = () => {
               </a>
             )}
             <a
-              className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
+              className="block px-4 py-2 text-p-sc md:text-p-sm text-f-gray2 hover:bg-gray-100 cursor-pointer"
               role="menuitem"
               onClick={logout}
             >

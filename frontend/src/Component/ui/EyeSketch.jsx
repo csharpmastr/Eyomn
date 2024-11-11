@@ -98,7 +98,7 @@ const EyeSketch = ({ onClose, onSave, backgroundImage }) => {
               onClick={() => {
                 canvasRef.current.clearCanvas();
               }}
-              className="px-4 py-1 text-f-dark text-p-rg font-medium rounded-md border border-c-gray3"
+              className="px-4 py-1 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border border-c-gray3"
             >
               Clear
             </button>
@@ -123,7 +123,7 @@ const EyeSketch = ({ onClose, onSave, backgroundImage }) => {
         <div className="p-4 mt-4 flex justify-end gap-4 w-full border border-t-f-gray">
           <button
             onClick={handleSave}
-            className="px-4 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md"
+            className="px-4 py-2 bg-c-secondary text-f-light text-p-sm md:text-p-rg font-semibold rounded-md hover:bg-opacity-75"
           >
             Save Sketch
           </button>
