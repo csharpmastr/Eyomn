@@ -319,11 +319,46 @@ const getBranchStaffs = async (organizationId, branchId, firebaseUid) => {
   }
 };
 
+const getBranchNameDoc = async (staffId) => {
+  try {
+    const staffRef = staffCollection.doc(staffId);
+    const staffSnapshot = await staffRef.get();
+
+    if (!staffSnapshot.exists) {
+      throw new Error("Staff not found");
+    }
+    const staffData = staffSnapshot.data();
+    const branches = staffData.branches;
+
+    let decryptedBranchName = [];
+
+    for (const branch of branches) {
+      const branchRef = branchCollection.doc(branch.branchId);
+      const branchSnap = await branchRef.get();
+
+      if (!branchSnap.exists) {
+        throw new Error("Branch not found");
+      }
+
+      const branchData = branchSnap.data();
+      decryptedBranchName.push({
+        branchName: decryptData(branchData.name),
+        branchId: branch.branchId,
+      });
+    }
+    return decryptedBranchName;
+  } catch (error) {
+    console.error("Error fetching branch name: ", error);
+    throw error;
+  }
+};
+
 module.exports = {
   addStaff,
   getBranchData,
   // getAllStaff,
   // getDoctorsList,
   addBranch,
+  getBranchNameDoc,
   getBranchStaffs,
 };

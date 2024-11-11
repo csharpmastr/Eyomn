@@ -1,4 +1,4 @@
-const { getBranchDoctors, getStaffs } = require("../Helper/Helper");
+const { getBranchDoctors } = require("../Helper/Helper");
 const {
   addStaff,
   getAllStaff,
@@ -7,6 +7,7 @@ const {
   getBranchData,
   getBranchStaffs,
   getOrgProductSales,
+  getBranchNameDoc,
 } = require("../Service/organizationService");
 const { EmailAlreadyExistsError } = require("../Service/UserService");
 
@@ -154,6 +155,18 @@ const getOrgProductSalesHandler = async (req, res) => {
   }
 };
 
+const getBranchNameHandler = async (req, res) => {
+  try {
+    const { firebaseUid, staffId } = req.query;
+    console.log(staffId, firebaseUid);
+
+    const branches = await getBranchNameDoc(staffId, firebaseUid);
+    return res.status(200).json(branches);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addStaffHandler,
   getStaffsHandler,
@@ -161,4 +174,5 @@ module.exports = {
   addBranchHandler,
   getBranchDataHandler,
   getOrgProductSalesHandler,
+  getBranchNameHandler,
 };

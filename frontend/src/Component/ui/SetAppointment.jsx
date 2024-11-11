@@ -18,9 +18,11 @@ const SetAppointment = ({ onClose }) => {
   const refreshToken = cookies.get("refreshToken");
   const user = useSelector((state) => state.reducer.user.user);
   const doctors = useSelector((state) => state.reducer.doctor.doctor);
+  const branches = useSelector((state) => state.reducer.branch.branch);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [doesExists, setDoesExists] = useState(false);
+  const [selectedBranch, setSelectedBranchId] = useState(null);
   const reduxDispatch = useDispatch();
   let branchId =
     (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
@@ -33,6 +35,13 @@ const SetAppointment = ({ onClose }) => {
     doctor: "",
   });
 
+  const [docFormData, setDocFormData] = useState({
+    patient_name: "",
+    reason: "",
+    doctorId: user.userId,
+    doctor: `${user.first_name} ${user.last_name}`,
+  });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -43,39 +52,81 @@ const SetAppointment = ({ onClose }) => {
       }));
     }
 
-    if (name === "doctor") {
-      const selectedDoctor = doctors.find((doctor) => doctor.staffId === value);
-      if (selectedDoctor) {
+    if (user.role !== "2") {
+      if (name === "doctor") {
+        const selectedDoctor = doctors.find(
+          (doctor) => doctor.staffId === value
+        );
+        if (selectedDoctor) {
+          setFormData((prevData) => ({
+            ...prevData,
+            doctor: selectedDoctor.first_name + " " + selectedDoctor.last_name,
+            doctorId: selectedDoctor.staffId,
+          }));
+        }
+      } else if (name === "patient_name") {
         setFormData((prevData) => ({
           ...prevData,
-          doctor: selectedDoctor.first_name + " " + selectedDoctor.last_name,
-          doctorId: selectedDoctor.staffId,
+          patient_name: value,
+        }));
+      } else if (name === "reason") {
+        setFormData((prevData) => ({
+          ...prevData,
+          reason: value,
+        }));
+      } else if (name === "date") {
+        setDate(value);
+      } else if (name === "time") {
+        setTime(value);
+      } else {
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
         }));
       }
-    } else if (name === "date") {
-      setDate(value);
-    } else if (name === "time") {
-      setTime(value);
     } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
+      if (name === "patient_name") {
+        setDocFormData((prevData) => ({
+          ...prevData,
+          patient_name: value,
+        }));
+      } else if (name === "reason") {
+        setDocFormData((prevData) => ({
+          ...prevData,
+          reason: value,
+        }));
+      } else if (name === "branch") {
+        setSelectedBranchId(value);
+      } else if (name === "date") {
+        setDate(value);
+      } else if (name === "time") {
+        setTime(value);
+      } else {
+        setDocFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
+        }));
+      }
     }
   };
+
   const validateForm = () => {
     let newErrors = {};
 
     if (
       !formData.patient_name ||
-      !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.patient_name)
+      !docFormData.patient_name ||
+      !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.patient_name) ||
+      !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(docFormData.patient_name)
     )
       newErrors.patient_name = "(Patient name is required)";
 
     if (!date) newErrors.date = "(Select appointment date)";
     if (!time) newErrors.time = "(Select appointment time)";
-    if (!formData.reason) newErrors.reason = "(Select reason for visit)";
-    if (!formData.doctor) newErrors.doctor = "(Select doctor to assign)";
+    if (!formData.reason || !docFormData.reason)
+      newErrors.reason = "(Select reason for visit)";
+    if (!formData.doctor || true)
+      newErrors.doctor = "(Select doctor to assign)";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -86,6 +137,10 @@ const SetAppointment = ({ onClose }) => {
       reason: "",
       doctorId: "",
       doctor: "",
+    });
+    setDocFormData({
+      patient_name: "",
+      reason: "",
     });
     setDate("");
     setTime("");
@@ -111,36 +166,57 @@ const SetAppointment = ({ onClose }) => {
 
   const handleSubmitAppointment = async () => {
     console.log(formData);
+    console.log(docFormData);
 
     // e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+    // if (!validateForm()) {
+    //   return;
+    // }
     setIsLoading(true);
 
     const scheduledTime = new Date(`${date}T${time}`).toISOString();
 
-    const appointmentData = {
-      ...formData,
-      scheduledTime,
-    };
-
     try {
-      const response = await addAppointmentService(
-        branchId,
-        appointmentData,
-        accessToken,
-        refreshToken,
-        user.firebaseUid
-      );
+      if (user.role !== "2") {
+        const appointmentData = {
+          ...formData,
+          scheduledTime,
+        };
+        const response = await addAppointmentService(
+          branchId,
+          appointmentData,
+          accessToken,
+          refreshToken,
+          user.firebaseUid
+        );
 
-      if (response) {
-        setIsSuccess(true);
-        handleClear();
-        console.log(response.data);
-        const scheduleId = response.data.scheduleId;
-        reduxDispatch(addAppointment({ ...appointmentData, scheduleId }));
+        if (response) {
+          setIsSuccess(true);
+          handleClear();
+          console.log(response.data);
+          const scheduleId = response.data.scheduleId;
+          reduxDispatch(addAppointment({ ...appointmentData, scheduleId }));
+        }
+      } else {
+        const appointmentData = {
+          ...docFormData,
+          scheduledTime,
+        };
+        const response = await addAppointmentService(
+          selectedBranch,
+          appointmentData,
+          accessToken,
+          refreshToken,
+          user.firebaseUid
+        );
+        if (response) {
+          setIsSuccess(true);
+          handleClear();
+          console.log(response.data);
+          const scheduleId = response.data.scheduleId;
+          reduxDispatch(addAppointment({ ...appointmentData, scheduleId }));
+        }
       }
     } catch (error) {
       setIsSuccess(false);
@@ -179,14 +255,16 @@ const SetAppointment = ({ onClose }) => {
                 >
                   Patient Name{" "}
                   <span className="text-red-400">
-                    {(formData.patient_name === "" || errors.patient_name) &&
+                    {(formData.patient_name === "" ||
+                      docFormData.patient_name === "" ||
+                      errors.patient_name) &&
                       errors.patient_name}
                   </span>
                 </label>
                 <input
                   type="text"
                   name="patient_name"
-                  value={formData.patient_name}
+                  value={formData.patient_name || docFormData.patient_name}
                   onChange={handleChange}
                   className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                   placeholder="Enter patient name"
@@ -246,12 +324,15 @@ const SetAppointment = ({ onClose }) => {
                 >
                   Reason{" "}
                   <span className="text-red-400">
-                    {(formData.reason === "" || errors.reason) && errors.reason}
+                    {(formData.reason === "" ||
+                      docFormData === "" ||
+                      errors.reason) &&
+                      errors.reason}
                   </span>
                 </label>
                 <select
                   name="reason"
-                  value={formData.reason}
+                  value={formData.reason || docFormData.reason}
                   onChange={handleChange}
                   className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
                 >
@@ -262,32 +343,63 @@ const SetAppointment = ({ onClose }) => {
                   <option value="consultation">Consultation</option>
                 </select>
               </section>
-              <section>
-                <label
-                  htmlFor="doctor"
-                  className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                >
-                  Appoint a Doctor{" "}
-                  <span className="text-red-400">
-                    {(formData.doctor === "" || errors.doctor) && errors.doctor}
-                  </span>
-                </label>
-                <select
-                  name="doctor"
-                  value={formData.doctorId || ""}
-                  onChange={handleChange}
-                  className="mt-2 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                >
-                  <option value="" disabled className="text-c-gray3">
-                    Available Doctor
-                  </option>
-                  {doctors.map((doctor, key) => (
-                    <option key={key} value={doctor.staffId}>
-                      {doctor.first_name + " " + doctor.last_name}
+              {user.role !== "2" ? (
+                <section>
+                  <label
+                    htmlFor="doctor"
+                    className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                  >
+                    Appoint a Doctor{" "}
+                    <span className="text-red-400">
+                      {(formData.doctor === "" || errors.doctor) &&
+                        errors.doctor}
+                    </span>
+                  </label>
+                  <select
+                    name="doctor"
+                    value={formData.doctorId || ""}
+                    onChange={handleChange}
+                    className="mt-2 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                  >
+                    <option value="" disabled className="text-c-gray3">
+                      Available Doctor
                     </option>
-                  ))}
-                </select>
-              </section>
+                    {doctors.map((doctor, key) => (
+                      <option key={key} value={doctor.staffId}>
+                        {doctor.first_name + " " + doctor.last_name}
+                      </option>
+                    ))}
+                  </select>
+                </section>
+              ) : (
+                <section>
+                  <label
+                    htmlFor="branch"
+                    className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                  >
+                    Select a Branch{" "}
+                    <span className="text-red-400">
+                      {/* {(formData.doctor === "" || errors.doctor) && errors.doctor} */}
+                    </span>
+                  </label>
+                  <select
+                    name="branch"
+                    value={selectedBranch || ""}
+                    onChange={handleChange}
+                    className="mt-2 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                  >
+                    <option value="" disabled className="text-c-gray3">
+                      Available Branches
+                    </option>
+                    {branches.map((branch, key) => (
+                      <option
+                        key={key}
+                        value={branch.branchId}
+                      >{`${branch.branchName}`}</option>
+                    ))}
+                  </select>
+                </section>
+              )}
             </form>
             <div className="border border-t-f-gray bg-white rounded-b-lg flex gap-4 justify-end p-4">
               <button

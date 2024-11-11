@@ -19,6 +19,7 @@ import {
 import { setAppointments } from "../Slice/AppointmentSlice";
 import {
   getBranchData,
+  getBranchName,
   getDoctorList,
   getStaffs,
 } from "../Service/organizationService";
@@ -34,7 +35,7 @@ export const useFetchData = () => {
 
   const buildApiCalls = () => {
     let organizationId = user.role === "0" ? user.userId : user.organizationId;
-    let staffId = user.staffId || user.userId;
+    let staffId = user.userId || user.staffId;
 
     let branchId =
       (user.branches &&
@@ -169,6 +170,16 @@ export const useFetchData = () => {
               ),
             type: "patients",
           },
+          {
+            call: () =>
+              getBranchName(
+                user.userId,
+                firebaseUid,
+                accessToken,
+                refreshToken
+              ),
+            type: "branch",
+          },
         ];
       default:
         return [];
@@ -176,7 +187,7 @@ export const useFetchData = () => {
   };
 
   const fetchData = async () => {
-    setLoading(true); // Set loading to true when starting to fetch data
+    setLoading(true);
     try {
       const apiCalls = buildApiCalls();
       await Promise.all(
@@ -202,6 +213,9 @@ export const useFetchData = () => {
                 break;
               case "staffs":
                 reduxDispatch(setStaffs(result));
+                break;
+              case "branch":
+                reduxDispatch(setBranch(result));
                 break;
               case "inventory":
                 let allPurchases = [];

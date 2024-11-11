@@ -148,3 +148,30 @@ export const getBranchData = async (
     return null;
   }
 };
+
+export const getBranchName = async (
+  staffId,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.get(
+      `${ORGANIZATION_API_BASE_URL}/get-branch-name`,
+      {
+        params: {
+          firebaseUid,
+          staffId,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "X-Refresh-Token": refreshToken,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching branch name:", error);
+    return null;
+  }
+};
