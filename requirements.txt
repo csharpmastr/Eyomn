@@ -1,0 +1,20 @@
+langgraph 
+langchain 
+langchain_groq
+langchain-huggingface
+langchain_chroma
+langchain_community
+langsmith 
+pandas
+pydantic
+sentence_transformers
+huggingface_hub
+firecrawl-py 
+pymupdf
+transformers
+
+# api setting
+streamlit
+fastapi 
+uvicorn
+chromadb
