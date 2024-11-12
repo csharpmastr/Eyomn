@@ -252,23 +252,29 @@ const ScribeRecord = () => {
           )}
           {currentCardIndex === 1 && (
             <div className="w-full cursor-pointer">
-              {rawNotes.map((note, index) => (
-                <div
-                  key={note.noteId || index}
-                  className="px-6 py-4 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white hover:bg-bg-sub"
-                  onClick={() => handleClickRawNotes(note.noteId)}
-                >
-                  <div className="flex items-center gap-3">
-                    <input type="checkbox" className="w-6 h-6" />
-                    <p>{note.name || `Raw Note ${index + 1}`}</p>
-                  </div>
-                  <p>
-                    {note.createdAt
-                      ? note.createdAt.split("T")[0]
-                      : "Unknown Date"}
-                  </p>
-                </div>
-              ))}
+              {rawNotes ? (
+                <>
+                  {rawNotes.map((note, index) => (
+                    <div
+                      key={note.noteId || index}
+                      className="px-6 py-4 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white hover:bg-bg-sub"
+                      onClick={() => handleClickRawNotes(note.noteId)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <input type="checkbox" className="w-6 h-6" />
+                        <p>{note.name || `Raw Note ${index + 1}`}</p>
+                      </div>
+                      <p>
+                        {note.createdAt
+                          ? note.createdAt.split("T")[0]
+                          : "Unknown Date"}
+                      </p>
+                    </div>
+                  ))}
+                </>
+              ) : (
+                ""
+              )}
             </div>
           )}
           {currentCardIndex === 2 && (
