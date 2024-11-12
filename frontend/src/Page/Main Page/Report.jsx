@@ -14,6 +14,27 @@ const Report = () => {
     setSelected(section);
   };
 
+  const staffs = useSelector((state) => state.reducer.staff.staffs);
+  const staffCount = staffs.length;
+
+  let secCount = 0;
+  let docCount = 0;
+  let rotate = 0;
+  let station = 0;
+
+  staffs.forEach((staff) => {
+    if (staff.role === "3") {
+      secCount++;
+    } else if (staff.role === "2") {
+      docCount++;
+      if (staff.branches.length > 1) {
+        rotate++;
+      } else if (staff.branches.length === 1) {
+        station++;
+      }
+    }
+  });
+
   return (
     <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppins w-full h-full overflow-auto">
       <div className="flex justify-between">
@@ -136,17 +157,11 @@ const Report = () => {
         ) : (
           <>
             <div className="flex gap-5 h-28">
-              <div className="w-1/5 rounded-md bg-c-primary">No. of Staffs</div>
-              <div className="w-1/5 rounded-md bg-c-primary">
-                No. of Secretary
-              </div>
-              <div className="w-1/5 rounded-md bg-c-primary">No. of Doctor</div>
-              <div className="w-1/5 rounded-md bg-c-primary">
-                No. of Rotational
-              </div>
-              <div className="w-1/5 rounded-md bg-c-primary">
-                No. of Stationary
-              </div>
+              <div className="w-1/5 rounded-md bg-c-primary">{staffCount}</div>
+              <div className="w-1/5 rounded-md bg-c-primary">{secCount}</div>
+              <div className="w-1/5 rounded-md bg-c-primary">{docCount}</div>
+              <div className="w-1/5 rounded-md bg-c-primary">{rotate}</div>
+              <div className="w-1/5 rounded-md bg-c-primary">{station}</div>
             </div>
           </>
         )}
