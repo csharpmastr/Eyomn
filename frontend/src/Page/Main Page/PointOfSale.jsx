@@ -124,11 +124,11 @@ const PointOfSale = () => {
                 <option value="price-h">High (Price)</option>
               </select>
             </div>
-            <div className="flex flex-row border border-f-gray bg-bg-sub px-4 rounded-md justify-center items-center w-full gap-2">
+            <div className="flex flex-row border border-f-gray  px-4 rounded-md justify-center items-center w-full gap-2">
               <IoMdSearch className="h-8 w-8 text-c-secondary" />
               <input
                 type="text"
-                className="w-full focus:outline-none placeholder-f-gray2 bg-bg-sub text-p-sm md:text-p-rg"
+                className="w-full focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-sm md:text-p-rg"
                 placeholder="Search product... "
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

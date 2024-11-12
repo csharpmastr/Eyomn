@@ -55,7 +55,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col h-fit w-[80vw] xl:w-[560px] font-Raleway text-f-dark">
+    <div className="flex flex-col h-fit w-full font-Raleway text-f-dark">
       <form onSubmit={handleSubmit} className="w-full">
         <div className="flex flex-col gap-10">
           <div>

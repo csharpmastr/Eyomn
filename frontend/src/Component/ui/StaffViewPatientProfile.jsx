@@ -42,9 +42,9 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
           </button>
         </header>
         <div className="w-full h-fit flex flex-col justify-between gap-6">
-          <div className="w-full flex-1 text-f-dark rounded-md border border-f-gray shadow-md">
-            <header className="px-8 py-4 bg-white border border-b-f-gray rounded-t-md">
-              <h1 className="text-p-rg md:text-p-lg font-medium text-c-primary">
+          <div className="w-full flex-1 text-f-dark rounded-md border shadow-sm bg-white">
+            <header>
+              <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mt-4 ml-4">
                 | Personal Information
               </h1>
             </header>
@@ -69,9 +69,9 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
               </section>
             </div>
           </div>
-          <div className="w-full flex-1 text-f-dark rounded-md border border-f-gray shadow-md">
-            <header className="px-8 py-4 bg-white border border-b-f-gray rounded-t-md">
-              <h1 className="text-p-rg md:text-p-lg font-medium text-c-primary">
+          <div className="w-full flex-1 text-f-dark rounded-md border shadow-sm bg-white">
+            <header>
+              <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mt-4 ml-4">
                 | Status Information
               </h1>
             </header>
@@ -91,9 +91,9 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
               <section className="flex-1 text-p-sm md:text-p-rg font-medium"></section>
             </div>
           </div>
-          <div className="w-full flex-1 text-f-dark rounded-md border border-f-gray shadow-md">
-            <header className="px-8 py-4 bg-white border border-b-f-gray rounded-t-md">
-              <h1 className="text-p-rg md:text-p-lg font-medium text-c-primary">
+          <div className="w-full flex-1 text-f-dark rounded-md border shadow-sm bg-white">
+            <header>
+              <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mt-4 ml-4">
                 | Contact Information
               </h1>
             </header>
@@ -120,7 +120,7 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
           </div>
         </div>
       </div>
-      <div className="md:w-3/5 h-full bg-white p-6 rounded-lg">
+      <div className="md:w-3/5 h-full shadow-sm border bg-white p-6 rounded-lg">
         <header className="flex w-full h-fit justify-between mb-4">
           <h1 className="text-p-sm md:text-p-rg font-medium text-c-gray3">
             | Recent Visit

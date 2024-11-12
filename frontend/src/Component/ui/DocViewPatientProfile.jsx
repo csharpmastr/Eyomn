@@ -78,8 +78,8 @@ const DocViewPatientProfile = ({ patient, visits }) => {
         </button>
       </header>
       <div className="flex flex-col gap-3 md:gap-6 justify-between lg:flex-row">
-        <div className="w-full h-auto flex flex-col gap-3 md:gap-6">
-          <div className="w-full bg-white p-5 rounded-lg border border-f-gray overflow-x-hidden">
+        <div className="w-full h-full flex flex-col gap-3 md:gap-6">
+          <div className="w-full bg-white p-5 rounded-lg shadow-sm border overflow-x-hidden">
             <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-5">
               | Contact Information
             </h1>
@@ -104,76 +104,69 @@ const DocViewPatientProfile = ({ patient, visits }) => {
               </div>
             </section>
           </div>
-          <div className="w-full bg-white p-5 rounded-lg border border-f-gray lg:mb-8">
-            <section className="mb-8">
+          <div className="w-full bg-white p-5 rounded-lg shadow-sm border h-fit overflow-y-scroll">
+            <section className="mb-8 flex justify-center">
               <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-5">
-                | Initial Observation
+                Patient Medical Records
               </h1>
-              <p className="text-f-dark text-p-sm md:text-p-rg">
-                lorem lorem lorem dasdasd hbashdb
-              </p>
             </section>
-            <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-5">
-              | Case History
-            </h1>
-            <section className="p-3 rounded-lg border border-f-gray mb-5">
-              <div className="mb-4">
-                <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm">
-                  Reason for visit:
-                </p>
-                <p className="text-f-dark text-p-sm md:text-p-rg">
-                  lorem lorem lorem dasdasd hbashdb
-                </p>
+            <section className="bg-white border rounded-md">
+              <div className="p-3 rounded-t-md bg-bg-sub border-b">
+                <h1 className="w-full text-center">Subjective</h1>
               </div>
-              <div>
-                <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm">
-                  Chief Complaint:
-                </p>
-                <p className="text-f-dark text-p-sm md:text-p-rg">
-                  lorem lorem lorem dasdasd hbashdb
-                </p>
-              </div>
-            </section>
-            <section className="p-3 rounded-lg border border-f-gray flex justify-between mb-5">
-              <div className="mb-4">
-                <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm">
-                  Occular History:
-                </p>
-                <p className="text-f-dark text-p-sm md:text-p-rg">
-                  lorem lorem lorem dasdasd hbashdb
-                </p>
-              </div>
-              <div>
-                <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm">
-                  Date of last Eye Exam:
-                </p>
-                <p className="text-f-dark text-p-sm md:text-p-rg text-end">
-                  June 2024
-                </p>
-              </div>
-            </section>
-            <section className="p-3 rounded-lg border border-f-gray flex justify-between">
-              <div className="mb-4">
-                <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm">
-                  General Health Hx:
-                </p>
-                <p className="text-f-dark text-p-sm md:text-p-rg">
-                  lorem lorem lorem dasdasd hbashdb
-                </p>
-              </div>
-              <div>
-                <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm">
-                  Date of last Medical Exam:
-                </p>
-                <p className="text-f-dark text-p-sm md:text-p-rg text-end">
-                  June 2024
-                </p>
+              <div className="p-5 gap-3 flex flex-col">
+                <div className="flex gap-3">
+                  <div className="p-3 rounded-lg border flex-1 text-f-dark text-p-sc md:text-p-sm bg-bg-mc">
+                    <h6 className="font-medium mb-3">| Initial Obeservation</h6>
+                    <article>
+                      <p>Content</p>
+                    </article>
+                  </div>
+                  <div className="p-3 rounded-lg border flex-1 text-f-dark text-p-sc md:text-p-sm bg-bg-mc">
+                    <h6 className="font-medium mb-3">| General Health Hx</h6>
+                    <article>
+                      <p>Content</p>
+                    </article>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="p-3 rounded-lg border flex-1 text-f-dark text-p-sc md:text-p-sm bg-bg-mc">
+                    <h6 className="font-medium mb-3">
+                      | Occular Condition/History
+                    </h6>
+                    <article>
+                      <p>Content</p>
+                    </article>
+                  </div>
+                  <div className="p-3 rounded-lg border flex-1 text-f-dark text-p-sc md:text-p-sm bg-bg-mc">
+                    <h6 className="font-medium mb-3">
+                      | Family Occular Conditon
+                    </h6>
+                    <article>
+                      <p>Content</p>
+                    </article>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="p-3 rounded-lg border flex-1 text-f-dark text-p-sc md:text-p-sm bg-bg-mc">
+                    <h6 className="font-medium mb-3">| Current Medication</h6>
+                    <article>
+                      <p>Content</p>
+                    </article>
+                  </div>
+                  <div className="p-3 rounded-lg border flex-1 text-f-dark text-p-sc md:text-p-sm bg-bg-mc">
+                    <h6 className="font-medium mb-3">| Lifestyle</h6>
+                    <article>
+                      <p>Content</p>
+                    </article>
+                  </div>
+                </div>
               </div>
             </section>
           </div>
         </div>
         <div className="w-full h-auto lg:w-[600px]">
-          <div className="w-full h-full bg-white rounded-lg font-poppins p-4">
+          <div className="w-full h-full shadow-sm border bg-white rounded-lg font-poppins p-4">
             <header className="flex w-full h-auto justify-between pt-4 mb-4">
               <h1 className="text-p-sm md:text-p-rg font-medium text-c-gray3">
                 Recent Visit

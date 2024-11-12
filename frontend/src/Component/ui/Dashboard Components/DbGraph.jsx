@@ -6,7 +6,7 @@ import RoleColor from "../../../assets/Util/RoleColor";
 
 const DbGraph = ({ patients, sales }) => {
   const user = useSelector((state) => state.reducer.user.user);
-  const [selectedFilter, setSelectedFilter] = useState("filter1");
+  const [selectedFilter, setSelectedFilter] = useState("filter2");
   const [selectedDataType, setSelectedDataType] = useState(
     user.role === "3" ? "sales" : "patients"
   );
