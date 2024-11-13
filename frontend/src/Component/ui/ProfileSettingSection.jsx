@@ -6,8 +6,15 @@ import Select from "react-select";
 import PhList from "../../assets/Data/location_list.json";
 import { useSelector } from "react-redux";
 import ArchiveTable from "./ArchiveTable";
+import { changeUserPassword } from "../../Service/UserService";
+import Cookies from "universal-cookie";
+import SuccessModal from "./SuccessModal";
+import Loader from "./Loader";
 
 const ProfileSettingSection = ({ selected }) => {
+  const cookies = new Cookies();
+  const accessToken = cookies.get("accessToken");
+  const refreshToken = cookies.get("refreshToken");
   const [image, setImage] = useState(null);
   const [selectedProvince, setSelectedProvince] = useState(null);
   const user = useSelector((state) => state.reducer.user.user);
@@ -17,6 +24,8 @@ const ProfileSettingSection = ({ selected }) => {
   const [npVisible, setNpVisible] = useState(false);
   const [cpVisible, setCpVisible] = useState(false);
   const [repeatPass, setRepeatPass] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [userForm, setUserForm] = useState({
     first_name: user.first_name,
@@ -31,7 +40,6 @@ const ProfileSettingSection = ({ selected }) => {
   const [passwordForm, setPasswordForm] = useState({
     password: "",
     newpassword: "",
-    confirmpassword: "",
   });
 
   const handlePasswordChange = (e) => {
@@ -163,17 +171,55 @@ const ProfileSettingSection = ({ selected }) => {
         newErrors.newpassword =
           "(Invalid password. Ensure it has at least 8 characters, including uppercase, lowercase, numbers, and special characters)";
 
-      if (passwordForm.confirmpassword !== repeatPass)
-        newErrors.confirmpassword = "(Passwords do not match)";
+      if (passwordForm.newpassword !== repeatPass)
+        newErrors.newpassword = "(Passwords do not match)";
     }
 
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
   };
-
+  const handleChangePassword = async () => {
+    setIsLoading(true);
+    if (repeatPass !== passwordForm.newpassword) {
+      console.error("Passwords do not match!");
+      return;
+    }
+    try {
+      const reponse = await changeUserPassword(
+        null,
+        null,
+        user.userId,
+        user.role,
+        user.firebaseUid,
+        passwordForm.password,
+        passwordForm.newpassword,
+        accessToken,
+        refreshToken
+      );
+      if (reponse) {
+        setIsSuccess(true);
+        handleClearPasswordForm();
+        console.log("nice");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleClearPasswordForm = () => {
+    setPasswordForm({
+      password: "",
+      newpassword: "",
+    });
+    setRepeatPass("");
+  };
   return (
     <>
+      {isLoading && (
+        <Loader description={"Changes user password. Please wait ..."} />
+      )}
       {selected === "My Profile" && (
         <form className="flex flex-col w-full h-full gap-4 md:gap-8 font-Poppins">
           <div className="w-full border border-f-gray bg-white rounded-lg p-6 md:p-10 h-full flex flex-col-reverse md:flex-row justify-between items-center">
@@ -536,7 +582,10 @@ const ProfileSettingSection = ({ selected }) => {
                   </button>
                 </div>
               </div>
-              <button className="px-5 py-3 mt-5 bg-c-secondary text-f-light text-p-sm md:text-p-rg font-semibold rounded-md">
+              <button
+                className="px-5 py-3 mt-5 bg-c-secondary text-f-light text-p-sm md:text-p-rg font-semibold rounded-md"
+                onClick={handleChangePassword}
+              >
                 Save Password
               </button>
             </div>
@@ -556,6 +605,14 @@ const ProfileSettingSection = ({ selected }) => {
         </div>
       )}
       {selected === "Product Archive" && <ArchiveTable />}
+      <SuccessModal
+        title={"Password Changed!"}
+        description={
+          "Your password has been changed successfully. Remember to keep your password secure and avoid sharing it with others."
+        }
+        isOpen={isSuccess}
+        onClose={() => setIsSuccess(false)}
+      />
     </>
   );
 };
