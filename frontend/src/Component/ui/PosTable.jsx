@@ -14,8 +14,12 @@ const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
     .filter((product) => product.isDeleted === false)
     .filter(
       (product) =>
-        product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.productSKU.toLowerCase().includes(searchTerm.toLowerCase())
+        (product.product_name &&
+          product.product_name
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())) ||
+        (product.productSKU &&
+          product.productSKU.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
   if (sortOption === "ascending") {
@@ -27,9 +31,9 @@ const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
       `${a.product_name}`.localeCompare(`${b.product_name}`)
     );
   } else if (sortOption === "price-l") {
-    filteredProducts = filteredProducts.sort((a, b) => b.quantity - a.quantity);
+    filteredProducts = filteredProducts.sort((a, b) => a.price - b.price);
   } else if (sortOption === "price-h") {
-    filteredProducts = filteredProducts.sort((a, b) => a.quantity - b.quantity);
+    filteredProducts = filteredProducts.sort((a, b) => b.price - a.price);
   }
 
   const paginatedProducts = filteredProducts.slice(

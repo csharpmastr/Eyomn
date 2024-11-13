@@ -28,6 +28,7 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
       [productId]: !prevState[productId],
     }));
   };
+  console.log(products);
 
   const handleCollapseToggle = (productId) => {
     setCollapsedProducts((prevState) => ({
@@ -40,8 +41,12 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
     .filter((product) => product.isDeleted === false)
     .filter(
       (product) =>
-        product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.productSKU.toLowerCase().includes(searchTerm.toLowerCase())
+        (product.product_name &&
+          product.product_name
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())) ||
+        (product.productSKU &&
+          product.productSKU.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
   if (sortOption === "ascending") {
