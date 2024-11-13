@@ -40,8 +40,12 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
     .filter((product) => product.isDeleted === false)
     .filter(
       (product) =>
-        product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.productSKU.toLowerCase().includes(searchTerm.toLowerCase())
+        (product.product_name &&
+          product.product_name
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())) ||
+        (product.productSKU &&
+          product.productSKU.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
   if (sortOption === "ascending") {

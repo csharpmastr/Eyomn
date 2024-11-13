@@ -5,9 +5,14 @@ import ReasonVisitCard from "./ReasonVisitCard";
 import { useDispatch } from "react-redux";
 import VisitReasonModal from "./VisitReasonModal";
 import { useSelector } from "react-redux";
+import AddEditPatient from "./AddEditPatient";
+
 const StaffViewPatientProfile = ({ patient, visits }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isVisitOpen, setIsVisitOpen] = useState(false);
   const toggleModal = () => setIsVisitOpen(!isVisitOpen);
+  const handleOpenModal = () => setIsModalOpen(!isModalOpen);
+
   const reduxDispatch = useDispatch();
   const formattedDate = patient.createdAt
     ? new Date(patient.createdAt).toLocaleDateString("en-US", {
@@ -34,12 +39,19 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
             </p>
             <p>{formattedDate}</p>
           </div>
-          <button className="flex w-fit justify-end">
-            <FiEdit className="h-6 w-6 md:mr-2 text-c-secondary" />
-            <p className="text-c-secondary font-regular text-p-sm md:text-p-rg">
-              Edit
-            </p>
-          </button>
+          <div>
+            {role === "3" && (
+              <button
+                className="flex w-fit justify-end"
+                onClick={handleOpenModal}
+              >
+                <FiEdit className="h-6 w-6 md:mr-2 text-c-secondary" />
+                <p className="text-c-secondary font-regular text-p-sm md:text-p-rg">
+                  Edit
+                </p>
+              </button>
+            )}
+          </div>
         </header>
         <div className="w-full h-fit flex flex-col justify-between gap-6">
           <div className="w-full flex-1 text-f-dark rounded-md border shadow-sm bg-white">
@@ -147,6 +159,12 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
         </div>
       </div>
       {isVisitOpen && <VisitReasonModal onClose={toggleModal} />}
+      {isModalOpen && (
+        <AddEditPatient
+          onClose={handleOpenModal}
+          title={"Edit Patient Information"}
+        />
+      )}
     </div>
   );
 };

@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import { IoMdCloseCircleOutline, IoMdSearch } from "react-icons/io";
-import { FiFilter } from "react-icons/fi";
+import { IoMdSearch } from "react-icons/io";
 import PosTable from "../../Component/ui/PosTable";
 import { useDispatch, useSelector } from "react-redux";
 import { useAddPurchase } from "../../Hooks/useAddPurchase";
 import Loader from "../../Component/ui/Loader";
 import SuccessModal from "../../Component/ui/SuccessModal";
 import { addPurchase } from "../../Slice/InventorySlice";
-import Modal from "../../Component/ui/Modal";
+import ErrorModal from "../../Component/ui/ErrorModal";
 
 const PointOfSale = () => {
   const [selectedProducts, setSelectedProducts] = React.useState([]);
@@ -44,6 +43,11 @@ const PointOfSale = () => {
     }
   };
   const handlePurchase = async () => {
+    if (selectedProducts.length === 0) {
+      setIsError(true);
+      return;
+    }
+
     const purchaseDetails = selectedProducts.map(
       ({ productId, productSKU, quantity, price }) => ({
         productId,
@@ -228,16 +232,14 @@ const PointOfSale = () => {
         isOpen={isSuccess}
         onClose={handleClose}
       />
-      <Modal
+
+      <ErrorModal
+        title={"No Products Selected"}
+        description={
+          "Please select at least one product before proceeding to checkout."
+        }
         isOpen={isError}
         onClose={handleCloseError}
-        title={"Invalid Request"}
-        description={"We can't process your request at this moment."}
-        icon={<IoMdCloseCircleOutline className="w-24 h-24 text-red-700" />}
-        className="w-[600px] h-auto p-4"
-        overlayDescriptionClassName={
-          "text-center font-Poppins pt-5 text-black text-[18px]"
-        }
       />
     </>
   );

@@ -108,6 +108,13 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
   const handleCategoryChange = (e) => {
     const selectedValue = e.target.value;
 
+    if (errors.category) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        category: "",
+      }));
+    }
+
     setSelectedCategory(selectedValue);
 
     setFormData((prevData) => ({
@@ -147,76 +154,80 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
   const validateForm = () => {
     let newErrors = {};
 
-    if (!formData.product_name || formData.product_name.trim() === "") {
-      newErrors.product_name = "(Product name is required)";
-    }
-
-    if (!formData.retail_price || formData.retail_price <= 0) {
-      newErrors.retail_price = "(Retail Price is required)";
-    }
-
-    if (!formData.price || formData.price <= 0) {
-      newErrors.price = "(Price is required)";
-    }
-
-    if (!formData.quantity || formData.quantity <= 0) {
-      newErrors.quantity = "(Quantity is required)";
-    }
-
-    if (!formData.brand || formData.brand.trim() === "") {
-      newErrors.brand = "(Brand is required)";
-    }
-
-    if (
-      (selectedCategory === "Medication" ||
-        selectedCategory === "Contact Lens") &&
-      (!formData.expirationDate || formData.expirationDate === "")
-    ) {
-      newErrors.expirationDate = "(Expiration date is required)";
-    }
-
-    //================================================================================
-
-    if (selectedCategory === "Medication") {
-      if (!formData.prescrip_otc || formData.prescrip_otc === "") {
-        newErrors.prescrip_otc = "(Please select Prescription or OTC)";
+    if (!formData.category || formData.category === "") {
+      newErrors.category = "(Please select category first)";
+    } else {
+      if (!formData.product_name || formData.product_name.trim() === "") {
+        newErrors.product_name = "(Product name is required)";
       }
 
-      if (!formData.md_form || formData.md_form === "") {
-        newErrors.md_form = "(Medicine form is required)";
+      if (!formData.retail_price || formData.retail_price <= 0) {
+        newErrors.retail_price = "(Retail Price is required)";
       }
 
-      if (!formData.dosage || formData.dosage.trim() === "") {
-        newErrors.dosage = "(Dosage and strength are required)";
-      }
-    }
-
-    if (selectedCategory === "Contact Lens") {
-      if (!formData.ct_type || formData.ct_type === "") {
-        newErrors.ct_type = "(Contact lens type is required)";
+      if (!formData.price || formData.price <= 0) {
+        newErrors.price = "(Price is required)";
       }
 
-      if (!formData.ct_material || formData.ct_material.trim() === "") {
-        newErrors.ct_material = "(Lens material is required)";
-      }
-    }
-
-    if (selectedCategory === "Eye Glass") {
-      if (!formData.eyeglass_category || formData.eyeglass_category === "") {
-        newErrors.eyeglass_category = "(Eye glass category is required)";
-      }
-      if (!formData.len_type || formData.len_type === "") {
-        newErrors.len_type = "(Lens type is required)";
+      if (!formData.quantity || formData.quantity <= 0) {
+        newErrors.quantity = "(Quantity is required)";
       }
 
-      if (!formData.color_material || formData.color_material === "") {
-        newErrors.color_material = "(Color / Material is required)";
+      if (!formData.brand || formData.brand.trim() === "") {
+        newErrors.brand = "(Brand is required)";
       }
-    }
 
-    if (selectedCategory === "Other") {
-      if (!formData.other_description || formData.other_description === "") {
-        newErrors.other_description = "(Product description is required)";
+      if (
+        (selectedCategory === "Medication" ||
+          selectedCategory === "Contact Lens") &&
+        (!formData.expirationDate || formData.expirationDate === "")
+      ) {
+        newErrors.expirationDate = "(Expiration date is required)";
+      }
+
+      //================================================================================
+
+      if (selectedCategory === "Medication") {
+        if (!formData.prescrip_otc || formData.prescrip_otc === "") {
+          newErrors.prescrip_otc = "(Please select Prescription or OTC)";
+        }
+
+        if (!formData.md_form || formData.md_form === "") {
+          newErrors.md_form = "(Medicine form is required)";
+        }
+
+        if (!formData.dosage || formData.dosage.trim() === "") {
+          newErrors.dosage = "(Dosage and strength are required)";
+        }
+      }
+
+      if (selectedCategory === "Contact Lens") {
+        if (!formData.ct_type || formData.ct_type === "") {
+          newErrors.ct_type = "(Contact lens type is required)";
+        }
+
+        if (!formData.ct_material || formData.ct_material.trim() === "") {
+          newErrors.ct_material = "(Lens material is required)";
+        }
+      }
+
+      if (selectedCategory === "Eye Glass") {
+        if (!formData.eyeglass_category || formData.eyeglass_category === "") {
+          newErrors.eyeglass_category = "(Eye glass category is required)";
+        }
+        if (!formData.len_type || formData.len_type === "") {
+          newErrors.len_type = "(Lens type is required)";
+        }
+
+        if (!formData.color_material || formData.color_material === "") {
+          newErrors.color_material = "(Color / Material is required)";
+        }
+      }
+
+      if (selectedCategory === "Other") {
+        if (!formData.other_description || formData.other_description === "") {
+          newErrors.other_description = "(Product description is required)";
+        }
       }
     }
 
@@ -225,10 +236,13 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleAddEditProduct = async () => {
-    // if (!validateForm()) {
-    //   return;
-    // }
+  const handleAddEditProduct = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
     try {
       const cleanedData = cleanFormData(formData);
@@ -307,7 +321,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
         <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
           <div className="w-[380px] md:w-[600px] md:mr-8">
             <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-              <h1 className="text-p-rg md:text-p-lg text-c-secondary font-semibold">
+              <h1 className="text-p-rg md:text-p-lg text-c-secondary font-medium">
                 {title}
               </h1>
               <button onClick={onClose}>&times;</button>
@@ -317,19 +331,23 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                 <section>
                   <header>
                     <h1 className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                      | Product Category
+                      | Product Category{" "}
+                      <span className="text-red-400 text-p-sc md:text-p-sm font-normal">
+                        {(formData.category === "" || errors.category) &&
+                          errors.category}
+                      </span>
                     </h1>
                   </header>
-                  <span className="text-red-400 text-p-sc md:text-p-sm">
-                    {(formData.first_name === "" || errors.first_name) &&
-                      errors.first_name}
-                  </span>
                   <select
                     name="category"
                     value={selectedCategory}
                     disabled={productDetails}
                     onChange={handleCategoryChange}
-                    className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
+                    className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                      errors.category
+                        ? "border-red-400 focus:outline-red-400"
+                        : "border-c-gray3 focus:outline-c-primary"
+                    }`}
                   >
                     <option value="" disabled className="text-c-gray3">
                       Select Category
@@ -750,31 +768,6 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                       <div className="flex gap-4">
                         <div className="w-1/2">
                           <label
-                            htmlFor="price"
-                            className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                          >
-                            Price{" "}
-                            <span className="text-red-400">
-                              {(formData.price === "" || errors.price) &&
-                                errors.price}
-                            </span>
-                          </label>
-                          <input
-                            type="number"
-                            name="price"
-                            min={0}
-                            value={formData.price}
-                            onChange={handleChange}
-                            className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                              errors.price
-                                ? "border-red-400 focus:outline-red-400"
-                                : "border-c-gray3 focus:outline-c-primary"
-                            }`}
-                            placeholder="Enter product price"
-                          />
-                        </div>
-                        <div className="w-1/2">
-                          <label
                             htmlFor="retail_price"
                             className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                           >
@@ -797,6 +790,31 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                                 : "border-c-gray3 focus:outline-c-primary"
                             }`}
                             placeholder="Enter retail price"
+                          />
+                        </div>
+                        <div className="w-1/2">
+                          <label
+                            htmlFor="price"
+                            className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                          >
+                            Srp Price{" "}
+                            <span className="text-red-400">
+                              {(formData.price === "" || errors.price) &&
+                                errors.price}
+                            </span>
+                          </label>
+                          <input
+                            type="number"
+                            name="price"
+                            min={0}
+                            value={formData.price}
+                            onChange={handleChange}
+                            className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                              errors.price
+                                ? "border-red-400 focus:outline-red-400"
+                                : "border-c-gray3 focus:outline-c-primary"
+                            }`}
+                            placeholder="Enter product price"
                           />
                         </div>
                       </div>
@@ -856,15 +874,15 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
                 </div>
               </div>
             </div>
-            <footer className="flex justify-end px-3 py-6 bg-white border border-t-f-gray rounded-b-lg">
+            <footer className="flex justify-end gap-4 px-4 py-3 bg-white border border-t-f-gray rounded-b-lg">
               <button
-                className="px-4 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border border-c-gray3 hover:bg-sb-org"
+                className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
                 onClick={onClose}
               >
                 Cancel
               </button>
               <button
-                className="ml-2 px-8 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md hover:bg-opacity-75"
+                className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md hover:bg-opacity-75"
                 type="submit"
                 onClick={handleAddEditProduct}
               >

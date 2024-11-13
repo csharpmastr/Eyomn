@@ -264,7 +264,6 @@ const AddStaff = ({ onClose, staffData }) => {
     }));
 
   const handleNext = () => {
-    setCurrentCardIndex(currentCardIndex + 1);
     const isValid = validateForm();
     if (isValid) {
       setCurrentCardIndex(currentCardIndex + 1);
@@ -272,7 +271,6 @@ const AddStaff = ({ onClose, staffData }) => {
   };
 
   const handleBack = () => {
-    setCurrentCardIndex(currentCardIndex - 1);
     if (currentCardIndex > 0) {
       setCurrentCardIndex(currentCardIndex - 1);
     }
@@ -336,9 +334,9 @@ const AddStaff = ({ onClose, staffData }) => {
   const handleSubmitStaff = async (e) => {
     e.preventDefault();
 
-    // if (!validateForm()) {
-    //   return false;
-    // }
+    if (!validateForm()) {
+      return false;
+    }
 
     console.log(formData);
 
@@ -1224,17 +1222,17 @@ const AddStaff = ({ onClose, staffData }) => {
                 </div>
               )}
             </form>
-            <footer className="flex justify-end p-4 gap-4 bg-white border-2 border-t-f-gray rounded-b-lg">
+            <footer className="flex justify-end px-4 py-3 gap-4 bg-white border-2 border-t-f-gray rounded-b-lg">
               {currentCardIndex === 0 ? (
                 <button
-                  className="px-4 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border border-c-gray3 hover:bg-sb-org"
+                  className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
                   onClick={onClose}
                 >
                   Cancel
                 </button>
               ) : (
                 <button
-                  className="px-4 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border border-c-gray3 hover:bg-sb-org"
+                  className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
                   onClick={handleBack}
                 >
                   Go Back
@@ -1243,7 +1241,7 @@ const AddStaff = ({ onClose, staffData }) => {
 
               {currentCardIndex < 2 && (
                 <button
-                  className="px-4 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md hover:bg-opacity-75"
+                  className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md hover:bg-opacity-75"
                   onClick={handleNext}
                 >
                   Continue
@@ -1252,7 +1250,7 @@ const AddStaff = ({ onClose, staffData }) => {
 
               {currentCardIndex === 2 && (
                 <button
-                  className="px-4 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md hover:bg-opacity-75"
+                  className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md hover:bg-opacity-75"
                   onClick={handleSubmitStaff}
                 >
                   Add Staff

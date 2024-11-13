@@ -6,11 +6,13 @@ import { MdOutlineEmail } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import ReasonVisitCard from "./ReasonVisitCard";
 import VisitReasonModal from "./VisitReasonModal";
+import AddEditPatient from "./AddEditPatient";
 import { getPatientVisit } from "../../Service/PatientService";
 import Cookies from "universal-cookie";
 
 const DocViewPatientProfile = ({ patient, visits }) => {
   const [isVisitOpen, setIsVisitOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const formattedDate = patient.createdAt
     ? new Date(patient.createdAt).toLocaleDateString("en-US", {
@@ -21,6 +23,7 @@ const DocViewPatientProfile = ({ patient, visits }) => {
     : "N/A";
 
   const toggleModal = () => setIsVisitOpen(!isVisitOpen);
+  const handleOpenModal = () => setIsModalOpen(!isModalOpen);
 
   return (
     <div className="w-full h-auto font-poppins">
@@ -70,7 +73,7 @@ const DocViewPatientProfile = ({ patient, visits }) => {
             {formattedDate}
           </p>
         </section>
-        <button className="flex w-1/6 justify-end">
+        <button className="flex w-1/6 justify-end" onClick={handleOpenModal}>
           <FiEdit className="h-6 w-6 md:mr-2 text-c-secondary" />
           <p className="text-c-secondary font-medium text-p-sm md:text-p-rg">
             Edit
@@ -178,17 +181,25 @@ const DocViewPatientProfile = ({ patient, visits }) => {
                 />
               </button>
             </header>
-            {visits.length > 0 ? (
-              visits.map((visit, index) => (
-                <ReasonVisitCard key={index} reasonData={visit} />
-              ))
-            ) : (
-              <p>No visit records found.</p>
-            )}
+            <div className="flex flex-col gap-4">
+              {visits.length > 0 ? (
+                visits.map((visit, index) => (
+                  <ReasonVisitCard key={index} reasonData={visit} />
+                ))
+              ) : (
+                <p>No visit records found.</p>
+              )}
+            </div>
           </div>
         </div>
       </div>
       {isVisitOpen && <VisitReasonModal onClose={toggleModal} />}
+      {isModalOpen && (
+        <AddEditPatient
+          onClose={handleOpenModal}
+          title={"Edit Patient Information"}
+        />
+      )}
     </div>
   );
 };

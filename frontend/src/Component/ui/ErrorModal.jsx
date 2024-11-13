@@ -29,7 +29,7 @@ const ErrorModal = ({ description, onClose, isOpen, title }) => {
           </article>
         </div>
         <div
-          className="border-t py-5 w-full mt-8 font-medium cursor-pointer bg-bg-sb rounded-b-lg hover:bg-c-primary"
+          className="border-t py-5 w-full mt-8 font-medium cursor-pointer bg-bg-sb rounded-b-lg hover:bg-c-primary hover:text-f-light"
           onClick={onClose}
         >
           <h1>Done</h1>

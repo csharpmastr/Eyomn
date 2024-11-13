@@ -31,7 +31,7 @@ const ViewSchedule = ({ onClose, appointments }) => {
               appointments.map((appointment, index) => (
                 <div
                   key={index}
-                  className={`w-full border-l-[8px] px-4 py-6 bg-white ${
+                  className={`w-full border-l-8 px-4 py-6 bg-white shadow-sm rounded-md ${
                     borderColors[index % borderColors.length]
                   }`}
                 >

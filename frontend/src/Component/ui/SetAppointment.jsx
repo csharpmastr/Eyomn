@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import ReactDOM from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "universal-cookie";
 import { addAppointmentService } from "../../Service/AppointmentService";
@@ -112,25 +111,31 @@ const SetAppointment = ({ onClose }) => {
 
   const validateForm = () => {
     let newErrors = {};
+    const dataToValidate = user.role !== "2" ? formData : docFormData;
 
     if (
-      !formData.patient_name ||
-      !docFormData.patient_name ||
-      !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.patient_name) ||
-      !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(docFormData.patient_name)
-    )
+      !dataToValidate.patient_name ||
+      !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(dataToValidate.patient_name)
+    ) {
       newErrors.patient_name = "(Patient name is required)";
-
-    if (!date) newErrors.date = "(Select appointment date)";
-    if (!time) newErrors.time = "(Select appointment time)";
-    if (!formData.reason || !docFormData.reason)
+    }
+    if (!date) {
+      newErrors.date = "(Select appointment date)";
+    }
+    if (!time) {
+      newErrors.time = "(Select appointment time)";
+    }
+    if (!dataToValidate.reason) {
       newErrors.reason = "(Select reason for visit)";
-    if (!formData.doctor || true)
+    }
+    if (user.role !== "2" && !dataToValidate.doctor) {
       newErrors.doctor = "(Select doctor to assign)";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
   const handleClear = () => {
     setFormData({
       patient_name: "",
@@ -164,15 +169,15 @@ const SetAppointment = ({ onClose }) => {
 
   const timeOptions = generateTimeOptions();
 
-  const handleSubmitAppointment = async () => {
+  const handleSubmitAppointment = async (e) => {
     console.log(formData);
     console.log(docFormData);
 
-    // e.preventDefault();
+    e.preventDefault();
 
-    // if (!validateForm()) {
-    //   return;
-    // }
+    if (!validateForm()) {
+      return;
+    }
     setIsLoading(true);
 
     const scheduledTime = new Date(`${date}T${time}`).toISOString();
@@ -242,7 +247,7 @@ const SetAppointment = ({ onClose }) => {
         <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
           <div className="w-[380px] md:w-1/2 xl:w-[500px] h-auto ">
             <header className="p-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-              <h1 className="text-p-rg md:text-p-lg text-c-secondary font-semibold">
+              <h1 className="text-p-rg md:text-p-lg text-c-secondary font-medium">
                 Set Appointment
               </h1>
               <button onClick={onClose}> &times; </button>
@@ -401,10 +406,10 @@ const SetAppointment = ({ onClose }) => {
                 </section>
               )}
             </form>
-            <div className="border border-t-f-gray bg-white rounded-b-lg flex gap-4 justify-end p-4">
+            <div className="border border-t-f-gray bg-white rounded-b-lg flex gap-4 justify-end px-4 py-3">
               <button
                 type="button"
-                className="px-4 py-2 text-f-dark text-p-sm md:text-p-rg font-medium border border-c-gray3 rounded-md hover:bg-sb-org"
+                className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium border shadow-sm rounded-md hover:bg-sb-org"
                 onClick={onClose}
               >
                 Cancel
@@ -412,7 +417,7 @@ const SetAppointment = ({ onClose }) => {
               <button
                 onClick={handleSubmitAppointment}
                 type="submit"
-                className="px-4 py-2 bg-bg-con rounded-md text-f-light text-p-sm md:text-p-rg font-medium hover:bg-opacity-75"
+                className="px-4 lg:px-12 py-2 bg-bg-con rounded-md text-f-light text-p-sm md:text-p-rg font-medium hover:bg-opacity-75"
               >
                 Schedule
               </button>
