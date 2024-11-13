@@ -2,11 +2,11 @@ const { notificationCollection } = require("../Config/FirebaseConfig");
 const { v4: uuid } = require("uuid");
 const { serverTimestamp } = require("firebase/firestore");
 const { decryptData, encryptData } = require("../Security/DataHashing");
-const { verifyFirebaseUid } = require("../Helper/Helper");
+const { verifyFirebaseUid, generateUniqueId } = require("../Helper/Helper");
 
 const pushNotification = async (userId, type, data) => {
   try {
-    const notificationId = uuid();
+    const notificationId = await generateUniqueId(notificationCollection);
     const currentDate = new Date();
     const notificationCol = notificationCollection
       .doc(userId)
