@@ -95,7 +95,10 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
     }
 
     const parsedValue =
-      name === "price" || name === "quantity" || name.includes("quantity")
+      name === "price" ||
+      name === "quantity" ||
+      name.includes("quantity") ||
+      name === "retail_price"
         ? Number(value)
         : value;
 

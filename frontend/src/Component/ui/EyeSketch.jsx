@@ -1,72 +1,88 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { ReactSketchCanvas } from "react-sketch-canvas";
+import ReactDOM from "react-dom";
+import { FaUndo, FaRedo } from "react-icons/fa";
 import OD from "../../assets/Image/OD.png";
 import OS from "../../assets/Image/OS.png";
 import CROSS from "../../assets/Image/CROSS.png";
-import BLANK from "../../assets/Image/BLANK.png";
-import FRONT from "../../assets/Image/FRONT.png";
-import ReactDOM from "react-dom";
-import { FaUndo, FaRedo } from "react-icons/fa";
+import BLANK_OD from "../../assets/Image/BLANKOD.png";
+import BLANK_OS from "../../assets/Image/BLANKOS.png";
+import FRONT_OD from "../../assets/Image/FRONTOD.png";
+import FRONT_OS from "../../assets/Image/FRONTOS.png";
 
 const EyeSketch = ({ onClose, onSave, backgroundImage }) => {
   const canvasRef = useRef(null);
+  const [bgImage, setBgImage] = useState(null);
+  const [canvasSize, setCanvasSize] = useState({ width: 500, height: 500 });
 
-  const getBackgroundImage = () => {
-    switch (backgroundImage) {
+  // Get the background image path based on backgroundImage prop
+  const getBackgroundImage = (imageKey) => {
+    switch (imageKey) {
       case "OD":
         return OD;
       case "OS":
         return OS;
       case "CROSS":
         return CROSS;
-      case "BLANK":
-        return BLANK;
-      case "FRONT":
-        return FRONT;
+      case "BLANK_OD":
+        return BLANK_OD;
+      case "BLANK_OS":
+        return BLANK_OS;
+      case "FRONT_OD":
+        return FRONT_OD;
+      case "FRONT_OS":
+        return FRONT_OS;
       default:
         return null;
     }
   };
 
+  // Set the background image and canvas size on mount or when backgroundImage changes
+  useEffect(() => {
+    const img = new Image();
+    img.src = getBackgroundImage(backgroundImage);
+    img.onload = () => {
+      setBgImage(img.src);
+      setCanvasSize({ width: img.width, height: img.height });
+    };
+    img.onerror = (err) => {
+      console.error("Error loading background image:", err);
+    };
+  }, [backgroundImage]);
+
+  // Handle saving the canvas with the drawing and background combined
   const handleSave = async () => {
     try {
       const drawing = await canvasRef.current.exportImage("png");
 
-      // Create a new HTML canvas to combine background and drawing
+      // Create a new canvas for combining background and drawing
       const combinedCanvas = document.createElement("canvas");
-      combinedCanvas.width = 500;
-      combinedCanvas.height = 500;
-
+      combinedCanvas.width = canvasSize.width;
+      combinedCanvas.height = canvasSize.height;
       const ctx = combinedCanvas.getContext("2d");
 
-      // Create an image element for the background
-      const backgroundImage = new Image();
-      backgroundImage.src = getBackgroundImage();
+      // Draw the background
+      const bg = new Image();
+      bg.src = bgImage;
+      bg.onload = () => {
+        ctx.drawImage(bg, 0, 0, canvasSize.width, canvasSize.height);
 
-      backgroundImage.onload = () => {
-        // Draw the background image first
-        ctx.drawImage(backgroundImage, 0, 0, 500, 500);
-
-        // Create an image element for the drawing
+        // Draw the drawing on top
         const drawingImage = new Image();
         drawingImage.src = drawing;
-
         drawingImage.onload = () => {
-          // Draw the drawing image on top of the background
-          ctx.drawImage(drawingImage, 0, 0, 500, 500);
+          ctx.drawImage(
+            drawingImage,
+            0,
+            0,
+            canvasSize.width,
+            canvasSize.height
+          );
 
-          // Export the combined image as a data URL (png)
+          // Export combined image as data URL
           const combinedImage = combinedCanvas.toDataURL("image/png");
-
-          // Pass the combined image to the onSave callback
           onSave(combinedImage);
         };
-        drawingImage.onerror = (error) => {
-          console.error("Error loading drawing image:", error);
-        };
-      };
-      backgroundImage.onerror = (error) => {
-        console.error("Error loading background image:", error);
       };
     } catch (error) {
       console.error("Error saving canvas:", error);
@@ -80,24 +96,18 @@ const EyeSketch = ({ onClose, onSave, backgroundImage }) => {
           <div className="flex gap-4 items-center">
             <button
               className="bg-slate-300 h-8 w-8 rounded-full flex items-center justify-center text-c-primary"
-              onClick={() => {
-                canvasRef.current.undo();
-              }}
+              onClick={() => canvasRef.current.undo()}
             >
               <FaUndo />
             </button>
             <button
               className="bg-slate-300 h-8 w-8 rounded-full flex items-center justify-center text-c-primary"
-              onClick={() => {
-                canvasRef.current.redo();
-              }}
+              onClick={() => canvasRef.current.redo()}
             >
               <FaRedo />
             </button>
             <button
-              onClick={() => {
-                canvasRef.current.clearCanvas();
-              }}
+              onClick={() => canvasRef.current.clearCanvas()}
               className="px-4 py-1 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border border-c-gray3"
             >
               Clear
@@ -110,16 +120,19 @@ const EyeSketch = ({ onClose, onSave, backgroundImage }) => {
             &times;
           </button>
         </div>
+
         <ReactSketchCanvas
           ref={canvasRef}
           style={{
-            width: "500px",
-            height: "500px",
+            width: `${canvasSize.width}px`,
+            height: `${canvasSize.height}px`,
           }}
+          canvasColor="transparent"
           strokeWidth={5}
           strokeColor="#26282A"
-          backgroundImage={getBackgroundImage()}
+          backgroundImage={bgImage}
         />
+
         <div className="p-4 mt-4 flex justify-end gap-4 w-full border border-t-f-gray">
           <button
             onClick={handleSave}

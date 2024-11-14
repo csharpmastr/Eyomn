@@ -159,15 +159,9 @@ const getNewAccessToken = (req, res) => {
   }
 };
 const changeUserPasswordHandler = async (req, res) => {
-  const {
-    organizationId,
-    branchId,
-    staffId,
-    role,
-    firebaseUid,
-    password,
-    newPassword,
-  } = req.body;
+  const { organizationId, branchId, staffId, role, password, newPassword } =
+    req.body;
+  const { firebaseUid } = req.query;
   let userId;
   try {
     if (!password || !newPassword) {

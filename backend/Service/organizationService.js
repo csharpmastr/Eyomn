@@ -40,7 +40,8 @@ const addStaff = async (organizationId, staffData, firebaseUid) => {
       displayName: `${staffData.firstName} ${staffData.lastName}`,
     });
 
-    const staffId = generateUniqueId(staffCollection);
+    const staffId = await generateUniqueId(staffCollection);
+
     const encryptedStaffData = {
       staffId,
       organizationId,
@@ -106,7 +107,7 @@ const addBranch = async (ogrId, branchData, firebaseUid) => {
       password: branchData.password,
       displayName: `${branchData.name}`,
     });
-    const branchId = uuidv4();
+    const branchId = await generateUniqueId(branchCollection);
     const encryptedBranchData = {
       branchId: branchId,
       firebaseUid: newUser.uid,

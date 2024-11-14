@@ -54,6 +54,7 @@ const addProduct = async (branchId, productDetails, firebaseUid) => {
     if (productExists) {
       throw { status: 400, message: "The product already exists." };
     }
+    console.log(productDetails);
 
     const productId = await generateUniqueId(productsCollectionRef);
     const productSKU = generateSKU();
@@ -66,6 +67,7 @@ const addProduct = async (branchId, productDetails, firebaseUid) => {
       "price",
       "expirationDate",
       "isDeleted",
+      "retail_price",
     ]);
 
     await productRef.set({ ...encryptedProduct, productId, productSKU });

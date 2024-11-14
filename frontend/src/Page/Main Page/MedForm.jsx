@@ -5,8 +5,10 @@ import EyeSketch from "../../Component/ui/EyeSketch";
 import OD from "../../assets/Image/OD.png";
 import OS from "../../assets/Image/OS.png";
 import CROSS from "../../assets/Image/CROSS.png";
-import BLANK from "../../assets/Image/BLANK.png";
-import FRONT from "../../assets/Image/FRONT.png";
+import BLANK_OD from "../../assets/Image/BLANKOD.png";
+import BLANK_OS from "../../assets/Image/BLANKOS.png";
+import FRONT_OD from "../../assets/Image/FRONTOD.png";
+import FRONT_OS from "../../assets/Image/FRONTOS.png";
 import { useAddNote } from "../../Hooks/useAddNote";
 import Loader from "../../Component/ui/Loader";
 import SuccessModal from "../../Component/ui/SuccessModal";
@@ -33,13 +35,15 @@ const MedForm = () => {
   const { addNote, isLoading, error } = useAddNote();
   const [isSuccess, setIsSuccess] = useState();
   const [isError, setIsError] = useState(false);
-  const [formData, setFormData] = useState({});
+
   const [canvasImages, setCanvasImages] = useState({
     OD: "",
     OS: "",
     CROSS: "",
-    BLANK: "",
-    FRONT: "",
+    BLANK_OD: "",
+    BLANK_OS: "",
+    FRONT_OD: "",
+    FRONT_OS: "",
   });
   const initialMedFormData = {
     //Subjective
@@ -554,31 +558,33 @@ const MedForm = () => {
   }, [hasUnsavedChanges]);
 
   const handleSubmitNote = async (e) => {
-    e.preventDefault();
-    const transformedData = cleanData(medformData);
-    console.log(transformedData);
+    console.log(medformData);
 
-    setHasUnsavedChanges(false);
-    try {
-      const response = await addNote(medformData, patientId);
+    // e.preventDefault();
+    // const transformedData = cleanData(medformData);
+    // console.log(transformedData);
 
-      if (response) {
-        console.log(response);
-        reduxDispatch(
-          addNewRawNote({
-            [patientId]: {
-              ...medformData,
-              noteId: response.noteId,
-              createdAt: response.createdAt,
-            },
-          })
-        );
-        setIsSuccess(true);
-      }
-    } catch (error) {
-      setIsError(true);
-      console.log(error);
-    }
+    // setHasUnsavedChanges(false);
+    // try {
+    //   const response = await addNote(medformData, patientId);
+
+    //   if (response) {
+    //     console.log(response);
+    //     reduxDispatch(
+    //       addNewRawNote({
+    //         [patientId]: {
+    //           ...medformData,
+    //           noteId: response.noteId,
+    //           createdAt: response.createdAt,
+    //         },
+    //       })
+    //     );
+    //     setIsSuccess(true);
+    //   }
+    // } catch (error) {
+    //   setIsError(true);
+    //   console.log(error);
+    // }
   };
   const navigateAfterSuccess = () => {
     navigate(`/scribe/${patientId}`);
@@ -589,6 +595,7 @@ const MedForm = () => {
     if (currentPage < pageTitles.length - 1) {
       setCurrentPage((prevPage) => prevPage + 1);
     }
+    console.log(medformData);
   };
   const handleBackPage = (e) => {
     e.preventDefault();
@@ -604,6 +611,37 @@ const MedForm = () => {
       ...prevImages,
       [selectedBG]: image,
     }));
+
+    switch (selectedBG) {
+      case "CROSS":
+        setMedformData((prevData) => ({
+          ...prevData,
+          confrontation_test: {
+            ...prevData.confrontation_test,
+            image: image,
+          },
+        }));
+        break;
+      case "BLANK_OD":
+        setMedformData((prevData) => ({
+          ...prevData,
+          ophthalmoscopy: {
+            ...prevData.ophthalmoscopy,
+            od: image,
+          },
+        }));
+        break;
+      case "BLANK_OS":
+        setMedformData((prevData) => ({
+          ...prevData,
+          ophthalmoscopy: {
+            ...prevData.ophthalmoscopy,
+            os: image,
+          },
+        }));
+        break;
+    }
+
     setIsCanvasOpen(false);
   };
 
@@ -701,7 +739,7 @@ const MedForm = () => {
             ))}
           </nav>
         </header>
-        <form onSubmit={handleSubmitNote} className="">
+        <form className="">
           <div className="w-full bg-white border border-f-gray rounded-lg ">
             <header className=" bg-bg-sb border border-b-f-gray flex justify-center items-center h-14 font-semibold text-p-rg md:text-p-lg text-c-secondary">
               <h1>Medical Form ({pageTitles[currentPage]})</h1>
@@ -3060,10 +3098,10 @@ const MedForm = () => {
                         </header>
                         <div className="border border-c-gray3 p-5 bg-white rounded-sm">
                           <img
-                            src={canvasImages.BLANK || BLANK}
+                            src={canvasImages.BLANK_OD || BLANK_OD}
                             alt="BLANK IMG"
                             className="w-full aspect-square"
-                            onClick={() => handleImageClick("BLANK")}
+                            onClick={() => handleImageClick("BLANK_OD")}
                           />
                         </div>
                       </div>
@@ -3073,10 +3111,10 @@ const MedForm = () => {
                         </header>
                         <div className="border border-c-gray3 p-5 bg-white rounded-sm">
                           <img
-                            src={canvasImages.BLANK || BLANK}
+                            src={canvasImages.BLANK_OS || BLANK_OS}
                             alt="BLANK IMG"
                             className="w-full aspect-square"
-                            onClick={() => handleImageClick("BLANK")}
+                            onClick={() => handleImageClick("BLANK_OS")}
                           />
                         </div>
                       </div>
@@ -3789,10 +3827,10 @@ const MedForm = () => {
                         </header>
                         <div className="border border-c-gray3 p-5 bg-white rounded-b-md">
                           <img
-                            src={canvasImages.FRONT || FRONT}
+                            src={canvasImages.FRONT_OD || FRONT_OD}
                             alt="FRONT IMG"
                             className="w-full"
-                            onClick={() => handleImageClick("FRONT")}
+                            onClick={() => handleImageClick("FRONT_OD")}
                           />
                         </div>
                       </div>
@@ -3802,10 +3840,10 @@ const MedForm = () => {
                         </header>
                         <div className="border border-c-gray3 p-5 bg-white rounded-b-md">
                           <img
-                            src={canvasImages.FRONT || FRONT}
+                            src={canvasImages.FRONT_OS || FRONT_OS}
                             alt="FRONT IMG"
                             className="w-full"
-                            onClick={() => handleImageClick("FRONT")}
+                            onClick={() => handleImageClick("FRONT_OS")}
                           />
                         </div>
                       </div>
@@ -5606,7 +5644,7 @@ const MedForm = () => {
         isOpen={isSuccess}
         onClose={() => {
           setIsSuccess(false);
-          navigateAfterSuccess();
+          // navigateAfterSuccess();
         }}
         title="Patient Note Added Successfully"
         description="The patient note has been successfully added to the records. We will notify you once "

@@ -28,6 +28,7 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
       [productId]: !prevState[productId],
     }));
   };
+  console.log(products);
 
   const handleCollapseToggle = (productId) => {
     setCollapsedProducts((prevState) => ({

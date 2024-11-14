@@ -62,10 +62,10 @@ const RCTable = ({ selected, branch, searchTerm }) => {
       .includes((searchTerm || "").toLowerCase())
   );
 
-  const filteredSearchProducts = filteredProducts.filter((product) =>
-    (product.product_name || "")
-      .toLowerCase()
-      .includes((searchTerm || "").toLowerCase())
+  const filteredSearchProducts = filteredProducts.filter(
+    (product) =>
+      product.product_name &&
+      product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const filteredSearchStaffs = filteredStaffs.filter((staff) =>
@@ -172,8 +172,8 @@ const RCTable = ({ selected, branch, searchTerm }) => {
                   className="pl-5 py-3 text-f-dark bg-f-light rounded-md shadow-sm flex"
                 >
                   <div className="flex-1">{product.product_name}</div>
-                  <div className="flex-1">{product.brand}</div>
-                  <div className="flex-1">{product.price}</div>
+                  <div className="flex-1">{product.brand || ""}</div>
+                  <div className="flex-1">{product.price || ""}</div>
                   <div className="flex-1">{product.totalQuantity}</div>
                   <div className="flex-1">{product.totalAmount}</div>
                 </div>
