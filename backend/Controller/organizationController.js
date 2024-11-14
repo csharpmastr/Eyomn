@@ -74,11 +74,7 @@ const getDoctorsListHandler = async (req, res) => {
       branchId,
       firebaseUid
     );
-    if (!doctors || doctors.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No doctors found for the provided clinic ID." });
-    }
+
     return res.status(200).json(doctors);
   } catch (err) {
     console.error("Error fetching doctors:", err);

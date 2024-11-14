@@ -389,29 +389,26 @@ const sendEmail = async ({ to, subject, text }) => {
     throw error;
   }
 };
-async function testEmail() {
-  try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
+const generateOTP = () => {
+  const length = 6;
+  const numbers = "0123456789";
 
-    const mailOptions = {
-      from: process.env.EMAIL,
-      to: "recipient@example.com",
-      subject: "Test Email",
-      text: "This is a test email from Nodemailer.",
-    };
+  const getRandomChar = (chars) =>
+    chars[Math.floor(Math.random() * chars.length)];
 
-    await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully!");
-  } catch (error) {
-    console.error("Error sending email:", error);
+  let OTP = [];
+
+  for (let i = 0; i < length; i++) {
+    OTP.push(getRandomChar(numbers));
   }
-}
+
+  for (let i = OTP.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [OTP[i], OTP[j]] = [OTP[j], OTP[i]];
+  }
+
+  return OTP.join("");
+};
 
 module.exports = {
   getOrganizationName,
@@ -429,5 +426,5 @@ module.exports = {
   deepDecrypt,
   generatePassword,
   sendEmail,
-  testEmail,
+  generateOTP,
 };

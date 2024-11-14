@@ -2,6 +2,9 @@ const {
   addUser,
   loginUser,
   changeUserPassword,
+  sendOTP,
+  verifyOTP,
+  forgotChangePassword,
 } = require("../Service/UserService");
 const jwt = require("jsonwebtoken");
 
@@ -203,10 +206,56 @@ const changeUserPasswordHandler = async (req, res) => {
       .json({ message: "Server error, please try again later." });
   }
 };
+const sendOTPHandler = async (req, res) => {
+  try {
+    const email = req.body.email;
 
+    await sendOTP(email);
+    res.status(200).json({ message: "OTP sent successfully!" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Server error, please try again later." });
+  }
+};
+const verifyOTPHandler = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const verificationResult = verifyOTP(email, otp);
+
+    if (verificationResult === true) {
+      return res.status(200).json({ message: "OTP verified successfully." });
+    } else if (verificationResult === "OTP has expired.") {
+      return res.status(400).json({ message: "OTP has expired." });
+    } else if (verificationResult === "OTP not found.") {
+      return res.status(400).json({ message: "OTP not found." });
+    } else {
+      return res.status(400).json({ message: "Invalid OTP." });
+    }
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+const forgotChangePasswordHandler = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    await forgotChangePassword(email, newPassword);
+    return res.status(200).json({ message: "Passwor changed successfully" });
+  } catch (error) {
+    console.error("Error changing:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
 module.exports = {
   addUserHandler,
   loginUserHandler,
   getNewAccessToken,
   changeUserPasswordHandler,
+  sendOTPHandler,
+  verifyOTPHandler,
+  forgotChangePasswordHandler,
 };

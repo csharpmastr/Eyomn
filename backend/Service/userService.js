@@ -9,6 +9,8 @@ const {
   getPatients,
   getBranchName,
   verifyFirebaseUid,
+  generateOTP,
+  sendEmail,
 } = require("../Helper/Helper");
 const { v4: uuidv4 } = require("uuid");
 
@@ -32,6 +34,17 @@ class EmailAlreadyExistsError extends Error {
     this.name = "EmailAlreadyExistsError";
   }
 }
+const otpStore = {};
+
+const storeOTP = (email) => {
+  const otp = generateOTP();
+  const expirationTime = Date.now() + 5 * 60 * 1000;
+
+  otpStore[email] = { otp, expirationTime };
+
+  return otp;
+};
+
 const addUser = async (orgData) => {
   try {
     const newUser = await admin.auth().createUser({
@@ -265,7 +278,6 @@ const changeUserPassword = async (
       newPassword
     );
 
-    // Set the query based on available parameters
     if (organizationId) {
       targetRef = userCollection.where("id", "==", organizationId);
     } else if (branchId) {
@@ -276,21 +288,17 @@ const changeUserPassword = async (
       targetRef = userCollection.where("staffId", "==", staffId);
     }
 
-    // Execute the query
     const querySnapshot = await targetRef.get();
 
-    // Check if no documents were found
     if (querySnapshot.empty) {
       throw new Error("User not found.");
     }
 
-    // Retrieve the first document from the query
     const userDoc = querySnapshot.docs[0];
-    const userDocData = userDoc.data(); // Access the document data
+    const userDocData = userDoc.data();
 
     console.log(userDocData);
 
-    // Compare the password from the request with the stored password
     const isPasswordValid = await comparePassword(
       password,
       userDocData.password
@@ -302,7 +310,6 @@ const changeUserPassword = async (
       };
     }
 
-    // Hash the new password and update it in Firestore
     const hashedPassword = await hashPassword(newPassword);
     await userDoc.ref.update({
       password: hashedPassword,
@@ -314,10 +321,70 @@ const changeUserPassword = async (
     throw error;
   }
 };
+const sendOTP = async (email) => {
+  try {
+    const otp = storeOTP(email);
+
+    await sendEmail({
+      to: email,
+      subject: "Your OTP Code",
+      text: `Your OTP code is: ${otp}`,
+    });
+  } catch (error) {
+    console.error("Failed to send OTP:", error);
+  }
+};
+
+const verifyOTP = (email, otpEntered) => {
+  const otpRecord = otpStore[email];
+
+  if (!otpRecord) {
+    return "OTP not found.";
+  }
+
+  const { otp, expirationTime } = otpRecord;
+
+  if (Date.now() > expirationTime) {
+    delete otpStore[email];
+    return "OTP has expired.";
+  }
+
+  if (otp === otpEntered) {
+    delete otpStore[email];
+    return true;
+  } else {
+    return false;
+  }
+};
+const forgotChangePassword = async (email, newPassword) => {
+  try {
+    const userRef = userCollection.where("email", "==", email);
+
+    const userSnapshot = await userRef.get();
+
+    if (userSnapshot.empty) {
+      throw { status: 400, message: "There is no existing email." };
+    }
+
+    const userDoc = userSnapshot.docs[0];
+    const hashedPassword = await hashPassword(newPassword);
+
+    await userDoc.ref.update({
+      password: hashedPassword,
+    });
+
+    console.log("Password updated successfully!");
+  } catch (error) {
+    console.error("Error updating password: ", error);
+  }
+};
 
 module.exports = {
   addUser,
   loginUser,
   EmailAlreadyExistsError,
   changeUserPassword,
+  sendOTP,
+  verifyOTP,
+  forgotChangePassword,
 };

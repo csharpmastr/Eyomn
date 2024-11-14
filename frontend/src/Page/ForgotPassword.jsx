@@ -4,22 +4,62 @@ import { FaRegEyeSlash } from "react-icons/fa";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaArrowLeft } from "react-icons/fa";
 import { MdOutlineEmail, MdOutlineLock } from "react-icons/md";
+import {
+  forgotChangePassword,
+  sendOTP,
+  verifyOTP,
+} from "../Service/UserService";
 
 const ForgotPassword = () => {
+  const [email, setEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isPassVisible, setIsPassVisible] = useState(false);
   const [isCPassVisible, setIsCPassVisible] = useState(false);
+  const [otp, setOtp] = useState(new Array(6).fill(""));
+
   const navigate = useNavigate();
 
-  const handleNext = () => {
-    setCurrentCardIndex(currentCardIndex + 1);
+  const handleNext = async () => {
+    try {
+      if (currentCardIndex === 0) {
+        if (email === "" || email === null) {
+          return;
+        }
+        const response = await sendOTP(email);
+        if (response) {
+          console.log(response.data);
+          setCurrentCardIndex(currentCardIndex + 1);
+        }
+      } else if (currentCardIndex === 1) {
+        const inputOTP = otp.join("");
+        const response = await verifyOTP(email, inputOTP);
+        if (response.status === 200) {
+          console.log(response);
+          setCurrentCardIndex(currentCardIndex + 1);
+        } else {
+          console.log("Invalid OTP");
+        }
+      } else if (currentCardIndex === 2) {
+        if (newPassword !== confirmPassword) {
+          console.log("Password do not match");
+          return;
+        }
+        const response = await forgotChangePassword(email, newPassword);
+        if (response.status === 200) {
+          console.log(response);
+          setCurrentCardIndex(currentCardIndex + 1);
+        } else {
+          console.log("There is an error");
+        }
+      }
+    } catch (error) {}
   };
 
   const handleBack = () => {
     setCurrentCardIndex(currentCardIndex - 1);
   };
-
-  const [otp, setOtp] = useState(new Array(6).fill(""));
   const inputsRef = useRef([]);
 
   const handleChange = (element, index) => {
@@ -77,8 +117,8 @@ const ForgotPassword = () => {
                       name="email"
                       className="mt-1 w-full pl-12 py-4 border border-c-gray3 font-medium rounded-md text-f-dark focus:outline-c-primary font-Poppins"
                       placeholder="Enter your email"
-                      //   value={userData.email}
-                      //   onChange={handleChange}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
                 </section>
@@ -152,8 +192,8 @@ const ForgotPassword = () => {
                       name="password"
                       className="mt-1 w-full pl-12 py-4 border border-c-gray3 font-medium rounded-md text-f-dark focus:outline-c-primary font-Poppins"
                       placeholder="Enter your new password"
-                      //   value={userData.password}
-                      //   onChange={handleChange}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
                     />
                     <button
                       type="button"
@@ -179,8 +219,8 @@ const ForgotPassword = () => {
                       name="confirmpassword"
                       className="mt-1 w-full pl-12 py-4 border border-c-gray3 font-medium rounded-md text-f-dark focus:outline-c-primary font-Poppins"
                       placeholder="Confirm your password"
-                      //   value={userData.password}
-                      //   onChange={handleChange}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                     <button
                       type="button"
