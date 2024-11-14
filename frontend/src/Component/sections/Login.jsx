@@ -55,12 +55,12 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col h-fit w-full font-Raleway text-f-dark">
+    <div className="flex flex-col h-fit w-full font-Raleway text-white lg:text-f-dark bg-[rgba(169,182,178,0.35)] lg:bg-bg-mc border border-white lg:border-none rounded-lg p-8 lg:p-0">
       <form onSubmit={handleSubmit} className="w-full">
         <div className="flex flex-col gap-10">
           <div>
             <h1 className="text-h-h4 font-semibold -mb-2">Get Started</h1>
-            <p className=" text-p-rg text-c-gray3">
+            <p className=" text-p-rg text-gray-200 lg:text-c-gray3">
               Back to work? Let's care for our patients together
             </p>
           </div>
@@ -106,7 +106,7 @@ const Login = () => {
               <div className="flex flex-row-reverse mt-1">
                 <a
                   onClick={() => navigate("/forgot-password")}
-                  className="text-p-rg font-bold text-c-secondary"
+                  className="text-p-rg font-bold text-f-light lg:text-c-secondary"
                 >
                   Forgot password?
                 </a>

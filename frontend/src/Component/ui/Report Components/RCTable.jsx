@@ -57,9 +57,9 @@ const RCTable = ({ selected, branch, searchTerm }) => {
     : staffs;
 
   const filteredSearchPatients = filteredPatients.filter((patient) =>
-    `${patient.first_name} ${patient.last_name}`
+    `${patient.first_name || ""} ${patient.last_name || ""}`
       .toLowerCase()
-      .includes(searchTerm.toLowerCase())
+      .includes((searchTerm || "").toLowerCase())
   );
 
   const filteredSearchProducts = filteredProducts.filter(

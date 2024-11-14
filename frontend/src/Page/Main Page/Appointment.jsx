@@ -93,7 +93,7 @@ const Appointment = () => {
   const { btnContentColor } = RoleColor();
 
   return (
-    <div className="p-4 md:p-6 2xl:p-8 text-c-secondary text-p-sm md:text-p-rg font-Poppins">
+    <div className="p-4 md:p-6 2xl:p-8 text-f-dark text-p-sm md:text-p-rg font-Poppins">
       <div className="flex justify-between items-center">
         <div>
           <button

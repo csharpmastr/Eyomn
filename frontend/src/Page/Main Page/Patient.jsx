@@ -18,6 +18,7 @@ const Patient = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [openSharePatient, setIsOpenSharePatient] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
+  const [selectedPatient, setSelectedPatient] = useState(null);
   const patients = useSelector((state) => state.reducer.patient.patients);
   const [attendingDoctor, setAttendingDoctor] = useState(null);
   const totalPatient = patients.length;
@@ -78,9 +79,10 @@ const Patient = () => {
     sessionStorage.setItem("currentPatient", patientId);
     navigate(`/patient/${patientId}`);
   };
-  const handleSharePatientClick = (patientId, doctorId) => {
+  const handleSharePatientClick = (patientId, doctorId, patientName) => {
     setAttendingDoctor(doctorId);
     setSelectedPatientId(patientId);
+    setSelectedPatient(patientName);
     setIsOpenSharePatient(true);
   };
   useEffect(() => {
@@ -162,17 +164,35 @@ const Patient = () => {
               <Table
                 data={filteredPatients}
                 handlePatientClick={handlePatientClick}
-                handleSharePatientClick={handleSharePatientClick}
+                handleSharePatientClick={(patientId, doctorId) =>
+                  handleSharePatientClick(
+                    patientId,
+                    doctorId,
+                    `${
+                      filteredPatients.find((p) => p.patientId === patientId)
+                        .first_name
+                    } ${
+                      filteredPatients.find((p) => p.patientId === patientId)
+                        .last_name
+                    }`
+                  )
+                }
               />
             </div>
           </div>
         </>
       )}
-      {isAddPatientModalOpen && <AddEditPatient onClose={closeAddPatient} />}
+      {isAddPatientModalOpen && (
+        <AddEditPatient
+          onClose={closeAddPatient}
+          title={"Patient Information"}
+        />
+      )}
       {openSharePatient && (
         <SharePatientModal
           patientId={selectedPatientId}
           currentDoctor={attendingDoctor}
+          patientName={selectedPatient} // Change here as well
           onClose={() => setIsOpenSharePatient(false)}
           title={"Share Patient"}
         />

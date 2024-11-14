@@ -83,9 +83,9 @@ const StaffAddPatientPage = () => {
     e.preventDefault();
     console.log(formData);
 
-    // if (!validateForm()) {
-    //   return;
-    // }
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       const res = await addPatientHook(
@@ -221,7 +221,7 @@ const StaffAddPatientPage = () => {
         <div>
           <form className="flex flex-col h-auto w-auto" onSubmit={handleSubmit}>
             <div className="p-8 w-full lg:w-[660px] rounded-lg bg-white mb-6 shadow-sm">
-              <label className="text-p-rg md:text-p-lg font-medium text-c-primary">
+              <label className="text-p-rg md:text-p-lg font-medium text-c-secondary">
                 | Personal Information
               </label>
               <div className="mt-3 text-c-gray3">
@@ -343,7 +343,7 @@ const StaffAddPatientPage = () => {
               </div>
             </div>
             <div className="p-8  w-full lg:w-[660px] rounded-lg bg-white mb-6 shadow-sm">
-              <label className="text-p-rg md:text-p-lg font-medium text-c-primary">
+              <label className="text-p-rg md:text-p-lg font-medium text-c-secondary">
                 | Status Infomation
               </label>
               <div className="mt-3 text-c-gray3">
@@ -397,7 +397,7 @@ const StaffAddPatientPage = () => {
               </div>
             </div>
             <div className="p-8 w-full lg:w-[660px] rounded-lg bg-white mb-6 shadow-sm">
-              <label className="text-p-rg md:text-p-lg font-medium text-c-primary">
+              <label className="text-p-rg md:text-p-lg font-medium text-c-secondary">
                 | Contact Information
               </label>
               <div className="mt-3 text-c-gray3">
@@ -479,7 +479,7 @@ const StaffAddPatientPage = () => {
               </div>
             </div>
             <div className="p-8  w-full lg:w-[660px] rounded-lg bg-white mb-6 shadow-sm">
-              <label className="text-p-rg md:text-p-lg font-medium text-c-primary">
+              <label className="text-p-rg md:text-p-lg font-medium text-c-secondary">
                 | Appoint a Doctor
               </label>
               <div className="mt-3 text-c-gray3">

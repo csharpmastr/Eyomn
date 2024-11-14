@@ -242,7 +242,6 @@ const ScribeRecord = () => {
                   onClick={() => handleClickSoap(patientId)}
                 >
                   <div className="flex items-center gap-3">
-                    <input type="checkbox" className="w-6 h-6" />
                     <p>{record.name}</p>
                   </div>
                   <p>{record.date}</p>
@@ -261,7 +260,6 @@ const ScribeRecord = () => {
                       onClick={() => handleClickRawNotes(note.noteId)}
                     >
                       <div className="flex items-center gap-3">
-                        <input type="checkbox" className="w-6 h-6" />
                         <p>{note.name || `Raw Note ${index + 1}`}</p>
                       </div>
                       <p>

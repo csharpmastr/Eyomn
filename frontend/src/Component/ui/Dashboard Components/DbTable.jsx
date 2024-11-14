@@ -36,7 +36,7 @@ const DbTable = () => {
         </h1>
         <button
           onClick={viewAll}
-          className="px-2 py-1 border border-c-primary text-c-primary rounded-md"
+          className="px-2 py-1 border border-c-secondary text-c-secondary rounded-md"
         >
           View All
         </button>

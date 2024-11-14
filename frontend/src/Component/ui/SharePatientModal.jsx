@@ -4,7 +4,13 @@ import { sharePatient } from "../../Service/PatientService";
 import Cookies from "universal-cookie";
 import Loader from "./Loader";
 
-const SharePatientModal = ({ patientId, title, onClose, currentDoctor }) => {
+const SharePatientModal = ({
+  patientId,
+  title,
+  onClose,
+  currentDoctor,
+  patientName,
+}) => {
   const cookies = new Cookies();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -64,31 +70,33 @@ const SharePatientModal = ({ patientId, title, onClose, currentDoctor }) => {
     <>
       {isLoading && <Loader />}
       <div className="fixed p-4 top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-        <div className="w-[500px] md:w-[600px] md:mr-8">
+        <div className="w-[380px] md:w-1/2 xl:w-[500px] h-auto ">
           <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-            <h1 className="text-p-lg text-c-secondary font-semibold">
-              {title}
-            </h1>
+            <h1 className="text-p-lg text-c-secondary font-medium">{title}</h1>
             <button onClick={onClose}>&times;</button>
           </header>
-          <div className="bg-white h-[480px] md:h-[450px] overflow-y-auto">
-            <div className="p-3 md:p-8">
-              <h1 className="text-p-rg font-semibold text-c-secondary">
-                | Attending Doctor
-              </h1>
-              <p className="text-center mt-4 text-h-h4 font-semibold text-c-gray3">
-                {`Doctor ${attendingDoctor.first_name} ${attendingDoctor.last_name}`}
-              </p>
+          <div className="bg-white px-8 py-6">
+            <div className="border shadow-sm rounded-md p-4 flex flex-col gap-4 mb-8">
+              <section className="flex flex-col">
+                <h1 className="text-p-sm text-c-gray3">Attending Doctor:</h1>
+                <p className="text-f-dark text-p-lg font-medium">{`Dr. ${attendingDoctor.first_name} ${attendingDoctor.last_name}`}</p>
+              </section>
+              <section className="flex flex-col">
+                <h1 className="text-p-sm text-c-gray3">Patient Name:</h1>
+                <p className="text-f-dark text-p-lg font-medium">
+                  {patientName}
+                </p>
+              </section>
             </div>
-            <div className="p-3 md:p-8">
-              <h1 className="text-p-rg font-semibold text-c-secondary mb-5">
-                | Other Doctor(s)
+            <div>
+              <h1 className="text-p-rg font-medium text-c-secondary mb-4">
+                | Share with Doctor
               </h1>
               {doctorsExceptCurrent.map((doctor, index) => (
-                <div key={index} className="flex items-center  mb-4">
+                <div key={index} className="flex items-center mb-2">
                   <input
                     type="checkbox"
-                    className="w-6 h-6 mr-2"
+                    className="w-5 h-5 mr-2"
                     id={doctor.staffId}
                     onChange={(e) =>
                       handleSelectAuthorizedDoctor(
@@ -99,21 +107,28 @@ const SharePatientModal = ({ patientId, title, onClose, currentDoctor }) => {
                   />
                   <label
                     htmlFor={doctor.staffId}
-                    className="text-c-gray3 font-medium text-p-lg"
+                    className="text-c-gray3 text-p-rg"
                   >
-                    {doctor.first_name} {doctor.last_name}
+                    {`Dr. ${doctor.first_name} ${doctor.last_name}`}
                   </label>
                 </div>
               ))}
             </div>
           </div>
-          <footer className="flex justify-end px-3 py-6 bg-white border border-t-f-gray rounded-b-lg">
+          <footer className="border border-t-f-gray bg-white rounded-b-lg flex gap-4 justify-end p-4">
             <button
-              className="ml-2 px-8 py-2 bg-bg-con text-f-light text-p-rg font-semibold rounded-md"
+              type="button"
+              className="px-4 lg:px-12 py-3 text-f-dark text-p-sm md:text-p-rg font-medium border shadow-sm rounded-md hover:bg-sb-org"
+              onClick={onClose}
+            >
+              Cancel
+            </button>
+            <button
+              className="px-4 lg:px-12 py-3 bg-bg-con rounded-md text-f-light text-p-sm md:text-p-rg font-medium hover:bg-opacity-75"
               type="submit"
               onClick={handleSharePatient}
             >
-              Save
+              Share Patient
             </button>
           </footer>
         </div>

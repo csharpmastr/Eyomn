@@ -118,7 +118,13 @@ const AddBranchModal = ({ onClose }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await addBranchService(
@@ -308,13 +314,13 @@ const AddBranchModal = ({ onClose }) => {
             </div>
             <footer className="border border-t-f-gray bg-white rounded-b-lg flex gap-4 justify-end py-3 px-4">
               <button
-                className="px-4 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border border-c-gray3 hover:bg-sb-org"
+                className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
                 onClick={onClose}
               >
                 Cancel
               </button>
               <button
-                className="py-2 px-4 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md hover:bg-opacity-75"
+                className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md hover:bg-opacity-75"
                 onClick={handleSubmit}
               >
                 Add Branch
