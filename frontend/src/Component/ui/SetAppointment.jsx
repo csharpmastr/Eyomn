@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "universal-cookie";
 import { addAppointmentService } from "../../Service/AppointmentService";
@@ -8,7 +8,7 @@ import Modal from "./Modal";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { addAppointment } from "../../Slice/AppointmentSlice";
 
-const SetAppointment = ({ onClose }) => {
+const SetAppointment = ({ onClose, appointmentToEdit }) => {
   const [errors, setErrors] = useState({});
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -40,6 +40,20 @@ const SetAppointment = ({ onClose }) => {
     doctorId: user.userId,
     doctor: `${user.first_name} ${user.last_name}`,
   });
+
+  useEffect(() => {
+    if (appointmentToEdit) {
+      setFormData({
+        patient_name: appointmentToEdit.patient_name,
+        reason: appointmentToEdit.reason,
+        doctorId: appointmentToEdit.doctorId,
+        doctor: appointmentToEdit.doctor,
+      });
+      const scheduledTime = new Date(appointmentToEdit.scheduledTime);
+      setDate(scheduledTime.toISOString().split("T")[0]);
+      setTime(scheduledTime.toTimeString().split(" ")[0].substring(0, 5));
+    }
+  }, [appointmentToEdit]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -248,7 +262,7 @@ const SetAppointment = ({ onClose }) => {
           <div className="w-[380px] md:w-1/2 xl:w-[500px] h-auto ">
             <header className="p-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
               <h1 className="text-p-rg md:text-p-lg text-c-secondary font-medium">
-                Set Appointment
+                {appointmentToEdit ? "Edit Appointment" : "Set Appointment"}
               </h1>
               <button onClick={onClose}> &times; </button>
             </header>

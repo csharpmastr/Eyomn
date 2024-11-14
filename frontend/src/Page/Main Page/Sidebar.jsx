@@ -18,6 +18,7 @@ import { FiFileText } from "react-icons/fi";
 import { FiGrid } from "react-icons/fi";
 import { FiClipboard } from "react-icons/fi";
 import { FiUserPlus } from "react-icons/fi";
+import Eyomnlogo from "../../assets/Logo/EyomnLogo.png";
 
 const SideBar = () => {
   const role = useSelector((state) => state.reducer.user.user.role);
@@ -64,9 +65,9 @@ const SideBar = () => {
           />
         )}
         <img
-          src={SidebarLogo}
+          src={Eyomnlogo}
           alt="Sidebar Logo"
-          className={`h-14 md:h-16 lg:h-18 w-auto mx-auto ${
+          className={`h-14 md:h-16 lg:h-18 w-1/2 mt-1 object-contain mx-auto ${
             isCollapsed ? "hidden" : "block"
           }`}
         />

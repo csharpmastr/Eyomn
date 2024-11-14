@@ -1,9 +1,19 @@
 import dayjs from "dayjs";
-import React from "react";
+import { useSelector } from "react-redux";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { FiClock } from "react-icons/fi";
+import { FiTrash } from "react-icons/fi";
+import { FiEdit } from "react-icons/fi";
+import ConfirmationModal from "./ConfirmationModal";
+import SetAppointment from "./SetAppointment";
 
 const ViewSchedule = ({ onClose, appointments }) => {
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [isSetAppoinmentOpen, setSetAppoimentOpen] = useState(false);
+  const [appointmentToEdit, setAppointmentToEdit] = useState(null);
+  const role = useSelector((state) => state.reducer.user.user.role);
+
   const borderColors = [
     "border-l-blue-300",
     "border-l-red-300",
@@ -16,11 +26,19 @@ const ViewSchedule = ({ onClose, appointments }) => {
     "border-l-violet-300",
   ];
 
+  const openConfirmation = () =>
+    setIsConfirmationModalOpen(!isConfirmationModalOpen);
+
+  const openSetAppoinment = (appointment) => {
+    setAppointmentToEdit(appointment);
+    setSetAppoimentOpen(!isSetAppoinmentOpen);
+  };
+
   return ReactDOM.createPortal(
     <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
       <div className="w-[380px] h-[480px] md:w-[500px] md:h-[600px]">
         <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-          <h1 className="text-p-rg md:text-p-lg text-c-secondary font-semibold">
+          <h1 className="text-p-rg md:text-p-lg text-c-secondary font-medium">
             Appointment Schedules
           </h1>
           <button onClick={onClose}> &times; </button>
@@ -31,24 +49,43 @@ const ViewSchedule = ({ onClose, appointments }) => {
               appointments.map((appointment, index) => (
                 <div
                   key={index}
-                  className={`w-full border-l-8 px-4 py-6 bg-white shadow-sm rounded-md ${
+                  className={`w-full border-l-8 px-4 py-6 bg-white shadow-sm rounded-md flex justify-between items-center ${
                     borderColors[index % borderColors.length]
-                  }`}
+                  } group`}
                 >
-                  <div className="flex justify-between text-p-sm md:text-p-rg mb-2">
-                    <p>{appointment.patient_name}</p>
-                    <p>Dr. {appointment.doctor}</p>
-                  </div>
-                  <div className="flex items-center gap-1 justify-between">
+                  <div className="flex flex-col gap-3">
+                    <p className="text-p-sm md:text-p-rg font-medium">
+                      {appointment.patient_name}
+                    </p>
                     <p className="text-p-sc md:text-p-sm text-c-gray3">
                       {appointment.reason}
                     </p>
-                    <div className="flex gap-2">
-                      <FiClock className="h-4 w-4 text-c-gray3" />
-                      <p className="text-p-sc md:text-p-sm text-c-gray3">
-                        {dayjs(appointment.scheduledTime).format("h:mm A")}
+                  </div>
+
+                  <div className="flex items-center relative gap-4 xl:gap-0">
+                    <div className="flex flex-col items-end gap-2 transform transition-transform duration-300 group-hover:-translate-x-5">
+                      <p className="text-p-sm md:text-p-rg font-medium">
+                        Dr. {appointment.doctor}
                       </p>
+                      <div className="flex items-center gap-2">
+                        <FiClock className="h-4 w-4 text-c-gray3" />
+                        <p className="text-p-sc md:text-p-sm text-c-gray3">
+                          {dayjs(appointment.scheduledTime).format("h:mm A")}
+                        </p>
+                      </div>
                     </div>
+                    {role === "0" || role === "1" ? (
+                      ""
+                    ) : (
+                      <div className="flex flex-col justify-between opacity-100 xl:opacity-0 group-hover:opacity-100 transition-opacity duration-300 gap-2">
+                        <button onClick={() => openSetAppoinment(appointment)}>
+                          <FiEdit className="w-5 h-5 text-blue-400" />
+                        </button>
+                        <button onClick={openConfirmation}>
+                          <FiTrash className="w-5 h-5 text-red-400" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))
@@ -60,6 +97,18 @@ const ViewSchedule = ({ onClose, appointments }) => {
           </div>
         </div>
       </div>
+      {isConfirmationModalOpen && (
+        <ConfirmationModal
+          onClose={() => setIsConfirmationModalOpen(false)}
+          title={"Delete Schedule"}
+        />
+      )}
+      {isSetAppoinmentOpen && (
+        <SetAppointment
+          onClose={openSetAppoinment}
+          appointmentToEdit={appointmentToEdit}
+        />
+      )}
     </div>,
     document.body
   );

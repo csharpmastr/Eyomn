@@ -7,30 +7,39 @@ import { FiPlus } from "react-icons/fi";
 
 const Organization = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const branch = useSelector((state) => state.reducer.branch.branch);
-  const location = useLocation();
+  const [branchToEdit, setBranchToEdit] = useState(null);
   const [hasSelectedBranch, setHasSelectedBranch] = useState(false);
 
+  const branch = useSelector((state) => state.reducer.branch.branch);
+  const location = useLocation();
   const navigate = useNavigate();
 
   const handleOpenStaffModal = () => {
     setIsModalOpen(true);
+    setBranchToEdit(null);
   };
 
   const handleCloseStaffModal = () => {
     setIsModalOpen(false);
+    setBranchToEdit(null);
   };
 
   const handleBranchClick = (branchId) => {
     setHasSelectedBranch(true);
-
     navigate(`/organization/${branchId}`);
   };
+
   useEffect(() => {
     if (location.state && location.state.resetSelected) {
       setHasSelectedBranch(false);
     }
   }, [location.state]);
+
+  const handleEditStaff = (branchId) => {
+    const branchToEdit = branch.find((branch) => branch.branchId === branchId);
+    setBranchToEdit(branchToEdit);
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="w-full h-full flex flex-col items-center p-4 md:p-6 2xl:p-8 font-Poppins">
@@ -52,13 +61,12 @@ const Organization = () => {
             <>
               <div className="flex flex-wrap justify-center gap-4 mt-4 md:items-center w-full md:h-full">
                 {branch.map((branchItem) => (
-                  <div
-                    key={branchItem.branchId}
-                    onClick={() => handleBranchClick(branchItem.branchId)}
-                  >
+                  <div key={branchItem.branchId}>
                     <BranchCard
                       name={branchItem.name}
                       municipality={branchItem.municipality}
+                      onClick={() => handleBranchClick(branchItem.branchId)}
+                      clickEdit={() => handleEditStaff(branchItem.branchId)}
                     />
                   </div>
                 ))}
@@ -72,7 +80,12 @@ const Organization = () => {
             </div>
           )}
 
-          {isModalOpen && <AddBranchModel onClose={handleCloseStaffModal} />}
+          {isModalOpen && (
+            <AddBranchModel
+              onClose={handleCloseStaffModal}
+              branchToEdit={branchToEdit}
+            />
+          )}
         </>
       ) : (
         <Outlet />

@@ -241,6 +241,7 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
               <ConfirmationModal
                 productId={productId}
                 onClose={() => setIsConfirmationModalOpen(false)}
+                title={"Delete Product"}
               />
             )}
           </div>
