@@ -3,7 +3,7 @@ import requests
 import json
 
 # URL of the LangGraph API
-API_URL = "https://csharpmastr--eyomns-rag-app-web-endpoint-dev.modal.run"  # Replace with your actual endpoint
+API_URL = "https://csharpmastr--eyomns-rag-app-web-endpoint.modal.run"  # Replace with your actual endpoint
 
 # Set up Streamlit UI
 st.set_page_config(page_title="LangGraph Chat", layout="centered")
