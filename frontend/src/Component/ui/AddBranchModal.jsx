@@ -21,16 +21,12 @@ const AddBranchModal = ({ onClose }) => {
   const refreshToken = cookies.get("refreshToken");
   const user = useSelector((state) => state.reducer.user.user);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
-  const [repeatPass, setRepeatPass] = useState("");
-  const [passVisible, setPassVisible] = useState(false);
-  const [cpVisible, setCpVisible] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     name: "",
     province: "",
     municipality: "",
     email: "",
-    password: "",
   });
 
   const handleChange = (e) => {
@@ -101,18 +97,6 @@ const AddBranchModal = ({ onClose }) => {
     if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
       newErrors.email = "(Valid email is required)";
 
-    if (
-      !formData.password ||
-      !/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$/.test(
-        formData.password
-      )
-    )
-      newErrors.password =
-        "(Invalid password. Ensure it has at least 8 characters, including uppercase, lowercase, numbers, and special characters)";
-
-    if (formData.password !== repeatPass)
-      newErrors.confirmpassword = "(Passwords do not match)";
-
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
@@ -159,7 +143,7 @@ const AddBranchModal = ({ onClose }) => {
               </h1>
               <button onClick={onClose}> &times; </button>
             </header>
-            <div className="py-6 px-6 h-[400px] md:h-[500px] bg-white overflow-y-scroll">
+            <div className="py-6 px-6 h-auto bg-white overflow-y-scroll">
               <div>
                 <header>
                   <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-4">
@@ -244,70 +228,6 @@ const AddBranchModal = ({ onClose }) => {
                       className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                       placeholder="Enter email"
                     />
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="password"
-                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                    >
-                      Password:{" "}
-                      <span className="text-red-400">
-                        {(formData.password === "" || errors.password) &&
-                          errors.password}
-                      </span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={passVisible ? "text" : "password"}
-                        name="password"
-                        onChange={handleChange}
-                        className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Enter password"
-                      />
-                      <button
-                        type="button"
-                        className="absolute top-4 right-2 text-c-gray3"
-                        onClick={() => setPassVisible(!passVisible)}
-                      >
-                        {passVisible ? (
-                          <MdOutlineRemoveRedEye className="w-6 h-6" />
-                        ) : (
-                          <FaRegEyeSlash className="w-6 h-6" />
-                        )}
-                      </button>
-                    </div>
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="confirmpassword"
-                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                    >
-                      Confirm Password:{" "}
-                      <span className="text-red-400">
-                        {(repeatPass === "" || errors.confirmpassword) &&
-                          errors.confirmpassword}
-                      </span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={cpVisible ? "text" : "password"}
-                        name="confirmpassword"
-                        onChange={handleChange}
-                        className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                        placeholder="Confirm password"
-                      />
-                      <button
-                        type="button"
-                        className="absolute top-4 right-2 text-c-gray3"
-                        onClick={() => setCpVisible(!cpVisible)}
-                      >
-                        {cpVisible ? (
-                          <MdOutlineRemoveRedEye className="w-6 h-6" />
-                        ) : (
-                          <FaRegEyeSlash className="w-6 h-6" />
-                        )}
-                      </button>
-                    </div>
                   </section>
                 </div>
               </div>

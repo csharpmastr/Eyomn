@@ -46,7 +46,6 @@ const AddStaff = ({ onClose, staffData }) => {
     email: "",
     contact_number: "",
     position: "",
-    password: "",
     branches: [],
   });
 
@@ -311,18 +310,6 @@ const AddStaff = ({ onClose, staffData }) => {
     } else if (currentCardIndex === 2) {
       if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
         newErrors.email = "(Valid email is required)";
-
-      if (
-        !formData.password ||
-        !/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$/.test(
-          formData.password
-        )
-      )
-        newErrors.password =
-          "(Invalid password. Ensure it has at least 8 characters, including uppercase, lowercase, numbers, and special characters)";
-
-      if (formData.password !== repeatPass)
-        newErrors.confirmpassword = "(Passwords do not match)";
     }
 
     setErrors(newErrors);
@@ -1145,78 +1132,6 @@ const AddStaff = ({ onClose, staffData }) => {
                         }`}
                         placeholder="Enter email"
                       />
-                    </section>
-                    <section>
-                      <label
-                        htmlFor="password"
-                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                      >
-                        Password:{" "}
-                        <span className="text-red-400">
-                          {(formData.password === "" || errors.password) &&
-                            errors.password}
-                        </span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={passVisible ? "text" : "password"}
-                          name="password"
-                          onChange={handleChange}
-                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                            errors.password
-                              ? "border-red-400 focus:outline-red-400"
-                              : "border-c-gray3 focus:outline-c-primary"
-                          }`}
-                          placeholder="Enter password"
-                        />
-                        <button
-                          type="button"
-                          className="absolute top-4 right-2 text-[#999999]"
-                          onClick={() => setPassVisible(!passVisible)}
-                        >
-                          {passVisible ? (
-                            <MdOutlineRemoveRedEye className="w-6 h-6" />
-                          ) : (
-                            <FaRegEyeSlash className="w-6 h-6" />
-                          )}
-                        </button>
-                      </div>
-                    </section>
-                    <section>
-                      <label
-                        htmlFor="confirmpassword"
-                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                      >
-                        Confirm Password:{" "}
-                        <span className="text-red-400">
-                          {(repeatPass === "" || errors.confirmpassword) &&
-                            errors.confirmpassword}
-                        </span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={cpVisible ? "text" : "password"}
-                          name="confirmpassword"
-                          onChange={handleChange}
-                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                            errors.confirmpassword
-                              ? "border-red-400 focus:outline-red-400"
-                              : "border-c-gray3 focus:outline-c-primary"
-                          }`}
-                          placeholder="Confirm password"
-                        />
-                        <button
-                          type="button"
-                          className="absolute top-4 right-2 text-[#999999]"
-                          onClick={() => setCpVisible(!cpVisible)}
-                        >
-                          {cpVisible ? (
-                            <MdOutlineRemoveRedEye className="w-6 h-6" />
-                          ) : (
-                            <FaRegEyeSlash className="w-6 h-6" />
-                          )}
-                        </button>
-                      </div>
                     </section>
                   </div>
                 </div>
