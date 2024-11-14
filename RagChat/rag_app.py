@@ -12,7 +12,7 @@ def web_endpoint(state: GraphState):
     try:
         rag_app = construct_rag_graph()
         output = rag_app.invoke({"question": state["question"]})
-        print(output)
+        #print(output)
         return output["generation"]
     except Exception as e:
         raise CustomException(e, sys)
