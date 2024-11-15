@@ -6,6 +6,7 @@ import AddEditProduct from "../../Component/ui/AddEditProduct";
 import ConfirmationModal from "../../Component/ui/ConfirmationModal";
 import Nodatafound from "../../assets/Image/nodatafound.png";
 import RoleColor from "../../assets/Util/RoleColor";
+import Fuse from "fuse.js";
 
 const InventoryTable = ({ searchTerm, sortOption }) => {
   const products = useSelector((state) => state.reducer.inventory.products);
@@ -37,17 +38,16 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
     }));
   };
 
-  let filteredProducts = products
-    .filter((product) => product.isDeleted === false)
-    .filter(
-      (product) =>
-        (product.product_name &&
-          product.product_name
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())) ||
-        (product.productSKU &&
-          product.productSKU.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+  const fuse = new Fuse(products, {
+    keys: ["product_name", "productSKU"],
+    threshold: 0.3,
+  });
+
+  let filteredProducts = searchTerm
+    ? fuse.search(searchTerm).map((result) => result.item)
+    : products;
+
+  filteredProducts = filteredProducts.filter((product) => !product.isDeleted);
 
   if (sortOption === "ascending") {
     filteredProducts = filteredProducts.sort((a, b) =>
