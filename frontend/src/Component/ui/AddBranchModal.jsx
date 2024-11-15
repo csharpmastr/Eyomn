@@ -1,8 +1,5 @@
-import React, { useState } from "react";
-import ReactDOM from "react-dom";
+import React, { useState, useEffect } from "react";
 import Select from "react-select";
-import { FaRegEyeSlash } from "react-icons/fa";
-import { MdOutlineRemoveRedEye } from "react-icons/md";
 import PhList from "../../assets/Data/location_list.json";
 import Loader from "./Loader";
 import { addBranchService } from "../../Service/organizationService";
@@ -10,8 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import Cookies from "universal-cookie";
 import SuccessModal from "./SuccessModal";
 import { addBranch } from "../../Slice/BranchSlice";
+import { FiTrash } from "react-icons/fi";
+import ConfirmationModal from "./ConfirmationModal";
 
-const AddBranchModal = ({ onClose }) => {
+const AddBranchModal = ({ onClose, branchToEdit }) => {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const reduxDispatch = useDispatch();
@@ -21,6 +20,7 @@ const AddBranchModal = ({ onClose }) => {
   const refreshToken = cookies.get("refreshToken");
   const user = useSelector((state) => state.reducer.user.user);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     name: "",
@@ -28,6 +28,50 @@ const AddBranchModal = ({ onClose }) => {
     municipality: "",
     email: "",
   });
+
+  const openConfirmation = () =>
+    setIsConfirmationModalOpen(!isConfirmationModalOpen);
+
+  useEffect(() => {
+    if (branchToEdit) {
+      setFormData({
+        name: branchToEdit.name,
+        province: branchToEdit.province,
+        municipality: branchToEdit.municipality,
+        email: branchToEdit.email,
+      });
+
+      setSelectedProvince({
+        value: branchToEdit.province,
+        label: branchToEdit.province,
+      });
+      setSelectedMunicipality({
+        value: branchToEdit.municipality,
+        label: branchToEdit.municipality,
+      });
+    } else {
+      setFormData({
+        name: "",
+        province: "",
+        municipality: "",
+        email: "",
+      });
+      setSelectedProvince(null);
+      setSelectedMunicipality(null);
+    }
+  }, [branchToEdit]);
+
+  const handleCloseModal = () => {
+    setFormData({
+      name: "",
+      province: "",
+      municipality: "",
+      email: "",
+    });
+    setSelectedProvince(null);
+    setSelectedMunicipality(null);
+    onClose();
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -139,17 +183,12 @@ const AddBranchModal = ({ onClose }) => {
           <div className="w-[600px]">
             <header className="px-4 py-3 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
               <h1 className="text-p-rg md:text-p-lg text-c-secondary font-medium">
-                Add Branch
+                {branchToEdit ? "Edit Branch" : "Add Branch"}
               </h1>
-              <button onClick={onClose}> &times; </button>
+              <button onClick={handleCloseModal}> &times; </button>
             </header>
-            <div className="py-6 px-6 h-auto bg-white overflow-y-scroll">
+            <div className="py-6 px-6 h-[400px] md:h-fit bg-white overflow-y-scroll">
               <div>
-                <header>
-                  <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-4">
-                    | Branch Details
-                  </h1>
-                </header>
                 <section>
                   <label
                     htmlFor="name"
@@ -169,7 +208,7 @@ const AddBranchModal = ({ onClose }) => {
                     placeholder="Enter branch name"
                   />
                 </section>
-                <div className="flex gap-4 mb-8">
+                <div className="flex gap-4 mb-6">
                   <div className="w-1/2">
                     <label
                       htmlFor="province"
@@ -203,47 +242,48 @@ const AddBranchModal = ({ onClose }) => {
                     />
                   </div>
                 </div>
-                <div>
-                  <header>
-                    <h1 className="text-p-sc md:text-p-rg font-medium text-c-secondary mb-4">
-                      | Login Credentials
-                    </h1>
-                  </header>
-                  <section>
-                    <label
-                      htmlFor="email"
-                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                    >
-                      Email Address:{" "}
-                      <span className="text-red-400">
-                        {(formData.email === "" || errors.email) &&
-                          errors.email}
-                      </span>
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                      placeholder="Enter email"
-                    />
-                  </section>
-                </div>
+                <section>
+                  <label
+                    htmlFor="email"
+                    className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                  >
+                    Email Address:{" "}
+                    <span className="text-red-400">
+                      {(formData.email === "" || errors.email) && errors.email}
+                    </span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                    placeholder="Enter email"
+                  />
+                </section>
               </div>
             </div>
             <footer className="border border-t-f-gray bg-white rounded-b-lg flex gap-4 justify-end py-3 px-4">
+              <div className="w-full flex justify-between">
+                {branchToEdit ? (
+                  <button onClick={openConfirmation}>
+                    <FiTrash className="w-5 h-5 text-red-500" />
+                  </button>
+                ) : (
+                  <div></div>
+                )}
+                <button
+                  className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
+                  onClick={handleCloseModal}
+                >
+                  Cancel
+                </button>
+              </div>
               <button
-                className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
-                onClick={onClose}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md hover:bg-opacity-75"
+                className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md hover:bg-opacity-75 text-nowrap"
                 onClick={handleSubmit}
               >
-                Add Branch
+                {branchToEdit ? "Save" : "Add Branch"}
               </button>
             </footer>
           </div>
@@ -258,6 +298,12 @@ const AddBranchModal = ({ onClose }) => {
         title="Adding Success"
         description="The branch has been registered in the system."
       />
+      {isConfirmationModalOpen && (
+        <ConfirmationModal
+          onClose={() => setIsConfirmationModalOpen(false)}
+          title={"Delete Branch"}
+        />
+      )}
     </>
   );
 };

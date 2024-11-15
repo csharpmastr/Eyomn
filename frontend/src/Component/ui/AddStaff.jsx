@@ -11,6 +11,8 @@ import { useAddStaff } from "../../Hooks/useAddStaff";
 import Loader from "./Loader";
 import SuccessModal from "./SuccessModal";
 import { addStaff } from "../../Slice/StaffSlice";
+import { FiTrash } from "react-icons/fi";
+import ConfirmationModal from "./ConfirmationModal";
 
 const AddStaff = ({ onClose, staffData }) => {
   const [image, setImage] = useState(null);
@@ -35,6 +37,7 @@ const AddStaff = ({ onClose, staffData }) => {
   const [isSatOn, setIsSatOn] = useState(false);
   const [isSunOn, setIsSunOn] = useState(false);
   const [branchAssignment, setBranchAssignment] = useState("");
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -48,6 +51,9 @@ const AddStaff = ({ onClose, staffData }) => {
     position: "",
     branches: [],
   });
+
+  const openConfirmation = () =>
+    setIsConfirmationModalOpen(!isConfirmationModalOpen);
 
   //Viewing staff details
   useEffect(() => {
@@ -1139,12 +1145,21 @@ const AddStaff = ({ onClose, staffData }) => {
             </form>
             <footer className="flex justify-end px-4 py-3 gap-4 bg-white border-2 border-t-f-gray rounded-b-lg">
               {currentCardIndex === 0 ? (
-                <button
-                  className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
-                  onClick={onClose}
-                >
-                  Cancel
-                </button>
+                <div className="w-full flex justify-between">
+                  {staffData ? (
+                    <button onClick={openConfirmation}>
+                      <FiTrash className="w-5 h-5 text-red-500" />
+                    </button>
+                  ) : (
+                    <div></div>
+                  )}
+                  <button
+                    className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
+                    onClick={onClose}
+                  >
+                    Cancel
+                  </button>
+                </div>
               ) : (
                 <button
                   className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
@@ -1184,6 +1199,12 @@ const AddStaff = ({ onClose, staffData }) => {
         title="Adding Success"
         description="The staff has been registered in the system."
       />
+      {isConfirmationModalOpen && (
+        <ConfirmationModal
+          onClose={() => setIsConfirmationModalOpen(false)}
+          title={"Delete Branch"}
+        />
+      )}
     </>,
     document.body
   );
