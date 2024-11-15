@@ -1,4 +1,5 @@
 const admin = require("firebase-admin");
+const nodemailer = require("nodemailer");
 const { v4: uuid } = require("uuid");
 const {
   organizationCollection,
@@ -338,6 +339,77 @@ const deepDecrypt = (data) => {
   }
   return decryptedData;
 };
+
+const generatePassword = () => {
+  const length = 12;
+  const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lowerCase = "abcdefghijklmnopqrstuvwxyz";
+  const numbers = "0123456789";
+  const allChars = upperCase + lowerCase + numbers;
+
+  const getRandomChar = (chars) =>
+    chars[Math.floor(Math.random() * chars.length)];
+
+  let password = [
+    getRandomChar(upperCase),
+    getRandomChar(lowerCase),
+    getRandomChar(numbers),
+  ];
+
+  for (let i = password.length; i < length; i++) {
+    password.push(getRandomChar(allChars));
+  }
+
+  password = password.sort(() => Math.random() - 0.5);
+
+  return password.join("");
+};
+
+const sendEmail = async ({ to, subject, text }) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to,
+      subject,
+      text,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Email sent to ${to}`);
+  } catch (error) {
+    console.error("Error sending email: ", error);
+    throw error;
+  }
+};
+const generateOTP = () => {
+  const length = 6;
+  const numbers = "0123456789";
+
+  const getRandomChar = (chars) =>
+    chars[Math.floor(Math.random() * chars.length)];
+
+  let OTP = [];
+
+  for (let i = 0; i < length; i++) {
+    OTP.push(getRandomChar(numbers));
+  }
+
+  for (let i = OTP.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [OTP[i], OTP[j]] = [OTP[j], OTP[i]];
+  }
+
+  return OTP.join("");
+};
+
 module.exports = {
   getOrganizationName,
   getPatients,
@@ -352,4 +424,7 @@ module.exports = {
   getBranchName,
   verifyFirebaseUid,
   deepDecrypt,
+  generatePassword,
+  sendEmail,
+  generateOTP,
 };

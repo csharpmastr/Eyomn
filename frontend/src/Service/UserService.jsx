@@ -77,3 +77,57 @@ export const changeUserPassword = async (
     throw error;
   }
 };
+
+export const sendOTP = async (email) => {
+  try {
+    const response = await axios.post(`${API_URL}/send-otp`, { email });
+    return response;
+  } catch (error) {
+    console.error("Error sending otp:", error);
+    throw error;
+  }
+};
+
+export const verifyOTP = async (email, otp) => {
+  try {
+    const response = await axios.post(`${API_URL}/verify-otp`, { email, otp });
+    return response;
+  } catch (error) {
+    console.error("Error sending otp:", error);
+    throw error;
+  }
+};
+
+export const forgotChangePassword = async (email, newPassword) => {
+  try {
+    const response = await axios.post(`${API_URL}/forgot-password-change`, {
+      email,
+      newPassword,
+    });
+
+    return response;
+  } catch (error) {
+    console.error("Error changing password:", error);
+    throw error;
+  }
+};
+
+export const sendQuestion = async (question, memory) => {
+  try {
+    const response = await axios.post(
+      `https://csharpmastr--eyomns-rag-app-web-endpoint.modal.run`,
+      {
+        question: question,
+        generation: "",
+        web_search: "",
+        documents: [],
+        memory: memory,
+        summarize_memory: "",
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error during request :", error);
+    throw error;
+  }
+};

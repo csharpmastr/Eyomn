@@ -21,7 +21,6 @@ const AddBranchModal = ({ onClose, branchToEdit }) => {
   const user = useSelector((state) => state.reducer.user.user);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
-
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     name: "",
@@ -141,18 +140,6 @@ const AddBranchModal = ({ onClose, branchToEdit }) => {
 
     if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
       newErrors.email = "(Valid email is required)";
-
-    if (
-      !formData.password ||
-      !/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$/.test(
-        formData.password
-      )
-    )
-      newErrors.password =
-        "(Invalid password. Ensure it has at least 8 characters, including uppercase, lowercase, numbers, and special characters)";
-
-    if (formData.password !== repeatPass)
-      newErrors.confirmpassword = "(Passwords do not match)";
 
     setErrors(newErrors);
 
