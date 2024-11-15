@@ -36,12 +36,10 @@ const LLMChatbot = () => {
           ...prevConversation,
           newBotMessage,
         ]);
+        setIsOmnieTyping(false);
         const memoryEntry = { question: userQuestion, answer: response.data };
         setMemory((prevState) => [...prevState, memoryEntry]);
-      } catch (error) {
-      } finally {
-        isOmnieTyping(false);
-      }
+      } catch (error) {}
     }
   };
 
