@@ -122,7 +122,7 @@ export const sendQuestion = async (question, memory) => {
         web_search: "",
         documents: [],
         memory: memory,
-        summarize_memory: "",
+        summarized_memory: "",
       }
     );
     return response;
