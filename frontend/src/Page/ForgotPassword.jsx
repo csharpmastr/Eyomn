@@ -16,7 +16,6 @@ const ForgotPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-
   const [isPassVisible, setIsPassVisible] = useState(false);
   const [isCPassVisible, setIsCPassVisible] = useState(false);
   const [otp, setOtp] = useState(new Array(6).fill(""));
@@ -103,7 +102,7 @@ const ForgotPassword = () => {
           ) : (
             <div className="rounded-full bg-green-300 p-16 mb-10"></div>
           )}
-          <div className="w-[600px] h-fit">
+          <div className="w-[400px] md:w-[600px] h-fit">
             {currentCardIndex === 0 && (
               <div className="flex flex-col gap-8">
                 <article className="flex flex-col text-center">
