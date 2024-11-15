@@ -111,3 +111,23 @@ export const forgotChangePassword = async (email, newPassword) => {
     throw error;
   }
 };
+
+export const sendQuestion = async (question, memory) => {
+  try {
+    const response = await axios.post(
+      `https://csharpmastr--eyomns-rag-app-web-endpoint.modal.run`,
+      {
+        question: question,
+        generation: "",
+        web_search: "",
+        documents: [],
+        memory: memory,
+        summarize_memory: "",
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error during request :", error);
+    throw error;
+  }
+};

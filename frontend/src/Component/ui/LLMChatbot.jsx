@@ -2,14 +2,15 @@ import { useState } from "react";
 import { FiMessageSquare } from "react-icons/fi";
 import { MdSend } from "react-icons/md";
 import BeatLoader from "react-spinners/BeatLoader";
+import { sendQuestion } from "../../Service/UserService";
 
 const LLMChatbot = () => {
   const [isLLMOpen, setIsLLMOpen] = useState(false);
   const [userQuestion, setUserQuestion] = useState("");
   const [conversation, setConversation] = useState([]);
   const [isOmnieTyping, setIsOmnieTyping] = useState(false);
-
-  const handleSendQuestion = () => {
+  const [memory, setMemory] = useState([]);
+  const handleSendQuestion = async () => {
     if (userQuestion.trim()) {
       const newUserQuestion = {
         id: conversation.length + 1,
@@ -22,22 +23,25 @@ const LLMChatbot = () => {
         newUserQuestion,
       ]);
       setUserQuestion("");
-
       setIsOmnieTyping(true);
+      try {
+        const response = await sendQuestion(userQuestion, memory);
 
-      setTimeout(() => {
         const newBotMessage = {
           id: conversation.length + 2,
           sender: "bot",
-          message: "LLM sample answer hahahaha",
+          message: response.data,
         };
         setConversation((prevConversation) => [
           ...prevConversation,
           newBotMessage,
         ]);
-
-        setIsOmnieTyping(false);
-      }, 2000);
+        const memoryEntry = { question: userQuestion, answer: response.data };
+        setMemory((prevState) => [...prevState, memoryEntry]);
+      } catch (error) {
+      } finally {
+        isOmnieTyping(false);
+      }
     }
   };
 
