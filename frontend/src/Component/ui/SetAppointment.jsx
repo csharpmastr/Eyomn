@@ -18,11 +18,16 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
   const user = useSelector((state) => state.reducer.user.user);
   const doctors = useSelector((state) => state.reducer.doctor.doctor);
   const branches = useSelector((state) => state.reducer.branch.branch);
+  const appointments = useSelector(
+    (state) => state.reducer.appointment.appointment
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [doesExists, setDoesExists] = useState(false);
   const [selectedBranch, setSelectedBranchId] = useState(null);
   const reduxDispatch = useDispatch();
+  const [availableDoctors, setAvailableDoctors] = useState([]);
+
   let branchId =
     (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
     user.userId;
@@ -164,12 +169,12 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
     setDate("");
     setTime("");
   };
-  const generateTimeOptions = () => {
+  const generateTimeOptions = (appointmentDay) => {
     const times = [];
     const start = new Date();
-    start.setHours(8, 30, 0);
+    start.setHours(8, 30, 0, 0);
     const end = new Date();
-    end.setHours(18, 0, 0);
+    end.setHours(18, 0, 0, 0);
 
     while (start <= end) {
       const hours = start.getHours().toString().padStart(2, "0");
@@ -178,15 +183,20 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
       start.setMinutes(start.getMinutes() + 30);
     }
 
-    return times;
+    return times.filter((time) => {
+      const timeISO = new Date(`${appointmentDay}T${time}:00`).toISOString();
+      return !appointments.some((appointment) => {
+        const appointmentTimeISO = new Date(
+          appointment.scheduledTime
+        ).toISOString();
+        return timeISO === appointmentTimeISO;
+      });
+    });
   };
 
-  const timeOptions = generateTimeOptions();
+  const timeOptions = date ? generateTimeOptions(date) : [];
 
   const handleSubmitAppointment = async (e) => {
-    console.log(formData);
-    console.log(docFormData);
-
     e.preventDefault();
 
     if (!validateForm()) {
@@ -250,6 +260,53 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
       setIsLoading(false);
     }
   };
+  const filterAvailableDoctors = (date, time) => {
+    return doctors.filter((doctor) => {
+      const doctorScheduleForDay = doctor.schedule.find((scheduleEntry) => {
+        const scheduleDay = scheduleEntry.day.toLowerCase();
+        const inputDay = new Date(date)
+          .toLocaleString("en-GB", { weekday: "long" })
+          .toLowerCase();
+        return scheduleDay === inputDay;
+      });
+
+      if (!doctorScheduleForDay) {
+        return false;
+      }
+
+      const inTime = new Date(`1970-01-01T${doctorScheduleForDay.in}:00Z`);
+      const outTime = new Date(`1970-01-01T${doctorScheduleForDay.out}:00Z`);
+      outTime.setMinutes(outTime.getMinutes() - 30);
+      const inputTime = new Date(`1970-01-01T${time}:00Z`);
+
+      const isTimeWithinRange = inputTime >= inTime && inputTime <= outTime;
+
+      const isDoctorAvailable = !appointments.some((appointment) => {
+        const appointmentDate = new Date(appointment.scheduledTime);
+        const appointmentTime = new Date(
+          `1970-01-01T${appointmentDate.toLocaleTimeString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}:00Z`
+        );
+
+        return (
+          appointment.doctorId === doctor.staffId &&
+          appointmentDate.toLocaleDateString() ===
+            new Date(date).toLocaleDateString() &&
+          appointmentTime.getTime() === inputTime.getTime()
+        );
+      });
+
+      return isTimeWithinRange && isDoctorAvailable;
+    });
+  };
+
+  useEffect(() => {
+    if (date && time) {
+      setAvailableDoctors(filterAvailableDoctors(date, time));
+    }
+  }, [date, time, appointments, doctors]);
 
   return (
     <>
@@ -383,7 +440,7 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
                     <option value="" disabled className="text-c-gray3">
                       Available Doctor
                     </option>
-                    {doctors.map((doctor, key) => (
+                    {availableDoctors.map((doctor, key) => (
                       <option key={key} value={doctor.staffId}>
                         {doctor.first_name + " " + doctor.last_name}
                       </option>
