@@ -4,31 +4,54 @@ import NotificationContent from "../../Component/ui/NotificationContent";
 import { updateNotification } from "../../Service/NotificationService";
 import { useDispatch, useSelector } from "react-redux";
 import { updateNotificationRead } from "../../Slice/NotificationSlice";
+import { setRawNotes } from "../../Slice/NoteSlice";
+import { getPatientNotes } from "../../Service/PatientService";
+import Cookies from "universal-cookie";
 
 const Notification = ({ data, setNotifOpen }) => {
+  const cookies = new Cookies();
+  const accessToken = cookies.get("accessToken");
+  const refreshToken = cookies.get("refreshToken");
   const reduxDispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.reducer.user.user);
-  console.log(data);
+  const rawNotes = useSelector((state) => state.reducer.note.rawNotes);
 
   const handleClickNotification = async (patientId, notificationId) => {
     try {
       setNotifOpen(false);
       sessionStorage.setItem("currentPatient", patientId);
-      sessionStorage.setItem("selectedTab", "patient");
-      navigate(`/patient/${patientId}`);
-      console.log(user.staffId, user.firebaseUid);
-      console.log(notificationId);
+      sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
+      sessionStorage.setItem("selectedTab", "scribe");
+      navigate(`/scribe/${patientId}`);
 
       try {
-        const response = await updateNotification(
-          user.staffId,
-          notificationId,
-          user.firebaseUid
-        );
-        if (response) {
-          reduxDispatch(updateNotificationRead({ notificationId }));
-          console.log("Notificaton Updated");
+        if (rawNotes[patientId]) {
+          console.log("Using cached notes from Redux store");
+          navigate(`/scribe/${patientId}`);
+        } else {
+          try {
+            const response = await getPatientNotes(
+              patientId,
+              user.firebaseUid,
+              accessToken,
+              refreshToken
+            );
+            if (response) {
+              reduxDispatch(setRawNotes({ [patientId]: response }));
+            }
+            const responseNotif = await updateNotification(
+              user.staffId,
+              notificationId,
+              user.firebaseUid
+            );
+            if (responseNotif) {
+              reduxDispatch(updateNotificationRead({ notificationId }));
+              console.log("Notificaton Updated");
+            }
+          } catch (error) {
+            console.log(error);
+          }
         }
       } catch (error) {
         console.log(error);
