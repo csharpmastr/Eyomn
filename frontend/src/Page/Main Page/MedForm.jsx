@@ -523,22 +523,33 @@ const MedForm = () => {
     management: "",
     followup_care: "",
   };
-  const [medformData, setMedformData] = useState(initialMedFormData);
+  const [medformData, setMedformData] = useState(() => {
+    const savedData = sessionStorage.getItem("medformData");
+    return savedData ? JSON.parse(savedData) : initialMedFormData;
+  });
+  useEffect(() => {
+    if (medformData) {
+      sessionStorage.setItem("medformData", JSON.stringify(medformData));
+    }
+  }, [medformData]);
 
   useEffect(() => {
     if (noteId && rawNotes) {
       const rawNote = rawNotes.find((raw) => raw.noteId === noteId);
       if (rawNote) {
-        setMedformData((prevData) => {
-          const updatedData = { ...prevData };
-
-          return mergeDeep(updatedData, rawNote);
-        });
+        if (!medformData || Object.keys(medformData).length === 0) {
+          setMedformData((prevData) => {
+            const updatedData = { ...prevData };
+            return mergeDeep(updatedData, rawNote);
+          });
+        }
       }
     } else {
-      setMedformData(initialMedFormData);
+      if (!medformData || Object.keys(medformData).length === 0) {
+        setMedformData(initialMedFormData);
+      }
     }
-  }, [noteId, rawNotes]);
+  }, [noteId, rawNotes, medformData]);
 
   useEffect(() => {
     const handleBeforeUnload = (event) => {
@@ -558,33 +569,31 @@ const MedForm = () => {
   }, [hasUnsavedChanges]);
 
   const handleSubmitNote = async (e) => {
-    console.log(medformData);
+    e.preventDefault();
+    const transformedData = cleanData(medformData);
+    console.log(transformedData);
 
-    // e.preventDefault();
-    // const transformedData = cleanData(medformData);
-    // console.log(transformedData);
+    setHasUnsavedChanges(false);
+    try {
+      const response = await addNote(medformData, patientId);
 
-    // setHasUnsavedChanges(false);
-    // try {
-    //   const response = await addNote(medformData, patientId);
-
-    //   if (response) {
-    //     console.log(response);
-    //     reduxDispatch(
-    //       addNewRawNote({
-    //         [patientId]: {
-    //           ...medformData,
-    //           noteId: response.noteId,
-    //           createdAt: response.createdAt,
-    //         },
-    //       })
-    //     );
-    //     setIsSuccess(true);
-    //   }
-    // } catch (error) {
-    //   setIsError(true);
-    //   console.log(error);
-    // }
+      if (response) {
+        console.log(response);
+        reduxDispatch(
+          addNewRawNote({
+            [patientId]: {
+              ...medformData,
+              noteId: response.noteId,
+              createdAt: response.createdAt,
+            },
+          })
+        );
+        setIsSuccess(true);
+      }
+    } catch (error) {
+      setIsError(true);
+      console.log(error);
+    }
   };
   const navigateAfterSuccess = () => {
     navigate(`/scribe/${patientId}`);
@@ -698,7 +707,7 @@ const MedForm = () => {
   const handleBack = () => {
     navigate(`/scribe/${patientId}`);
     console.log(medformData);
-
+    sessionStorage.removeItem("medformData");
     sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
   };
 
@@ -5644,7 +5653,7 @@ const MedForm = () => {
         isOpen={isSuccess}
         onClose={() => {
           setIsSuccess(false);
-          // navigateAfterSuccess();
+          navigateAfterSuccess();
         }}
         title="Patient Note Added Successfully"
         description="The patient note has been successfully added to the records. We will notify you once "
