@@ -91,16 +91,16 @@ const DbProduct = ({ filteredSales }) => {
   };
 
   return (
-    <div className="rounded-lg h-[500px] bg-white text-f-dark font-poppins border text-p-sm md:text-p-rg py-4 overflow-clip shadow-sm p-4">
+    <div className="rounded-lg h-[360px] bg-white text-f-dark font-poppins border text-p-sm md:text-p-rg py-4 overflow-clip shadow-sm p-4">
       <header className="flex justify-between px-4 pt-2 mb-4 text-c-secondary">
         <h1 className="font-medium text-nowrap text-c-secondary">
           | Top Selling Products
         </h1>
       </header>
-      <div className="w-full">
+      <div className="w-full pl-5">
         <Chart
           type="bar"
-          height={420}
+          height={280}
           width="100%"
           series={chartData.series}
           options={chartOptions}

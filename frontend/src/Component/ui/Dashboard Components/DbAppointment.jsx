@@ -36,7 +36,7 @@ const DbAppointment = () => {
   };
 
   return (
-    <div className="rounded-lg h-[500px] bg-white text-f-dark font-poppins border text-p-sm md:text-p-rg py-4 overflow-clip shadow-sm">
+    <div className="rounded-lg h-[360px] bg-white text-f-dark font-poppins border text-p-sm md:text-p-rg py-4 overflow-clip shadow-sm">
       <header className="flex justify-between px-4 items-center">
         <h1 className="font-medium text-nowrap text-c-secondary">
           | Upcoming Appointment
@@ -68,8 +68,8 @@ const DbAppointment = () => {
               >
                 <section className="flex items-center gap-3">
                   <h1
-                    className={`w-fit rounded-md text-center px-2 ${
-                      dateColors[index % dateColors.length] // Apply color from dateColors array
+                    className={`w-fit rounded-md text-center px-2 shadow-sm ${
+                      dateColors[index % dateColors.length]
                     }`}
                   >
                     {month}

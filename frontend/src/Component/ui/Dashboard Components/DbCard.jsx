@@ -1,21 +1,23 @@
 import React from "react";
-import { FiUser } from "react-icons/fi";
 
-const DbCard = ({ title, value, percentageChange, color }) => {
+const DbCard = ({ title, value, percentageChange, color, bg }) => {
   return (
     <>
       <div
-        className="py-4 px-6 w-full rounded-xl text-f-dark font-Poppins border border-white text-p-sm md:text-p-rg shadow-sm"
+        className={`py-3 lg:px-2 2xl:px-6 w-full rounded-xl text-f-dark font-Poppins border border-white text-p-sm md:text-p-rg shadow-sm ${color}`}
         style={{
-          background: `linear-gradient(to top, ${color})`,
+          backgroundImage: `url(${bg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
-        <div className="flex items-center w-full justify-between">
+        <div className="flex items-center w-full justify-between mb-5">
           <section>
-            <p className="text-p-sc md:text-p-sm font-medium mb-2">{title}</p>
+            <p className="text-p-sc md:text-p-sm font-medium mb-1  text-nowrap truncate">
+              {title}
+            </p>
             <p className="font-semibold text-h-h6">{value}</p>
           </section>
-          <div className="p-8 rounded-xl bg-f-light shadow-md"></div>
         </div>
         <p className="text-p-sc md:text-p-sm mt-2">
           <span className="text-[#3FB59D]">{percentageChange}</span> vs last

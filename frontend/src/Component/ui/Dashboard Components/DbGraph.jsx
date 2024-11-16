@@ -148,8 +148,13 @@ const DbGraph = ({ patients, sales }) => {
     },
   ];
 
+  const graphHeight = [user.role !== "2" ? "280" : "420"];
   return (
-    <div className="text-p-sm md:text-p-rg h-[500px] text-f-dark rounded-lg bg-white p-4 border">
+    <div
+      className={`text-p-sm md:text-p-rg text-f-dark rounded-lg bg-white p-4 border ${
+        user.role !== "2" ? "h-[360px]" : "h-[500px]"
+      }`}
+    >
       <header className="flex justify-between h-fit w-full items-center mb-4">
         <h1 className="font-medium text-nowrap text-c-secondary">
           {user.role !== "2"
@@ -184,7 +189,7 @@ const DbGraph = ({ patients, sales }) => {
         options={chartOptions}
         series={chartSeries}
         type="line"
-        height={420}
+        height={graphHeight}
       />
     </div>
   );
