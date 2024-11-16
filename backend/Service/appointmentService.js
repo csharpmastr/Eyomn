@@ -187,7 +187,13 @@ const getDoctorAppointments = async (doctorId, firebaseUid) => {
         firebaseUid,
         true
       );
-      appointments = [...appointments, ...branchAppointments];
+      const branchAppointmentsWithId = branchAppointments.map(
+        (appointment) => ({
+          ...appointment,
+          branchId,
+        })
+      );
+      appointments = [...appointments, ...branchAppointmentsWithId];
     }
 
     return appointments;
