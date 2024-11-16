@@ -63,15 +63,19 @@ const removeNullValues = (obj) => {
 };
 
 export const mergeDeep = (target, source) => {
-  for (const key in target) {
-    if (source && source[key] !== undefined) {
+  // Loop through both source and target objects
+  for (const key in source) {
+    if (source.hasOwnProperty(key)) {
+      // If both are objects and not arrays, recursively merge
       if (
         typeof source[key] === "object" &&
         !Array.isArray(source[key]) &&
         source[key] !== null
       ) {
-        target[key] = mergeDeep(target[key], source[key]);
-      } else if (source[key] !== "") {
+        if (!target[key]) target[key] = {}; // Initialize target[key] if it doesn't exist
+        mergeDeep(target[key], source[key]);
+      } else if (source[key] !== undefined && source[key] !== "") {
+        // Update target with non-undefined, non-empty source values
         target[key] = source[key];
       }
     }
