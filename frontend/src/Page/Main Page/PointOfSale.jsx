@@ -7,6 +7,8 @@ import Loader from "../../Component/ui/Loader";
 import SuccessModal from "../../Component/ui/SuccessModal";
 import { addPurchase } from "../../Slice/InventorySlice";
 import ErrorModal from "../../Component/ui/ErrorModal";
+import { FiArrowLeft } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 const PointOfSale = () => {
   const [selectedProducts, setSelectedProducts] = React.useState([]);
@@ -17,6 +19,7 @@ const PointOfSale = () => {
   const { addPurchaseHook, isLoading, error } = useAddPurchase();
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const navigate = useNavigate();
   let branchId =
     (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
     user.userId ||
@@ -112,31 +115,42 @@ const PointOfSale = () => {
       )}
       <div className="text-f-dark font-Poppins flex flex-col md:flex-row h-full">
         <div className="flex flex-col w-full md:w-3/4 p-4 md:p-6 2xl:p-8">
-          <div className="flex flex-row gap-3 mb-6">
-            <div className="flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-bg-sub text-c-gray3 font-normal hover:cursor-pointer">
-              <select
-                className="hover:cursor-pointer focus:outline-none bg-bg-sub w-fit"
-                value={sortOption}
-                onChange={(e) => setSortOption(e.target.value)}
+          <div className="flex flex-row gap-3 mb-6 items-center">
+            <div className="mb-2 w-2/5">
+              <button
+                className="flex items-center gap-2"
+                onClick={() => navigate("/inventory")}
               >
-                <option value="" disabled selected>
-                  Sort by
-                </option>
-                <option value="ascending">Ascending</option>
-                <option value="descending">Descending</option>
-                <option value="price-l">Low (Price)</option>
-                <option value="price-h">High (Price)</option>
-              </select>
+                <FiArrowLeft />
+                Go back
+              </button>
             </div>
-            <div className="flex flex-row border border-f-gray  px-4 rounded-md justify-center items-center w-full gap-2">
-              <IoMdSearch className="h-8 w-8 text-c-secondary" />
-              <input
-                type="text"
-                className="w-full focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-sm md:text-p-rg"
-                placeholder="Search product... "
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+            <div className="w-3/5 flex gap-4">
+              <div className="flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-bg-sub text-c-gray3 font-normal hover:cursor-pointer">
+                <select
+                  className="hover:cursor-pointer focus:outline-none bg-bg-sub w-fit"
+                  value={sortOption}
+                  onChange={(e) => setSortOption(e.target.value)}
+                >
+                  <option value="" disabled selected>
+                    Sort by
+                  </option>
+                  <option value="ascending">Ascending</option>
+                  <option value="descending">Descending</option>
+                  <option value="price-l">Low (Price)</option>
+                  <option value="price-h">High (Price)</option>
+                </select>
+              </div>
+              <div className="flex flex-row border border-f-gray  px-4 rounded-md justify-center items-center w-full gap-2">
+                <IoMdSearch className="h-8 w-8 text-c-secondary" />
+                <input
+                  type="text"
+                  className="w-full focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-sm md:text-p-rg"
+                  placeholder="Search product... "
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
             </div>
           </div>
           <div className="overflow-auto w-full">
