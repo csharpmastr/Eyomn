@@ -128,7 +128,7 @@ const MVP = () => {
           </div>
           <div className="flex-1 overflow-auto bg-bg-mc">
             <Outlet />
-            {currentTab != "Dashboard" && <LLMChatbot />}
+            {<LLMChatbot />}
           </div>
         </div>
       </div>

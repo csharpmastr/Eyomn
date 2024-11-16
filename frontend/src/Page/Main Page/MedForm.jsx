@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Modal from "../../Component/ui/Modal";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { addNewRawNote } from "../../Slice/NoteSlice";
-import { cleanData, jsonToString, mergeDeep } from "../../Helper/Helper";
+import { cleanData, mergeDeep } from "../../Helper/Helper";
 
 const MedForm = () => {
   const { patientId } = useParams();

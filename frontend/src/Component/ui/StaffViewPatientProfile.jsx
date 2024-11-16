@@ -148,7 +148,7 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
             ""
           )}
         </header>
-        <div className="flex flex-col gap-6 w-full h-full">
+        <div className="flex flex-col gap-4 overflow-auto">
           {visits.length > 0 ? (
             visits.map((visit, index) => (
               <ReasonVisitCard key={index} reasonData={visit} />
