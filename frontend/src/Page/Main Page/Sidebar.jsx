@@ -308,33 +308,6 @@ const SideBar = () => {
                 />
                 {!isCollapsed && <span className="ml-2">Inventory</span>}
               </NavLink>
-              {role !== "0" && (
-                <NavLink
-                  className={`ml-4 xl:ml-0 flex items-center text-p-sm md:text-p-rg py-3 px-4 text-f-dark rounded-md 
-              ${btnHoverColor}
-              ${
-                selected === "stock_checkout"
-                  ? btnBgColor
-                  : "text-f-dark font-medium"
-              }
-              ${
-                isCollapsed
-                  ? "xl:justify-center xl:px-2 py-2"
-                  : "xl:py-3 xl:px-4"
-              } `}
-                  onClick={() => setSelected("stock_checkout")}
-                  to="stock_checkout"
-                >
-                  <FiShoppingCart
-                    className={`${
-                      isCollapsed
-                        ? " h-[26px] w-[26px]"
-                        : " h-[26px] w-[26px] xl:mr-3"
-                    }`}
-                  />
-                  {!isCollapsed && <span className="ml-2">Stock Checkout</span>}
-                </NavLink>
-              )}
             </div>
           )}
         </div>

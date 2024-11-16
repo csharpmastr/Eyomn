@@ -5,6 +5,8 @@ import InventoryTable from "../../Component/ui/InventoryTable";
 import AddEditProduct from "../../Component/ui/AddEditProduct";
 import { useSelector } from "react-redux";
 import RoleColor from "../../assets/Util/RoleColor";
+import { FiShoppingCart } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 const Inventory = () => {
   const user = useSelector((state) => state.reducer.user.user);
@@ -19,24 +21,29 @@ const Inventory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("");
   const toggleModal = () => setIsModalOpen(!isModalOpen);
-
+  const navigate = useNavigate();
   const { btnContentColor } = RoleColor();
 
   return (
     <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppins">
       <nav className="flex flex-col gap-4 lg:gap-0 lg:flex-row justify-between mb-8">
         <div className="flex gap-3 items-center">
-          <h1 className="text-p-rg md:text-p-lg font-medium text-c-secondary">
-            All Product
-          </h1>
           <section className="bg-white flex rounded-md h-fit w-fit p-3 border shadow-sm">
             <p className="text-p-sc md:text-p-sm">
               <span className="text-blue-500">{productCount}</span> Total
               Products |{"  "}
               <span className="text-red-500">{lowStockCount}</span> Low Stock
-              {"  "}
             </p>
           </section>
+          {user.role === "3" && (
+            <button
+              className="text-p-sm border flex gap-2 items-center p-3 rounded-md text-blue-300 shadow-sm font-medium"
+              onClick={() => navigate("/stock_checkout")}
+            >
+              <FiShoppingCart className="w-4 h-4" />
+              Checkout
+            </button>
+          )}
         </div>
         <div className="flex gap-3">
           <div className="flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-white text-c-gray3 font-normal hover:cursor-pointer">

@@ -63,6 +63,7 @@ export default {
         "p-lg": "19.2px",
         "h-h6": "23.04px",
         "h-h4": "33.18px",
+        "h-h3": "37.9px",
       },
       animation: {
         soundwave: "soundwave 1.3s infinite",
