@@ -45,13 +45,19 @@ const Scribe = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
+    const currentPath = location.pathname;
+    const patientIdMatch = currentPath.match(/\/scribe\/(\d+)/);
+
     const storedPatientId = sessionStorage.getItem("currentPatientId");
     const storedLocation = sessionStorage.getItem("currentPath");
 
     if (storedPatientId && storedLocation) {
       setHasSelected(true);
-
       navigate(storedLocation);
+    } else if (patientIdMatch) {
+      setHasSelected(true);
+      sessionStorage.setItem("currentPatientId", patientIdMatch[1]);
+      sessionStorage.setItem("currentPath", currentPath);
     }
   }, [navigate]);
 
@@ -63,26 +69,7 @@ const Scribe = () => {
       const newPath = `/scribe/${id}`;
       sessionStorage.setItem("currentPatientId", id);
       sessionStorage.setItem("currentPath", newPath);
-
-      if (rawNotes[id]) {
-        console.log("Using cached notes from Redux store");
-        navigate(newPath);
-      } else {
-        try {
-          const response = await getPatientNotes(
-            id,
-            user.firebaseUid,
-            accessToken,
-            refreshToken
-          );
-          if (response) {
-            reduxDispatch(setRawNotes({ [id]: response }));
-          }
-        } catch (error) {
-          console.log(error);
-        }
-        navigate(newPath);
-      }
+      navigate(newPath);
     } else {
       console.error("Patient not found");
     }

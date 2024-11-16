@@ -9,12 +9,17 @@ import SampleImage from "../../../assets/Image/eyomn_logoS1-2-06.jpg";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import {
   getPatientImageArchive,
+  getPatientNotes,
   uploadImageArchive,
 } from "../../../Service/PatientService";
 import Cookies from "universal-cookie";
 import Loader from "../../../Component/ui/Loader";
 import SuccessModal from "../../../Component/ui/SuccessModal";
-import { addNewImageArchive, setImagesArchive } from "../../../Slice/NoteSlice";
+import {
+  addNewImageArchive,
+  setImagesArchive,
+  setRawNotes,
+} from "../../../Slice/NoteSlice";
 
 const ScribeRecord = () => {
   const { patientId } = useParams();
@@ -39,6 +44,7 @@ const ScribeRecord = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [image, setImage] = useState(null);
+  const [raw, setRaw] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const reduxDispatch = useDispatch();
   const medicalRecords = [
@@ -120,43 +126,59 @@ const ScribeRecord = () => {
   };
 
   useEffect(() => {
-    const fetchImages = async () => {
-      setIsLoading(true);
+    const fetchData = async () => {
+      setIsLoading(true); // Start loading at the beginning of the request
+
       try {
-        if (imagesUrl && imagesUrl.length > 0) {
-          setPatientImages(imagesUrl);
-        } else {
-          const response = await getPatientImageArchive(
+        // Fetch raw notes if they are not in redux
+        if (!rawNotes || rawNotes.length === 0) {
+          const notesResponse = await getPatientNotes(
             patientId,
             user.firebaseUid,
             accessToken,
             refreshToken
           );
-          console.log(response);
+          if (notesResponse) {
+            reduxDispatch(setRawNotes({ [patientId]: notesResponse }));
+            setRaw(notesResponse); // Set raw notes
+          }
+        } else {
+          setRaw(rawNotes); // Use redux data if available
+        }
 
+        // Fetch images if they are not in redux
+        if (!imagesUrl || imagesUrl.length === 0) {
+          const imagesResponse = await getPatientImageArchive(
+            patientId,
+            user.firebaseUid,
+            accessToken,
+            refreshToken
+          );
           if (
-            response &&
-            response.imageUrls &&
-            Array.isArray(response.imageUrls)
+            imagesResponse &&
+            imagesResponse.imageUrls &&
+            Array.isArray(imagesResponse.imageUrls)
           ) {
-            setIsLoading(false);
-            setPatientImages(response.imageUrls);
+            setPatientImages(imagesResponse.imageUrls);
             reduxDispatch(
-              setImagesArchive({ [patientId]: response.imageUrls })
+              setImagesArchive({ [patientId]: imagesResponse.imageUrls })
             );
           } else {
             console.log("No images found");
           }
+        } else {
+          setPatientImages(imagesUrl); // Use redux images if available
         }
       } catch (error) {
-        console.log("Error fetching images:", error);
+        console.log("Error fetching data:", error);
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); // Stop loading after data fetch
       }
     };
 
+    // Ensure patientId and user.firebaseUid are available before fetching data
     if (patientId && user.firebaseUid) {
-      fetchImages();
+      fetchData();
     }
   }, [patientId]);
 
