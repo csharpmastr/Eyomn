@@ -13,7 +13,7 @@ const ViewSchedule = ({ onClose, appointments }) => {
   const [isSetAppoinmentOpen, setSetAppoimentOpen] = useState(false);
   const [appointmentToEdit, setAppointmentToEdit] = useState(null);
   const role = useSelector((state) => state.reducer.user.user.role);
-
+  const branches = useSelector((state) => state.reducer.branch.branch);
   const borderColors = [
     "border-l-blue-300",
     "border-l-red-300",
@@ -46,49 +46,64 @@ const ViewSchedule = ({ onClose, appointments }) => {
         <div className="bg-bg-mc h-full rounded-b-lg text-f-dark flex flex-col px-2 py-4">
           <div className="overflow-y-auto h-full flex flex-col gap-4">
             {appointments.length > 0 ? (
-              appointments.map((appointment, index) => (
-                <div
-                  key={index}
-                  className={`w-full border-l-8 px-4 py-6 bg-white shadow-sm rounded-md flex justify-between items-center ${
-                    borderColors[index % borderColors.length]
-                  } group`}
-                >
-                  <div className="flex flex-col gap-3">
-                    <p className="text-p-sm md:text-p-rg font-medium">
-                      {appointment.patient_name}
-                    </p>
-                    <p className="text-p-sc md:text-p-sm text-c-gray3">
-                      {appointment.reason}
-                    </p>
-                  </div>
+              appointments.map((appointment, index) => {
+                const branch = branches.find(
+                  (b) => b.branchId === appointment.branchId
+                );
+                const branchesName =
+                  branch?.name || branch?.branchName || "Unknown Branch";
 
-                  <div className="flex items-center relative gap-4 xl:gap-0">
-                    <div className="flex flex-col items-end gap-2 transform transition-transform duration-300 group-hover:-translate-x-5">
-                      <p className="text-p-sm md:text-p-rg font-medium">
-                        Dr. {appointment.doctor}
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <FiClock className="h-4 w-4 text-c-gray3" />
+                return (
+                  <div
+                    key={index}
+                    className={`w-full border-l-8 px-4 py-6 bg-white shadow-sm rounded-md flex justify-between items-center ${
+                      borderColors[index % borderColors.length]
+                    } group flex flex-col`}
+                  >
+                    {(role === "0" || role === "2") && <h1>{branchesName}</h1>}
+                    <div className="flex justify-between w-full">
+                      <div className="flex flex-col gap-3">
+                        <p className="text-p-sm md:text-p-rg font-medium">
+                          {appointment.patient_name}
+                        </p>
                         <p className="text-p-sc md:text-p-sm text-c-gray3">
-                          {dayjs(appointment.scheduledTime).format("h:mm A")}
+                          {appointment.reason}
                         </p>
                       </div>
-                    </div>
-                    {role === "0" || role === "1" ? (
-                      ""
-                    ) : (
-                      <div className="flex flex-col justify-between opacity-100 xl:opacity-0 group-hover:opacity-100 transition-opacity duration-300 gap-2">
-                        <button onClick={() => openSetAppoinment(appointment)}>
-                          <FiEdit className="w-5 h-5 text-blue-400" />
-                        </button>
-                        <button onClick={openConfirmation}>
-                          <FiTrash className="w-5 h-5 text-red-400" />
-                        </button>
+
+                      <div className="flex items-center relative gap-4 xl:gap-0">
+                        <div className="flex flex-col items-end gap-2 transform transition-transform duration-300 group-hover:-translate-x-5">
+                          <p className="text-p-sm md:text-p-rg font-medium">
+                            Dr. {appointment.doctor}
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <FiClock className="h-4 w-4 text-c-gray3" />
+                            <p className="text-p-sc md:text-p-sm text-c-gray3">
+                              {dayjs(appointment.scheduledTime).format(
+                                "h:mm A"
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                        {role === "0" || role === "1" ? (
+                          ""
+                        ) : (
+                          <div className="flex flex-col justify-between opacity-100 xl:opacity-0 group-hover:opacity-100 transition-opacity duration-300 gap-2">
+                            <button
+                              onClick={() => openSetAppoinment(appointment)}
+                            >
+                              <FiEdit className="w-5 h-5 text-blue-400" />
+                            </button>
+                            <button onClick={openConfirmation}>
+                              <FiTrash className="w-5 h-5 text-red-400" />
+                            </button>
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="h-full flex justify-center items-center">
                 <p className="text-center">No appointments for this day.</p>
