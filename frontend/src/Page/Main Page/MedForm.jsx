@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Modal from "../../Component/ui/Modal";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { addNewRawNote } from "../../Slice/NoteSlice";
-import { cleanData, mergeDeep } from "../../Helper/Helper";
+import { cleanData, jsonToString, mergeDeep } from "../../Helper/Helper";
 
 const MedForm = () => {
   const { patientId } = useParams();
@@ -572,28 +572,29 @@ const MedForm = () => {
     e.preventDefault();
     const transformedData = cleanData(medformData);
     console.log(transformedData);
+    console.log(jsonToString(transformedData));
 
-    setHasUnsavedChanges(false);
-    try {
-      const response = await addNote(medformData, patientId);
+    // setHasUnsavedChanges(false);
+    // try {
+    //   const response = await addNote(medformData, patientId);
 
-      if (response) {
-        console.log(response);
-        reduxDispatch(
-          addNewRawNote({
-            [patientId]: {
-              ...medformData,
-              noteId: response.noteId,
-              createdAt: response.createdAt,
-            },
-          })
-        );
-        setIsSuccess(true);
-      }
-    } catch (error) {
-      setIsError(true);
-      console.log(error);
-    }
+    //   if (response) {
+    //     console.log(response);
+    //     reduxDispatch(
+    //       addNewRawNote({
+    //         [patientId]: {
+    //           ...medformData,
+    //           noteId: response.noteId,
+    //           createdAt: response.createdAt,
+    //         },
+    //       })
+    //     );
+    //     setIsSuccess(true);
+    //   }
+    // } catch (error) {
+    //   setIsError(true);
+    //   console.log(error);
+    // }
   };
   const navigateAfterSuccess = () => {
     navigate(`/scribe/${patientId}`);
