@@ -10,7 +10,12 @@ import { addAppointment } from "../../Slice/AppointmentSlice";
 
 const SetAppointment = ({ onClose, appointmentToEdit }) => {
   const [errors, setErrors] = useState({});
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(
+    new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
+      .toISOString()
+      .split("T")[0]
+  );
+
   const [time, setTime] = useState("");
   const cookies = new Cookies();
   const accessToken = cookies.get("accessToken");
@@ -171,10 +176,19 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
   };
   const generateTimeOptions = (appointmentDay) => {
     const times = [];
+    const now = new Date();
+    const isToday =
+      new Date(appointmentDay).toDateString() === now.toDateString();
+
     const start = new Date();
-    start.setHours(8, 30, 0, 0);
     const end = new Date();
+    start.setHours(8, 30, 0, 0);
     end.setHours(18, 0, 0, 0);
+
+    if (isToday) {
+      const minutes = now.getMinutes();
+      start.setHours(now.getHours(), minutes < 30 ? 30 : 60, 0, 0);
+    }
 
     while (start <= end) {
       const hours = start.getHours().toString().padStart(2, "0");
@@ -260,6 +274,7 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
       setIsLoading(false);
     }
   };
+
   const filterAvailableDoctors = (date, time) => {
     return doctors.filter((doctor) => {
       const doctorScheduleForDay = doctor.schedule.find((scheduleEntry) => {
@@ -360,7 +375,14 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
                   <input
                     type="date"
                     name="date"
-                    min={new Date().toISOString().split("T")[0]}
+                    min={
+                      new Date(
+                        new Date().getTime() -
+                          new Date().getTimezoneOffset() * 60000
+                      )
+                        .toISOString()
+                        .split("T")[0]
+                    }
                     value={date}
                     onChange={handleChange}
                     className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
