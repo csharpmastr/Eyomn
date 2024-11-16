@@ -51,6 +51,9 @@ export const useLogout = () => {
       reduxDispatch(clearBranch());
       reduxDispatch(clearImages());
       reduxDispatch(clearRawNotes());
+      sessionStorage.removeItem("medformData");
+      sessionStorage.removeItem("currentPatientId");
+      sessionStorage.removeItem("currentPath");
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred during logout.");
