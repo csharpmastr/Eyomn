@@ -288,7 +288,7 @@ const sharePatientHandler = async (req, res) => {
     const authorizedDoctor = req.body.authorizedDoctor;
 
     // Validation
-    if (!Array.isArray(authorizedDoctor) || authorizedDoctor.length === 0) {
+    if (!Array.isArray(authorizedDoctor)) {
       return res
         .status(400)
         .json({ message: "At least one doctor must be selected." });

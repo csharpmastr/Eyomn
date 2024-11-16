@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { sharePatient } from "../../Service/PatientService";
 import Cookies from "universal-cookie";
@@ -18,10 +18,15 @@ const SharePatientModal = ({
   const refreshToken = cookies.get("refreshToken");
   const user = useSelector((state) => state.reducer.user.user);
   const doctors = useSelector((state) => state.reducer.doctor.doctor);
+  const patients = useSelector((state) => state.reducer.patient.patients);
+  const patient = patients.find((patient) => patient.patientId === patientId);
+
   const [authorizedDoctor, setSelectedAuthorizedDoctor] = useState([]);
+
   if (doctors.length === 0) {
     return [];
   }
+
   const attendingDoctor = doctors.find(
     (doctor) => doctor.staffId === currentDoctor
   );
@@ -29,14 +34,20 @@ const SharePatientModal = ({
   const doctorsExceptCurrent = doctors.filter(
     (doctor) => doctor.staffId !== currentDoctor
   );
+
+  useEffect(() => {
+    if (patient && patient.authorizedDoctor) {
+      const initialAuthorizedDoctors = patient.authorizedDoctor;
+      setSelectedAuthorizedDoctor(initialAuthorizedDoctors);
+    }
+  }, [patient]);
+
   const handleSelectAuthorizedDoctor = (doctor, isChecked) => {
     setSelectedAuthorizedDoctor((prevAuthorizedDoctors) => {
       if (isChecked) {
-        return [...prevAuthorizedDoctors, doctor];
+        return [...prevAuthorizedDoctors, doctor.staffId];
       } else {
-        return prevAuthorizedDoctors.filter(
-          (doc) => doc.staffId !== doctor.staffId
-        );
+        return prevAuthorizedDoctors.filter((doc) => doc !== doctor.staffId);
       }
     });
   };
@@ -56,7 +67,6 @@ const SharePatientModal = ({
       );
       if (response) {
         console.log("success");
-
         console.log(response);
       }
     } catch (error) {
@@ -65,6 +75,7 @@ const SharePatientModal = ({
       setIsLoading(false);
     }
   };
+  console.log(user.userId);
 
   return (
     <>
@@ -98,11 +109,10 @@ const SharePatientModal = ({
                     type="checkbox"
                     className="w-5 h-5 mr-2"
                     id={doctor.staffId}
+                    checked={authorizedDoctor.includes(doctor.staffId)}
+                    disabled={authorizedDoctor.includes(user.userId)}
                     onChange={(e) =>
-                      handleSelectAuthorizedDoctor(
-                        doctor.staffId,
-                        e.target.checked
-                      )
+                      handleSelectAuthorizedDoctor(doctor, e.target.checked)
                     }
                   />
                   <label
@@ -124,9 +134,18 @@ const SharePatientModal = ({
               Cancel
             </button>
             <button
-              className="px-4 lg:px-12 py-3 bg-bg-con rounded-md text-f-light text-p-sm md:text-p-rg font-medium hover:bg-opacity-75"
+              className={`px-4 lg:px-12 py-3  bg-bg-con rounded-md text-f-light text-p-sm md:text-p-rg font-medium ${
+                authorizedDoctor.includes(user.userId)
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-opacity-75 cursor-pointer"
+              }`}
               type="submit"
-              onClick={handleSharePatient}
+              disabled={authorizedDoctor.includes(user.userId)}
+              onClick={
+                authorizedDoctor.includes(user.userId)
+                  ? null
+                  : handleSharePatient
+              }
             >
               Share Patient
             </button>
