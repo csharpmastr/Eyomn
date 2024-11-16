@@ -247,6 +247,13 @@ export const useFetchData = () => {
                     uniqueStaffsMap.set(staff.staffId, staff);
                   }
                 });
+                const appointments = result.flatMap((branch) =>
+                  (branch.appointments || []).map((appointment) => ({
+                    ...appointment,
+                    branchId: branch.branchId,
+                  }))
+                );
+                reduxDispatch(setAppointments(appointments));
                 reduxDispatch(setStaffs(Array.from(uniqueStaffsMap.values())));
                 break;
               default:
