@@ -322,6 +322,10 @@ def decide_to_generate(state):
         print("---DECISION: GENERATE---")
         return "generate"
 
+# track how many times the hullicination agent checks the generation, and if reaches 5, END the generation
+# and flag the user that the generation should be used appropriately. or "Not Fact-Checked"
+hallucination_checker_counter = 0
+
 # Conditional Edge
 def grade_generation(state: GraphState):
     """
@@ -349,10 +353,7 @@ def grade_generation(state: GraphState):
         # Check Hallucination
         score = hallu_checker_chain.invoke({"documents": documents, "generation": generation})
         grade = score.score
-        # track how many times the hullicination agent checks the generation, and if reaches 5, END the generation
-        # and flag the user that the generation should be used appropriately. or "Not Fact-Checked"
-        hallucination_checker_counter = 0
-    
+        
         # Check Hallucination
         if grade.lower() == "yes":
             print("---DECISION: GENERATION IS GROUNDED IN DOCUMENTS---")
@@ -380,9 +381,10 @@ def grade_generation(state: GraphState):
             print("---DECISION: GENERATION IS NOT GROUNDED IN DOCUMENTS, RE-TRY---")
             hallucination_checker_counter += 1
             
-            if hallucination_checker_counter >= 5:
+            if hallucination_checker_counter == 5:
                 print("LLM's Response is not Fact-Checked: USE WITH CAUTION")
                 return "useful"
+                
             return "not supported"
     
     else:
