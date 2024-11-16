@@ -4,6 +4,8 @@ from pathlib import Path
 from exception import CustomException
 from logger import logging
 import sys
+import os
+import json
 
 from helper_utils import get_model_config     
 
@@ -11,7 +13,7 @@ model_dir = "/eyomn_model_volume"
 model_name = "m42-health/Llama3-Med42-8B"
 num_gpu = 1
 hours = 60 * 60
-token = "eyomnai-ophthal-agent"
+token = os.getenv('OPHTHAL_AGENT_TOKEN')
 
 vllm_image = (
     Image.debian_slim(python_version="3.11")
@@ -31,7 +33,9 @@ try:
 except modal.exception.NotFoundError as e:
     raise CustomException(e, sys)
 
-app = App(f"vllm--serving--OPHTHAL--AGENT--70B")
+app = App(f"EYOMN-OPHTHAL-AGENT-VLLM-SERVING", secrets=[
+    Secret.from_name("RAG_APP_SECRETS", required_keys=['OPHTHAL_AGENT_TOKEN'])
+])
 
 @app.function(
     image=vllm_image,
@@ -120,9 +124,15 @@ def serve_llm():
         # ADD AUTHED VLLM TO THE FASTAPI APP
         web_app.include_router(router)
             
+        # Define RoPE scaling configuration
+        rope_scaling_config = {"type": "linear", "factor": 2.0}
+        
         engine_args = AsyncEngineArgs(
             model = model_dir + "/" + "OPHTHAL-AGENT-8B",
             tensor_parallel_size = num_gpu,
+            enable_chunked_prefill=True,
+            max_num_batched_tokens=1024,
+            rope_scaling=rope_scaling_config,
             gpu_memory_utilization=0.90,
             max_model_len=4088,
             enforce_eager=False

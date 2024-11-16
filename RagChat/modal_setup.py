@@ -18,14 +18,13 @@ packages = [
 rag_image = (
     modal.Image.debian_slim()
     # Install necessary dependencies
-    #.apt_install(["sqlite3", "libsqlite3-dev"])
     .pip_install(packages)
     .copy_local_file(local_path=Path("RagChat/Thesis_Documentation.pdf"))
     .copy_local_file(local_path=Path("RagChat/sys_prompts.yaml"))
 )
 
 app = modal.App(
-    "Eyomns-RAG-APP",
+    "EyomnAI-RAG-CHAT",
     image=rag_image,
     secrets=[modal.Secret.from_name("RAG_APP_SECRETS")]
 )

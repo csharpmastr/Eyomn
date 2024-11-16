@@ -18,7 +18,7 @@ with rag_image.imports():
     from langgraph.graph import END, StateGraph
     from langgraph.graph.state import CompiledStateGraph
     from typing_extensions import TypedDict
-    from typing import List, Literal, Dict
+    from typing import List, Dict
 
 # define global object variable
 convo_summ_chain = None

@@ -1,6 +1,7 @@
 langgraph 
 langchain 
 langchain_groq
+langchain-openai
 langchain-huggingface
 langchain_chroma
 langchain_community

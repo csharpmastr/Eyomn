@@ -10,7 +10,6 @@ from data_models import (
 )
 
 from modal_setup import rag_image
-
 from helper_utils import load_sys_prompts
 
 # context manager for global imports

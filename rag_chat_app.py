@@ -1,9 +1,8 @@
 import streamlit as st
 import requests
-import json
 
 # URL of the LangGraph API
-API_URL = "https://csharpmastr--eyomns-rag-app-web-endpoint-dev.modal.run"  # Replace with your actual endpoint
+API_URL = "https://csharpmastr--eyomns-rag-app-web-endpoint.modal.run"
 
 # Set up Streamlit UI
 st.set_page_config(page_title="LangGraph Chat", layout="centered")
@@ -23,6 +22,7 @@ def send_question_to_langgraph(question):
         # Define payload
         print("Questions: ", question)
         
+        # Retrieve chat history if existing
         for i in range(0, len(st.session_state["chat_history"]) - 1, 2):
             user_question = st.session_state["chat_history"][i]["message"]
             langgraph_response = st.session_state["chat_history"][i + 1]["message"]
@@ -33,7 +33,12 @@ def send_question_to_langgraph(question):
                 st.session_state["memory"].append(memory_entry)
             
         print(st.session_state["memory"])           
-        payload = {"question": question, "generation": "", "web_search": "", "documents": [], "memory": st.session_state["memory"], "summarized_memory": ""}
+        payload = {"question": question, 
+                   "generation": "", 
+                   "web_search": "", 
+                   "documents": [], 
+                   "memory": st.session_state["memory"], 
+                   "summarized_memory": ""}
         # Make POST request to LangGraph API
         response = requests.post(API_URL, json=payload, timeout=60.0)
         

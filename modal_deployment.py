@@ -1,5 +1,5 @@
 import modal
-from LangGraph.agent_flow import construct_graph
+from MedTeam_Graph.agent_flow import construct_graph
 
 import os
 from pathlib import Path
