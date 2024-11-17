@@ -34,7 +34,7 @@ const addScheduleHandler = async (req, res) => {
 };
 const deleteScheduleHandler = async (req, res) => {
   try {
-    const { branchId, appointmentId } = req.query;
+    const { branchId, appointmentId, firebaseUid } = req.query;
 
     console.log(branchId, appointmentId);
 
@@ -43,7 +43,7 @@ const deleteScheduleHandler = async (req, res) => {
         .status(400)
         .json({ message: "Branch ID  and Schedule ID are required." });
     }
-    await deleteSchedule(branchId, appointmentId);
+    await deleteSchedule(branchId, appointmentId, firebaseUid);
     res.status(200).json({ message: "Schedule deleted sucessfully" });
   } catch (error) {
     res.status(error.status || 500).json({ message: error.message });

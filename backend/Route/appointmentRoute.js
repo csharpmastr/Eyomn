@@ -9,7 +9,7 @@ const {
 } = require("../Controller/appointmentController");
 
 router.post("/add/:branchId", addScheduleHandler);
-router.delete("/delete/:branchId/:appointmentId", deleteScheduleHandler);
+router.delete("/delete", deleteScheduleHandler);
 router.get("/get-appointments", getAppoitmentsHandler);
 router.get("/get-doctor-appointments", getDoctorAppointmentHandler);
 router.patch("/update-appointment", updateAppointmentHandler);

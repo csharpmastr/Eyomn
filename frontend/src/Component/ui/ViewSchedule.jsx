@@ -1,19 +1,31 @@
 import dayjs from "dayjs";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import { FiClock } from "react-icons/fi";
-import { FiTrash } from "react-icons/fi";
-import { FiEdit } from "react-icons/fi";
+import { FiClock, FiTrash, FiEdit } from "react-icons/fi";
 import ConfirmationModal from "./ConfirmationModal";
 import SetAppointment from "./SetAppointment";
+import { deleteAppointment } from "../../Service/AppointmentService";
+import Cookies from "universal-cookie";
+import { removeAppointment } from "../../Slice/AppointmentSlice";
 
 const ViewSchedule = ({ onClose, appointments }) => {
+  const cookies = new Cookies();
+  const accessToken = cookies.get("accessToken");
+  const refreshToken = cookies.get("refreshToken");
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [isSetAppoinmentOpen, setSetAppoimentOpen] = useState(false);
   const [appointmentToEdit, setAppointmentToEdit] = useState(null);
-  const role = useSelector((state) => state.reducer.user.user.role);
+  const [appointmentToDelete, setAppointmentToDelete] = useState(null);
+  const reduxDispatch = useDispatch();
+  const user = useSelector((state) => state.reducer.user.user);
+  const role = user.role;
   const branches = useSelector((state) => state.reducer.branch.branch);
+  let branchId =
+    (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
+    user.userId;
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const borderColors = [
     "border-l-blue-300",
     "border-l-red-300",
@@ -32,6 +44,29 @@ const ViewSchedule = ({ onClose, appointments }) => {
   const openSetAppoinment = (appointment) => {
     setAppointmentToEdit(appointment);
     setSetAppoimentOpen(!isSetAppoinmentOpen);
+  };
+
+  const handleDeleteAppointment = async () => {
+    if (!appointmentToDelete) return;
+
+    setIsLoading(true);
+    try {
+      const response = await deleteAppointment(
+        branchId,
+        appointmentToDelete,
+        user.firebaseUid,
+        accessToken,
+        refreshToken
+      );
+      if (response) {
+        setIsSuccess(true);
+        reduxDispatch(removeAppointment(appointmentToDelete));
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return ReactDOM.createPortal(
@@ -85,7 +120,7 @@ const ViewSchedule = ({ onClose, appointments }) => {
                             </p>
                           </div>
                         </div>
-                        {role === "0" || role === "1" ? (
+                        {role === "0" ? (
                           ""
                         ) : (
                           <div className="flex flex-col justify-between opacity-100 xl:opacity-0 group-hover:opacity-100 transition-opacity duration-300 gap-2">
@@ -94,7 +129,12 @@ const ViewSchedule = ({ onClose, appointments }) => {
                             >
                               <FiEdit className="w-5 h-5 text-blue-400" />
                             </button>
-                            <button onClick={openConfirmation}>
+                            <button
+                              onClick={() => {
+                                setAppointmentToDelete(appointment.id);
+                                openConfirmation();
+                              }}
+                            >
                               <FiTrash className="w-5 h-5 text-red-400" />
                             </button>
                           </div>
@@ -116,6 +156,10 @@ const ViewSchedule = ({ onClose, appointments }) => {
         <ConfirmationModal
           onClose={() => setIsConfirmationModalOpen(false)}
           title={"Delete Schedule"}
+          handleDelete={() => handleDeleteAppointment(appointmentToDelete)}
+          isLoading={isLoading}
+          actionSuccessMessage={"Appointment Successfully Deleted!"}
+          isSuccessModalOpen={isSuccess}
         />
       )}
       {isSetAppoinmentOpen && (

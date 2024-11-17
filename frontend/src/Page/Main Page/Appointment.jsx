@@ -40,12 +40,16 @@ const Appointment = () => {
       .sort((a, b) => dayjs(a.scheduledTime) - dayjs(b.scheduledTime));
   };
 
-  // Function to generate a pastel color
-  const getPastelColor = () => {
-    const r = Math.floor(Math.random() * 128 + 127);
-    const g = Math.floor(Math.random() * 128 + 127);
-    const b = Math.floor(Math.random() * 128 + 127);
-    return `rgb(${r}, ${g}, ${b})`;
+  const getAppointmentColor = (scheduledTime) => {
+    const now = dayjs();
+    const appointmentDate = dayjs(scheduledTime);
+    const diffInDays = appointmentDate.diff(now, "day");
+
+    if (diffInDays < 0) return "bg-red-300";
+
+    if (diffInDays <= 7) return "bg-green-300";
+
+    return "bg-green-100";
   };
 
   const renderDays = () => {
@@ -75,8 +79,9 @@ const Appointment = () => {
                 {getAppointmentsForDay(i).map((appointment, index) => (
                   <div
                     key={index}
-                    className="text-rg text-f-dark font-medium py-2 rounded-md mb-2"
-                    style={{ backgroundColor: getPastelColor() }}
+                    className={`text-rg text-f-dark font-medium py-2 rounded-md mb-2 ${getAppointmentColor(
+                      appointment.scheduledTime
+                    )}`}
                   >
                     {dayjs(appointment.scheduledTime).format("h:mm A")}
                   </div>
