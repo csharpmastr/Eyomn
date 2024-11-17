@@ -196,7 +196,6 @@ export const useFetchData = () => {
             const result = await apiCall.call();
             switch (apiCall.type) {
               case "patients":
-                console.log(result);
                 reduxDispatch(setPatients(result));
                 break;
               case "appointments":
