@@ -54,7 +54,6 @@ const addProduct = async (branchId, productDetails, firebaseUid) => {
     if (productExists) {
       throw { status: 400, message: "The product already exists." };
     }
-    console.log(productDetails);
 
     const productId = await generateUniqueId(productsCollectionRef);
     const productSKU = generateSKU();
@@ -74,42 +73,6 @@ const addProduct = async (branchId, productDetails, firebaseUid) => {
     return { productId, productSKU };
   } catch (error) {
     console.error("Error adding product:", error);
-    throw error;
-  }
-};
-
-const getProducts = async (branchId, firebaseUid) => {
-  try {
-    await verifyFirebaseUid(firebaseUid);
-    const productRef = inventoryCollection.doc(branchId).collection("products");
-    const snapshot = await productRef.get();
-
-    if (snapshot.empty) {
-      console.log("No products found for this branch.");
-      return [];
-    }
-
-    const products = snapshot.docs.map((doc) => {
-      console.log(doc.data());
-
-      const decryptedData = decryptDocument(doc.data(), [
-        "product",
-        "productId",
-        "expirationDate",
-        "productSKU",
-        "price",
-        "quantity",
-        "isDeleted",
-        "retail_price",
-      ]);
-      return {
-        ...decryptedData,
-      };
-    });
-
-    return products;
-  } catch (error) {
-    console.error("Error fetching products: ", error);
     throw error;
   }
 };
@@ -284,30 +247,89 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
   }
 };
 
-const getPurchases = async (branchId, firebaseUid) => {
+const getBranchInventory = async (branchId, firebaseUid) => {
   try {
     await verifyFirebaseUid(firebaseUid);
-    const salesColRef = inventoryCollection
+
+    const servicesRef = inventoryCollection
+      .doc(branchId)
+      .collection("services");
+    const purchasesRef = inventoryCollection
       .doc(branchId)
       .collection("purchases");
+    const productsRef = inventoryCollection
+      .doc(branchId)
+      .collection("products");
 
-    const saleSnapShot = await salesColRef.get();
-    if (saleSnapShot.empty) {
-      return [];
-    }
-    const purchases = saleSnapShot.docs.map((doc) => doc.data());
+    const [servicesSnap, purchasesSnap, productsSnap] = await Promise.all([
+      servicesRef.get(),
+      purchasesRef.get(),
+      productsRef.get(),
+    ]);
 
-    return purchases;
+    const services = servicesSnap.empty
+      ? []
+      : servicesSnap.docs.map((doc) => {
+          const serviceData = doc.data();
+
+          const decryptedServiceData = decryptDocument(serviceData, [
+            "service_price",
+            "date",
+            "createdAt",
+            "doctorId",
+            "patientId",
+          ]);
+
+          return {
+            id: doc.id,
+            ...decryptedServiceData,
+          };
+        });
+
+    const purchases = purchasesSnap.empty
+      ? []
+      : purchasesSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+    const products = productsSnap.empty
+      ? []
+      : productsSnap.docs.map((doc) => {
+          const productData = doc.data();
+
+          const decryptedProductData = decryptDocument(productData, [
+            "product",
+            "productId",
+            "expirationDate",
+            "productSKU",
+            "price",
+            "quantity",
+            "isDeleted",
+            "retail_price",
+          ]);
+
+          return {
+            id: doc.id,
+            ...decryptedProductData,
+          };
+        });
+
+    return { services, purchases, products };
   } catch (error) {
-    return {
+    console.error("Error retrieving branch inventory:", error);
+    throw {
       status: error.status || 500,
-      message: error.message || "An error occurred while fetching purchases.",
+      message:
+        error.message || "An error occurred while fetching branch inventory.",
     };
   }
 };
-const getOrgProductSales = async (organizationId, firebaseUid) => {
+
+const getOrgProductSalesWithServices = async (organizationId, firebaseUid) => {
   try {
     await verifyFirebaseUid(firebaseUid);
+
     const orgDoc = await organizationCollection.doc(organizationId).get();
     if (!orgDoc.exists) {
       throw { status: 404, message: "Organization not found." };
@@ -340,18 +362,27 @@ const getOrgProductSales = async (organizationId, firebaseUid) => {
         ]);
       });
 
+      const services = await getServiceFees(branchId, firebaseUid);
+
       inventoryData[branchId] = {
         purchases: sales,
         products: products,
+        services: services,
       };
     }
 
     return inventoryData;
   } catch (error) {
-    console.error("Error fetching organization product sales:", error);
-    throw new Error("Error fetching product sales data: " + error.message);
+    console.error(
+      "Error fetching organization product sales with services:",
+      error
+    );
+    throw new Error(
+      "Error fetching product sales and services data: " + error.message
+    );
   }
 };
+
 const retrieveProduct = async (branchId, products, firebaseUid) => {
   try {
     await verifyFirebaseUid(firebaseUid);
@@ -372,13 +403,94 @@ const retrieveProduct = async (branchId, products, firebaseUid) => {
   }
 };
 
+const addServiceFee = async (
+  branchId,
+  doctorId,
+  patientId,
+  serviceDetails,
+  firebaseUid
+) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const currentDate = new Date();
+    const servicesColRef = inventoryCollection
+      .doc(branchId)
+      .collection("services");
+
+    const serviceId = await generateUniqueId(servicesColRef);
+
+    const serviceDataWithTimestamp = {
+      ...serviceDetails,
+      createdAt: currentDate.toISOString(),
+      doctorId: doctorId,
+      patientId: patientId,
+    };
+
+    const encryptedServiceData = encryptDocument(serviceDataWithTimestamp, [
+      "service_price",
+      "date",
+      "createdAt",
+      "doctorId",
+      "patientId",
+    ]);
+
+    await servicesColRef.doc(serviceId).set(encryptedServiceData);
+
+    return serviceId;
+    console.log("Service fee added successfully.");
+  } catch (error) {
+    console.error("Error adding service fee:", error);
+  }
+};
+const getServiceFees = async (branchId, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const servicesRef = inventoryCollection
+      .doc(branchId)
+      .collection("services");
+
+    const servicesSnap = await servicesRef.get();
+
+    if (servicesSnap.empty) {
+      console.log("No service fees found.");
+      return [];
+    }
+
+    const services = servicesSnap.docs.map((doc) => {
+      const serviceData = doc.data();
+
+      const decryptedServiceData = decryptDocument(serviceData, [
+        "service_price",
+        "date",
+        "createdAt",
+        "doctorId",
+        "patientId",
+      ]);
+
+      return {
+        id: doc.id,
+        ...decryptedServiceData,
+      };
+    });
+
+    console.log("Service fees retrieved:", services);
+    return services;
+  } catch (error) {
+    console.error("Error retrieving service fees:", error);
+    throw error;
+  }
+};
+
 module.exports = {
   addProduct,
-  getProducts,
+
   deleteProduct,
   updateProduct,
   addPurchase,
-  getPurchases,
-  getOrgProductSales,
+  getBranchInventory,
+  getOrgProductSalesWithServices,
   retrieveProduct,
+  addServiceFee,
 };

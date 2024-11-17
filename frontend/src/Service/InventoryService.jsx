@@ -42,20 +42,26 @@ export const addProductService = async (
   }
 };
 
-export const getProducts = async (
+export const getBranchInventory = async (
   branchId,
   accessToken,
   refreshToken,
   firebaseUid
 ) => {
   try {
-    const response = await axios.get(`${INVENTORY_API_BASE_URL}/get-products`, {
-      params: {
-        branchId,
-        firebaseUid,
-      },
-      headers: {},
-    });
+    const response = await axios.get(
+      `${INVENTORY_API_BASE_URL}/get-branch-inventory`,
+      {
+        params: {
+          branchId,
+          firebaseUid,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Error getting products : ", err);
@@ -173,7 +179,7 @@ export const getPurchases = async (
   }
 };
 
-export const getProductsSales = async (
+export const getInventory = async (
   organizationId,
   firebaseUid,
   accessToken,
@@ -181,7 +187,7 @@ export const getProductsSales = async (
 ) => {
   try {
     const response = await axios.get(
-      `${INVENTORY_API_BASE_URL}/get-product-sales`,
+      `${INVENTORY_API_BASE_URL}/get-inventory`,
       {
         params: {
           firebaseUid,
@@ -222,6 +228,37 @@ export const retrieveProductService = async (
     return response.data;
   } catch (error) {
     console.error("Error retrieving product: ", error);
+    throw error;
+  }
+};
+export const addService = async (
+  branchId,
+  doctorId,
+  patientId,
+  serviceDetails,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.post(
+      `${INVENTORY_API_BASE_URL}/add-service/${branchId}`,
+      serviceDetails,
+      {
+        params: {
+          firebaseUid,
+          patientId,
+          doctorId,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error adding service fee: ", error);
     throw error;
   }
 };

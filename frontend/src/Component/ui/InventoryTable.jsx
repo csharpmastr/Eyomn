@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { FaEllipsisV } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AddEditProduct from "../../Component/ui/AddEditProduct";
 import ConfirmationModal from "../../Component/ui/ConfirmationModal";
 import Nodatafound from "../../assets/Image/nodatafound.png";
 import RoleColor from "../../assets/Util/RoleColor";
 import Fuse from "fuse.js";
+import { deleteProduct } from "../../Service/InventoryService";
+import { removeProduct } from "../../Slice/InventorySlice";
 
 const InventoryTable = ({ searchTerm, sortOption }) => {
   const products = useSelector((state) => state.reducer.inventory.products);
+  const user = useSelector((state) => state.reducer.user.user);
+  let branchId =
+    (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
+    user.userId;
   const [collapsedProducts, setCollapsedProducts] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -20,7 +26,9 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [productId, setProductId] = useState("");
-
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const reduxDispatch = useDispatch();
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   const toggleOpen = (productId) => {
@@ -29,7 +37,6 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
       [productId]: !prevState[productId],
     }));
   };
-  console.log(products);
 
   const handleCollapseToggle = (productId) => {
     setCollapsedProducts((prevState) => ({
@@ -110,6 +117,25 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
 
   const { btnContentColor } = RoleColor();
 
+  const handleDelete = async (productId) => {
+    setIsLoading(true);
+    try {
+      const response = await deleteProduct(
+        branchId,
+        productId,
+        { isDeleted: true },
+        user.firebaseUid
+      );
+      if (response) {
+        setIsSuccess(true);
+        reduxDispatch(removeProduct(productId));
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <>
       {filteredProducts.length > 0 ? (
@@ -242,6 +268,10 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
                 productId={productId}
                 onClose={() => setIsConfirmationModalOpen(false)}
                 title={"Delete Product"}
+                handleDelete={() => handleDelete(productId)}
+                isLoading={isLoading}
+                actionSuccessMessage={"Product Successfully Deleted!"}
+                isSuccessModalOpen={isSuccess}
               />
             )}
           </div>

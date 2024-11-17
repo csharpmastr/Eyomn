@@ -1,7 +1,22 @@
 import React, { useState } from "react";
 import PaymentHistory from "./PaymentHistory";
+import { addService } from "../../Service/InventoryService";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import Cookies from "universal-cookie";
+import Loader from "./Loader";
+import { addServices } from "../../Slice/InventorySlice";
 
 const PaymentBreakdown = () => {
+  const cookies = new Cookies();
+  const accessToken = cookies.get("accessToken");
+  const refreshToken = cookies.get("refreshToken");
+  const reduxDispatch = useDispatch();
+  const user = useSelector((state) => state.reducer.user.user);
+  const patients = useSelector((state) => state.reducer.patient.patients);
+  const { patientId } = useParams();
+  const patient = patients.find((patient) => patient.patientId === patientId);
+  const [isLoading, setIsLoading] = useState(false);
   const today = new Date().toISOString().split("T")[0];
   const [isHistoryOpen, setHistoryOpen] = useState(false);
   const [selectType, setSelectType] = useState("Product");
@@ -22,7 +37,11 @@ const PaymentBreakdown = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    const numericFields = ["product_qty", "product_price", "service_price"];
+    const newValue = numericFields.includes(name) ? Number(value) : value;
+
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
   };
 
   const calculateTotal = () => {
@@ -31,25 +50,50 @@ const PaymentBreakdown = () => {
     return productTotal + serviceTotal;
   };
 
-  const handleSubmit = () => {
-    console.log(`${selectType} Data:`, formData);
+  const handleSubmit = async () => {
+    console.log(`${selectType} Data:`);
     console.log("Total Payment:", calculateTotal());
+    setIsLoading(true);
+    let submittedData = { ...formData };
 
-    setFormData({
-      date: today,
-      product_name: "",
-      category: "",
-      product_description: "",
-      product_qty: 0,
-      product_price: 0,
-      service_type: "",
-      service_price: 0,
-      service_other: "",
-    });
+    try {
+      if (selectType === "Service") {
+        const {
+          product_name,
+          category,
+          product_description,
+          product_qty,
+          product_price,
+          product_code,
+          ...serviceData
+        } = formData;
+
+        submittedData = serviceData;
+
+        const response = await addService(
+          patient.branchId,
+          patient.doctorId,
+          patientId,
+          submittedData,
+          user.firebaseUid,
+          accessToken,
+          refreshToken
+        );
+        if (response) {
+          reduxDispatch(
+            addServices({ ...submittedData, id: response.serviceId })
+          );
+        }
+      }
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <>
+      {isLoading && <Loader />}
       <header className="flex w-full h-fit justify-between items-center mb-4">
         <h1 className="text-p-sm md:text-p-rg font-medium text-f-dark">
           Payment Breakdown

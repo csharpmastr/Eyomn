@@ -6,12 +6,12 @@ import { setPatients } from "../Slice/PatientSlice";
 import { setDoctor } from "../Slice/doctorSlice";
 import { setBranch } from "../Slice/BranchSlice";
 import { setStaffs } from "../Slice/StaffSlice";
+import { getBranchInventory, getInventory } from "../Service/InventoryService";
 import {
-  getProducts,
-  getProductsSales,
-  getPurchases,
-} from "../Service/InventoryService";
-import { setProducts, setPurchases } from "../Slice/InventorySlice";
+  setProducts,
+  setPurchases,
+  setServices,
+} from "../Slice/InventorySlice";
 import {
   getAppointments,
   getDoctorAppointments,
@@ -75,18 +75,18 @@ export const useFetchData = () => {
           },
           {
             call: () =>
-              getProducts(branchId, accessToken, refreshToken, firebaseUid),
-            type: "products",
+              getBranchInventory(
+                branchId,
+                accessToken,
+                refreshToken,
+                firebaseUid
+              ),
+            type: "inventory",
           },
           {
             call: () =>
               getAppointments(branchId, accessToken, refreshToken, firebaseUid),
             type: "appointments",
-          },
-          {
-            call: () =>
-              getPurchases(branchId, firebaseUid, accessToken, refreshToken),
-            type: "purchases",
           },
           {
             call: () =>
@@ -127,7 +127,7 @@ export const useFetchData = () => {
           },
           {
             call: () =>
-              getProductsSales(
+              getInventory(
                 organizationId,
                 firebaseUid,
                 accessToken,
@@ -219,24 +219,47 @@ export const useFetchData = () => {
               case "inventory":
                 let allPurchases = [];
                 let allProducts = [];
-                Object.entries(result).forEach(
-                  ([branchId, { purchases, products }]) => {
-                    const formattedPurchases = purchases.map((purchase) => ({
-                      ...purchase,
-                      branchId,
-                    }));
-                    allPurchases = [...allPurchases, ...formattedPurchases];
+                let allServices = [];
 
-                    const formattedProducts = products.map((product) => ({
-                      ...product,
-                      branchId,
-                    }));
-                    allProducts = [...allProducts, ...formattedProducts];
-                  }
-                );
+                if (user.role === "0") {
+                  Object.entries(result).forEach(
+                    ([branchId, { purchases, products, services }]) => {
+                      //purchases
+                      const formattedPurchases = purchases.map((purchase) => ({
+                        ...purchase,
+                        branchId,
+                      }));
+                      allPurchases = [...allPurchases, ...formattedPurchases];
+
+                      //products
+                      const formattedProducts = products.map((product) => ({
+                        ...product,
+                        branchId,
+                      }));
+                      allProducts = [...allProducts, ...formattedProducts];
+
+                      //services
+                      if (services) {
+                        const formattedServices = services.map((service) => ({
+                          ...service,
+                          branchId,
+                        }));
+                        allServices = [...allServices, ...formattedServices];
+                      }
+                    }
+                  );
+                } else {
+                  allProducts = result.products;
+                  allPurchases = result.purchases;
+                  allServices = result.services;
+                }
+
                 reduxDispatch(setPurchases(allPurchases));
                 reduxDispatch(setProducts(allProducts));
+                reduxDispatch(setServices(allServices));
+
                 break;
+
               case "branches":
                 reduxDispatch(setBranch(result));
                 const staffs = result.flatMap((branch) => branch.staffs || []);
