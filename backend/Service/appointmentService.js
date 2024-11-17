@@ -207,9 +207,97 @@ const getDoctorAppointments = async (doctorId, firebaseUid) => {
   }
 };
 
+const updateAppointment = async (
+  branchId,
+  appointmentId,
+  updatedDetails,
+  firebaseUid
+) => {
+  try {
+    console.log(updatedDetails);
+
+    await verifyFirebaseUid(firebaseUid);
+    console.log();
+
+    const schedRef = appointmentCollection
+      .doc(branchId)
+      .collection("schedules");
+
+    const appointmentDocRef = schedRef.doc(appointmentId);
+
+    const appointmentDoc = await appointmentDocRef.get();
+    if (!appointmentDoc.exists) {
+      throw {
+        status: 404,
+        message: "Appointment not found.",
+      };
+    }
+
+    const existingDetails = appointmentDoc.data();
+    const thirtyMinuteGap = 30 * 60 * 1000;
+
+    const newStartTime = new Date(updatedDetails.scheduledTime).getTime();
+    const newEndTime =
+      newStartTime +
+      (updatedDetails.duration
+        ? updatedDetails.duration * 60 * 1000
+        : thirtyMinuteGap);
+
+    const schedulesSnapshot = await schedRef.get();
+
+    if (!schedulesSnapshot.empty) {
+      schedulesSnapshot.forEach((doc) => {
+        if (doc.id === appointmentId) return;
+
+        const scheduleData = doc.data();
+        const existingStartTime = new Date(
+          scheduleData.scheduledTime
+        ).getTime();
+        const existingReason = decryptData(scheduleData.reason);
+
+        const requiredGap =
+          existingReason === "check up" || existingReason === "consultation"
+            ? thirtyMinuteGap
+            : 0;
+
+        const existingEndTime = existingStartTime + requiredGap;
+
+        if (newStartTime < existingEndTime && newEndTime > existingStartTime) {
+          throw {
+            status: 422,
+            message: `Conflict detected with another schedule. Ensure a ${
+              requiredGap === thirtyMinuteGap ? "30-minute" : "custom"
+            } gap between schedules.`,
+          };
+        }
+      });
+    }
+
+    const encryptedDetails = encryptDocument(updatedDetails, [
+      "scheduledTime",
+      "doctorId",
+    ]);
+
+    await appointmentDocRef.set({
+      ...existingDetails,
+      ...encryptedDetails,
+    });
+
+    return `Appointment ${appointmentId} updated successfully.`;
+  } catch (error) {
+    console.error("Error editing appointment:", error.message);
+    if (error.status) {
+      throw { status: error.status, message: error.message };
+    } else {
+      throw new Error("Failed to edit appointment: " + error.message);
+    }
+  }
+};
+
 module.exports = {
   addSchedule,
   deleteSchedule,
   getAppointments,
   getDoctorAppointments,
+  updateAppointment,
 };

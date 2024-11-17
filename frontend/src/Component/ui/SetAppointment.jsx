@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "universal-cookie";
-import { addAppointmentService } from "../../Service/AppointmentService";
+import {
+  addAppointmentService,
+  updateAppointment,
+} from "../../Service/AppointmentService";
 import Loader from "./Loader";
 import SuccessModal from "./SuccessModal";
 import Modal from "./Modal";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import { addAppointment } from "../../Slice/AppointmentSlice";
+import {
+  addAppointment,
+  updatedAppointment,
+} from "../../Slice/AppointmentSlice";
 
 const SetAppointment = ({ onClose, appointmentToEdit }) => {
   const [errors, setErrors] = useState({});
@@ -52,16 +58,31 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
   });
 
   useEffect(() => {
-    if (appointmentToEdit) {
-      setFormData({
-        patient_name: appointmentToEdit.patient_name,
-        reason: appointmentToEdit.reason,
-        doctorId: appointmentToEdit.doctorId,
-        doctor: appointmentToEdit.doctor,
-      });
-      const scheduledTime = new Date(appointmentToEdit.scheduledTime);
-      setDate(scheduledTime.toISOString().split("T")[0]);
-      setTime(scheduledTime.toTimeString().split(" ")[0].substring(0, 5));
+    if (user.role !== "2") {
+      if (appointmentToEdit) {
+        setFormData({
+          patient_name: appointmentToEdit.patient_name,
+          reason: appointmentToEdit.reason,
+          doctorId: appointmentToEdit.doctorId,
+          doctor: appointmentToEdit.doctor,
+        });
+        const scheduledTime = new Date(appointmentToEdit.scheduledTime);
+        setDate(scheduledTime.toISOString().split("T")[0]);
+        setTime(scheduledTime.toTimeString().split(" ")[0].substring(0, 5));
+      }
+    } else {
+      if (appointmentToEdit) {
+        setDocFormData({
+          patient_name: appointmentToEdit.patient_name,
+          reason: appointmentToEdit.reason,
+          doctorId: user.userId,
+          doctor: `${user.first_name} ${user.last_name}`,
+        });
+        const scheduledTime = new Date(appointmentToEdit.scheduledTime);
+        setSelectedBranchId(appointmentToEdit.branchId);
+        setDate(scheduledTime.toISOString().split("T")[0]);
+        setTime(scheduledTime.toTimeString().split(" ")[0].substring(0, 5));
+      }
     }
   }, [appointmentToEdit]);
 
@@ -211,6 +232,8 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
   const timeOptions = date ? generateTimeOptions(date) : [];
 
   const handleSubmitAppointment = async (e) => {
+    const scheduledTime = new Date(`${date}T${time}`).toISOString();
+
     e.preventDefault();
 
     if (!validateForm()) {
@@ -218,62 +241,112 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
     }
     setIsLoading(true);
 
-    const scheduledTime = new Date(`${date}T${time}`).toISOString();
-
     try {
-      if (user.role !== "2") {
-        const appointmentData = {
-          ...formData,
-          scheduledTime,
-        };
-        const response = await addAppointmentService(
-          branchId,
-          appointmentData,
-          accessToken,
-          refreshToken,
-          user.firebaseUid
-        );
+      if (!appointmentToEdit) {
+        try {
+          if (user.role !== "2") {
+            const appointmentData = {
+              ...formData,
+              scheduledTime,
+            };
+            const response = await addAppointmentService(
+              branchId,
+              appointmentData,
+              accessToken,
+              refreshToken,
+              user.firebaseUid
+            );
 
-        if (response) {
-          setIsSuccess(true);
-          handleClear();
-          console.log(response.data);
-          const scheduleId = response.data.scheduleId;
-          reduxDispatch(addAppointment({ ...appointmentData, scheduleId }));
+            if (response) {
+              setIsSuccess(true);
+              handleClear();
+              console.log(response.data);
+              const scheduleId = response.data.scheduleId;
+              reduxDispatch(addAppointment({ ...appointmentData, scheduleId }));
+            }
+          } else {
+            const appointmentData = {
+              ...docFormData,
+              scheduledTime,
+            };
+            const response = await addAppointmentService(
+              selectedBranch,
+              appointmentData,
+              accessToken,
+              refreshToken,
+              user.firebaseUid
+            );
+            if (response) {
+              setIsSuccess(true);
+              handleClear();
+              console.log(response.data);
+              const scheduleId = response.data.scheduleId;
+              reduxDispatch(addAppointment({ ...appointmentData, scheduleId }));
+            }
+          }
+        } catch (error) {
+          setIsSuccess(false);
+          if (error.response?.status === 409) {
+            setDoesExists({ type: "same_time" });
+          } else if (error.response?.status === 422) {
+            setDoesExists({ type: "overlap" });
+          } else {
+            console.error("An unexpected error occurred:", error);
+          }
+        } finally {
+          setIsLoading(false);
         }
       } else {
-        const appointmentData = {
-          ...docFormData,
-          scheduledTime,
-        };
-        const response = await addAppointmentService(
-          selectedBranch,
-          appointmentData,
-          accessToken,
-          refreshToken,
-          user.firebaseUid
-        );
-        if (response) {
-          setIsSuccess(true);
-          handleClear();
-          console.log(response.data);
-          const scheduleId = response.data.scheduleId;
-          reduxDispatch(addAppointment({ ...appointmentData, scheduleId }));
+        try {
+          if (user.role !== "2") {
+            const appointmentData = { ...formData, scheduledTime };
+
+            const response = await updateAppointment(
+              branchId,
+              appointmentToEdit.id,
+              appointmentData,
+              user.firebaseUid,
+              accessToken,
+              refreshToken
+            );
+            if (response) {
+              setIsSuccess(true);
+            }
+          } else {
+            const appointmentData = { ...docFormData, scheduledTime };
+
+            const response = await updateAppointment(
+              selectedBranch,
+              appointmentToEdit.id,
+              appointmentData,
+              user.firebaseUid,
+              accessToken,
+              refreshToken
+            );
+
+            if (response) {
+              setIsSuccess(true);
+              reduxDispatch(
+                updatedAppointment({
+                  id: appointmentToEdit.id,
+                  ...appointmentData,
+                  createdAt: appointmentToEdit.createdAt,
+                  branchId: appointmentToEdit.branchId,
+                })
+              );
+            }
+          }
+        } catch (error) {
+          console.error("An unexpected error occurred:", error);
         }
       }
     } catch (error) {
-      setIsSuccess(false);
-      if (error.response?.status === 409) {
-        setDoesExists({ type: "same_time" });
-      } else if (error.response?.status === 422) {
-        setDoesExists({ type: "overlap" });
-      } else {
-        console.error("An unexpected error occurred:", error);
-      }
+      console.error("An unexpected error occurred:", error);
     } finally {
       setIsLoading(false);
     }
   };
+  console.log(appointmentToEdit);
 
   const filterAvailableDoctors = (date, time) => {
     return doctors.filter((doctor) => {
@@ -327,7 +400,11 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
     <>
       {isLoading ? (
         <Loader
-          description={"Saving Appointment Information, please wait..."}
+          description={`${
+            appointmentToEdit
+              ? "Updating Appointment Information, please wait..."
+              : "Saving Appointment Information, please wait..."
+          }`}
         />
       ) : (
         <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
@@ -523,8 +600,12 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
         onClose={() => {
           setIsSuccess(false);
         }}
-        title="Adding Success"
-        description="Appointment has been added in the system."
+        title={`${appointmentToEdit ? "Updating Success" : "Adding Success"}`}
+        description={`${
+          appointmentToEdit
+            ? "Appointment has been updated in the system."
+            : "Appointment has been added in the system."
+        }`}
       />
       <Modal
         isOpen={doesExists}

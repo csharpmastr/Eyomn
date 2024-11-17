@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Modal from "../../Component/ui/Modal";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { addNewRawNote } from "../../Slice/NoteSlice";
-import { cleanData, mergeDeep } from "../../Helper/Helper";
+import { cleanData, formatPatientNotes, mergeDeep } from "../../Helper/Helper";
 
 const MedForm = () => {
   const { patientId } = useParams();
@@ -72,7 +72,7 @@ const MedForm = () => {
       additional_note: "",
     },
 
-    occular_history: {
+    ocular_history: {
       option: {
         glaucoma: false,
         cataract: false,
@@ -83,7 +83,7 @@ const MedForm = () => {
       additional_note: "",
     },
 
-    fam_occular_history: {
+    fam_ocular_history: {
       option: {
         glaucoma: false,
         cataract: false,
@@ -302,7 +302,7 @@ const MedForm = () => {
         od: "",
         os: "",
       },
-      virteous: {
+      vitreous: {
         od: "",
         os: "",
       },
@@ -525,8 +525,10 @@ const MedForm = () => {
   };
   const [medformData, setMedformData] = useState(() => {
     const savedData = sessionStorage.getItem("medformData");
+
     return savedData ? JSON.parse(savedData) : initialMedFormData;
   });
+
   useEffect(() => {
     if (medformData) {
       sessionStorage.setItem("medformData", JSON.stringify(medformData));
@@ -537,19 +539,15 @@ const MedForm = () => {
     if (noteId && rawNotes) {
       const rawNote = rawNotes.find((raw) => raw.noteId === noteId);
       if (rawNote) {
-        if (!medformData || Object.keys(medformData).length === 0) {
-          setMedformData((prevData) => {
-            const updatedData = { ...prevData };
-            return mergeDeep(updatedData, rawNote);
-          });
-        }
+        setMedformData((prevData) => {
+          const updatedData = mergeDeep({ ...initialMedFormData }, rawNote);
+          return updatedData;
+        });
       }
     } else {
-      if (!medformData || Object.keys(medformData).length === 0) {
-        setMedformData(initialMedFormData);
-      }
+      setMedformData(medformData);
     }
-  }, [noteId, rawNotes, medformData]);
+  }, [noteId, rawNotes]);
 
   useEffect(() => {
     const handleBeforeUnload = (event) => {
@@ -572,7 +570,7 @@ const MedForm = () => {
     e.preventDefault();
     const transformedData = cleanData(medformData);
     console.log(transformedData);
-    console.log(jsonToString(transformedData));
+    console.log(formatPatientNotes(transformedData));
 
     // setHasUnsavedChanges(false);
     // try {
@@ -605,11 +603,10 @@ const MedForm = () => {
     if (currentPage < pageTitles.length - 1) {
       setCurrentPage((prevPage) => prevPage + 1);
     }
-    console.log(medformData);
   };
   const handleBackPage = (e) => {
     e.preventDefault();
-    if (currentPage < pageTitles.length - 1) {
+    if (currentPage > 0) {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
@@ -707,7 +704,7 @@ const MedForm = () => {
   };
   const handleBack = () => {
     navigate(`/scribe/${patientId}`);
-    console.log(medformData);
+    t;
     sessionStorage.removeItem("medformData");
     sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
   };
@@ -1042,7 +1039,7 @@ const MedForm = () => {
                 <div className="flex gap-5 flex-col md:flex-row">
                   <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full md:w-1/2">
                     <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                      | Occular Condition/History
+                      | Ocular Condition/History
                     </label>
                     <section className="text-p-sc md:text-p-sm font-semibold mt-5 flex">
                       <div className="flex flex-col gap-3 w-1/2">
@@ -1050,11 +1047,9 @@ const MedForm = () => {
                           <input
                             type="checkbox"
                             name="occhis_glaucoma"
-                            checked={
-                              medformData.occular_history.option.glaucoma
-                            }
+                            checked={medformData.ocular_history.option.glaucoma}
                             onChange={(e) =>
-                              handleChange(e, "occular_history.option.glaucoma")
+                              handleChange(e, "ocular_history.option.glaucoma")
                             }
                             className="w-6 h-6"
                           />
@@ -1066,11 +1061,9 @@ const MedForm = () => {
                           <input
                             type="checkbox"
                             name="occhis_cataract"
-                            checked={
-                              medformData.occular_history.option.cataract
-                            }
+                            checked={medformData.ocular_history.option.cataract}
                             onChange={(e) =>
-                              handleChange(e, "occular_history.option.cataract")
+                              handleChange(e, "ocular_history.option.cataract")
                             }
                             className="w-6 h-6"
                           />
@@ -1083,12 +1076,12 @@ const MedForm = () => {
                             type="checkbox"
                             name="occhis_stigmatism"
                             checked={
-                              medformData.occular_history.option.astigmatism
+                              medformData.ocular_history.option.astigmatism
                             }
                             onChange={(e) =>
                               handleChange(
                                 e,
-                                "occular_history.option.astigmatism"
+                                "ocular_history.option.astigmatism"
                               )
                             }
                             className="w-6 h-6"
@@ -1101,9 +1094,9 @@ const MedForm = () => {
                           <input
                             type="checkbox"
                             name="occhis_macular"
-                            checked={medformData.occular_history.option.macular}
+                            checked={medformData.ocular_history.option.macular}
                             onChange={(e) =>
-                              handleChange(e, "occular_history.option.macular")
+                              handleChange(e, "ocular_history.option.macular")
                             }
                             className="w-6 h-6"
                           />
@@ -1121,9 +1114,9 @@ const MedForm = () => {
                             type="date"
                             name="occhis_date"
                             max={new Date().toISOString().split("T")[0]}
-                            value={medformData.occular_history.last_exam}
+                            value={medformData.ocular_history.last_exam}
                             onChange={(e) =>
-                              handleChange(e, "occular_history.last_exam")
+                              handleChange(e, "ocular_history.last_exam")
                             }
                             className="mt-1 w-fit h-fit px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           />
@@ -1133,9 +1126,9 @@ const MedForm = () => {
                     <textarea
                       type="text"
                       name="occhis_additional_note"
-                      value={medformData.occular_history.additional_note}
+                      value={medformData.ocular_history.additional_note}
                       onChange={(e) =>
-                        handleChange(e, "occular_history.additional_note")
+                        handleChange(e, "ocular_history.additional_note")
                       }
                       className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
@@ -1143,7 +1136,7 @@ const MedForm = () => {
                   </div>
                   <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full md:w-1/2">
                     <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                      | Family Occular Conditon
+                      | Family Ocular Conditon
                     </label>
                     <section className="text-p-sc md:text-p-sm font-semibold mt-5 flex flex-col gap-3">
                       <label className="flex items-center gap-2">
@@ -1151,12 +1144,12 @@ const MedForm = () => {
                           type="checkbox"
                           name="fam_occhis_glaucoma"
                           checked={
-                            medformData.fam_occular_history.option.glaucoma
+                            medformData.fam_ocular_history.option.glaucoma
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "fam_occular_history.option.glaucoma"
+                              "fam_ocular_history.option.glaucoma"
                             )
                           }
                           className="w-6 h-6"
@@ -1170,12 +1163,12 @@ const MedForm = () => {
                           type="checkbox"
                           name="fam_occhis_cataract"
                           checked={
-                            medformData.fam_occular_history.option.cataract
+                            medformData.fam_ocular_history.option.cataract
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "fam_occular_history.option.cataract"
+                              "fam_ocular_history.option.cataract"
                             )
                           }
                           className="w-6 h-6"
@@ -1189,12 +1182,12 @@ const MedForm = () => {
                           type="checkbox"
                           name="fam_occhis_astigmatism"
                           checked={
-                            medformData.fam_occular_history.option.astigmatism
+                            medformData.fam_ocular_history.option.astigmatism
                           }
                           onChange={(e) =>
                             handleChange(
                               e,
-                              "fam_occular_history.option.astigmatism"
+                              "fam_ocular_history.option.astigmatism"
                             )
                           }
                           className="w-6 h-6"
@@ -1208,13 +1201,10 @@ const MedForm = () => {
                           type="checkbox"
                           name="fam_occhis_macular"
                           checked={
-                            medformData.fam_occular_history.option.macular
+                            medformData.fam_ocular_history.option.macular
                           }
                           onChange={(e) =>
-                            handleChange(
-                              e,
-                              "fam_occular_history.option.macular"
-                            )
+                            handleChange(e, "fam_ocular_history.option.macular")
                           }
                           className="w-6 h-6"
                         />
@@ -1226,9 +1216,9 @@ const MedForm = () => {
                     <textarea
                       type="text"
                       name="fam_occhis_additional_note"
-                      value={medformData.fam_occular_history.additional_note}
+                      value={medformData.fam_ocular_history.additional_note}
                       onChange={(e) =>
-                        handleChange(e, "fam_occular_history.additional_note")
+                        handleChange(e, "fam_ocular_history.additional_note")
                       }
                       className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       placeholder="If option not available"
@@ -2322,7 +2312,11 @@ const MedForm = () => {
                       </section>
                       <div className="md:w-2/3 border border-c-gray p-5 bg-white rounded-sm">
                         <img
-                          src={canvasImages.CROSS || CROSS}
+                          src={
+                            medformData.confrontation_test.image ||
+                            canvasImages.CROSS ||
+                            CROSS
+                          }
                           alt="CROSS IMG"
                           className="w-full aspect-square"
                           onClick={() => handleImageClick("CROSS")}
@@ -3108,7 +3102,11 @@ const MedForm = () => {
                         </header>
                         <div className="border border-c-gray3 p-5 bg-white rounded-sm">
                           <img
-                            src={canvasImages.BLANK_OD || BLANK_OD}
+                            src={
+                              medformData.ophthalmoscopy.od ||
+                              canvasImages.BLANK_OD ||
+                              BLANK_OD
+                            }
                             alt="BLANK IMG"
                             className="w-full aspect-square"
                             onClick={() => handleImageClick("BLANK_OD")}
@@ -3121,7 +3119,11 @@ const MedForm = () => {
                         </header>
                         <div className="border border-c-gray3 p-5 bg-white rounded-sm">
                           <img
-                            src={canvasImages.BLANK_OS || BLANK_OS}
+                            src={
+                              medformData.ophthalmoscopy.os ||
+                              canvasImages.BLANK_OS ||
+                              BLANK_OS
+                            }
                             alt="BLANK IMG"
                             className="w-full aspect-square"
                             onClick={() => handleImageClick("BLANK_OS")}
@@ -3183,7 +3185,11 @@ const MedForm = () => {
                       </header>
                       <div className="border border-c-gray3 p-5 bg-white rounded-sm">
                         <img
-                          src={canvasImages.OD || OD}
+                          src={
+                            medformData.internal_examination.image.od ||
+                            canvasImages.OD ||
+                            OD
+                          }
                           alt="OD IMG"
                           className="w-full aspect-square"
                           onClick={() => handleImageClick("OD")}
@@ -3293,9 +3299,9 @@ const MedForm = () => {
                       <div className="flex gap-3 items-center flex-col md:flex-row">
                         <select
                           name="virtreous_od"
-                          value={medformData.internal_examination.virteous.od}
+                          value={medformData.internal_examination.vitreous.od}
                           onChange={(e) =>
-                            handleChange(e, "internal_examination.virteous.od")
+                            handleChange(e, "internal_examination.vitreous.od")
                           }
                           className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
@@ -3313,9 +3319,9 @@ const MedForm = () => {
                         </p>
                         <select
                           name="virtreous_os"
-                          value={medformData.internal_examination.virteous.os}
+                          value={medformData.internal_examination.vitreous.os}
                           onChange={(e) =>
-                            handleChange(e, "internal_examination.virteous.os")
+                            handleChange(e, "internal_examination.vitreous.os")
                           }
                           className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
@@ -3816,7 +3822,11 @@ const MedForm = () => {
                       </header>
                       <div className="border border-c-gray3 p-5 bg-white rounded-sm">
                         <img
-                          src={canvasImages.OS || OS}
+                          src={
+                            medformData.internal_examination.image.os ||
+                            canvasImages.OS ||
+                            OS
+                          }
                           alt="OS IMG"
                           className="w-full aspect-square"
                           onClick={() => handleImageClick("OS")}
@@ -3837,7 +3847,11 @@ const MedForm = () => {
                         </header>
                         <div className="border border-c-gray3 p-5 bg-white rounded-b-md">
                           <img
-                            src={canvasImages.FRONT_OD || FRONT_OD}
+                            src={
+                              medformData.external_examination.image.od ||
+                              canvasImages.FRONT_OD ||
+                              FRONT_OD
+                            }
                             alt="FRONT IMG"
                             className="w-full"
                             onClick={() => handleImageClick("FRONT_OD")}
@@ -3850,7 +3864,11 @@ const MedForm = () => {
                         </header>
                         <div className="border border-c-gray3 p-5 bg-white rounded-b-md">
                           <img
-                            src={canvasImages.FRONT_OS || FRONT_OS}
+                            src={
+                              medformData.external_examination.image.os ||
+                              canvasImages.FRONT_OS ||
+                              FRONT_OS
+                            }
                             alt="FRONT IMG"
                             className="w-full"
                             onClick={() => handleImageClick("FRONT_OS")}
@@ -5615,12 +5633,20 @@ const MedForm = () => {
           {currentPage === 3 ? (
             <>
               {(noteId === null || noteId === undefined) && (
-                <button
-                  className="py-4 rounded-md bg-c-primary font-semibold text-p-sm md:text-p-rg text-f-light w-full mt-5"
-                  onClick={handleSubmitNote}
-                >
-                  Dito muna submit button
-                </button>
+                <div className="flex justify-end gap-4">
+                  <button
+                    className="py-3 rounded-md border-c-gray3 border-2  font-semibold text-p-sm md:text-p-rg text-f-dark w-32 mt-5"
+                    onClick={handleBackPage}
+                  >
+                    Back
+                  </button>
+                  <button
+                    className="py-4 rounded-md bg-c-primary font-semibold text-p-sm md:text-p-rg text-f-light w-64 mt-5"
+                    onClick={handleSubmitNote}
+                  >
+                    Submit Note
+                  </button>
+                </div>
               )}
             </>
           ) : (

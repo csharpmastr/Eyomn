@@ -110,6 +110,7 @@ const OrgDashboard = () => {
     const intervalId = setInterval(updateDateTimeAndGreeting, 1000);
     return () => clearInterval(intervalId);
   }, []);
+  console.log(user.organization);
 
   return (
     <>
@@ -122,12 +123,18 @@ const OrgDashboard = () => {
             <article className="text-f-light text-p-lg">
               <h6>{greeting}</h6>
               <h1 className="lg:text-h-h6 2xl:text-h-h3 font-semibold">
-                Welcome Back, Secretary Kim
+                {`Welcome Back, ${
+                  user.role !== "3"
+                    ? user.role === "0"
+                      ? user.organization
+                      : user.name
+                    : `Secretary ${user.first_name}`
+                }`}
               </h1>
             </article>
             <div className="flex gap-5 font-Poppins">
               {user.role === "0" && (
-                <div className="flex flex-col justify-between bg-white p-4 h-fit w-fit  gap-4 rounded-lg text-f-dark bg-[rgba(169,182,178,0.50)]  border">
+                <div className="flex flex-col justify-between bg-white p-4 h-fit w-fit  gap-4 rounded-lg text-f-dark bg-[rgba(169,182,178,0.20)]  border">
                   <div className="text-p-sc md:text-p-sm flex justify-between">
                     <p className="flex gap-1 items-center">
                       <FiCalendar /> {currentDateTime.date}

@@ -38,7 +38,7 @@ const MVP = () => {
       sub: "Configure your clinic’s structure and operational settings.",
     },
     "/add-patient": {
-      main: "Add Patient",
+      main: "Add New Patient",
       sub: "Easily add new patient information to your records.",
     },
     "/appointment": {
