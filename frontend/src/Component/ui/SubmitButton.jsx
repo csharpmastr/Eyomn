@@ -1,14 +1,22 @@
 import React from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 
-const SubmitButton = ({ value, onClick, disabled, style }) => {
+const SubmitButton = ({ value, onClick, disabled, style, isLoading }) => {
   return (
     <button
       type="submit"
       onClick={onClick}
       disabled={disabled}
-      className={`${style} text-center px-4 py-3 rounded-md text-p-rg text-f-light font-medium`}
+      className={`${style} text-center p-4 rounded-md text-p-rg text-f-light font-medium flex items-center justify-center gap-2`}
     >
-      {value}
+      {isLoading ? (
+        <>
+          <ClipLoader size={24} color="#a5b7bb" />
+          {value}
+        </>
+      ) : (
+        value
+      )}
     </button>
   );
 };
