@@ -2,12 +2,12 @@ import streamlit as st
 import requests
 
 # URL of the LangGraph API
-API_URL = "https://csharpmastr--eyomns-rag-app-web-endpoint.modal.run"
+API_URL = "https://csharpmastr--eyomnai-rag-chat-web-endpoint.modal.run"
 
 # Set up Streamlit UI
-st.set_page_config(page_title="LangGraph Chat", layout="centered")
+st.set_page_config(page_title="EyomnAI Chat", layout="centered")
 
-st.title("LangGraph Chat Interface")
+st.title("EyomnAI Chat Interface")
 
 # Initialize chat history in session state
 if "chat_history" not in st.session_state:
@@ -32,15 +32,16 @@ def send_question_to_langgraph(question):
             if memory_entry not in st.session_state["memory"]:
                 st.session_state["memory"].append(memory_entry)
             
-        print(st.session_state["memory"])           
+        #print(st.session_state["memory"])           
         payload = {"question": question, 
                    "generation": "", 
                    "web_search": "", 
                    "documents": [], 
                    "memory": st.session_state["memory"], 
                    "summarized_memory": ""}
+        
         # Make POST request to LangGraph API
-        response = requests.post(API_URL, json=payload, timeout=60.0)
+        response = requests.post(API_URL, json=payload, timeout=90.0)
         
         # Check if request was successful
         if response.status_code == 200:

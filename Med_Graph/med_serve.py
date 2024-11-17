@@ -1,32 +1,19 @@
 import modal
 from modal import Image, App, Secret, gpu
-from pathlib import Path
 from exception import CustomException
-from logger import logging
 import sys
 import os
-import json
-
 from helper_utils import get_model_config     
 
 model_dir = "/eyomn_model_volume"
 model_name = "m42-health/Llama3-Med42-8B"
-num_gpu = 1
+num_gpu = 2
 hours = 60 * 60
 token = os.getenv('OPHTHAL_AGENT_TOKEN')
 
 vllm_image = (
     Image.debian_slim(python_version="3.11")
     .pip_install(["fastapi>=0.115.4", "vllm==0.6.3post1"])
-    # .env({"HF_HUB_ENABLE_HF_TRANSFER": "1"})
-    # .run_function(
-    #     download_model,
-    #     secrets=[
-    #         Secret.from_name("RAG_APP_SECRETS", required_keys=["INFERENCE_AGENTS_TOKEN"])
-    #     ],
-    #     timeout= 60 * 20,
-    #     kwargs={"model_dir": model_dir, "model_name": model_name}
-    # )
 )
 try: 
     vllm_volume = modal.Volume.from_name("eyomn_model_volume", create_if_missing=False)
@@ -39,10 +26,11 @@ app = App(f"EYOMN-OPHTHAL-AGENT-VLLM-SERVING", secrets=[
 
 @app.function(
     image=vllm_image,
-    gpu=gpu.A10G(count=num_gpu),
+    gpu=gpu.L4(count=num_gpu),
     timeout=12 * hours,
     allow_concurrent_inputs=50,
-    volumes={model_dir: vllm_volume}
+    volumes={model_dir: vllm_volume},
+    container_idle_timeout=40
 )
 @modal.asgi_app()
 def serve_llm():
@@ -124,15 +112,12 @@ def serve_llm():
         # ADD AUTHED VLLM TO THE FASTAPI APP
         web_app.include_router(router)
             
-        # Define RoPE scaling configuration
-        rope_scaling_config = {"type": "linear", "factor": 2.0}
-        
+        # SET MODEL CONFIG FOR INFERENCE
         engine_args = AsyncEngineArgs(
             model = model_dir + "/" + "OPHTHAL-AGENT-8B",
             tensor_parallel_size = num_gpu,
             enable_chunked_prefill=True,
             max_num_batched_tokens=1024,
-            rope_scaling=rope_scaling_config,
             gpu_memory_utilization=0.90,
             max_model_len=4088,
             enforce_eager=False

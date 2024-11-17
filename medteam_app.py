@@ -14,7 +14,7 @@ def main():
     user_input = st.text_area("Enter your long string here:", height=200, help="Paste your long string here.")
 
     # API URL
-    api_url = st.text_input("API URL", "https://csharpmastr--eyomnai-medical-team-agent-web-endpoint.modal.run", help="Enter the API endpoint to connect to.")
+    api_url = st.text_input("API URL", "https://csharpmastr--eyomnai-medical-team-agent-web-endpoint-dev.modal.run", help="Enter the API endpoint to connect to.")
 
     # Submit button
     if st.button("Submit"):

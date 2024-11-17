@@ -6,20 +6,17 @@ from pathlib import Path
 from logger import logging
 from exception import CustomException
 #import numpy as np
-
-from typing import List
 from langchain_community.vectorstores import Chroma
-
-#from sentence_transformers import SentenceTransformer
-#import torch
 
 from modal_setup import rag_image
 
 # context manager for global imports
 with rag_image.imports():
     from langchain_community.vectorstores import Chroma
+    from uuid import uuid4
     import sqlite3
     import _sqlite3
+    #from chromadb.utils.embedding_functions.huggingface_embedding_function import HuggingFaceEmbeddingFunction
     import chromadb
     from langchain.text_splitter import RecursiveCharacterTextSplitter
     from langchain_huggingface.embeddings import HuggingFaceEmbeddings
@@ -27,6 +24,13 @@ with rag_image.imports():
     from langchain_community.document_loaders import PyMuPDFLoader
     from langchain_community.document_loaders.firecrawl import FireCrawlLoader
     from transformers import AutoTokenizer
+
+
+# GLOBAL VARIABLES TO HOLD THE PERSISTENT CLIENT AND COLLECTION OF CHROMADB
+persistent_client = None
+collection_name = "rag-chroma"
+collection = None
+embedding_fn = None
 
 # function to preprocess documents before passing to content
 def preprocess(text: str) -> str:
@@ -60,8 +64,28 @@ def retrieve_vector_store() -> Chroma:
         If any error occurs during the loading, processing, or storing of documents, a CustomException 
         is raised with the original exception details.
     """    
+    # USE THE GLOBAL VARIABLES
+    global persistent_client, collection, embedding_fn
+    
+    # INITIALIZE PERSISTENT CHROMA CLIENT ONCE
+    if persistent_client is None:
+        # INITIALIZE THE PERSISTENT CHROMA CLIENT
+        print("INITIALIZING PERSISTENT CLIENT")
+        persistent_client = chromadb.PersistentClient()
+        collection = persistent_client.get_or_create_collection(collection_name)
+        
+    # INITIALIZE THE EMBEDDING FUNCTION
+    if embedding_fn is None:
+        print("INITIALIZING EMBEDDING FUNCTION")
+        embedding_fn = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    
+    # CHECK IF THE COLLECTION ALREADY CONTAINS DOCUMENTS
+    if collection.count() > 0:
+        print(f"Collection already exists with documents. Returning existing vector store.")
+        return Chroma(client=persistent_client, collection_name=collection_name, embedding_function=embedding_fn)
+    
     # list of urls to store as knowledge base
-    urls = ["https://eyomn.com/", str(Path("/Thesis_Documentation.pdf"))]
+    urls = ["https://eyomn.com/", str(Path("/Thesis_Documentation.pdf")), "https://www.ncbi.nlm.nih.gov/books/NBK482263/", str(Path("/ophthal_opto_guide.pdf"))]
     
     docs = []
     unique_docs = set()  # Set to track unique document contents
@@ -77,7 +101,6 @@ def retrieve_vector_store() -> Chroma:
                 api_key=os.environ['FIRECRAWL_API'], url=url, mode="scrape"
                 )
                 is_url = True
-            
             
             logging.info("Extracting Contents from {url}")
             doc = loader.lazy_load()
@@ -103,17 +126,27 @@ def retrieve_vector_store() -> Chroma:
                         chunk_overlap=10
                         )
             doc_splits = text_splitter.split_documents(cleaned_docs)
-
-            # Add to vectorDB
-            vectorstore = Chroma.from_documents(
-                documents=doc_splits,
-                collection_name="rag-chroma",
-                embedding=HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2"),
-            )
+            
+            # EXTRACT PAGE CONTENT ON DOC SPLITS
+            documents_to_add = [d.page_content for d in doc_splits]
+            
+            # GENERATE SYNTHETIC IDS FOR EACH DOCUMENTS
+            uids = [str(uuid4()) for _ in range(len(documents_to_add))]
+            
+            # ADD TO A PERSISTENT VECTORDB
+            collection.add(documents=documents_to_add, 
+                           ids=uids)
+            
+            # # Add to vectorDB
+            # vectorstore = Chroma.from_documents(
+            #     documents=doc_splits,
+            #     collection_name="rag-chroma",
+            #     embedding=HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2"),
+            # )
             logging.info("Added the Document Splits from {url} to ChromaDB")
         print(f"Length of Documents: {len(docs)}")
     
-        return vectorstore
+        return Chroma(client=persistent_client, collection_name=collection_name, embedding_function=embedding_fn)
     except Exception as e:
         raise CustomException(e, sys)   
 

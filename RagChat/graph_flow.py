@@ -29,6 +29,7 @@ router_chain = None
 ques_rewriter_chain = None
 hallu_checker_chain = None
 answer_grader_chain = None
+doc_grader = None
 
 # define Graph State to track
 class GraphState(TypedDict):
@@ -53,7 +54,7 @@ class GraphState(TypedDict):
 # Define nodes for the Graph
 
 # function to update the agent's memory
-def update_memory(state: GraphState, question: str, generation: str):
+def update_memory(state: GraphState):
     """
     Updates memory with the latest question and generation. Summarizes if
     memory exceeds the set threshold.
@@ -64,46 +65,40 @@ def update_memory(state: GraphState, question: str, generation: str):
         generation (str): The generated response.
     """
     try:
-        # Initialize memory and summarized_memory if it doesn't exist
-        if "memory" not in state:
-            print("---Initialize Memory---")
-            state["memory"] = []
-            
-        if "summarized_memory" not in state:
-            print("---Initialize Summarized Memory---")
-            state["summarized_memory"] = []
-            
-        # Append the new Q&A to memory
-        state["memory"].append({"question": question, "answer": generation})
-        print("---MEMORY UPDATED---")
         
+        # Update memory with the latest question and generation
+        question = state['question']
+        generation = state['generation']
+            
+        # Add the new Q&A to memory
+        print("---MEMORY UPDATED---")
+    
         # log conversation 
         logging.info(f"MEMORY UPDATED")
+
+        if "memory" in state:
+                 
+            # Check if memory length has reached the threshold for summarization
+            if len(state["memory"]) >= 6:  # Summarize after every 6 exchanges
+                print("---SUMMARIZING MEMORY---")
+                memory_text = " ".join([f"Question: {item['question']} Answer: {item['answer']}" for item in state["memory"]])
+                    
+                global convo_summ_chain
+                # check if convo summarization chain is already initialized
+                if convo_summ_chain is None:
+                    print("---Initializing Conversation Summarization Chain---")
+                    convo_summ_chain = build_convo_summ_chain()
+                    
+                # Summarize memory
+                summary = convo_summ_chain.invoke({"text": memory_text})
+                    
+                # Append summary to the summarized_memory state and re-initialize memory
+                print("---CONVERSATION SUMMARY UPDATED---")
+                return {"summarized_memory": summary.summarized_convo, "memory": []}
+            
+            print(f"Memory: [Question: {question} Answer: {generation}")
+            return {"memory": [{"question": question, "answer": generation}]}
         
-         
-        # Check if memory length has reached the threshold for summarization
-        if len(state["memory"]) >= 6:  # Summarize after every 6 exchanges
-            print("---SUMMARIZING MEMORY---")
-            memory_text = " ".join([f"Question: {item['question']} Answer: {item['answer']}" for item in state["memory"]])
-            
-            global convo_summ_chain
-            # check if convo summarization chain is already initialized
-            if convo_summ_chain is None:
-                print("---Initializing Conversation Summarization Chain---")
-                convo_summ_chain = build_convo_summ_chain()
-            
-            # Summarize memory
-            summary = convo_summ_chain.invoke({"text": memory_text})
-            
-            # Append the summary to the summarized_memory field
-            state["summarized_memory"] += f" {summary.summarized_convo}"
-            print("---CONVERSATION SUMMARY UPDATED---")
-            
-            # log summarized conversation
-            logging.info(f"SuMMARIZED CONVERSATION: {summary.summarized_convo}")
-            
-            # Re-initialize the memory to an empty list
-            state["memory"] = []
     except CustomException as e:
         raise CustomException(e, sys)
 
@@ -185,11 +180,12 @@ def grade_docs(state):
     question = state["question"]
     documents = state["documents"]
     
-    global retrieval_grader_chain
+    global retrieval_grader_chain, doc_grader
     # check if retrieval grader chain is already initialized
-    if retrieval_grader_chain is None:
+    if retrieval_grader_chain is None and doc_grader is None:
         print("---Initializing Retrieval Grader Chain---")
         retrieval_grader_chain = build_retrieval_grader_chain()
+        doc_grader = 0
     
     # Score each doc
     filtered_docs = []
@@ -206,6 +202,11 @@ def grade_docs(state):
             # We do not include the document in filtered_docs
             # We set a flag to indicate that we want to run web search
             #web_search = "Yes"
+            if doc_grader >= 4:
+                print("EyomnAI's Response is not Fact-Checked: USE SUMMARIZED SOAP WITH CAUTION")
+                return {"documents": filtered_docs, "question": question}
+            
+            doc_grader += 1
             continue
     return {"documents": filtered_docs, "question": question}
 
@@ -322,9 +323,9 @@ def decide_to_generate(state):
         print("---DECISION: GENERATE---")
         return "generate"
 
-# track how many times the hullicination agent checks the generation, and if reaches 5, END the generation
+# track how many times the hullicination agent checks the generation, and if reaches 4, END the generation
 # and flag the user that the generation should be used appropriately. or "Not Fact-Checked"
-hallucination_checker_counter = 0
+hallucination_checker_counter = None
 
 # Conditional Edge
 def grade_generation(state: GraphState):
@@ -344,11 +345,12 @@ def grade_generation(state: GraphState):
     
     if documents[0] != "Respond in a Friendly and Professional Manner.":
         
-        global hallu_checker_chain
+        global hallu_checker_chain, hallucination_checker_counter
         # check if hallucination checker chain is already initialized
-        if hallu_checker_chain is None:
+        if hallu_checker_chain is None and hallucination_checker_counter is None:
             print("---Initializing Hallucination Checker Chain---")
             hallu_checker_chain = build_hallu_checker_chain()
+            hallucination_checker_counter = 0
         
         # Check Hallucination
         score = hallu_checker_chain.invoke({"documents": documents, "generation": generation})
@@ -371,8 +373,6 @@ def grade_generation(state: GraphState):
 
             if grade.lower() == "yes":
                 print("---DECISION: GENERATION ADDRESSES QUESTION---")
-                # update memory with the final and graded generation
-                update_memory(state, question, generation)
                 return "useful"
             else:
                 print("---DECISION: GENERATION DOES NOT ADDRESS QUESTION---")
@@ -381,7 +381,7 @@ def grade_generation(state: GraphState):
             print("---DECISION: GENERATION IS NOT GROUNDED IN DOCUMENTS, RE-TRY---")
             hallucination_checker_counter += 1
             
-            if hallucination_checker_counter == 5:
+            if hallucination_checker_counter == 4:
                 print("LLM's Response is not Fact-Checked: USE WITH CAUTION")
                 return "useful"
                 
@@ -390,7 +390,6 @@ def grade_generation(state: GraphState):
     else:
         print("---DECISION: RESPONDING IN A FRIENDLY MANNER---")
         print("---GRADE GENERATION vs QUESTION---")
-        update_memory(state, question, generation)
         return "useful"
 
 
@@ -404,6 +403,7 @@ def construct_rag_graph() -> CompiledStateGraph:
         workflow.add_node("grade_documents", grade_docs) # Check Relevance of Retrieved Documents to the Question
         workflow.add_node("generate", generate) # Generate Response to question
         workflow.add_node("transform_query", transform_query) # Transform question if needed
+        workflow.add_node("update_memory", update_memory) # Add Memory to EyomnAi
         
         # connect the nodes through the edges
         
@@ -429,11 +429,11 @@ def construct_rag_graph() -> CompiledStateGraph:
                 "generate": "generate",
             },
         )
-        
+        workflow.add_edge("generate", "update_memory")
         # Transform Query -> Retrieved Documents
         workflow.add_edge("transform_query", "retrieve")
         workflow.add_conditional_edges(
-            "generate",
+            "update_memory",
             grade_generation,
             {
                 # if grade_generation returned not supported -> generate

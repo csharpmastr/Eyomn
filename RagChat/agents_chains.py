@@ -51,7 +51,7 @@ def build_retrieval_grader_chain():
     try:
         # initialize LLM agent from ChatGroq
         llm_retrieval_grader = ChatGroq(model_name="llama-3.1-8b-instant", 
-                                max_retries=2, temperature=0.0, max_tokens=None,
+                                max_retries=2, temperature=0.0, max_tokens=50,
                                 api_key=os.environ['GROQ_API_KEY'])
         
         # bind with a structured output
@@ -103,8 +103,8 @@ def build_rag_generation_chain():
     try:
         prompts = hub.pull("rlm/rag-prompt", api_key=os.environ['LANGCHAIN_API_KEY'])
     
-        llm_generator = ChatGroq(model_name="llama-3.1-8b-instant", 
-                                max_retries=2, temperature=0.3, max_tokens=None,
+        llm_generator = ChatGroq(model_name="llama-3.2-11b-text-preview", 
+                                max_retries=2, temperature=0.4, max_tokens=256,
                                 api_key=os.environ['GROQ_API_KEY'])
         
         # chain the llm and prompt
@@ -145,7 +145,7 @@ def build_convo_summ_chain():
     global sys_prompts
     try:
         llm_summarizer = ChatGroq(model_name="llama-3.1-8b-instant", 
-                             max_retries=2, temperature=0.2, max_tokens=None,
+                             max_retries=2, temperature=0.2, max_tokens=256,
                              api_key=os.environ['GROQ_API_KEY'])
         
         # bind with a structured output
@@ -201,7 +201,7 @@ def build_router_chain():
     global sys_prompts
     try:
         llm_router = ChatGroq(model_name="llama-3.1-8b-instant", 
-                             max_retries=2, temperature=0.2, max_tokens=None,
+                             max_retries=2, temperature=0.2, max_tokens=50,
                              api_key=os.environ['GROQ_API_KEY'])
         
         # bind with a structured output
@@ -258,7 +258,7 @@ def build_hallu_checker_chain():
     global sys_prompts
     try:
         llm_hallu_checker = ChatGroq(model_name="llama-3.1-8b-instant", 
-                             max_retries=2, temperature=0.0, max_tokens=None,
+                             max_retries=2, temperature=0.0, max_tokens=50,
                              api_key=os.environ['GROQ_API_KEY'])
         
         # bind with a structured output
@@ -315,7 +315,7 @@ def build_ans_grader_chain():
     global sys_prompts
     try:
         llm_ans_grader = ChatGroq(model_name="llama-3.1-8b-instant", 
-                             max_retries=2, temperature=0.0, max_tokens=None,
+                             max_retries=2, temperature=0.0, max_tokens=50,
                              api_key=os.environ['GROQ_API_KEY'])
         
         # bind with a structured output
@@ -371,7 +371,7 @@ def build_ques_rewriter_chain():
     global sys_prompts
     try:
         llm_ques_rewriter = ChatGroq(model_name="llama-3.1-8b-instant", 
-                             max_retries=2, temperature=0.0, max_tokens=None,
+                             max_retries=2, temperature=0.0, max_tokens=150,
                              api_key=os.environ['GROQ_API_KEY'])
         
         # check if sys prompts is already initialized

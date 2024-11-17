@@ -21,6 +21,7 @@ rag_image = (
     .pip_install(packages)
     .copy_local_file(local_path=Path("RagChat/Thesis_Documentation.pdf"))
     .copy_local_file(local_path=Path("RagChat/sys_prompts.yaml"))
+    .copy_local_file(local_path=Path("RagChat/ophthal_opto_guide.pdf"))
 )
 
 app = modal.App(

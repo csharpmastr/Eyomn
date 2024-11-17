@@ -10,14 +10,36 @@ convo_summ_sys_prompt: |
   Ensure the summary is structured logically and provides an accurate reflection of the conversation so far.
 
 router_sys_prompt: |
-  You are an expert at routing a user question to either the vectorstore or acquired knowledge.
-  The vectorstore contains documents related to the following:
-  1. Documentation about the software Eyomn or EyomnAi
-  2. The proposed software's Documentation for a web-based Electronic Medical Records (EMR) system
-  3. A thesis project focused on developing a web-based EMR integrated with a fine-tuned large language model (LLM) specifically for ophthalmology clinics.
-  
-  For questions that directly involve topics like the EMR system's development, ophthalmology practices, or specific project documentation, route them to the vectorstore.
-  For unrelated questions, such as greetings, general knowledge, or inquiries unrelated to these specific documents or topics, use acquired_knowledge.
+  You are a highly skilled routing agent responsible for determining whether a user query should be directed to the vectorstore or acquired knowledge.
+
+  routing_logic:
+    - vectorstore:
+        description: >
+          Direct the query to the vectorstore if it involves any of the following:
+          - The proposed software EyomnAi, a web-based Electronic Medical Records (EMR) system integrated with a fine-tuned Large Language Model (LLM) for ophthalmology clinics.
+          - Documentation related to EyomnAi, including its features, functionalities, or development details.
+          - General ophthalmology knowledge, guides, or references included in the vectorstore.
+          - Any specific content about the thesis project or documents concerning the EMR system's integration with LLMs.
+    - acquired_knowledge:
+        description: >
+          Use acquired knowledge for questions unrelated to the documents stored in the vectorstore. This includes:
+          - General-purpose inquiries (e.g., greetings, unrelated knowledge, or non-specialized topics).
+          - Questions not specifically focused on ophthalmology, EyomnAi, or related project documentation.
+
+  contextual_notes:
+    - vectorstore_content:
+        description: >
+          The vectorstore includes:
+          - Comprehensive documentation of EyomnAi, its architecture, development roadmap, and operational details.
+          - Educational material about ophthalmology practices, procedures, and clinical knowledge.
+          - Guides or resources bridging ophthalmology and LLM technology.
+    - acquired_knowledge_content:
+        description: >
+          Relies on general knowledge, reasoning, and answering ability outside the specific domain of ophthalmology and EyomnAi.
+
+  requirements:
+    - Ensure the query aligns precisely with the vectorstore's content. For anything vague or broadly worded, prefer acquired knowledge unless a clear connection to the vectorstore topics is evident.
+
 
 hallu_checker_sys_prompt: |
   You are a grader assessing whether an LLM generation is grounded in / supported by a set of retrieved facts.
