@@ -302,7 +302,7 @@ const MedForm = () => {
         od: "",
         os: "",
       },
-      virteous: {
+      vitreous: {
         od: "",
         os: "",
       },
@@ -525,8 +525,10 @@ const MedForm = () => {
   };
   const [medformData, setMedformData] = useState(() => {
     const savedData = sessionStorage.getItem("medformData");
+
     return savedData ? JSON.parse(savedData) : initialMedFormData;
   });
+
   useEffect(() => {
     if (medformData) {
       sessionStorage.setItem("medformData", JSON.stringify(medformData));
@@ -537,17 +539,15 @@ const MedForm = () => {
     if (noteId && rawNotes) {
       const rawNote = rawNotes.find((raw) => raw.noteId === noteId);
       if (rawNote) {
-        console.log(rawNote);
         setMedformData((prevData) => {
           const updatedData = mergeDeep({ ...initialMedFormData }, rawNote);
           return updatedData;
         });
       }
     } else {
-      setMedformData(initialMedFormData);
+      setMedformData(medformData);
     }
   }, [noteId, rawNotes]);
-  console.log(medformData);
 
   useEffect(() => {
     const handleBeforeUnload = (event) => {
@@ -572,27 +572,27 @@ const MedForm = () => {
     console.log(transformedData);
     console.log(formatPatientNotes(transformedData));
 
-    setHasUnsavedChanges(false);
-    try {
-      const response = await addNote(medformData, patientId);
+    // setHasUnsavedChanges(false);
+    // try {
+    //   const response = await addNote(medformData, patientId);
 
-      if (response) {
-        console.log(response);
-        reduxDispatch(
-          addNewRawNote({
-            [patientId]: {
-              ...medformData,
-              noteId: response.noteId,
-              createdAt: response.createdAt,
-            },
-          })
-        );
-        setIsSuccess(true);
-      }
-    } catch (error) {
-      setIsError(true);
-      console.log(error);
-    }
+    //   if (response) {
+    //     console.log(response);
+    //     reduxDispatch(
+    //       addNewRawNote({
+    //         [patientId]: {
+    //           ...medformData,
+    //           noteId: response.noteId,
+    //           createdAt: response.createdAt,
+    //         },
+    //       })
+    //     );
+    //     setIsSuccess(true);
+    //   }
+    // } catch (error) {
+    //   setIsError(true);
+    //   console.log(error);
+    // }
   };
   const navigateAfterSuccess = () => {
     navigate(`/scribe/${patientId}`);
@@ -603,11 +603,10 @@ const MedForm = () => {
     if (currentPage < pageTitles.length - 1) {
       setCurrentPage((prevPage) => prevPage + 1);
     }
-    console.log(medformData);
   };
   const handleBackPage = (e) => {
     e.preventDefault();
-    if (currentPage < pageTitles.length - 1) {
+    if (currentPage > 0) {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
@@ -705,7 +704,7 @@ const MedForm = () => {
   };
   const handleBack = () => {
     navigate(`/scribe/${patientId}`);
-    console.log(medformData);
+    t;
     sessionStorage.removeItem("medformData");
     sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
   };
@@ -3300,9 +3299,9 @@ const MedForm = () => {
                       <div className="flex gap-3 items-center flex-col md:flex-row">
                         <select
                           name="virtreous_od"
-                          value={medformData.internal_examination.virteous.od}
+                          value={medformData.internal_examination.vitreous.od}
                           onChange={(e) =>
-                            handleChange(e, "internal_examination.virteous.od")
+                            handleChange(e, "internal_examination.vitreous.od")
                           }
                           className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
@@ -3320,9 +3319,9 @@ const MedForm = () => {
                         </p>
                         <select
                           name="virtreous_os"
-                          value={medformData.internal_examination.virteous.os}
+                          value={medformData.internal_examination.vitreous.os}
                           onChange={(e) =>
-                            handleChange(e, "internal_examination.virteous.os")
+                            handleChange(e, "internal_examination.vitreous.os")
                           }
                           className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                         >
@@ -5634,12 +5633,20 @@ const MedForm = () => {
           {currentPage === 3 ? (
             <>
               {(noteId === null || noteId === undefined) && (
-                <button
-                  className="py-4 rounded-md bg-c-primary font-semibold text-p-sm md:text-p-rg text-f-light w-full mt-5"
-                  onClick={handleSubmitNote}
-                >
-                  Dito muna submit button
-                </button>
+                <div className="flex justify-end gap-4">
+                  <button
+                    className="py-3 rounded-md border-c-gray3 border-2  font-semibold text-p-sm md:text-p-rg text-f-dark w-32 mt-5"
+                    onClick={handleBackPage}
+                  >
+                    Back
+                  </button>
+                  <button
+                    className="py-4 rounded-md bg-c-primary font-semibold text-p-sm md:text-p-rg text-f-light w-64 mt-5"
+                    onClick={handleSubmitNote}
+                  >
+                    Submit Note
+                  </button>
+                </div>
               )}
             </>
           ) : (
