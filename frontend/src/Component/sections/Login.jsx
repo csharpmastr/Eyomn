@@ -5,11 +5,13 @@ import { useLogin } from "../../Hooks/useLogin";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { MdOutlineEmail, MdOutlineLock } from "react-icons/md";
+import { FiAlertCircle } from "react-icons/fi";
 
 const Login = () => {
-  const { login, isLoading, error } = useLogin();
+  const { login, isLoading, error: loginError } = useLogin();
   const [isVisible, setIsvisible] = useState(false);
   const [isPassVisible, setIsPassVisible] = useState(false);
+  const [signinError, setSigninError] = useState("");
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
     email: "",
@@ -22,6 +24,7 @@ const Login = () => {
       ...userData,
       [name]: value,
     });
+    setSigninError("");
   };
 
   const handleSubmit = async (e) => {
@@ -64,6 +67,12 @@ const Login = () => {
               Back to work? Let's care for our patients together
             </p>
           </div>
+          {(signinError || loginError) && (
+            <div className="flex items-center text-sm font-semibold px-4 p-3 bg-red-100 text-red-400 rounded-md w-fit gap-4">
+              <FiAlertCircle className="w-8 h-8" />
+              {signinError || loginError}
+            </div>
+          )}
           <div className="flex flex-col gap-6">
             <section>
               <label className="text-p-rg font-medium">Email Address</label>
@@ -106,7 +115,7 @@ const Login = () => {
               <div className="flex flex-row-reverse mt-1">
                 <a
                   onClick={() => navigate("/forgot-password")}
-                  className="text-p-rg font-bold text-f-light lg:text-c-secondary"
+                  className="text-p-rg font-semibold text-f-light lg:text-c-secondary"
                 >
                   Forgot password?
                 </a>
@@ -116,6 +125,7 @@ const Login = () => {
           <SubmitButton
             value={"Sign In"}
             disabled={isLoading}
+            isLoading={isLoading}
             style={
               "bg-c-primary hover:bg-opacity-80 active:bg-pressed-doctor font-font-Raleway"
             }
