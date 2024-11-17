@@ -17,10 +17,24 @@ const appointmentSlice = createSlice({
     addAppointment: (state, action) => {
       state.appointment.push(action.payload);
     },
+    updatedAppointment: (state, action) => {
+      const { id, ...updates } = action.payload; // Destructure id and the rest as updates
+
+      const index = state.list.findIndex(
+        (appointment) => appointment.id === id
+      );
+      if (index !== -1) {
+        state.list[index] = { ...state.list[index], ...updates }; // Merge updates
+      }
+    },
   },
 });
 
-export const { setAppointments, clearAppointment, addAppointment } =
-  appointmentSlice.actions;
+export const {
+  setAppointments,
+  clearAppointment,
+  addAppointment,
+  updatedAppointment,
+} = appointmentSlice.actions;
 
 export default appointmentSlice.reducer;
