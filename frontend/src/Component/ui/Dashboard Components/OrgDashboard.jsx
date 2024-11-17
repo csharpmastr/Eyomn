@@ -45,7 +45,10 @@ const OrgDashboard = () => {
   const productCount = filteredProducts.length;
   const staffCount = staffs.length;
 
-  const combinedSalesAndServices = [...filteredSales, ...filteredServices];
+  const combinedSalesAndServices = [
+    ...(filteredSales || []),
+    ...(filteredServices || []),
+  ];
 
   const filterSalesByMonth = (data, monthOffset = 0) => {
     const now = new Date();
