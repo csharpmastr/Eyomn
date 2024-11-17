@@ -38,12 +38,16 @@ const OrgDashboard = () => {
         .filter((product) => product.isDeleted === false)
         .filter((product) => product.branchId === selectedBranch)
     : products.filter((product) => product.isDeleted === false);
-
+  const filteredServices = selectedBranch
+    ? services.filter((service) => service.branchId === selectedBranch)
+    : services;
   const patientCount = filteredPatients.length;
   const productCount = filteredProducts.length;
   const staffCount = staffs.length;
 
-  const filterSalesByMonth = (sales, monthOffset = 0) => {
+  const combinedSalesAndServices = [...filteredSales, ...filteredServices];
+
+  const filterSalesByMonth = (data, monthOffset = 0) => {
     const now = new Date();
     const targetMonth = new Date(
       now.getFullYear(),
@@ -56,34 +60,32 @@ const OrgDashboard = () => {
       1
     );
 
-    return sales.filter((sale) => {
-      const saleDate = new Date(sale.createdAt);
-      return saleDate >= targetMonth && saleDate < nextMonth;
+    return data.filter((item) => {
+      const itemDate = new Date(item.createdAt);
+      return itemDate >= targetMonth && itemDate < nextMonth;
     });
   };
 
-  const currentMonthSales = filterSalesByMonth(filteredSales, 0);
-  const previousMonthSales = filterSalesByMonth(filteredSales, -1);
+  const currentMonthSales = filterSalesByMonth(combinedSalesAndServices, 0);
+  const previousMonthSales = filterSalesByMonth(combinedSalesAndServices, -1);
 
-  const getTotalSales = (sales) => {
-    const salesTotal = sales.reduce((total, item) => {
-      const itemTotal = item.purchaseDetails.reduce((sum, detail) => {
-        return sum + detail.totalAmount;
-      }, 0);
-      return total + itemTotal;
+  const getTotalSales = (data) => {
+    return data.reduce((total, item) => {
+      if (item.purchaseDetails) {
+        const itemTotal = item.purchaseDetails.reduce((sum, detail) => {
+          return sum + detail.totalAmount;
+        }, 0);
+        return total + itemTotal;
+      } else if (item.service_price) {
+        return total + parseFloat(item.service_price);
+      }
+      return total;
     }, 0);
-
-    const servicesTotal = services
-      .filter(
-        (service) => !selectedBranch || service.branchId === selectedBranch
-      )
-      .reduce((total, service) => total + parseFloat(service.service_price), 0);
-
-    return salesTotal + servicesTotal;
   };
 
   const currentMonthTotalSales = getTotalSales(currentMonthSales);
   const previousMonthTotalSales = getTotalSales(previousMonthSales);
+  console.log(currentMonthTotalSales);
 
   const calculatePercentageChange = (currentValue, previousValue) => {
     if (previousValue === 0) {
@@ -93,7 +95,7 @@ const OrgDashboard = () => {
     return `${change > 0 ? "+" : ""}${change.toFixed(1)}%`;
   };
 
-  const totalSales = getTotalSales(filteredSales);
+  const totalSales = getTotalSales(combinedSalesAndServices);
   const salesChange = calculatePercentageChange(
     currentMonthTotalSales,
     previousMonthTotalSales
