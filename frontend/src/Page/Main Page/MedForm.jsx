@@ -705,7 +705,6 @@ const MedForm = () => {
   };
   const handleBack = () => {
     navigate(`/scribe/${patientId}`);
-    t;
     sessionStorage.removeItem("medformData");
     sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
   };
