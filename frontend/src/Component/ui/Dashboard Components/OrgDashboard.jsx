@@ -20,6 +20,7 @@ const OrgDashboard = () => {
   const products = useSelector((state) => state.reducer.inventory.products);
   const staffs = useSelector((state) => state.reducer.staff.staffs);
   const sales = useSelector((state) => state.reducer.inventory.purchases);
+  const services = useSelector((state) => state.reducer.inventory.services);
   const branch = useSelector((state) => state.reducer.branch.branch);
   const [selectedBranch, setSelectedBranch] = useState("");
   const [greeting, setGreeting] = useState("");
@@ -43,12 +44,20 @@ const OrgDashboard = () => {
   const staffCount = staffs.length;
 
   const getTotalSales = () => {
-    return filteredSales.reduce((total, item) => {
+    const salesTotal = filteredSales.reduce((total, item) => {
       const itemTotal = item.purchaseDetails.reduce((sum, detail) => {
         return sum + detail.totalAmount;
       }, 0);
       return total + itemTotal;
     }, 0);
+
+    const servicesTotal = services
+      .filter(
+        (service) => !selectedBranch || service.branchId === selectedBranch
+      )
+      .reduce((total, service) => total + parseFloat(service.service_price), 0);
+
+    return salesTotal + servicesTotal;
   };
 
   const totalSales = getTotalSales();

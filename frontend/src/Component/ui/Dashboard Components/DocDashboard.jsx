@@ -71,7 +71,7 @@ const DocDashboard = () => {
             <article className="text-f-light text-p-lg">
               <h6>{greeting}</h6>
               <h1 className="lg:text-h-h6 2xl:text-h-h3 font-semibold">
-                Welcome Back, Secretary Kim
+                {`Welcome Back, Dr. ${user.first_name}`}
               </h1>
             </article>
           </div>
