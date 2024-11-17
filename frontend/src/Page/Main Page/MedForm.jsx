@@ -13,7 +13,9 @@ import { useAddNote } from "../../Hooks/useAddNote";
 import Loader from "../../Component/ui/Loader";
 import SuccessModal from "../../Component/ui/SuccessModal";
 import { useDispatch, useSelector } from "react-redux";
-
+import { FileUploader } from "react-drag-drop-files";
+import { FiPlus } from "react-icons/fi";
+import { TiUpload } from "react-icons/ti";
 import Modal from "../../Component/ui/Modal";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { addNewRawNote } from "../../Slice/NoteSlice";
@@ -35,6 +37,8 @@ const MedForm = () => {
   const { addNote, isLoading, error } = useAddNote();
   const [isSuccess, setIsSuccess] = useState();
   const [isError, setIsError] = useState(false);
+  const [image, setImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
 
   const [canvasImages, setCanvasImages] = useState({
     OD: "",
@@ -108,18 +112,23 @@ const MedForm = () => {
         od: "",
         os: "",
         ou: "",
-        additional_note: "",
+        custom_od: "",
+        custom_os: "",
+        custom_ou: "",
       },
       unaided_va: {
         od: "",
         os: "",
         ou: "",
-        additional_note: "",
+        custom_od: "",
+        custom_os: "",
+        custom_ou: "",
       },
       pinhole_va: {
         od: "",
         os: "",
-        additional_note: "",
+        custom_od: "",
+        custom_os: "",
       },
     },
 
@@ -127,12 +136,14 @@ const MedForm = () => {
       with_drop: {
         od: "",
         os: "",
-        additional_note: "",
+        custom_od: "",
+        custom_os: "",
       },
       without_drop: {
         od: "",
         os: "",
-        additional_note: "",
+        custom_od: "",
+        custom_os: "",
       },
     },
 
@@ -184,7 +195,8 @@ const MedForm = () => {
           phoria: false,
         },
       },
-      additional_note: "",
+      additional_note_od: "",
+      additional_note_os: "",
     },
 
     confrontation_test: {
@@ -221,42 +233,46 @@ const MedForm = () => {
       od: {
         present: false,
         absent: false,
+        additional_note_od: "",
       },
       os: {
         present: false,
         absent: false,
+        additional_note_os: "",
       },
-      additional_note: "",
     },
 
     motility_test: {
       od: {
         normal: false,
         abnormal: false,
+        additional_note_od: "",
       },
       os: {
         normal: false,
         abnormal: false,
+        additional_note_os: "",
       },
-      additional_note: "",
     },
 
     saccadic_test: {
       od: {
         present: false,
         absent: false,
+        additional_note_od: "",
       },
       os: {
         present: false,
         absent: false,
+        additional_note_os: "",
       },
-      additional_note: "",
     },
 
     amsler_grid: {
       od: "",
       os: "",
-      additional_note: "",
+      custom_od: "",
+      custom_os: "",
     },
 
     worths_FD: {
@@ -277,6 +293,8 @@ const MedForm = () => {
     ophthalmoscopy: {
       od: "",
       os: "",
+      additional_note_od: "",
+      additional_note_os: "",
     },
 
     IOP: {
@@ -307,44 +325,20 @@ const MedForm = () => {
         os: "",
       },
       vessel: {
-        od: {
-          normal: false,
-          abnormal: false,
-        },
-        os: {
-          normal: false,
-          abnormal: false,
-        },
+        od: "",
+        os: "",
       },
       venous_pulse: {
-        od: {
-          normal: false,
-          abnormal: false,
-        },
-        os: {
-          normal: false,
-          abnormal: false,
-        },
+        od: "",
+        os: "",
       },
       forveal_reflex: {
-        od: {
-          present: false,
-          absent: false,
-        },
-        os: {
-          present: false,
-          absent: false,
-        },
+        od: "",
+        os: "",
       },
       periphery: {
-        od: {
-          normal: false,
-          abnormal: false,
-        },
-        os: {
-          normal: false,
-          abnormal: false,
-        },
+        od: "",
+        os: "",
       },
     },
 
@@ -463,7 +457,7 @@ const MedForm = () => {
           options: {
             miosis_or_mydriasis: false,
             IIS: false,
-            pupil_distortion: false,
+            distorted_pupil: false,
             LRA: false,
           },
           additional_note: "",
@@ -472,7 +466,7 @@ const MedForm = () => {
           options: {
             miosis_or_mydriasis: false,
             IIS: false,
-            pupil_distortion: false,
+            distorted_pupil: false,
             LRA: false,
           },
           additional_note: "",
@@ -501,12 +495,6 @@ const MedForm = () => {
       },
     },
 
-    habitual_prescription: {
-      date_prescribed: "",
-      od: "",
-      os: "",
-    },
-
     contact_lens_prescription: {
       date_prescribed: "",
       od: "",
@@ -518,8 +506,21 @@ const MedForm = () => {
     refractive_error: "",
 
     //Plan
-    new_prescription_od: "",
-    new_prescription_os: "",
+    new_prescription_od: {
+      np_ADD: "",
+      np_NEAR: "",
+      np_FAR: "",
+    },
+    new_prescription_os: {
+      np_ADD: "",
+      np_NEAR: "",
+      np_FAR: "",
+    },
+    new_prescription_ou: {
+      np_ADD: "",
+      np_NEAR: "",
+      np_FAR: "",
+    },
     management: "",
     followup_care: "",
   };
@@ -707,6 +708,47 @@ const MedForm = () => {
     t;
     sessionStorage.removeItem("medformData");
     sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
+  };
+
+  const handleImageUpload = (file) => {
+    if (file) {
+      setImageFile(file);
+
+      const imageUrl = URL.createObjectURL(file);
+      setImage(imageUrl);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImage(null);
+  };
+
+  const handleUploadImage = async () => {
+    setIsLoading(true);
+    try {
+      const response = await uploadImageArchive(
+        patientId,
+        imageFile,
+        user.firebaseUid,
+        accessToken,
+        refreshToken
+      );
+      if (response) {
+        setPatientImages((prevData) => [...patientImages, response.url]);
+        reduxDispatch(
+          addNewImageArchive({
+            [patientId]: response.url,
+          })
+        );
+        setIsSuccess(true);
+        setImageFile(null);
+        setImage(null);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -1262,157 +1304,101 @@ const MedForm = () => {
                     <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap">
                       Blood Pressure
                     </p>
-                    <input
-                      type="text"
-                      name="bp"
-                      value={medformData.bp}
-                      onChange={(e) => handleChange(e, "bp")}
-                      className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                    />
+                    <section className="relative w-[130px] lg:w-full">
+                      <input
+                        type="text"
+                        name="bp"
+                        value={medformData.bp}
+                        onChange={(e) => handleChange(e, "bp")}
+                        className="mt-2 w-full px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                      />
+                      <span className="px-2 py-1 bg-zinc-200 border rounded-md absolute top-4 right-2 text-p-sc md:text-p-sm text-f-gray2">
+                        mm/Hg
+                      </span>
+                    </section>
                   </div>
                   <div className="flex-1">
                     <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap">
                       Blood Glucose
                     </p>
-                    <input
-                      type="text"
-                      name="bg"
-                      value={medformData.bg}
-                      onChange={(e) => handleChange(e, "bg")}
-                      className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                    />
+                    <section className="relative w-[130px] lg:w-full">
+                      <input
+                        type="number"
+                        name="bg"
+                        min={0}
+                        max={500}
+                        value={medformData.bg}
+                        onChange={(e) => handleChange(e, "bg")}
+                        className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                      />
+                      <span className="px-2 py-1 bg-zinc-200 border rounded-md absolute top-4 right-2 text-p-sc md:text-p-sm text-f-gray2">
+                        mg/dL
+                      </span>
+                    </section>
                   </div>
                   <div className="flex-1">
                     <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap">
                       Heart Rate
                     </p>
-                    <input
-                      type="text"
-                      name="hr"
-                      value={medformData.hr}
-                      onChange={(e) => handleChange(e, "hr")}
-                      className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                    />
+                    <section className="relative w-[130px] lg:w-full">
+                      <input
+                        type="number"
+                        name="hr"
+                        min={30}
+                        max={220}
+                        value={medformData.hr}
+                        onChange={(e) => handleChange(e, "hr")}
+                        className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                      />
+                      <span className="px-3 py-1 bg-zinc-200 border rounded-md absolute top-4 right-2 text-p-sc md:text-p-sm text-f-gray2">
+                        Bpm
+                      </span>
+                    </section>
                   </div>
                   <div className="flex-1">
                     <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap">
                       O2 Saturation
                     </p>
-                    <input
-                      type="text"
-                      name="o2_saturation"
-                      value={medformData.o2_saturation}
-                      onChange={(e) => handleChange(e, "o2_saturation")}
-                      className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                    />
+                    <section className="relative w-[130px] lg:w-full">
+                      <input
+                        type="number"
+                        name="o2_saturation"
+                        min={0}
+                        max={100}
+                        value={medformData.o2_saturation}
+                        onChange={(e) => handleChange(e, "o2_saturation")}
+                        className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                      />
+                      <span className="px-4 py-1 bg-zinc-200 border rounded-md absolute top-4 right-2 text-p-sc md:text-p-sm text-f-gray2">
+                        %
+                      </span>
+                    </section>
                   </div>
                   <div className="flex-1">
                     <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap">
                       Temperature
                     </p>
-                    <input
-                      type="text"
-                      name="temperature"
-                      value={medformData.temperature}
-                      onChange={(e) => handleChange(e, "temperature")}
-                      className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                    />
+                    <section className="relative w-[130px] lg:w-full">
+                      <input
+                        type="number"
+                        name="temperature"
+                        step={0.1}
+                        value={medformData.temperature}
+                        onChange={(e) => handleChange(e, "temperature")}
+                        className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                      />
+                      <span className="px-4 py-1 bg-zinc-200 border rounded-md absolute top-4 right-2 text-p-sc md:text-p-sm text-f-gray2">
+                        C/F
+                      </span>
+                    </section>
                   </div>
                 </div>
                 <div className="w-full">
-                  <header className="flex justify-center py-2 rounded-t-md w-full border border-f-gray text-c-secondary text-p-sm md:text-p-rg font-semibold bg-bg-sb mb-2">
+                  <header className="flex justify-center py-2 rounded-t-md w-full border border-f-gray text-c-secondary text-p-sm md:text-p-rg font-semibold bg-bg-sb mb-1">
                     <h1>Visual Acuity</h1>
                   </header>
-                  <div className="flex gap-2 flex-col md:flex-row">
+                  <div className="flex gap-1 flex-col md:flex-row">
                     <div className="border border-f-gray bg-bg-mc w-full md:w-1/2 rounded-bl-md p-5">
-                      <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                        | Habitual VA
-                      </label>
-                      <section className=" mt-5 flex gap-3 w-full">
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OD
-                          </p>
-                          <select
-                            name="habitual_od"
-                            value={medformData.visual_acuity.habitual_va.od}
-                            onChange={(e) =>
-                              handleChange(e, "visual_acuity.habitual_va.od")
-                            }
-                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
-                          >
-                            <option
-                              value=""
-                              disabled
-                              className="text-f-border-f-gray"
-                            >
-                              -
-                            </option>
-                            <option value="20/20">20/20</option>
-                          </select>
-                        </div>
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OS
-                          </p>
-                          <select
-                            name="habitual_os"
-                            value={medformData.visual_acuity.habitual_va.os}
-                            onChange={(e) =>
-                              handleChange(e, "visual_acuity.habitual_va.os")
-                            }
-                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
-                          >
-                            <option
-                              value=""
-                              disabled
-                              className="text-f-border-f-gray"
-                            >
-                              -
-                            </option>
-                            <option value="20/20">20/20</option>
-                          </select>
-                        </div>
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OU
-                          </p>
-                          <select
-                            name="habitual_ou"
-                            value={medformData.visual_acuity.habitual_va.ou}
-                            onChange={(e) =>
-                              handleChange(e, "visual_acuity.habitual_va.ou")
-                            }
-                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
-                          >
-                            <option
-                              value=""
-                              disabled
-                              className="text-f-border-f-gray"
-                            >
-                              -
-                            </option>
-                            <option value="20/20">20/20</option>
-                          </select>
-                        </div>
-                      </section>
-                      <textarea
-                        type="text"
-                        name="habitual_additional_note"
-                        value={
-                          medformData.visual_acuity.habitual_va.additional_note
-                        }
-                        onChange={(e) =>
-                          handleChange(
-                            e,
-                            "visual_acuity.habitual_va.additional_note"
-                          )
-                        }
-                        className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                        placeholder="If option not available"
-                      />
-                    </div>
-                    <div className="border border-f-gray bg-bg-mc w-full md:w-1/2 p-5">
                       <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
                         | Unaided VA
                       </label>
@@ -1424,9 +1410,15 @@ const MedForm = () => {
                           <select
                             name="unaided_od"
                             value={medformData.visual_acuity.unaided_va.od}
-                            onChange={(e) =>
-                              handleChange(e, "visual_acuity.unaided_va.od")
-                            }
+                            onChange={(e) => {
+                              handleChange(e, "visual_acuity.unaided_va.od");
+                              if (e.target.value !== "") {
+                                handleChange(
+                                  { target: { value: "" } },
+                                  "visual_acuity.unaided_va.custom_od"
+                                );
+                              }
+                            }}
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
                             <option
@@ -1434,10 +1426,32 @@ const MedForm = () => {
                               disabled
                               className="text-f-border-f-gray"
                             >
-                              -
+                              Choose option
                             </option>
                             <option value="20/20">20/20</option>
+                            <option value="20/40">20/40</option>
+                            <option value="20/60">20/60</option>
+                            <option value="20/100">20/100</option>
+                            <option value=" ">Other</option>
                           </select>
+                          {medformData.visual_acuity.unaided_va.od === " " && (
+                            <input
+                              type="text"
+                              name="unaided_od_custom"
+                              value={
+                                medformData.visual_acuity.unaided_va
+                                  .custom_od || ""
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "visual_acuity.unaided_va.custom_od"
+                                )
+                              }
+                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                              placeholder="Enter custom value"
+                            />
+                          )}
                         </div>
                         <div className="flex flex-col w-full">
                           <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
@@ -1446,9 +1460,15 @@ const MedForm = () => {
                           <select
                             name="unaided_os"
                             value={medformData.visual_acuity.unaided_va.os}
-                            onChange={(e) =>
-                              handleChange(e, "visual_acuity.unaided_va.os")
-                            }
+                            onChange={(e) => {
+                              handleChange(e, "visual_acuity.unaided_va.os");
+                              if (e.target.value !== "") {
+                                handleChange(
+                                  { target: { value: "" } },
+                                  "visual_acuity.unaided_va.custom_os"
+                                );
+                              }
+                            }}
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
                             <option
@@ -1456,10 +1476,32 @@ const MedForm = () => {
                               disabled
                               className="text-f-border-f-gray"
                             >
-                              -
+                              Choose option
                             </option>
                             <option value="20/20">20/20</option>
+                            <option value="20/40">20/40</option>
+                            <option value="20/60">20/60</option>
+                            <option value="20/100">20/100</option>
+                            <option value=" ">Other</option>
                           </select>
+                          {medformData.visual_acuity.unaided_va.os === " " && (
+                            <input
+                              type="text"
+                              name="unaided_os_custom"
+                              value={
+                                medformData.visual_acuity.unaided_va
+                                  .custom_os || ""
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "visual_acuity.unaided_va.custom_os"
+                                )
+                              }
+                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                              placeholder="Enter custom value"
+                            />
+                          )}
                         </div>
                         <div className="flex flex-col w-full">
                           <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
@@ -1468,9 +1510,15 @@ const MedForm = () => {
                           <select
                             name="unaided_ou"
                             value={medformData.visual_acuity.unaided_va.ou}
-                            onChange={(e) =>
-                              handleChange(e, "visual_acuity.unaided_va.ou")
-                            }
+                            onChange={(e) => {
+                              handleChange(e, "visual_acuity.unaided_va.ou");
+                              if (e.target.value !== "") {
+                                handleChange(
+                                  { target: { value: "" } },
+                                  "visual_acuity.unaided_va.custom_ou"
+                                );
+                              }
+                            }}
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
                             <option
@@ -1478,27 +1526,191 @@ const MedForm = () => {
                               disabled
                               className="text-f-border-f-gray"
                             >
-                              -
+                              Choose option
                             </option>
                             <option value="20/20">20/20</option>
+                            <option value="20/40">20/40</option>
+                            <option value="20/60">20/60</option>
+                            <option value="20/100">20/100</option>
+                            <option value=" ">Other</option>
                           </select>
+                          {medformData.visual_acuity.unaided_va.ou === " " && (
+                            <input
+                              type="text"
+                              name="unaided_ou_custom"
+                              value={
+                                medformData.visual_acuity.unaided_va
+                                  .custom_ou || ""
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "visual_acuity.unaided_va.custom_ou"
+                                )
+                              }
+                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                              placeholder="Enter custom value"
+                            />
+                          )}
                         </div>
                       </section>
-                      <textarea
-                        type="text"
-                        name="unaided_additional_note"
-                        value={
-                          medformData.visual_acuity.unaided_va.additional_note
-                        }
-                        onChange={(e) =>
-                          handleChange(
-                            e,
-                            "visual_acuity.unaided_va.additional_note"
-                          )
-                        }
-                        className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                        placeholder="If option not available"
-                      />
+                    </div>
+                    <div className="border border-f-gray bg-bg-mc w-full md:w-1/2 p-5">
+                      <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
+                        | Habitual VA
+                      </label>
+                      <section className=" mt-5 flex gap-3 w-full">
+                        <div className="flex flex-col w-full">
+                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                            OD
+                          </p>
+                          <select
+                            name="habitual_od"
+                            value={medformData.visual_acuity.habitual_va.od}
+                            onChange={(e) => {
+                              handleChange(e, "visual_acuity.habitual_va.od");
+                              if (e.target.value !== "") {
+                                handleChange(
+                                  { target: { value: "" } },
+                                  "visual_acuity.habitual_va.custom_od"
+                                );
+                              }
+                            }}
+                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
+                          >
+                            <option
+                              value=""
+                              disabled
+                              className="text-f-border-f-gray"
+                            >
+                              Choose option
+                            </option>
+                            <option value="20/20">20/20</option>
+                            <option value="20/40">20/40</option>
+                            <option value="20/60">20/60</option>
+                            <option value="20/100">20/100</option>
+                            <option value=" ">Other</option>
+                          </select>
+                          {medformData.visual_acuity.habitual_va.od === " " && (
+                            <input
+                              type="text"
+                              name="habitual_od_custom"
+                              value={
+                                medformData.visual_acuity.habitual_va
+                                  .custom_od || ""
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "visual_acuity.habitual_va.custom_od"
+                                )
+                              }
+                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                              placeholder="Enter custom value"
+                            />
+                          )}
+                        </div>
+                        <div className="flex flex-col w-full">
+                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                            OS
+                          </p>
+                          <select
+                            name="habitual_os"
+                            value={medformData.visual_acuity.habitual_va.os}
+                            onChange={(e) => {
+                              handleChange(e, "visual_acuity.habitual_va.os");
+                              if (e.target.value !== "") {
+                                handleChange(
+                                  { target: { value: "" } },
+                                  "visual_acuity.habitual_va.custom_os"
+                                );
+                              }
+                            }}
+                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
+                          >
+                            <option
+                              value=""
+                              disabled
+                              className="text-f-border-f-gray"
+                            >
+                              Choose option
+                            </option>
+                            <option value="20/20">20/20</option>
+                            <option value="20/40">20/40</option>
+                            <option value="20/60">20/60</option>
+                            <option value="20/100">20/100</option>
+                            <option value=" ">Other</option>
+                          </select>
+                          {medformData.visual_acuity.habitual_va.os === " " && (
+                            <input
+                              type="text"
+                              name="habitual_os_custom"
+                              value={
+                                medformData.visual_acuity.habitual_va
+                                  .custom_os || ""
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "visual_acuity.habitual_va.custom_os"
+                                )
+                              }
+                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                              placeholder="Enter custom value"
+                            />
+                          )}
+                        </div>
+                        <div className="flex flex-col w-full">
+                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                            OU
+                          </p>
+                          <select
+                            name="habitual_ou"
+                            value={medformData.visual_acuity.habitual_va.ou}
+                            onChange={(e) => {
+                              handleChange(e, "visual_acuity.habitual_va.ou");
+                              if (e.target.value !== "") {
+                                handleChange(
+                                  { target: { value: "" } },
+                                  "visual_acuity.habitual_va.custom_ou"
+                                );
+                              }
+                            }}
+                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
+                          >
+                            <option
+                              value=""
+                              disabled
+                              className="text-f-border-f-gray"
+                            >
+                              Choose option
+                            </option>
+                            <option value="20/20">20/20</option>
+                            <option value="20/40">20/40</option>
+                            <option value="20/60">20/60</option>
+                            <option value="20/100">20/100</option>
+                            <option value=" ">Other</option>
+                          </select>
+                          {medformData.visual_acuity.habitual_va.ou === " " && (
+                            <input
+                              type="text"
+                              name="habitual_ou_custom"
+                              value={
+                                medformData.visual_acuity.habitual_va
+                                  .custom_ou || ""
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "visual_acuity.habitual_va.custom_ou"
+                                )
+                              }
+                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                              placeholder="Enter custom value"
+                            />
+                          )}
+                        </div>
+                      </section>
                     </div>
                     <div className="border border-f-gray bg-bg-mc w-full md:w-1/3 rounded-br-md p-5">
                       <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
@@ -1512,9 +1724,15 @@ const MedForm = () => {
                           <select
                             name="pinhole_od"
                             value={medformData.visual_acuity.pinhole_va.od}
-                            onChange={(e) =>
-                              handleChange(e, "visual_acuity.pinhole_va.od")
-                            }
+                            onChange={(e) => {
+                              handleChange(e, "visual_acuity.pinhole_va.od");
+                              if (e.target.value !== "") {
+                                handleChange(
+                                  { target: { value: "" } },
+                                  "visual_acuity.pinhole_va.custom_od"
+                                );
+                              }
+                            }}
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
                             <option
@@ -1522,10 +1740,32 @@ const MedForm = () => {
                               disabled
                               className="text-f-border-f-gray"
                             >
-                              -
+                              Choose option
                             </option>
                             <option value="20/20">20/20</option>
+                            <option value="20/40">20/40</option>
+                            <option value="20/60">20/60</option>
+                            <option value="20/100">20/100</option>
+                            <option value=" ">Other</option>
                           </select>
+                          {medformData.visual_acuity.pinhole_va.od === " " && (
+                            <input
+                              type="text"
+                              name="pinhole_od_custom"
+                              value={
+                                medformData.visual_acuity.pinhole_va
+                                  .custom_od || ""
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "visual_acuity.pinhole_va.custom_od"
+                                )
+                              }
+                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                              placeholder="Enter custom value"
+                            />
+                          )}
                         </div>
                         <div className="flex flex-col w-full">
                           <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
@@ -1534,9 +1774,15 @@ const MedForm = () => {
                           <select
                             name="pinhole_os"
                             value={medformData.visual_acuity.pinhole_va.os}
-                            onChange={(e) =>
-                              handleChange(e, "visual_acuity.pinhole_va.os")
-                            }
+                            onChange={(e) => {
+                              handleChange(e, "visual_acuity.pinhole_va.os");
+                              if (e.target.value !== "") {
+                                handleChange(
+                                  { target: { value: "" } },
+                                  "visual_acuity.pinhole_va.custom_os"
+                                );
+                              }
+                            }}
                             className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
                           >
                             <option
@@ -1544,106 +1790,109 @@ const MedForm = () => {
                               disabled
                               className="text-f-border-f-gray"
                             >
-                              -
+                              Choose option
                             </option>
                             <option value="20/20">20/20</option>
+                            <option value="20/40">20/40</option>
+                            <option value="20/60">20/60</option>
+                            <option value="20/100">20/100</option>
+                            <option value=" ">Other</option>
                           </select>
+                          {medformData.visual_acuity.pinhole_va.os === " " && (
+                            <input
+                              type="text"
+                              name="pinhole_os_custom"
+                              value={
+                                medformData.visual_acuity.pinhole_va
+                                  .custom_os || ""
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "visual_acuity.pinhole_va.custom_os"
+                                )
+                              }
+                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                              placeholder="Enter custom value"
+                            />
+                          )}
                         </div>
                       </section>
-                      <textarea
-                        type="text"
-                        name="pinhole_additional_note"
-                        value={
-                          medformData.visual_acuity.pinhole_va.additional_note
-                        }
-                        onChange={(e) =>
-                          handleChange(
-                            e,
-                            "visual_acuity.pinhole_va.additional_note"
-                          )
-                        }
-                        className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                        placeholder="If option not available"
-                      />
                     </div>
                   </div>
                 </div>
                 <div className="w-full">
-                  <header className="flex justify-center py-2 rounded-t-md w-full border border-f-gray text-c-secondary text-p-sm md:text-p-rg font-semibold bg-bg-sb mb-2">
-                    <h1>Retinoscopy / AR</h1>
-                  </header>
-                  <div className="flex gap-2 flex-col md:flex-row">
-                    <div className="border border-f-gray bg-bg-mc w-full md:w-1/2 rounded-bl-md p-5">
-                      <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                        | With Drops
-                      </label>
-                      <section className=" mt-5 flex gap-3 w-full">
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OD
-                          </p>
-                          <select
-                            name="retinoscopy_w_od"
-                            value={medformData.retinoscopy.with_drop.od}
-                            onChange={(e) =>
-                              handleChange(e, "retinoscopy.with_drop.od")
-                            }
-                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
-                          >
-                            <option
-                              value=""
-                              disabled
-                              className="text-f-border-f-gray"
-                            >
-                              -
-                            </option>
-                            <option value="20/20">20/20</option>
-                          </select>
-                        </div>
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OS
-                          </p>
-                          <select
-                            name="retinoscopy_w_os"
-                            value={medformData.retinoscopy.with_drop.os}
-                            onChange={(e) =>
-                              handleChange(e, "retinoscopy.with_drop.os")
-                            }
-                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
-                          >
-                            <option
-                              value=""
-                              disabled
-                              className="text-f-border-f-gray"
-                            >
-                              -
-                            </option>
-                            <option value="20/20">20/20</option>
-                          </select>
-                        </div>
-                      </section>
-                      <textarea
-                        name="retinoscopy_w_additional_note"
-                        value={
-                          medformData.retinoscopy.with_drop.additional_note
-                        }
-                        onChange={
-                          (e) =>
+                  <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
+                    <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
+                      | Contact Lens Prescrition
+                    </label>
+                    <section className="text-p-sc md:text-p-sm font-semibold mt-5 flex gap-3">
+                      <label className="w-1/3">
+                        <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm">
+                          Date Prescribe
+                        </p>
+                        <input
+                          type="date"
+                          name="clp_date"
+                          max={new Date().toISOString().split("T")[0]}
+                          value={
+                            medformData.contact_lens_prescription
+                              .date_prescribed
+                          }
+                          onChange={(e) =>
                             handleChange(
                               e,
-                              "retinoscopy.with_drop.additional_note"
-                            ) // Update this line for correct path
-                        }
-                        className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                        placeholder="If option not available"
-                      />
-                    </div>
-                    <div className="border border-f-gray bg-bg-mc w-full md:w-1/2 rounded-br-md p-5">
+                              "contact_lens_prescription.date_prescribed"
+                            )
+                          }
+                          className="mt-3 w-fit h-fit px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        />
+                      </label>
+                      <div className="flex flex-col w-full">
+                        <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                          OD
+                        </p>
+                        <textarea
+                          type="text"
+                          name="clp_od"
+                          value={medformData.contact_lens_prescription.od}
+                          onChange={(e) =>
+                            handleChange(e, "contact_lens_prescription.od")
+                          }
+                          className="mt-3 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={1}
+                          placeholder=""
+                        />
+                      </div>
+                      <div className="flex flex-col w-full">
+                        <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                          OS
+                        </p>
+                        <textarea
+                          type="text"
+                          name="clp_os"
+                          value={medformData.contact_lens_prescription.os}
+                          onChange={(e) =>
+                            handleChange(e, "contact_lens_prescription.os")
+                          }
+                          className="mt-3 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={1}
+                          placeholder=""
+                        />
+                      </div>
+                    </section>
+                  </div>
+                </div>
+                <div className="w-full">
+                  <header className="flex justify-center py-2 rounded-t-md w-full border border-f-gray text-c-secondary text-p-sm md:text-p-rg font-semibold bg-bg-sb mb-1">
+                    <h1>Retinoscopy / AR</h1>
+                  </header>
+                  <div className="flex gap-1 flex-col md:flex-row">
+                    <div className="border border-f-gray bg-bg-mc w-full md:w-1/2 rounded-bl-md p-5">
                       <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
                         | Without Drops
                       </label>
-                      <section className=" mt-5 flex gap-3 w-full">
+                      <section className="mt-5 flex gap-3 w-full">
                         <div className="flex flex-col w-full">
                           <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
                             OD
@@ -1651,20 +1900,43 @@ const MedForm = () => {
                           <select
                             name="retinoscopy_wo_od"
                             value={medformData.retinoscopy.without_drop.od}
-                            onChange={(e) =>
-                              handleChange(e, "retinoscopy.without_drop.od")
-                            }
-                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
+                            onChange={(e) => {
+                              handleChange(e, "retinoscopy.without_drop.od");
+                              if (e.target.value !== "") {
+                                handleChange(
+                                  { target: { value: "" } },
+                                  "retinoscopy.without_drop.custom_od"
+                                );
+                              }
+                            }}
+                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           >
-                            <option
-                              value=""
-                              disabled
-                              className="text-f-border-f-gray"
-                            >
-                              -
+                            <option value="" disabled>
+                              Choose options
                             </option>
-                            <option value="20/20">20/20</option>
+                            <option value="Plano">Plano</option>
+                            <option value="-">-</option>
+                            <option value="+">+</option>
+                            <option value=" ">Other</option>
                           </select>
+                          {medformData.retinoscopy.without_drop.od === " " && (
+                            <input
+                              type="text"
+                              name="retinoscopy_wo_od_custom"
+                              value={
+                                medformData.retinoscopy.without_drop
+                                  .custom_od || ""
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "retinoscopy.without_drop.custom_od"
+                                )
+                              }
+                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                              placeholder="Enter custom value"
+                            />
+                          )}
                         </div>
                         <div className="flex flex-col w-full">
                           <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
@@ -1673,37 +1945,142 @@ const MedForm = () => {
                           <select
                             name="retinoscopy_wo_os"
                             value={medformData.retinoscopy.without_drop.os}
-                            onChange={(e) =>
-                              handleChange(e, "retinoscopy.without_drop.os")
-                            }
-                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
+                            onChange={(e) => {
+                              handleChange(e, "retinoscopy.without_drop.os");
+                              if (e.target.value !== "") {
+                                handleChange(
+                                  { target: { value: "" } },
+                                  "retinoscopy.without_drop.custom_os"
+                                );
+                              }
+                            }}
+                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                           >
-                            <option
-                              value=""
-                              disabled
-                              className="text-f-border-f-gray"
-                            >
-                              -
+                            <option value="" disabled>
+                              Choose options
                             </option>
-                            <option value="20/20">20/20</option>
+                            <option value="Plano">Plano</option>
+                            <option value="-">-</option>
+                            <option value="+">+</option>
+                            <option value=" ">Other</option>
                           </select>
+                          {medformData.retinoscopy.without_drop.os === " " && (
+                            <input
+                              type="text"
+                              name="retinoscopy_wo_os_custom"
+                              value={
+                                medformData.retinoscopy.without_drop
+                                  .custom_os || ""
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "retinoscopy.without_drop.custom_os"
+                                )
+                              }
+                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                              placeholder="Enter custom value"
+                            />
+                          )}
                         </div>
                       </section>
-                      <textarea
-                        name="retinoscopy_wo_additional_note"
-                        value={
-                          medformData.retinoscopy.without_drop.additional_note
-                        }
-                        onChange={
-                          (e) =>
-                            handleChange(
-                              e,
-                              "retinoscopy.without_drop.additional_note"
-                            ) // Update this line for correct path
-                        }
-                        className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                        placeholder="If option not available"
-                      />
+                    </div>
+                    <div className="border border-f-gray bg-bg-mc w-full md:w-1/2 rounded-br-md p-5">
+                      <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
+                        | With Drops
+                      </label>
+                      <section className="mt-5 flex gap-3 w-full">
+                        <div className="flex flex-col w-full">
+                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                            OD
+                          </p>
+                          <select
+                            name="retinoscopy_w_od"
+                            value={medformData.retinoscopy.with_drop.od}
+                            onChange={(e) => {
+                              handleChange(e, "retinoscopy.with_drop.od");
+                              if (e.target.value !== "") {
+                                handleChange(
+                                  { target: { value: "" } },
+                                  "retinoscopy.with_drop.custom_od"
+                                );
+                              }
+                            }}
+                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                          >
+                            <option value="" disabled>
+                              Choose options
+                            </option>
+                            <option value="Plano">Plano</option>
+                            <option value="-">-</option>
+                            <option value="+">+</option>
+                            <option value=" ">Other</option>
+                          </select>
+                          {medformData.retinoscopy.with_drop.od === " " && (
+                            <input
+                              type="text"
+                              name="retinoscopy_w_od_custom"
+                              value={
+                                medformData.retinoscopy.with_drop.custom_od ||
+                                ""
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "retinoscopy.with_drop.custom_od"
+                                )
+                              }
+                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                              placeholder="Enter custom value"
+                            />
+                          )}
+                        </div>
+                        <div className="flex flex-col w-full">
+                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                            OS
+                          </p>
+                          <select
+                            name="retinoscopy_w_os"
+                            value={medformData.retinoscopy.with_drop.os}
+                            onChange={(e) => {
+                              handleChange(e, "retinoscopy.with_drop.os");
+                              if (e.target.value !== "") {
+                                handleChange(
+                                  { target: { value: "" } },
+                                  "retinoscopy.with_drop.custom_os"
+                                );
+                              }
+                            }}
+                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                          >
+                            <option value="" disabled>
+                              Choose options
+                            </option>
+                            <option value="Plano">Plano</option>
+                            <option value="-">-</option>
+                            <option value="+">+</option>
+                            <option value=" ">Other</option>
+                          </select>
+                          {medformData.retinoscopy.with_drop.os === " " && (
+                            <input
+                              type="text"
+                              name="retinoscopy_w_os_custom"
+                              value={
+                                medformData.retinoscopy.with_drop.custom_os ||
+                                ""
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  e,
+                                  "retinoscopy.with_drop.custom_os"
+                                )
+                              }
+                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                              placeholder="Enter custom value"
+                            />
+                          )}
+                        </div>
+                      </section>
                     </div>
                   </div>
                 </div>
@@ -1840,7 +2217,7 @@ const MedForm = () => {
                         handleChange(e, "dominant_EH.additional_note")
                       }
                       className="mt-4 h-36 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                      placeholder="If option not available"
+                      placeholder="Additional notes..."
                     />
                   </div>
                   <div className="border border-f-gray bg-bg-mc w-full md:w-1/2 rounded-md p-5">
@@ -1899,7 +2276,7 @@ const MedForm = () => {
                         handleChange(e, "pupillary_distance.additional_note")
                       }
                       className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                      placeholder="If option not available"
+                      placeholder="Additional notes..."
                     />
                   </div>
                 </div>
@@ -1907,379 +2284,405 @@ const MedForm = () => {
                   <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
                     | Cover Test
                   </label>
-                  <section className="mt-5 flex gap-3 w-full flex-col md:flex-row">
-                    <div className="w-full md:w-1/2">
-                      <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                        OD
-                      </p>
-                      <div className="border border-f-gray bg-white p-5 rounded-md mt-3 flex flex-col gap-5">
-                        <div className="flex">
-                          <p className="text-f-dark font-medium w-1/4">
-                            With Rx
-                          </p>
-                          <section className="flex justify-between w-full flex-wrap">
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="with_rx_near"
-                                value="near"
-                                checked={medformData.cover_test.od.with_rx.near}
-                                onChange={(e) =>
-                                  handleChange(e, "cover_test.od.with_rx.near")
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Near
-                              </span>
-                            </label>
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="with_rx_distance"
-                                value="distance"
-                                checked={
-                                  medformData.cover_test.od.with_rx.distance
-                                }
-                                onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "cover_test.od.with_rx.distance"
-                                  )
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Distance
-                              </span>
-                            </label>
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="with_rx_tropia"
-                                value="tropia"
-                                checked={
-                                  medformData.cover_test.od.with_rx.tropia
-                                }
-                                onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "cover_test.od.with_rx.tropia"
-                                  )
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Tropia
-                              </span>
-                            </label>
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="with_rx_phoria"
-                                value="phoria"
-                                checked={
-                                  medformData.cover_test.od.with_rx.phoria
-                                }
-                                onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "cover_test.od.with_rx.phoria"
-                                  )
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Phoria
-                              </span>
-                            </label>
-                          </section>
-                        </div>
-                        <div className="flex">
-                          <p className="text-f-dark font-medium w-1/4">
-                            Without Rx
-                          </p>
-                          <section className="flex justify-between w-full flex-wrap">
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="without_rx_near"
-                                value="near"
-                                checked={
-                                  medformData.cover_test.od.without_rx.near
-                                }
-                                onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "cover_test.od.without_rx.near"
-                                  )
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Near
-                              </span>
-                            </label>
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="without_rx_distance"
-                                value="distance"
-                                checked={
-                                  medformData.cover_test.od.without_rx.distance
-                                }
-                                onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "cover_test.od.without_rx.distance"
-                                  )
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Distance
-                              </span>
-                            </label>
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="without_rx_tropia"
-                                value="tropia"
-                                checked={
-                                  medformData.cover_test.od.without_rx.tropia
-                                }
-                                onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "cover_test.od.without_rx.tropia"
-                                  )
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Tropia
-                              </span>
-                            </label>
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="without_rx_phoria"
-                                value="phoria"
-                                checked={
-                                  medformData.cover_test.od.without_rx.phoria
-                                }
-                                onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "cover_test.od.without_rx.phoria"
-                                  )
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Phoria
-                              </span>
-                            </label>
-                          </section>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="w-full md:w-1/2">
-                      <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                        OS
-                      </p>
-                      <div className="border border-f-gray bg-white p-5 rounded-md mt-3 flex flex-col gap-5">
-                        <div className="flex">
-                          <p className="text-f-dark font-medium w-1/4">
-                            With Rx
-                          </p>
-                          <section className="flex justify-between w-full flex-wrap">
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="with_rx_near"
-                                value="near"
-                                checked={medformData.cover_test.os.with_rx.near}
-                                onChange={(e) =>
-                                  handleChange(e, "cover_test.os.with_rx.near")
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Near
-                              </span>
-                            </label>
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="with_rx_distance"
-                                value="distance"
-                                checked={
-                                  medformData.cover_test.os.with_rx.distance
-                                }
-                                onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "cover_test.os.with_rx.distance"
-                                  )
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Distance
-                              </span>
-                            </label>
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="with_rx_tropia"
-                                value="tropia"
-                                checked={
-                                  medformData.cover_test.os.with_rx.tropia
-                                }
-                                onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "cover_test.os.with_rx.tropia"
-                                  )
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Tropia
-                              </span>
-                            </label>
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="with_rx_phoria"
-                                value="phoria"
-                                checked={
-                                  medformData.cover_test.os.with_rx.phoria
-                                }
-                                onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "cover_test.os.with_rx.phoria"
-                                  )
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Phoria
-                              </span>
-                            </label>
-                          </section>
-                        </div>
-                        <div className="flex">
-                          <p className="text-f-dark font-medium w-1/4">
-                            Without Rx
-                          </p>
-                          <section className="flex justify-between w-full flex-wrap">
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="without_rx_near"
-                                value="near"
-                                checked={
-                                  medformData.cover_test.os.without_rx.near
-                                }
-                                onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "cover_test.os.without_rx.near"
-                                  )
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Near
-                              </span>
-                            </label>
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="without_rx_distance"
-                                value="distance"
-                                checked={
-                                  medformData.cover_test.os.without_rx.distance
-                                }
-                                onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "cover_test.os.without_rx.distance"
-                                  )
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Distance
-                              </span>
-                            </label>
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="without_rx_tropia"
-                                value="tropia"
-                                checked={
-                                  medformData.cover_test.os.without_rx.tropia
-                                }
-                                onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "cover_test.os.without_rx.tropia"
-                                  )
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Tropia
-                              </span>
-                            </label>
-                            <label className="flex items-center gap-2 flex-1">
-                              <input
-                                type="checkbox"
-                                name="without_rx_phoria"
-                                value="phoria"
-                                checked={
-                                  medformData.cover_test.os.without_rx.phoria
-                                }
-                                onChange={(e) =>
-                                  handleChange(
-                                    e,
-                                    "cover_test.os.without_rx.phoria"
-                                  )
-                                }
-                                className="w-6 h-6"
-                              />
-                              <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
-                                Phoria
-                              </span>
-                            </label>
-                          </section>
+                  <div className="w-full flex flex-col md:flex-row gap-5">
+                    <section className="mt-5 flex gap-3 w-full flex-col">
+                      <div className="w-full">
+                        <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                          OD
+                        </p>
+                        <div className="border border-f-gray bg-white p-5 rounded-md mt-3 flex flex-col gap-5">
+                          <div className="flex">
+                            <p className="text-f-dark font-medium w-1/4">
+                              With Rx
+                            </p>
+                            <section className="flex justify-between w-full flex-wrap">
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="with_rx_near"
+                                  value="near"
+                                  checked={
+                                    medformData.cover_test.od.with_rx.near
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.od.with_rx.near"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Near
+                                </span>
+                              </label>
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="with_rx_distance"
+                                  value="distance"
+                                  checked={
+                                    medformData.cover_test.od.with_rx.distance
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.od.with_rx.distance"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Distance
+                                </span>
+                              </label>
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="with_rx_tropia"
+                                  value="tropia"
+                                  checked={
+                                    medformData.cover_test.od.with_rx.tropia
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.od.with_rx.tropia"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Tropia
+                                </span>
+                              </label>
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="with_rx_phoria"
+                                  value="phoria"
+                                  checked={
+                                    medformData.cover_test.od.with_rx.phoria
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.od.with_rx.phoria"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Phoria
+                                </span>
+                              </label>
+                            </section>
+                          </div>
+                          <div className="flex">
+                            <p className="text-f-dark font-medium w-1/4">
+                              Without Rx
+                            </p>
+                            <section className="flex justify-between w-full flex-wrap">
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="without_rx_near"
+                                  value="near"
+                                  checked={
+                                    medformData.cover_test.od.without_rx.near
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.od.without_rx.near"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Near
+                                </span>
+                              </label>
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="without_rx_distance"
+                                  value="distance"
+                                  checked={
+                                    medformData.cover_test.od.without_rx
+                                      .distance
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.od.without_rx.distance"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Distance
+                                </span>
+                              </label>
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="without_rx_tropia"
+                                  value="tropia"
+                                  checked={
+                                    medformData.cover_test.od.without_rx.tropia
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.od.without_rx.tropia"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Tropia
+                                </span>
+                              </label>
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="without_rx_phoria"
+                                  value="phoria"
+                                  checked={
+                                    medformData.cover_test.od.without_rx.phoria
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.od.without_rx.phoria"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Phoria
+                                </span>
+                              </label>
+                            </section>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </section>
-                  <textarea
-                    type="text"
-                    name="cover_test_additional_note"
-                    value={medformData.cover_test.additional_note}
-                    onChange={(e) =>
-                      handleChange(e, "cover_test.additional_note")
-                    }
-                    className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                    placeholder="If option not available"
-                  />
+                      <textarea
+                        type="text"
+                        name="cover_test_additional_note_od"
+                        value={medformData.cover_test.additional_note_od}
+                        onChange={(e) =>
+                          handleChange(e, "cover_test.additional_note_od")
+                        }
+                        className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        placeholder="OD additional note..."
+                      />
+                    </section>
+                    <section className="mt-5 flex gap-3 w-full flex-col">
+                      <div className="w-full">
+                        <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                          OS
+                        </p>
+                        <div className="border border-f-gray bg-white p-5 rounded-md mt-3 flex flex-col gap-5">
+                          <div className="flex">
+                            <p className="text-f-dark font-medium w-1/4">
+                              With Rx
+                            </p>
+                            <section className="flex justify-between w-full flex-wrap">
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="with_rx_near"
+                                  value="near"
+                                  checked={
+                                    medformData.cover_test.os.with_rx.near
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.os.with_rx.near"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Near
+                                </span>
+                              </label>
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="with_rx_distance"
+                                  value="distance"
+                                  checked={
+                                    medformData.cover_test.os.with_rx.distance
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.os.with_rx.distance"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Distance
+                                </span>
+                              </label>
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="with_rx_tropia"
+                                  value="tropia"
+                                  checked={
+                                    medformData.cover_test.os.with_rx.tropia
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.os.with_rx.tropia"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Tropia
+                                </span>
+                              </label>
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="with_rx_phoria"
+                                  value="phoria"
+                                  checked={
+                                    medformData.cover_test.os.with_rx.phoria
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.os.with_rx.phoria"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Phoria
+                                </span>
+                              </label>
+                            </section>
+                          </div>
+                          <div className="flex">
+                            <p className="text-f-dark font-medium w-1/4">
+                              Without Rx
+                            </p>
+                            <section className="flex justify-between w-full flex-wrap">
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="without_rx_near"
+                                  value="near"
+                                  checked={
+                                    medformData.cover_test.os.without_rx.near
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.os.without_rx.near"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Near
+                                </span>
+                              </label>
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="without_rx_distance"
+                                  value="distance"
+                                  checked={
+                                    medformData.cover_test.os.without_rx
+                                      .distance
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.os.without_rx.distance"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Distance
+                                </span>
+                              </label>
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="without_rx_tropia"
+                                  value="tropia"
+                                  checked={
+                                    medformData.cover_test.os.without_rx.tropia
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.os.without_rx.tropia"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Tropia
+                                </span>
+                              </label>
+                              <label className="flex items-center gap-2 flex-1">
+                                <input
+                                  type="checkbox"
+                                  name="without_rx_phoria"
+                                  value="phoria"
+                                  checked={
+                                    medformData.cover_test.os.without_rx.phoria
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "cover_test.os.without_rx.phoria"
+                                    )
+                                  }
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-f-gray font-medium text-p-sc md:text-p-sm">
+                                  Phoria
+                                </span>
+                              </label>
+                            </section>
+                          </div>
+                        </div>
+                      </div>
+                      <textarea
+                        type="text"
+                        name="cover_test_additional_note_os"
+                        value={medformData.cover_test.additional_note_os}
+                        onChange={(e) =>
+                          handleChange(e, "cover_test.additional_note_os")
+                        }
+                        className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        placeholder="OS additional note..."
+                      />
+                    </section>
+                  </div>
                 </div>
                 <div className="flex gap-5 flex-col md:flex-row">
                   <div className="border border-f-gray bg-bg-mc w-full md:w-1/2 rounded-md p-5">
                     <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
                       | Confrontation Test
                     </label>
-                    <div className="flex gap-5 mt-5 flex-col md:flex-row">
+                    <div className="flex gap-5 mt-5 flex-col-reverse items-center md:flex-row">
                       <section className="w-full md:w-2/3">
-                        <div className="flex flex-col w-full">
+                        <div className="flex flex-col w-full mb-4">
                           <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
                             OD
                           </p>
@@ -2290,11 +2693,11 @@ const MedForm = () => {
                             onChange={(e) =>
                               handleChange(e, "confrontation_test.od")
                             }
-                            className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                            className="mt-2 w-full h-20 px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
                             placeholder=""
                           />
                         </div>
-                        <div className="flex flex-col w-full">
+                        <div className="flex flex-col w-full ">
                           <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
                             OS
                           </p>
@@ -2305,12 +2708,12 @@ const MedForm = () => {
                             onChange={(e) =>
                               handleChange(e, "confrontation_test.os")
                             }
-                            className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                            className="mt-2 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
                             placeholder=""
                           />
                         </div>
                       </section>
-                      <div className="md:w-2/3 border border-c-gray p-5 bg-white rounded-sm">
+                      <div className="w-1/2 md:w-1/3 border border-c-gray p-5 bg-white rounded-md">
                         <img
                           src={
                             medformData.confrontation_test.image ||
@@ -2489,84 +2892,22 @@ const MedForm = () => {
                         handleChange(e, "stereopsis.additional_note")
                       }
                       className="mt-4 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                      placeholder="If option not available"
+                      placeholder="If none of the other options are applicable"
                     />
                   </div>
                 </div>
                 <div className="w-full flex flex-col md:flex-row gap-5">
-                  <div className="w-full md:w-1/2 flex flex-col gap-5">
-                    <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
-                      <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                        | Diplopia Test
-                      </label>
-                      <section className="mt-5 flex gap-5">
-                        <div className="flex flex-col gap-3">
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="diplopia_present"
-                              value="present"
-                              checked={medformData.diplopia_test.present}
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  diplopia_test: {
-                                    ...prevData.diplopia_test,
-                                    present: true,
-                                    absent: false,
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Present
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="diplopia_absent"
-                              value="absent"
-                              checked={medformData.diplopia_test.absent}
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  diplopia_test: {
-                                    ...prevData.diplopia_test,
-                                    present: false,
-                                    absent: true,
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Absent
-                            </span>
-                          </div>
-                        </div>
-                        <textarea
-                          type="text"
-                          name="diplopia_additional_note"
-                          value={medformData.diplopia_test.additional_note}
-                          onChange={(e) =>
-                            handleChange(e, "diplopia_test.additional_note")
-                          }
-                          className="w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                        />
-                      </section>
-                    </div>
-                    <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
-                      <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                        | Corneal Reflex Test
-                      </label>
-                      <section className="mt-5 flex flex-col gap-3 md:flex-row md:gap-0 justify-between">
+                  <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
+                    <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
+                      | Corneal Reflex Test
+                    </label>
+                    <div className="flex gap-5 md:gap-5 flex-col md:flex-row mt-5">
+                      <section className="flex flex-col w-full md:w-1/2">
                         <div>
                           <p className="text-p-sc md:text-p-sm font-medium text-f-gray text-nowrap mb-3">
                             OD
                           </p>
-                          <div className="flex gap-3 md:gap-0 lg:gap-8 ">
+                          <div className="flex flex-row gap-3 md:gap-0 lg:gap-8">
                             <div className="flex items-center">
                               <input
                                 type="radio"
@@ -2615,11 +2956,30 @@ const MedForm = () => {
                             </div>
                           </div>
                         </div>
+                        <textarea
+                          type="text"
+                          name="corneal_additional_note_od"
+                          value={
+                            medformData.corneal_reflex_test.od
+                              .additional_note_od
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "corneal_reflex_test.od.additional_note_od"
+                            )
+                          }
+                          className="mt-4 w-full px-4 py-2 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={2}
+                          placeholder="option are not applicable"
+                        />
+                      </section>
+                      <section className="flex flex-col w-full md:w-1/2">
                         <div>
                           <p className="text-p-sc md:text-p-sm font-medium text-f-gray text-nowrap mb-3">
                             OS
                           </p>
-                          <div className="flex gap-3 md:gap-0 lg:gap-8">
+                          <div className="flex flex-row gap-3 md:gap-0 lg:gap-8">
                             <div className="flex items-center">
                               <input
                                 type="radio"
@@ -2668,23 +3028,133 @@ const MedForm = () => {
                             </div>
                           </div>
                         </div>
+                        <textarea
+                          type="text"
+                          name="corneal_additional_note_os"
+                          value={
+                            medformData.corneal_reflex_test.os
+                              .additional_note_os
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "corneal_reflex_test.os.additional_note_os"
+                            )
+                          }
+                          className="mt-4 w-full px-4 py-2 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={2}
+                          placeholder="option are not applicable"
+                        />
                       </section>
+                    </div>
+                  </div>
+                  <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
+                    <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
+                      | Worth’s Four Dots
+                    </label>
+                    <section className="flex gap-3 mt-5">
+                      <div className="flex flex-col w-full">
+                        <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                          OD
+                        </p>
+                        <textarea
+                          type="text"
+                          name="wfd_od"
+                          value={medformData.worths_FD.od}
+                          onChange={(e) => handleChange(e, "worths_FD.od")}
+                          className="mt-4 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={3}
+                          placeholder=""
+                        />
+                      </div>
+                      <div className="flex flex-col w-full">
+                        <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                          OS
+                        </p>
+                        <textarea
+                          type="text"
+                          name="wfd_os"
+                          value={medformData.worths_FD.os}
+                          onChange={(e) => handleChange(e, "worths_FD.os")}
+                          className="mt-4 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={3}
+                          placeholder=""
+                        />
+                      </div>
+                    </section>
+                  </div>
+                  <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
+                    <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
+                      | Diplopia
+                    </label>
+                    <section className="mt-5 flex gap-3 flex-col">
+                      <div className="flex gap-3">
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            name="diplopia_present"
+                            value="present"
+                            checked={medformData.diplopia_test.present}
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                diplopia_test: {
+                                  ...prevData.diplopia_test,
+                                  present: true,
+                                  absent: false,
+                                },
+                              }))
+                            }
+                            className="mr-3 w-6 h-6"
+                          />
+                          <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
+                            Present
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            name="diplopia_absent"
+                            value="absent"
+                            checked={medformData.diplopia_test.absent}
+                            onChange={() =>
+                              setMedformData((prevData) => ({
+                                ...prevData,
+                                diplopia_test: {
+                                  ...prevData.diplopia_test,
+                                  present: false,
+                                  absent: true,
+                                },
+                              }))
+                            }
+                            className="mr-3 w-6 h-6"
+                          />
+                          <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
+                            Absent
+                          </span>
+                        </div>
+                      </div>
                       <textarea
                         type="text"
-                        name="corneal_additional_note"
-                        value={medformData.corneal_reflex_test.additional_note}
+                        name="diplopia_additional_note"
+                        value={medformData.diplopia_test.additional_note}
                         onChange={(e) =>
-                          handleChange(e, "corneal_reflex_test.additional_note")
+                          handleChange(e, "diplopia_test.additional_note")
                         }
-                        className="mt-4 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                        placeholder=""
+                        className="w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                        rows={3}
+                        placeholder="If none of the options are applicable"
                       />
-                    </div>
-                    <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
-                      <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                        | Motility Test
-                      </label>
-                      <section className="mt-5 flex flex-col gap-3 md:flex-row md:gap-0 justify-between">
+                    </section>
+                  </div>
+                </div>
+                <div className="w-full flex flex-col md:flex-row gap-5">
+                  <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
+                    <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
+                      | Motility Test
+                    </label>
+                    <section className="flex gap-5 md:gap-5 flex-col md:flex-row mt-5">
+                      <section className="flex flex-col w-full md:w-1/2">
                         <div>
                           <p className="text-p-sc md:text-p-sm font-medium text-f-gray text-nowrap mb-3">
                             OD
@@ -2734,6 +3204,24 @@ const MedForm = () => {
                             </div>
                           </div>
                         </div>
+                        <textarea
+                          type="text"
+                          name="motility_additional_note_od"
+                          value={
+                            medformData.motility_test.od.additional_note_od
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "motility_test.od.additional_note_od"
+                            )
+                          }
+                          className="mt-4 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={2}
+                          placeholder="additional note..."
+                        />
+                      </section>
+                      <section className="flex flex-col w-full md:w-1/2">
                         <div>
                           <p className="text-p-sc md:text-p-sm font-medium text-f-gray text-nowrap mb-3">
                             OS
@@ -2783,23 +3271,31 @@ const MedForm = () => {
                             </div>
                           </div>
                         </div>
+                        <textarea
+                          type="text"
+                          name="motility_additional_note_os"
+                          value={
+                            medformData.motility_test.os.additional_note_os
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "motility_test.os.additional_note_os"
+                            )
+                          }
+                          className="mt-4 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={2}
+                          placeholder="additional note..."
+                        />
                       </section>
-                      <textarea
-                        type="text"
-                        name="motility_additional_note"
-                        value={medformData.motility_test.additional_note}
-                        onChange={(e) =>
-                          handleChange(e, "motility_test.additional_note")
-                        }
-                        className="mt-4 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                        placeholder=""
-                      />
-                    </div>
-                    <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
-                      <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                        | Saccadic Test
-                      </label>
-                      <section className="mt-5 flex flex-col gap-3 md:flex-row md:gap-0 justify-between">
+                    </section>
+                  </div>
+                  <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
+                    <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
+                      | Saccadic Test
+                    </label>
+                    <section className="flex gap-5 md:gap-5 flex-col md:flex-row mt-5">
+                      <section className="flex flex-col w-full md:w-1/2">
                         <div>
                           <p className="text-p-sc md:text-p-sm font-medium text-f-gray text-nowrap mb-3">
                             OD
@@ -2849,6 +3345,24 @@ const MedForm = () => {
                             </div>
                           </div>
                         </div>
+                        <textarea
+                          type="text"
+                          name="saccadic_additional_note_od"
+                          value={
+                            medformData.saccadic_test.od.additional_note_od
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "saccadic_test.od.additional_note_od"
+                            )
+                          }
+                          className="mt-4 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={2}
+                          placeholder="additional note..."
+                        />
+                      </section>
+                      <section className="flex flex-col w-full md:w-1/2">
                         <div>
                           <p className="text-p-sc md:text-p-sm font-medium text-f-gray text-nowrap mb-3">
                             OS
@@ -2898,196 +3412,199 @@ const MedForm = () => {
                             </div>
                           </div>
                         </div>
-                      </section>
-                      <textarea
-                        type="text"
-                        name="saccadic_additional_note"
-                        value={medformData.saccadic_test.additional_note}
-                        onChange={(e) =>
-                          handleChange(e, "saccadic_test.additional_note")
-                        }
-                        className="mt-4 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                        placeholder=""
-                      />
-                    </div>
-                  </div>
-                  <div className="w-full md:w-1/2 flex flex-col gap-5">
-                    <div className="border border-f-gray bg-bg-mc rounded-md p-5">
-                      <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                        | Amsler Grid
-                      </label>
-                      <section className=" mt-6 flex gap-3 w-full">
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OD
-                          </p>
-                          <select
-                            name="amsler_od"
-                            value={medformData.amsler_grid.od}
-                            onChange={(e) => handleChange(e, "amsler_grid.od")}
-                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
-                          >
-                            <option
-                              value=""
-                              disabled
-                              className="text-f-border-f-gray"
-                            >
-                              -
-                            </option>
-                            <option value="Full Field">Full Field</option>
-                          </select>
-                        </div>
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OS
-                          </p>
-                          <select
-                            name="amsler_os"
-                            value={medformData.amsler_grid.os}
-                            onChange={(e) => handleChange(e, "amsler_grid.os")}
-                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
-                          >
-                            <option
-                              value=""
-                              disabled
-                              className="text-f-border-f-gray"
-                            >
-                              -
-                            </option>
-                            <option value="Full Field">Full Field</option>
-                          </select>
-                        </div>
-                      </section>
-                      <section className="flex gap-5 mt-5 ">
                         <textarea
                           type="text"
-                          name="amsler_additional_note"
-                          value={medformData.amsler_grid.additional_note}
-                          onChange={(e) =>
-                            handleChange(e, "amsler_grid.additional_note")
+                          name="saccadic_additional_note_os"
+                          value={
+                            medformData.saccadic_test.os.additional_note_os
                           }
-                          className="h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "saccadic_test.os.additional_note_os"
+                            )
+                          }
+                          className="mt-4 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={2}
+                          placeholder="additional note..."
+                        />
+                      </section>
+                    </section>
+                  </div>
+                </div>
+                <div className="w-full flex flex-col md:flex-row gap-5">
+                  <div className="border border-f-gray bg-bg-mc rounded-md w-full md:w-1/3 p-5">
+                    <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
+                      | Amsler Grid
+                    </label>
+                    <section className="mt-6 flex gap-3 flex-col md:flex-row w-full">
+                      <div className="flex flex-col w-full">
+                        <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                          OD
+                        </p>
+                        <select
+                          name="amsler_od"
+                          value={medformData.amsler_grid.od}
+                          onChange={(e) => {
+                            handleChange(e, "amsler_grid.od");
+                            if (e.target.value !== "") {
+                              handleChange(
+                                { target: { value: "" } },
+                                "amsler_grid.custom_od"
+                              );
+                            }
+                          }}
+                          className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        >
+                          <option
+                            value=""
+                            disabled
+                            className="text-f-border-f-gray"
+                          >
+                            Choose option
+                          </option>
+                          <option value="Full Field">Full Field</option>
+                          <option value="Central Scotoma">
+                            Central Scotoma
+                          </option>
+                          <option value="Peripheral Scotoma">
+                            Peripheral Scotoma
+                          </option>
+                          <option value="Distorted">Distorted</option>
+                          <option value=" ">Other</option>
+                        </select>
+                        {medformData.amsler_grid.od === " " && (
+                          <input
+                            type="text"
+                            name="amsler_od_custom"
+                            value={medformData.amsler_grid.custom_od || ""}
+                            onChange={(e) =>
+                              handleChange(e, "amsler_grid.custom_od")
+                            }
+                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                            placeholder="none of the other options are applicable"
+                          />
+                        )}
+                      </div>
+                      <div className="flex flex-col w-full">
+                        <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                          OS
+                        </p>
+                        <select
+                          name="amsler_os"
+                          value={medformData.amsler_grid.os}
+                          onChange={(e) => {
+                            handleChange(e, "amsler_grid.os");
+                            if (e.target.value !== "") {
+                              handleChange(
+                                { target: { value: "" } },
+                                "amsler_grid.custom_os"
+                              );
+                            }
+                          }}
+                          className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        >
+                          <option
+                            value=""
+                            disabled
+                            className="text-f-border-f-gray"
+                          >
+                            Choose option
+                          </option>
+                          <option value="Full Field">Full Field</option>
+                          <option value="Central Scotoma">
+                            Central Scotoma
+                          </option>
+                          <option value="Peripheral Scotoma">
+                            Peripheral Scotoma
+                          </option>
+                          <option value="Distorted">Distorted</option>
+                          <option value=" ">Other</option>
+                        </select>
+                        {medformData.amsler_grid.os === " " && (
+                          <input
+                            type="text"
+                            name="amsler_os_custom"
+                            value={medformData.amsler_grid.custom_os || ""}
+                            onChange={(e) =>
+                              handleChange(e, "amsler_grid.custom_os")
+                            }
+                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                            placeholder="none of the other options are applicable"
+                          />
+                        )}
+                      </div>
+                    </section>
+                  </div>
+                  <div className="border border-f-gray bg-bg-mc rounded-md w-full md:w-1/3 p-5">
+                    <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
+                      | Ishihara Test
+                    </label>
+                    <section className="flex gap-3 mt-5 flex-col md:flex-row">
+                      <div className="flex flex-col w-full">
+                        <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                          OD
+                        </p>
+                        <textarea
+                          type="text"
+                          name="ishihara_od"
+                          value={medformData.ishihara_test.od}
+                          onChange={(e) => handleChange(e, "ishihara_test.od")}
+                          className="mt-4 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={3}
                           placeholder=""
                         />
-                        <div className="flex flex-col justify-center items-center gap-3">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray text-nowrap">
-                            Sample Image
-                          </p>
-                          <img
-                            src=""
-                            alt=""
-                            className="bg-blue-900 w-24 h-24"
-                          />
-                        </div>
-                      </section>
-                    </div>
-                    <div className="border border-f-gray bg-bg-mc rounded-md p-5">
-                      <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                        | Worth’s Four Dots
-                      </label>
-                      <section className="flex gap-3 mt-5">
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OD
-                          </p>
-                          <textarea
-                            type="text"
-                            name="wfd_od"
-                            value={medformData.worths_FD.od}
-                            onChange={(e) => handleChange(e, "worths_FD.od")}
-                            className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                            placeholder=""
-                          />
-                        </div>
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OS
-                          </p>
-                          <textarea
-                            type="text"
-                            name="wfd_os"
-                            value={medformData.worths_FD.os}
-                            onChange={(e) => handleChange(e, "worths_FD.os")}
-                            className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                            placeholder=""
-                          />
-                        </div>
-                      </section>
-                    </div>
-                    <div className="border border-f-gray bg-bg-mc rounded-md p-5">
-                      <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                        | Ishihara Test
-                      </label>
-                      <section className="flex gap-3 mt-5">
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OD
-                          </p>
-                          <textarea
-                            type="text"
-                            name="ishihara_od"
-                            value={medformData.ishihara_test.od}
-                            onChange={(e) =>
-                              handleChange(e, "ishihara_test.od")
-                            }
-                            className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                            placeholder=""
-                          />
-                        </div>
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OS
-                          </p>
-                          <textarea
-                            type="text"
-                            name="ishihara_os"
-                            value={medformData.ishihara_test.os}
-                            onChange={(e) =>
-                              handleChange(e, "ishihara_test.os")
-                            }
-                            className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                            placeholder=""
-                          />
-                        </div>
-                      </section>
-                    </div>
-                    <div className="border border-f-gray bg-bg-mc rounded-md p-5">
-                      <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                        | Schirmer Test
-                      </label>
-                      <section className="flex gap-3 mt-5">
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OD
-                          </p>
-                          <textarea
-                            type="text"
-                            name="schirmer_od"
-                            value={medformData.schirmer_test.od}
-                            onChange={(e) =>
-                              handleChange(e, "schirmer_test.od")
-                            }
-                            className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                            placeholder=""
-                          />
-                        </div>
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OS
-                          </p>
-                          <textarea
-                            type="text"
-                            name="schirmer_os"
-                            value={medformData.schirmer_test.os}
-                            onChange={(e) =>
-                              handleChange(e, "schirmer_test.os")
-                            }
-                            className="mt-4 h-20 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                            placeholder=""
-                          />
-                        </div>
-                      </section>
-                    </div>
+                      </div>
+                      <div className="flex flex-col w-full">
+                        <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                          OS
+                        </p>
+                        <textarea
+                          type="text"
+                          name="ishihara_os"
+                          value={medformData.ishihara_test.os}
+                          onChange={(e) => handleChange(e, "ishihara_test.os")}
+                          className="mt-4 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={3}
+                          placeholder=""
+                        />
+                      </div>
+                    </section>
+                  </div>
+                  <div className="border border-f-gray bg-bg-mc rounded-md w-full md:w-1/3 p-5">
+                    <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
+                      | Schirmer Test
+                    </label>
+                    <section className="flex gap-3 mt-5 flex-col md:flex-row">
+                      <div className="flex flex-col w-full">
+                        <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                          OD
+                        </p>
+                        <textarea
+                          type="text"
+                          name="schirmer_od"
+                          value={medformData.schirmer_test.od}
+                          onChange={(e) => handleChange(e, "schirmer_test.od")}
+                          className="mt-4 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={3}
+                          placeholder=""
+                        />
+                      </div>
+                      <div className="flex flex-col w-full">
+                        <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
+                          OS
+                        </p>
+                        <textarea
+                          type="text"
+                          name="schirmer_os"
+                          value={medformData.schirmer_test.os}
+                          onChange={(e) => handleChange(e, "schirmer_test.os")}
+                          className="mt-4 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={3}
+                          placeholder=""
+                        />
+                      </div>
+                    </section>
                   </div>
                 </div>
                 <div className="flex flex-col md:flex-row gap-5">
@@ -3095,40 +3612,66 @@ const MedForm = () => {
                     <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
                       | Ophthalmoscopy
                     </label>
-                    <section className="flex gap-5 mt-5">
-                      <div className="w-1/2 ">
-                        <header className="bg-bg-sb border border-c-gray3 py-1 font-semibold text-p-sc md:text-p-sm text-f-gray rounded-t-md flex justify-center">
-                          OD
-                        </header>
-                        <div className="border border-c-gray3 p-5 bg-white rounded-sm">
-                          <img
-                            src={
-                              medformData.ophthalmoscopy.od ||
-                              canvasImages.BLANK_OD ||
-                              BLANK_OD
-                            }
-                            alt="BLANK IMG"
-                            className="w-full aspect-square"
-                            onClick={() => handleImageClick("BLANK_OD")}
-                          />
+                    <section className="flex flex-col md:flex-row gap-5 mt-5">
+                      <div className="w-full h-fit flex flex-col items-center gap-5">
+                        <div className="w-2/3">
+                          <header className="bg-bg-sb border border-c-gray3 py-1 font-semibold text-p-sc md:text-p-sm text-f-gray rounded-t-md flex justify-center">
+                            OD
+                          </header>
+                          <div className="border border-c-gray3 p-5 bg-white rounded-b-md">
+                            <img
+                              src={
+                                medformData.ophthalmoscopy.od ||
+                                canvasImages.BLANK_OD ||
+                                BLANK_OD
+                              }
+                              alt="BLANK IMG"
+                              className="w-full aspect-square"
+                              onClick={() => handleImageClick("BLANK_OD")}
+                            />
+                          </div>
                         </div>
+                        <textarea
+                          type="text"
+                          name="ophthalmoscopy_additional_od"
+                          value={medformData.ophthalmoscopy.additional_note_od}
+                          onChange={(e) =>
+                            handleChange(e, "ophthalmoscopy.additional_note_od")
+                          }
+                          className="w-4/5 px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={2}
+                          placeholder="Additional notes..."
+                        />
                       </div>
-                      <div className="w-1/2 ">
-                        <header className="bg-bg-sb border border-c-gray3 py-1 font-semibold text-p-sc md:text-p-sm text-f-gray rounded-t-md flex justify-center">
-                          OS
-                        </header>
-                        <div className="border border-c-gray3 p-5 bg-white rounded-sm">
-                          <img
-                            src={
-                              medformData.ophthalmoscopy.os ||
-                              canvasImages.BLANK_OS ||
-                              BLANK_OS
-                            }
-                            alt="BLANK IMG"
-                            className="w-full aspect-square"
-                            onClick={() => handleImageClick("BLANK_OS")}
-                          />
+                      <div className="w-full h-fit flex flex-col items-center gap-5">
+                        <div className="w-2/3 ">
+                          <header className="bg-bg-sb border border-c-gray3 py-1 font-semibold text-p-sc md:text-p-sm text-f-gray rounded-t-md flex justify-center">
+                            OS
+                          </header>
+                          <div className="border border-c-gray3 p-5 bg-white rounded-b-md">
+                            <img
+                              src={
+                                medformData.ophthalmoscopy.os ||
+                                canvasImages.BLANK_OS ||
+                                BLANK_OS
+                              }
+                              alt="BLANK IMG"
+                              className="w-full aspect-square"
+                              onClick={() => handleImageClick("BLANK_OS")}
+                            />
+                          </div>
                         </div>
+                        <textarea
+                          type="text"
+                          name="ophthalmoscopy_additional_os"
+                          value={medformData.ophthalmoscopy.additional_note_os}
+                          onChange={(e) =>
+                            handleChange(e, "ophthalmoscopy.additional_note_os")
+                          }
+                          className="w-4/5  px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                          rows={2}
+                          placeholder="Additional notes..."
+                        />
                       </div>
                     </section>
                   </div>
@@ -3162,14 +3705,53 @@ const MedForm = () => {
                         />
                       </div>
                     </section>
-                    <div className="flex gap-3 mt-3">
-                      <input
-                        type="image"
-                        className="w-full border border-f-gray h-44"
-                      />
-                      <div className="flex flex-col gap-4 ">
-                        <img src="" alt="" className="bg-blue-900 w-20 h-20" />
-                        <img src="" alt="" className="bg-blue-900 w-20 h-20" />
+                    <div className="flex gap-3 mt-3 h-64">
+                      <div className="w-1/6">
+                        <div
+                          className={`relative justify-center items-center rounded-md aspect-square ${
+                            image
+                              ? `border-none`
+                              : `border-dashed border-2 border-c-gray3`
+                          }`}
+                        >
+                          {!image ? (
+                            <FileUploader
+                              handleChange={handleImageUpload}
+                              name="file"
+                              types={["JPG", "PNG", "GIF"]}
+                              maxSize={50 * 1024 * 1024}
+                            >
+                              <div className="flex flex-col justify-center items-center w-full h-full text-c-gray3 gap-2">
+                                <TiUpload className="h-10 w-10" />
+                                <h1 className="text-p-sm md:text-p-rg text-center hidden md:block">
+                                  Attach Image
+                                </h1>
+                              </div>
+                            </FileUploader>
+                          ) : (
+                            <div className="relative w-full h-full">
+                              <button
+                                onClick={handleRemoveImage}
+                                className="absolute -top-3 -right-4 md:top-2 md:right-2 bg-c-gray3 text-white pt-1 px-3 rounded-full text-2xl hover:bg-c-red"
+                              >
+                                &times;
+                              </button>
+                              <img
+                                src={image}
+                                alt="Uploaded preview"
+                                className="rounded-md w-full h-full border border-c-gray3"
+                              />
+                            </div>
+                          )}
+                        </div>
+                        {image && (
+                          <button
+                            className="bg-c-primary text-f-light text-p-sm md:text-p-rg rounded-md font-semibold py-1 md:py-3 w-full mt-3"
+                            onClick={handleUploadImage}
+                          >
+                            Save
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -3210,7 +3792,7 @@ const MedForm = () => {
                               "internal_examination.cup_disc_ratio.od"
                             )
                           }
-                          className="mt-2 w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                          className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                         <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
                           Cup/Disc Ratio
@@ -3227,7 +3809,7 @@ const MedForm = () => {
                               "internal_examination.cup_disc_ratio.os"
                             )
                           }
-                          className="mt-2 w-2/3  p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                          className="mt-2 w-full md:w-2/3  p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </div>
                       <div className="flex gap-3 items-center flex-col md:flex-row">
@@ -3238,7 +3820,7 @@ const MedForm = () => {
                           onChange={(e) =>
                             handleChange(e, "internal_examination.av_ratio.od")
                           }
-                          className="mt-2 w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                          className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                         <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
                           A/V Ratio
@@ -3250,570 +3832,166 @@ const MedForm = () => {
                           onChange={(e) =>
                             handleChange(e, "internal_examination.av_ratio.os")
                           }
-                          className="mt-2 w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                          className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </div>
                       <div className="flex gap-3 items-center flex-col md:flex-row">
-                        <select
+                        <input
+                          type="text"
                           name="macula_od"
                           value={medformData.internal_examination.macula.od}
                           onChange={(e) =>
                             handleChange(e, "internal_examination.macula.od")
                           }
-                          className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
-                        >
-                          <option
-                            value=""
-                            disabled
-                            className="text-f-border-f-gray"
-                          >
-                            -
-                          </option>
-                          <option value="Abnormal (Drusen)">
-                            Abnormal (Drusen)
-                          </option>
-                        </select>
+                          className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        />
                         <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
                           Macula
                         </p>
-                        <select
+                        <input
+                          type="text"
                           name="macula_os"
                           value={medformData.internal_examination.macula.os}
                           onChange={(e) =>
                             handleChange(e, "internal_examination.macula.os")
                           }
-                          className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
-                        >
-                          <option
-                            value=""
-                            disabled
-                            className="text-f-border-f-gray"
-                          >
-                            -
-                          </option>
-                          <option value="Abnormal (Drusen)">
-                            Abnormal (Drusen)
-                          </option>
-                        </select>
+                          className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        />
                       </div>
                       <div className="flex gap-3 items-center flex-col md:flex-row">
-                        <select
+                        <input
+                          type="text"
                           name="virtreous_od"
                           value={medformData.internal_examination.vitreous.od}
                           onChange={(e) =>
                             handleChange(e, "internal_examination.vitreous.od")
                           }
-                          className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
-                        >
-                          <option
-                            value=""
-                            disabled
-                            className="text-f-border-f-gray"
-                          >
-                            -
-                          </option>
-                          <option value="Hemorrhage">Hemorrhage</option>
-                        </select>
+                          className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        />
                         <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
                           Vitreous
                         </p>
-                        <select
+                        <input
+                          type="text"
                           name="virtreous_os"
                           value={medformData.internal_examination.vitreous.os}
                           onChange={(e) =>
                             handleChange(e, "internal_examination.vitreous.os")
                           }
-                          className="mt-3 w-2/3 p-3 border border-f-gray rounded-md text-f-dark  focus:outline-c-primary"
-                        >
-                          <option
-                            value=""
-                            disabled
-                            className="text-f-border-f-gray"
-                          >
-                            -
-                          </option>
-                          <option value="Hemorrhage">Hemorrhage</option>
-                        </select>
+                          className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        />
                       </div>
-                      <div className="flex gap-3 items-center">
-                        <div className="flex gap-2 w-2/3 flex-col md:flex-row md:gap-6">
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="vessel_od_normal"
-                              value="normal"
-                              checked={
-                                medformData.internal_examination.vessel.od
-                                  .normal
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    vessel: {
-                                      ...prevData.internal_examination.vessel,
-                                      od: { normal: true, abnormal: false },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Normal
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="vessel_od_abnormal"
-                              value="abnormal"
-                              checked={
-                                medformData.internal_examination.vessel.od
-                                  .abnormal
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    vessel: {
-                                      ...prevData.internal_examination.vessel,
-                                      od: { normal: false, abnormal: true },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Abnormal
-                            </span>
-                          </div>
-                        </div>
+                      <div className="flex gap-3 items-center flex-col md:flex-row">
+                        <input
+                          type="text"
+                          name="vessel_od"
+                          value={medformData.internal_examination.vessel.od}
+                          onChange={(e) =>
+                            handleChange(e, "internal_examination.vessel.od")
+                          }
+                          className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        />
                         <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
                           Vessel
                         </p>
-                        <div className="flex gap-2 w-2/3 flex-col md:flex-row md:gap-6 justify-end">
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="vessel_os_normal"
-                              value="normal"
-                              checked={
-                                medformData.internal_examination.vessel.os
-                                  .normal
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    vessel: {
-                                      ...prevData.internal_examination.vessel,
-                                      os: { normal: true, abnormal: false },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Normal
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="vessel_os_abnormal"
-                              value="abnormal"
-                              checked={
-                                medformData.internal_examination.vessel.os
-                                  .abnormal
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    vessel: {
-                                      ...prevData.internal_examination.vessel,
-                                      os: { normal: false, abnormal: true },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Abnormal
-                            </span>
-                          </div>
-                        </div>
+                        <input
+                          type="text"
+                          name="vessel_os"
+                          value={medformData.internal_examination.vessel.os}
+                          onChange={(e) =>
+                            handleChange(e, "internal_examination.vessel.os")
+                          }
+                          className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        />
                       </div>
-                      <div className="flex gap-3 items-center">
-                        <div className="flex gap-2 w-2/3 flex-col md:flex-row md:gap-6">
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="venous_od_normal"
-                              value="normal"
-                              checked={
-                                medformData.internal_examination.venous_pulse.od
-                                  .normal
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    venous_pulse: {
-                                      ...prevData.internal_examination
-                                        .venous_pulse,
-                                      od: { normal: true, abnormal: false },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Normal
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="venous_od_abnormal"
-                              value=""
-                              checked={
-                                medformData.internal_examination.venous_pulse.od
-                                  .abnormal
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    venous_pulse: {
-                                      ...prevData.internal_examination
-                                        .venous_pulse,
-                                      od: { normal: false, abnormal: true },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Abnormal
-                            </span>
-                          </div>
-                        </div>
+                      <div className="flex gap-3 items-center flex-col md:flex-row">
+                        <input
+                          type="text"
+                          name="venous_pulse_od"
+                          value={
+                            medformData.internal_examination.venous_pulse.od
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "internal_examination.venous_pulse.od"
+                            )
+                          }
+                          className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        />
                         <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
                           Venous Pulse
                         </p>
-                        <div className="flex gap-2 w-2/3 flex-col md:flex-row md:gap-6 justify-end">
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="venous_os_normal"
-                              value="normal"
-                              checked={
-                                medformData.internal_examination.venous_pulse.os
-                                  .normal
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    venous_pulse: {
-                                      ...prevData.internal_examination
-                                        .venous_pulse,
-                                      os: { normal: true, abnormal: false },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Normal
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="venous_os_abnormal"
-                              value="abnormal"
-                              checked={
-                                medformData.internal_examination.venous_pulse.os
-                                  .abnormal
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    venous_pulse: {
-                                      ...prevData.internal_examination
-                                        .venous_pulse,
-                                      os: { normal: false, abnormal: true },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Abnormal
-                            </span>
-                          </div>
-                        </div>
+                        <input
+                          type="text"
+                          name="venous_pulse_os"
+                          value={
+                            medformData.internal_examination.venous_pulse.os
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "internal_examination.venous_pulse.os"
+                            )
+                          }
+                          className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        />
                       </div>
-                      <div className="flex gap-3 items-center">
-                        <div className="flex gap-2 w-2/3 flex-col md:flex-row md:gap-6">
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="forveal_od_present"
-                              value="present"
-                              checked={
-                                medformData.internal_examination.forveal_reflex
-                                  .od.present
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    forveal_reflex: {
-                                      ...prevData.internal_examination
-                                        .forveal_reflex,
-                                      od: { present: true, absent: false },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Present
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="forveal_od_absent"
-                              value="absent"
-                              checked={
-                                medformData.internal_examination.forveal_reflex
-                                  .od.absent
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    forveal_reflex: {
-                                      ...prevData.internal_examination
-                                        .forveal_reflex,
-                                      od: { present: false, absent: true },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Absent
-                            </span>
-                          </div>
-                        </div>
+                      <div className="flex gap-3 items-center flex-col md:flex-row">
+                        <input
+                          type="text"
+                          name="forveal_reflex_od"
+                          value={
+                            medformData.internal_examination.forveal_reflex.od
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "internal_examination.forveal_reflex.od"
+                            )
+                          }
+                          className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        />
                         <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
                           Foveal Reflex
                         </p>
-                        <div className="flex gap-2 w-2/3 flex-col md:flex-row md:gap-6 justify-end">
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="forveal_os_present"
-                              value="present"
-                              checked={
-                                medformData.internal_examination.forveal_reflex
-                                  .os.present
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    forveal_reflex: {
-                                      ...prevData.internal_examination
-                                        .forveal_reflex,
-                                      os: { present: true, absent: false },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Present
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="forveal_os_absent"
-                              value="absent"
-                              checked={
-                                medformData.internal_examination.forveal_reflex
-                                  .os.absent
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    forveal_reflex: {
-                                      ...prevData.internal_examination
-                                        .forveal_reflex,
-                                      os: { present: false, absent: true },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Absent
-                            </span>
-                          </div>
-                        </div>
+                        <input
+                          type="text"
+                          name="forveal_reflex_os"
+                          value={
+                            medformData.internal_examination.forveal_reflex.os
+                          }
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              "internal_examination.forveal_reflex.os"
+                            )
+                          }
+                          className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        />
                       </div>
-                      <div className="flex gap-3 items-center">
-                        <div className="flex gap-2 w-2/3 flex-col md:flex-row md:gap-6">
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="periphery_od_normal"
-                              value="normal"
-                              checked={
-                                medformData.internal_examination.periphery.od
-                                  .normal
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    periphery: {
-                                      ...prevData.internal_examination
-                                        .periphery,
-                                      od: { normal: true, abnormal: false },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Normal
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="periphery_od_abnormal"
-                              value="abnormal"
-                              checked={
-                                medformData.internal_examination.periphery.od
-                                  .abnormal
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    periphery: {
-                                      ...prevData.internal_examination
-                                        .periphery,
-                                      od: { normal: false, abnormal: true },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Abnormal
-                            </span>
-                          </div>
-                        </div>
+                      <div className="flex gap-3 items-center flex-col md:flex-row">
+                        <input
+                          type="text"
+                          name="periphery_od"
+                          value={medformData.internal_examination.periphery.od}
+                          onChange={(e) =>
+                            handleChange(e, "internal_examination.periphery.od")
+                          }
+                          className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        />
                         <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
                           Periphery
                         </p>
-                        <div className="flex gap-2 w-2/3 flex-col md:flex-row md:gap-6 justify-end">
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="periphery_os_normal"
-                              value="normal"
-                              checked={
-                                medformData.internal_examination.periphery.os
-                                  .normal
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    periphery: {
-                                      ...prevData.internal_examination
-                                        .periphery,
-                                      os: { normal: true, abnormal: false },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Normal
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="periphery_os_abnormal"
-                              value="abnormal"
-                              checked={
-                                medformData.internal_examination.periphery.os
-                                  .abnormal
-                              }
-                              onChange={() =>
-                                setMedformData((prevData) => ({
-                                  ...prevData,
-                                  internal_examination: {
-                                    ...prevData.internal_examination,
-                                    periphery: {
-                                      ...prevData.internal_examination
-                                        .periphery,
-                                      os: { normal: false, abnormal: true },
-                                    },
-                                  },
-                                }))
-                              }
-                              className="mr-3 w-6 h-6"
-                            />
-                            <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                              Abnormal
-                            </span>
-                          </div>
-                        </div>
+                        <input
+                          type="text"
+                          name="periphery_os"
+                          value={medformData.internal_examination.periphery.os}
+                          onChange={(e) =>
+                            handleChange(e, "internal_examination.periphery.os")
+                          }
+                          className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                        />
                       </div>
                     </section>
                     <div className="w-full md:w-1/5">
@@ -5022,22 +5200,22 @@ const MedForm = () => {
                             <label className="flex items-center gap-2">
                               <input
                                 type="checkbox"
-                                name="pupil_od_distortion"
-                                value="Pupil distortion"
+                                name="pupil_od_distorted"
+                                value="Distorted pupil"
                                 checked={
                                   medformData.external_examination.pupil.od
-                                    .options.pupil_distortion
+                                    .options.distorted_pupil
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "external_examination.pupil.od.options.pupil_distortion"
+                                    "external_examination.pupil.od.options.distorted_pupil"
                                   )
                                 }
                                 className="w-6 h-6"
                               />
                               <span className="text-c-gray3 font-medium text-p-sc md:text-p-sm">
-                                Pupil distortion
+                                Distorted pupil
                               </span>
                             </label>
                             <label className="flex items-center gap-2">
@@ -5132,22 +5310,22 @@ const MedForm = () => {
                             <label className="flex items-center gap-2">
                               <input
                                 type="checkbox"
-                                name="pupil_os_distortion"
-                                value="Pupil distortion"
+                                name="pupil_os_distorted"
+                                value="Distorted pupil"
                                 checked={
                                   medformData.external_examination.pupil.os
-                                    .options.pupil_distortion
+                                    .options.distorted_pupil
                                 }
                                 onChange={(e) =>
                                   handleChange(
                                     e,
-                                    "external_examination.pupil.os.options.pupil_distortion"
+                                    "external_examination.pupil.os.options.distorted_pupil"
                                   )
                                 }
                                 className="w-6 h-6"
                               />
                               <span className="text-c-gray3 font-medium text-p-sc md:text-p-sm">
-                                Pupil distortion
+                                Distorted pupil
                               </span>
                             </label>
                             <label className="flex items-center gap-2">
@@ -5411,194 +5589,218 @@ const MedForm = () => {
                     </div>
                   </div>
                 </div>
-                <div className="w-full">
-                  <header className="flex justify-center py-2 rounded-t-md w-full border border-f-gray text-c-secondary text-p-sm md:text-p-rg font-semibold bg-bg-sb mb-2">
-                    <h1>Prescription</h1>
-                  </header>
-                  <div className="flex gap-2 flex-col md:flex-row">
-                    <div className="border border-f-gray bg-bg-mc w-full md:w-1/2 rounded-br-md p-5">
-                      <section className="flex justify-between">
-                        <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                          | Habitual Prescription
-                        </label>
-                        <label>
-                          <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm">
-                            Date Prescribe
-                          </p>
-                          <input
-                            type="date"
-                            name="hp_date"
-                            max={new Date().toISOString().split("T")[0]}
-                            value={
-                              medformData.habitual_prescription.date_prescribed
-                            }
-                            onChange={(e) =>
-                              handleChange(
-                                e,
-                                "habitual_prescription.date_prescribed"
-                              )
-                            }
-                            className="mt-1 w-fit h-fit px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                          />
-                        </label>
-                      </section>
-                      <section className="text-p-sc md:text-p-sm font-semibold mt-5 flex gap-3">
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OD
-                          </p>
-                          <textarea
-                            type="text"
-                            name="hp_od"
-                            value={medformData.habitual_prescription.od}
-                            onChange={(e) =>
-                              handleChange(e, "habitual_prescription.od")
-                            }
-                            className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                            placeholder=""
-                          />
-                        </div>
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OS
-                          </p>
-                          <textarea
-                            type="text"
-                            name="hp_os"
-                            value={medformData.habitual_prescription.os}
-                            onChange={(e) =>
-                              handleChange(e, "habitual_prescription.os")
-                            }
-                            className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                            placeholder=""
-                          />
-                        </div>
-                      </section>
-                    </div>
-                    <div className="border border-f-gray bg-bg-mc w-full md:w-1/2 rounded-br-md p-5">
-                      <section className="flex justify-between">
-                        <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                          | Contact Lens Prescrition
-                        </label>
-                        <label>
-                          <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm">
-                            Date Prescribe
-                          </p>
-                          <input
-                            type="date"
-                            name="clp_date"
-                            max={new Date().toISOString().split("T")[0]}
-                            value={
-                              medformData.contact_lens_prescription
-                                .date_prescribed
-                            }
-                            onChange={(e) =>
-                              handleChange(
-                                e,
-                                "contact_lens_prescription.date_prescribed"
-                              )
-                            }
-                            className="mt-1 w-fit h-fit px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                          />
-                        </label>
-                      </section>
-                      <section className="text-p-sc md:text-p-sm font-semibold mt-5 flex gap-3">
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OD
-                          </p>
-                          <textarea
-                            type="text"
-                            name="clp_od"
-                            value={medformData.contact_lens_prescription.od}
-                            onChange={(e) =>
-                              handleChange(e, "contact_lens_prescription.od")
-                            }
-                            className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                            placeholder=""
-                          />
-                        </div>
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OS
-                          </p>
-                          <textarea
-                            type="text"
-                            name="clp_os"
-                            value={medformData.contact_lens_prescription.os}
-                            onChange={(e) =>
-                              handleChange(e, "contact_lens_prescription.os")
-                            }
-                            className="mt-3 h-32 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                            placeholder=""
-                          />
-                        </div>
-                      </section>
-                    </div>
-                  </div>
-                </div>
               </div>
             )}
             {currentPage === 2 && (
-              <div className="p-5 flex gap-5 flex-col md:flex-row">
-                <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full md:w-1/2">
-                  <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                    | Diagnosis
-                  </label>
-                  <textarea
-                    type="text"
-                    name="diagnosis"
-                    value={medformData.diagnosis}
-                    onChange={(e) => handleChange(e, "diagnosis")}
-                    className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                    placeholder="If option not available"
-                  />
+              <div className="p-5 flex gap-5 flex-col md:flex-row w-full">
+                <div className="w-full md:w-1/2 bg-white rounded-md border p-5">
+                  <p>Subject & Objective Window</p>
                 </div>
-                <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full md:w-1/2">
-                  <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                    | Refractive Error
-                  </label>
-                  <textarea
-                    type="text"
-                    name="refractive_error"
-                    value={medformData.refractive_error}
-                    onChange={(e) => handleChange(e, "refractive_error")}
-                    className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                    placeholder="If option not available"
-                  />
+                <div className="w-full md:w-1/2 flex flex-col gap-5">
+                  <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full">
+                    <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
+                      | Diagnosis
+                    </label>
+                    <textarea
+                      type="text"
+                      name="diagnosis"
+                      value={medformData.diagnosis}
+                      onChange={(e) => handleChange(e, "diagnosis")}
+                      className="mt-5 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                      rows={5}
+                    />
+                  </div>
+                  <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full">
+                    <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
+                      | Refractive Error
+                    </label>
+                    <textarea
+                      type="text"
+                      name="refractive_error"
+                      value={medformData.refractive_error}
+                      onChange={(e) => handleChange(e, "refractive_error")}
+                      className="mt-5 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                      rows={5}
+                    />
+                  </div>
                 </div>
               </div>
             )}
             {currentPage === 3 && (
               <div className="p-5 flex flex-col gap-5">
-                <div className="flex gap-5 flex-col md:flex-row">
-                  <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full md:w-1/2">
-                    <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                      | New Prescription OD
-                    </label>
-                    <textarea
-                      type="text"
-                      name="new_prescription_od"
-                      value={medformData.new_prescription_od}
-                      onChange={(e) => handleChange(e, "new_prescription_od")}
-                      className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                      placeholder="If option not available"
-                    />
-                  </div>
-                  <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full md:w-1/2">
-                    <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                      | New Prescription OS
-                    </label>
-                    <textarea
-                      type="text"
-                      name="new_prescription_os"
-                      value={medformData.new_prescription_os}
-                      onChange={(e) => handleChange(e, "new_prescription_os")}
-                      className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                      placeholder="If option not available"
-                    />
+                <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full">
+                  <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
+                    | New Prescription
+                  </label>
+                  <div className="w-full flex flex-col lg:flex-row gap-5 mt-5">
+                    <div className="w-full lg:w-1/3">
+                      <header className="flex justify-center py-2 rounded-t-md w-full border border-f-gray text-c-secondary text-p-sm md:text-p-rg font-semibold bg-bg-sb">
+                        <h1>OD</h1>
+                      </header>
+                      <section className="w-fullflex flex-col gap-1 p-5 border rounded-b-md bg-white border-f-gray">
+                        <section className="w-full h-fit">
+                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
+                            ADD
+                          </p>
+                          <textarea
+                            type="text"
+                            name="new_prescription_od_add"
+                            value={medformData.new_prescription_od.np_ADD}
+                            onChange={(e) =>
+                              handleChange(e, "new_prescription_od.np_ADD")
+                            }
+                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                            rows={2}
+                            placeholder="Input prescription"
+                          />
+                        </section>
+                        <section className="w-full h-fit">
+                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
+                            NEAR
+                          </p>
+                          <textarea
+                            type="text"
+                            name="new_prescription_od_near"
+                            value={medformData.new_prescription_od.np_NEAR}
+                            onChange={(e) =>
+                              handleChange(e, "new_prescription_od.np_NEAR")
+                            }
+                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                            rows={2}
+                            placeholder="Input prescription"
+                          />
+                        </section>
+                        <section className="w-full h-fit">
+                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
+                            FAR
+                          </p>
+                          <textarea
+                            type="text"
+                            name="new_prescription_od_far"
+                            value={medformData.new_prescription_od.np_FAR}
+                            onChange={(e) =>
+                              handleChange(e, "new_prescription_od.np_FAR")
+                            }
+                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                            rows={2}
+                            placeholder="Input prescription"
+                          />
+                        </section>
+                      </section>
+                    </div>
+                    <div className="w-full lg:w-1/3">
+                      <header className="flex justify-center py-2 rounded-t-md w-full border border-f-gray text-c-secondary text-p-sm md:text-p-rg font-semibold bg-bg-sb">
+                        <h1>OS</h1>
+                      </header>
+                      <section className="w-fullflex flex-col gap-1 p-5 border rounded-b-md  bg-white border-f-gray">
+                        <section className="w-full h-fit">
+                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
+                            ADD
+                          </p>
+                          <textarea
+                            type="text"
+                            name="new_prescription_os_add"
+                            value={medformData.new_prescription_os.np_ADD}
+                            onChange={(e) =>
+                              handleChange(e, "new_prescription_os.np_ADD")
+                            }
+                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                            rows={2}
+                            placeholder="Input prescription"
+                          />
+                        </section>
+                        <section className="w-full h-fit">
+                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
+                            NEAR
+                          </p>
+                          <textarea
+                            type="text"
+                            name="new_prescription_os_near"
+                            value={medformData.new_prescription_os.np_NEAR}
+                            onChange={(e) =>
+                              handleChange(e, "new_prescription_os.np_NEAR")
+                            }
+                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                            rows={2}
+                            placeholder="Input prescription"
+                          />
+                        </section>
+                        <section className="w-full h-fit">
+                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
+                            FAR
+                          </p>
+                          <textarea
+                            type="text"
+                            name="new_prescription_os_far"
+                            value={medformData.new_prescription_os.np_FAR}
+                            onChange={(e) =>
+                              handleChange(e, "new_prescription_os.np_FAR")
+                            }
+                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                            rows={2}
+                            placeholder="Input prescription"
+                          />
+                        </section>
+                      </section>
+                    </div>
+                    <div className="w-full lg:w-1/3">
+                      <header className="flex justify-center py-2 rounded-t-md w-full border border-f-gray text-c-secondary text-p-sm md:text-p-rg font-semibold bg-bg-sb">
+                        <h1>OU</h1>
+                      </header>
+                      <section className="w-fullflex flex-col gap-1 p-5 border rounded-b-md  bg-white border-f-gray">
+                        <section className="w-full h-fit">
+                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
+                            ADD
+                          </p>
+                          <textarea
+                            type="text"
+                            name="new_prescription_ou_add"
+                            value={medformData.new_prescription_ou.np_ADD}
+                            onChange={(e) =>
+                              handleChange(e, "new_prescription_ou.np_ADD")
+                            }
+                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                            rows={2}
+                            placeholder="Input prescription"
+                          />
+                        </section>
+                        <section className="w-full h-fit">
+                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
+                            NEAR
+                          </p>
+                          <textarea
+                            type="text"
+                            name="new_prescription_ou_near"
+                            value={medformData.new_prescription_ou.np_NEAR}
+                            onChange={(e) =>
+                              handleChange(e, "new_prescription_ou.np_NEAR")
+                            }
+                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                            rows={2}
+                            placeholder="Input prescription"
+                          />
+                        </section>
+                        <section className="w-full h-fit">
+                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
+                            FAR
+                          </p>
+                          <textarea
+                            type="text"
+                            name="new_prescription_ou_far"
+                            value={medformData.new_prescription_ou.np_FAR}
+                            onChange={(e) =>
+                              handleChange(e, "new_prescription_ou.np_FAR")
+                            }
+                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                            rows={2}
+                            placeholder="Input prescription"
+                          />
+                        </section>
+                      </section>
+                    </div>
                   </div>
                 </div>
+                <div className="flex gap-5 flex-col md:flex-row"></div>
                 <div className="flex gap-5 flex-col md:flex-row">
                   <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full md:w-1/2">
                     <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
@@ -5609,8 +5811,9 @@ const MedForm = () => {
                       name="management"
                       value={medformData.management}
                       onChange={(e) => handleChange(e, "management")}
-                      className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                      placeholder="If option not available"
+                      className="mt-5 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                      rows={4}
+                      placeholder="Input data"
                     />
                   </div>
                   <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full md:w-1/2">
@@ -5622,8 +5825,9 @@ const MedForm = () => {
                       name="followup_care"
                       value={medformData.followup_care}
                       onChange={(e) => handleChange(e, "followup_care")}
-                      className="mt-5 h-60 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                      placeholder="If option not available"
+                      className="mt-5 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                      rows={4}
+                      placeholder="Input data"
                     />
                   </div>
                 </div>
@@ -5635,16 +5839,16 @@ const MedForm = () => {
               {(noteId === null || noteId === undefined) && (
                 <div className="flex justify-end gap-4">
                   <button
-                    className="py-3 rounded-md border-c-gray3 border-2  font-semibold text-p-sm md:text-p-rg text-f-dark w-32 mt-5"
+                    className="py-3 px-20 rounded-md border shadow-sm font-semibold text-p-sm md:text-p-rg mt-5 hover:bg-sb-org text-f-dark"
                     onClick={handleBackPage}
                   >
-                    Back
+                    Go back
                   </button>
                   <button
-                    className="py-4 rounded-md bg-c-primary font-semibold text-p-sm md:text-p-rg text-f-light w-64 mt-5"
+                    className="py-3 px-20 rounded-md bg-c-primary font-semibold text-p-sm md:text-p-rg text-f-light mt-5 hover:bg-hover-doctor"
                     onClick={handleSubmitNote}
                   >
-                    Submit Note
+                    Submit Scribe
                   </button>
                 </div>
               )}
@@ -5653,17 +5857,17 @@ const MedForm = () => {
             <div className="flex gap-4 justify-end">
               {currentPage !== 0 && (
                 <button
-                  className="py-3 rounded-md border-c-gray3 border-2  font-semibold text-p-sm md:text-p-rg text-f-dark w-32 mt-5"
+                  className="py-3 px-20 rounded-md border shadow-sm font-semibold text-p-sm md:text-p-rg mt-5 hover:bg-sb-org text-f-dark"
                   onClick={handleBackPage}
                 >
-                  Back
+                  Go back
                 </button>
               )}
               <button
-                className="py-3 rounded-md bg-c-secondary font-semibold text-p-sm md:text-p-rg text-f-light w-44  mt-5"
+                className="py-3 px-20 rounded-md bg-c-secondary font-semibold text-p-sm md:text-p-rg text-f-light mt-5 hover:bg-hover-org"
                 onClick={handleNext}
               >
-                Next
+                Continue
               </button>
             </div>
           )}
