@@ -43,8 +43,30 @@ const OrgDashboard = () => {
   const productCount = filteredProducts.length;
   const staffCount = staffs.length;
 
-  const getTotalSales = () => {
-    const salesTotal = filteredSales.reduce((total, item) => {
+  const filterSalesByMonth = (sales, monthOffset = 0) => {
+    const now = new Date();
+    const targetMonth = new Date(
+      now.getFullYear(),
+      now.getMonth() + monthOffset,
+      1
+    );
+    const nextMonth = new Date(
+      targetMonth.getFullYear(),
+      targetMonth.getMonth() + 1,
+      1
+    );
+
+    return sales.filter((sale) => {
+      const saleDate = new Date(sale.createdAt);
+      return saleDate >= targetMonth && saleDate < nextMonth;
+    });
+  };
+
+  const currentMonthSales = filterSalesByMonth(filteredSales, 0);
+  const previousMonthSales = filterSalesByMonth(filteredSales, -1);
+
+  const getTotalSales = (sales) => {
+    const salesTotal = sales.reduce((total, item) => {
       const itemTotal = item.purchaseDetails.reduce((sum, detail) => {
         return sum + detail.totalAmount;
       }, 0);
@@ -60,13 +82,28 @@ const OrgDashboard = () => {
     return salesTotal + servicesTotal;
   };
 
-  const totalSales = getTotalSales();
+  const currentMonthTotalSales = getTotalSales(currentMonthSales);
+  const previousMonthTotalSales = getTotalSales(previousMonthSales);
+
+  const calculatePercentageChange = (currentValue, previousValue) => {
+    if (previousValue === 0) {
+      return currentValue > 0 ? "+∞%" : "0%";
+    }
+    const change = ((currentValue - previousValue) / previousValue) * 100;
+    return `${change > 0 ? "+" : ""}${change.toFixed(1)}%`;
+  };
+
+  const totalSales = getTotalSales(filteredSales);
+  const salesChange = calculatePercentageChange(
+    currentMonthTotalSales,
+    previousMonthTotalSales
+  );
 
   const dummyData = [
     {
       title: "Gross Income",
       value: `₱ ${totalSales}`,
-      percentageChange: "+4.3%",
+      percentageChange: salesChange,
     },
     { title: "Total Patients", value: patientCount, percentageChange: "+4.3%" },
     { title: "Total Product", value: productCount, percentageChange: "+4.3%" },
@@ -119,7 +156,6 @@ const OrgDashboard = () => {
     const intervalId = setInterval(updateDateTimeAndGreeting, 1000);
     return () => clearInterval(intervalId);
   }, []);
-  console.log(user.organization);
 
   return (
     <>
