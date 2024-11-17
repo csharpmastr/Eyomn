@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { FiEdit } from "react-icons/fi";
 import ReasonVisitCard from "./ReasonVisitCard";
 import { useDispatch } from "react-redux";
 import VisitReasonModal from "./VisitReasonModal";
 import { useSelector } from "react-redux";
-import AddEditPatient from "./AddEditPatient";
+import PaymentBreakdown from "./PaymentBreakdown";
 
 const StaffViewPatientProfile = ({ patient, visits }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isVisitOpen, setIsVisitOpen] = useState(false);
   const toggleModal = () => setIsVisitOpen(!isVisitOpen);
-  const handleOpenModal = () => setIsModalOpen(!isModalOpen);
 
   const reduxDispatch = useDispatch();
   const formattedDate = patient.createdAt
@@ -24,14 +21,16 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
   const role = useSelector((state) => state.reducer.user.user.role);
 
   return (
-    <div className="w-full h-full flex flex-col gap-4 md:gap-8 md:flex-row font-poppins">
-      <div className="w-full h-full">
-        <header className="w-full h-fit flex justify-between items-center bg-bg-sb border border-c-primary rounded-md px-4 py-6 mb-6">
+    <div className="w-full h-full flex gap-4">
+      <div className="w-2/3 h-[800px] flex flex-col gap-5">
+        <header className="w-full h-1/6 flex items-center bg-bg-sb border border-c-primary rounded-md px-8 justify-between">
           <div className="text-f-dark font-medium text-p-sm md:text-p-rg">
             <p className="text-c-gray3 text-p-sc md:text-p-sm font-normal">
               Patient Name
             </p>
-            <p>{patient.first_name + " " + patient.last_name}</p>
+            <p className="text-p-lg">
+              {patient.first_name + " " + patient.last_name}
+            </p>
           </div>
           <div className="text-f-dark font-medium text-p-sm md:text-p-rg">
             <p className="text-c-gray3 text-p-sc md:text-p-sm font-normal">
@@ -39,28 +38,14 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
             </p>
             <p>{formattedDate}</p>
           </div>
-          <div>
-            {role === "3" && (
-              <button
-                className="flex w-fit justify-end"
-                onClick={handleOpenModal}
-              >
-                <FiEdit className="h-6 w-6 md:mr-2 text-c-secondary" />
-                <p className="text-c-secondary font-regular text-p-sm md:text-p-rg">
-                  Edit
-                </p>
-              </button>
-            )}
-          </div>
+          <span> </span>
         </header>
-        <div className="w-full h-fit flex flex-col justify-between gap-6">
-          <div className="w-full flex-1 text-f-dark rounded-md border shadow-sm bg-white">
-            <header>
-              <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mt-4 ml-4">
-                | Personal Information
-              </h1>
-            </header>
-            <div className="w-full flex flex-wrap p-8 gap-8 md:gap-0 md:flex-none">
+        <div className="w-full h-5/6 bg-white p-8 rounded-lg shadow-sm border flex flex-col justify-between">
+          <div>
+            <h1 className="text-p-sm md:text-p-rg font-medium text-f-dark mb-4">
+              | Personal Information
+            </h1>
+            <article className="flex w-full">
               <section className="flex-1 text-p-sm md:text-p-rg font-medium">
                 <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
                   Birthdate
@@ -79,92 +64,124 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
                 </p>
                 <p>{patient.sex || "Not Indicated"}</p>
               </section>
-            </div>
+            </article>
           </div>
-          <div className="w-full flex-1 text-f-dark rounded-md border shadow-sm bg-white">
-            <header>
-              <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mt-4 ml-4">
-                | Status Information
-              </h1>
-            </header>
-            <div className="w-full flex flex-wrap p-8 gap-8 md:gap-0 md:flex-none">
-              <section className="flex-1 text-p-sm md:text-p-rg font-medium">
-                <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
+          <hr />
+          <div>
+            <h1 className="text-p-sm md:text-p-rg font-medium text-f-dark mb-4">
+              | Status Information
+            </h1>
+            <article className="flex w-full">
+              <section className="flex-1">
+                <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm mb-2">
                   Civil Status
                 </p>
-                <p>{patient.civil_status}</p>
+                <p className="text-f-dark font-medium text-p-sm md:text-p-rg">
+                  {patient.civil_status}
+                </p>
               </section>
-              <section className="flex-1 text-p-sm md:text-p-rg font-medium">
-                <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
+              <section className="flex-1">
+                <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm mb-2">
                   Occupation
                 </p>
-                <p>{patient.occupation ? patient.occupation : "None"}</p>
+                <p className="text-f-dark font-medium text-p-sm md:text-p-rg">
+                  {patient.occupation}
+                </p>
               </section>
-              <section className="flex-1 text-p-sm md:text-p-rg font-medium"></section>
-            </div>
+              <section className="flex-1"> </section>
+            </article>
           </div>
-          <div className="w-full flex-1 text-f-dark rounded-md border shadow-sm bg-white">
-            <header>
-              <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mt-4 ml-4">
-                | Contact Information
-              </h1>
-            </header>
-            <div className="w-full flex flex-wrap p-8 gap-8 md:gap-4 md:flex-none">
-              <section className="flex-1 text-p-sm md:text-p-rg font-medium">
-                <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
-                  Email Address
-                </p>
-                <p>{patient.email}</p>
-              </section>
-              <section className="flex-1 text-p-sm md:text-p-rg font-medium">
-                <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
-                  Contact Number
-                </p>
-                <p>{patient.contact_number || patient.contact}</p>
-              </section>
-              <section className="flex-1 text-p-sm md:text-p-rg font-medium">
-                <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
+          <hr />
+          <div>
+            <h1 className="text-p-sm md:text-p-rg font-medium text-f-dark mb-4">
+              | Contact Information
+            </h1>
+            <article className="flex w-full">
+              <section className="flex-1">
+                <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm mb-2">
                   Address
                 </p>
-                <p>{patient.municipality + ", " + patient.province}</p>
+                <p className="text-f-dark font-medium text-p-sm md:text-p-rg">
+                  {patient.municipality + ", " + patient.province}
+                </p>
               </section>
-            </div>
+              <section className="flex-1">
+                <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm mb-2">
+                  Contact Number
+                </p>
+                <p className="text-f-dark font-medium text-p-sm md:text-p-rg">
+                  {patient.contact_number}
+                </p>
+              </section>
+              <section className="flex-1">
+                <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm mb-2">
+                  Email Address
+                </p>
+                <p className="text-f-dark font-medium text-p-sm md:text-p-rg truncate">
+                  {patient.email}
+                </p>
+              </section>
+            </article>
+          </div>
+          <hr />
+          <div>
+            <h1 className="text-p-sm md:text-p-rg font-medium text-f-dark mb-4">
+              | Attending Doctor(s)
+            </h1>
+            <article className="flex w-full">
+              <section className="flex-1">
+                <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm mb-2">
+                  Doctor's Name
+                </p>
+                <p className="text-f-dark font-medium text-p-sm md:text-p-rg">
+                  {patient.civil_status}
+                </p>
+              </section>
+              <section className="flex-1">
+                <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm mb-2">
+                  Occupation
+                </p>
+                <p className="text-f-dark font-medium text-p-sm md:text-p-rg">
+                  {patient.occupation}
+                </p>
+              </section>
+              <section className="flex-1"> </section>
+            </article>
           </div>
         </div>
       </div>
-      <div className="md:w-3/5 h-full shadow-sm border bg-white p-6 rounded-lg">
-        <header className="flex w-full h-fit justify-between mb-4">
-          <h1 className="text-p-sm md:text-p-rg font-medium text-c-gray3">
-            | Recent Visit
-          </h1>
-          {role === "3" ? (
-            <button>
-              <IoIosAddCircleOutline
-                className="h-6 w-6 md:mr-2 text-c-gray3"
-                onClick={toggleModal}
-              />
-            </button>
-          ) : (
-            ""
-          )}
-        </header>
-        <div className="flex flex-col gap-4 overflow-auto">
-          {visits.length > 0 ? (
-            visits.map((visit, index) => (
-              <ReasonVisitCard key={index} reasonData={visit} />
-            ))
-          ) : (
-            <p>No visit records found.</p>
-          )}
+      <div className="w-1/3 h-[800px] flex flex-col gap-4">
+        <div className="w-full h-1/2 shadow-sm border bg-white rounded-md font-poppins p-4 overflow-hidden pb-14">
+          <header className="flex w-full h-fit justify-between items-center mb-4">
+            <h1 className="text-p-sm md:text-p-rg font-medium text-f-dark">
+              Recent Visit
+            </h1>
+            {role === "3" ? (
+              <button>
+                <IoIosAddCircleOutline
+                  className="h-6 w-6 md:mr-2 text-c-gray3"
+                  onClick={toggleModal}
+                />
+              </button>
+            ) : (
+              ""
+            )}
+          </header>
+          <div className="w-full h-full overflow-y-scroll flex flex-col gap-4">
+            {visits.length > 0 ? (
+              visits.map((visit, index) => (
+                <ReasonVisitCard key={index} reasonData={visit} />
+              ))
+            ) : (
+              <p>No visit records found.</p>
+            )}
+          </div>
+        </div>
+        <div className="w-full h-1/2 shadow-sm border bg-white rounded-lg font-poppins p-4 overflow-y-scroll">
+          <PaymentBreakdown />
         </div>
       </div>
       {isVisitOpen && <VisitReasonModal onClose={toggleModal} />}
-      {isModalOpen && (
-        <AddEditPatient
-          onClose={handleOpenModal}
-          title={"Edit Patient Information"}
-        />
-      )}
     </div>
   );
 };
