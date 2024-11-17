@@ -8,6 +8,8 @@ import Cookies from "universal-cookie";
 import { getPatientVisit } from "../../Service/PatientService";
 import { useDispatch } from "react-redux";
 import { addVisit } from "../../Slice/VisitSlice";
+import AddEditPatient from "../../Component/ui/AddEditPatient";
+import { FiEdit } from "react-icons/fi";
 
 const PatientProfile = () => {
   const cookies = new Cookies();
@@ -19,10 +21,13 @@ const PatientProfile = () => {
   const visitsStore = useSelector((state) => state.reducer.visit.visits);
   const user = useSelector((state) => state.reducer.user.user);
   const { patientId } = useParams();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [currentPatient, setCurrentPatient] = useState(null);
   const navigate = useNavigate();
   const reduxDispatch = useDispatch();
+
+  const handleOpenModal = () => setIsModalOpen(!isModalOpen);
 
   const handleBack = () => {
     navigate("/patient", { state: { resetSelected: true } });
@@ -75,13 +80,30 @@ const PatientProfile = () => {
   }, [currentPatient, accessToken, refreshToken, reduxDispatch, visitsStore]);
 
   return (
-    <div className="w-full h-fit p-4 md:p-6 2xl:p-8">
-      <div
-        className="flex gap-2 items-center mb-6 hover:cursor-pointer"
-        onClick={handleBack}
-      >
-        <AiOutlineArrowLeft className="h-6 w-6" />
-        <button className="text-p-sm md:text-p-rg font-medium">Back</button>
+    <div className="w-full h-full p-4 md:p-6 2xl:p-8">
+      <div className="flex items-end justify-between mb-6">
+        <div className="flex gap-3 items-center w-fit">
+          <div
+            className="flex gap-1 items-center text-c-primary"
+            onClick={handleBack}
+          >
+            <AiOutlineArrowLeft className="h-4 w-5" />
+            <button className="text-p-sm md:text-p-rg">Patient List</button>
+          </div>
+          <p className="text-h-h4 flex items-center gap-3 text-f-gray2">
+            &gt;
+            <span className="text-p-sm md:text-p-rg">
+              {currentPatient?.first_name}
+            </span>
+          </p>
+        </div>
+        <button
+          className="flex px-6 py-3 bg-c-branch rounded-md text-f-light gap-3 items-center"
+          onClick={handleOpenModal}
+        >
+          <FiEdit className="h-5 w-5" />
+          <p className="font-medium text-p-sm md:text-p-rg">Edit</p>
+        </button>
       </div>
       {currentPatient ? (
         role === "2" ? (
@@ -91,6 +113,12 @@ const PatientProfile = () => {
         )
       ) : (
         <p>Loading...</p>
+      )}
+      {isModalOpen && (
+        <AddEditPatient
+          onClose={handleOpenModal}
+          title={"Edit Patient Information"}
+        />
       )}
     </div>
   );
