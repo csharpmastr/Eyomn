@@ -6,11 +6,13 @@ import { useParams } from "react-router-dom";
 import Cookies from "universal-cookie";
 import Loader from "./Loader";
 import { addServices } from "../../Slice/InventorySlice";
+import SuccessModal from "./SuccessModal";
 
 const PaymentBreakdown = () => {
   const cookies = new Cookies();
   const accessToken = cookies.get("accessToken");
   const refreshToken = cookies.get("refreshToken");
+  const [isSuccess, setIsSuccess] = useState(false);
   const reduxDispatch = useDispatch();
   const user = useSelector((state) => state.reducer.user.user);
   const patients = useSelector((state) => state.reducer.patient.patients);
@@ -33,6 +35,13 @@ const PaymentBreakdown = () => {
     service_other: "",
   });
 
+  const servicePriceMapping = {
+    "Basic Eye Exam": 350,
+    "Pediatric Eye Exam": 500,
+    "Cataract & Glaucoma Assessment": 1000,
+    "Low Vision & Strabismus": 1200,
+  };
+
   const handleToggle = () => setHistoryOpen(!isHistoryOpen);
 
   const handleInputChange = (e) => {
@@ -41,9 +50,24 @@ const PaymentBreakdown = () => {
     const numericFields = ["product_qty", "product_price", "service_price"];
     const newValue = numericFields.includes(name) ? Number(value) : value;
 
-    setFormData((prev) => ({ ...prev, [name]: newValue }));
-  };
+    setFormData((prev) => {
+      const updatedFormData = { ...prev, [name]: newValue };
 
+      if (name === "service_type" && value === "") {
+        updatedFormData.service_price = 0;
+        updatedFormData.service_other = "";
+      }
+
+      if (name === "service_type" && servicePriceMapping[value]) {
+        updatedFormData.service_price = servicePriceMapping[value];
+      }
+
+      return updatedFormData;
+    });
+  };
+  const handleClose = () => {
+    setIsSuccess(false);
+  };
   const calculateTotal = () => {
     const productTotal = formData.product_qty * formData.product_price || 0;
     const serviceTotal = parseFloat(formData.service_price) || 0;
@@ -51,6 +75,19 @@ const PaymentBreakdown = () => {
   };
 
   const handleSubmit = async () => {
+    if (
+      selectType === "Product" &&
+      (!formData.product_name || formData.product_qty <= 0)
+    ) {
+      alert("Please fill in product details and quantity.");
+      return;
+    }
+
+    if (selectType === "Service" && !formData.service_type) {
+      alert("Please select a service type.");
+      return;
+    }
+
     console.log(`${selectType} Data:`);
     console.log("Total Payment:", calculateTotal());
     setIsLoading(true);
@@ -83,8 +120,23 @@ const PaymentBreakdown = () => {
           reduxDispatch(
             addServices({ ...submittedData, id: response.serviceId })
           );
+          setIsSuccess(true);
         }
       }
+      setIsSuccess(true);
+      setFormData({
+        date: today,
+        product_code: "",
+        product_name: "",
+        category: "",
+        product_description: "",
+        product_qty: 0,
+        product_price: 0,
+        service_type: "",
+        service_price: 0,
+        service_other: "",
+      });
+      setSelectType("Product");
     } catch (error) {
     } finally {
       setIsLoading(false);
@@ -207,6 +259,7 @@ const PaymentBreakdown = () => {
                     onChange={handleInputChange}
                     className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
                     placeholder="Enter quantity"
+                    disabled={!formData.product_name}
                   />
                 </section>
                 <section className="w-3/5">
@@ -221,6 +274,7 @@ const PaymentBreakdown = () => {
                     onChange={handleInputChange}
                     className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
                     placeholder="Enter price"
+                    disabled={!formData.product_name}
                   />
                 </section>
               </div>
@@ -239,11 +293,19 @@ const PaymentBreakdown = () => {
                       onChange={handleInputChange}
                       className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
                     >
-                      <option value="" disabled>
-                        Select Service Type
+                      <option value="" className="text-f-gray">
+                        None
                       </option>
-                      <option value="Consultation">Consultation</option>
-                      <option value="Checkup">Checkup</option>
+                      <option value="Basic Eye Exam">Basic Eye Exam</option>
+                      <option value="Pediatric Eye Exam">
+                        Pediatric Eye Exam
+                      </option>
+                      <option value="Cataract & Glaucoma Assessment">
+                        Cataract & Glaucoma Assessment
+                      </option>
+                      <option value="Low Vision & Strabismus">
+                        Low Vision & Strabismus
+                      </option>
                     </select>
                   </section>
                   <section className="w-2/5">
@@ -258,6 +320,7 @@ const PaymentBreakdown = () => {
                       onChange={handleInputChange}
                       className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
                       placeholder="Enter amount"
+                      disabled={!formData.service_type}
                     />
                   </section>
                 </div>
@@ -283,13 +346,19 @@ const PaymentBreakdown = () => {
             className="w-full rounded-md bg-c-primary py-3 h-fit text-f-light"
             onClick={handleSubmit}
           >
-            Save Payment{" "}
+            Confirm Payment{" "}
             {(formData.product_qty > 0 || formData.service_price > 0) && (
               <>( Php: {calculateTotal()} )</>
             )}
           </button>
         </div>
         {isHistoryOpen && <PaymentHistory onClose={handleToggle} />}
+        <SuccessModal
+          isOpen={isSuccess}
+          title={"Payment Success"}
+          description={`Patient's product or service fee has been paid successfully.`}
+          onClose={handleClose}
+        />
       </div>
     </>
   );
