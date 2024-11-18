@@ -10,7 +10,11 @@ import { clearStaffs } from "../Slice/StaffSlice";
 import { removeUser } from "../Slice/UserSlice";
 import { clearBranch } from "../Slice/BranchSlice";
 import { clearAppointment } from "../Slice/AppointmentSlice";
-import { clearProducts, clearPurchases } from "../Slice/InventorySlice";
+import {
+  clearProducts,
+  clearPurchases,
+  clearServices,
+} from "../Slice/InventorySlice";
 import { clearNotifications } from "../Slice/NotificationSlice";
 import { clearVisits } from "../Slice/VisitSlice";
 import {
@@ -51,6 +55,7 @@ export const useLogout = () => {
       reduxDispatch(clearBranch());
       reduxDispatch(clearImages());
       reduxDispatch(clearRawNotes());
+      reduxDispatch(clearServices());
       sessionStorage.removeItem("medformData");
       sessionStorage.removeItem("currentPatientId");
       sessionStorage.removeItem("currentPath");

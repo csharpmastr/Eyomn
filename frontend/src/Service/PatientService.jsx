@@ -292,3 +292,24 @@ export const sharePatient = async (
     console.error("Error sharing patient", error);
   }
 };
+
+export const summarizeInitialPatientCase = async (medformData) => {
+  try {
+    const response = await axios.post(
+      "https://csharpmastr--eyomnai-medical-team-agent-web-endpoint.modal.run",
+      {
+        patient_data: medformData,
+        summarized_data: {
+          subjective: "",
+          objective: "",
+          assessment: "",
+          plan: "",
+        },
+        halu_score: Number(10),
+        feedback: [],
+        markdown_output: "",
+      }
+    );
+    return response.data;
+  } catch (error) {}
+};

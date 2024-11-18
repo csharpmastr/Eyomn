@@ -19,7 +19,13 @@ import { TiUpload } from "react-icons/ti";
 import Modal from "../../Component/ui/Modal";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { addNewRawNote } from "../../Slice/NoteSlice";
-import { cleanData, formatPatientNotes, mergeDeep } from "../../Helper/Helper";
+import {
+  cleanData,
+  extractSoapData,
+  formatPatientNotes,
+  mergeDeep,
+} from "../../Helper/Helper";
+import { summarizeInitialPatientCase } from "../../Service/PatientService";
 
 const MedForm = () => {
   const { patientId } = useParams();
@@ -34,12 +40,13 @@ const MedForm = () => {
   const [selectedBG, setSelectedBG] = useState("OD");
   const navigate = useNavigate();
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [initLoad, setInitLoad] = useState(false);
   const { addNote, isLoading, error } = useAddNote();
   const [isSuccess, setIsSuccess] = useState();
   const [isError, setIsError] = useState(false);
   const [image, setImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
-
+  const [soap, setSoap] = useState([]);
   const [canvasImages, setCanvasImages] = useState({
     OD: "",
     OS: "",
@@ -570,41 +577,67 @@ const MedForm = () => {
   const handleSubmitNote = async (e) => {
     e.preventDefault();
     const transformedData = cleanData(medformData);
+    const formattedData = formatPatientNotes(transformedData);
     console.log(transformedData);
-    console.log(formatPatientNotes(transformedData));
 
-    // setHasUnsavedChanges(false);
-    // try {
-    //   const response = await addNote(medformData, patientId);
+    console.log(formattedData);
 
-    //   if (response) {
-    //     console.log(response);
-    //     reduxDispatch(
-    //       addNewRawNote({
-    //         [patientId]: {
-    //           ...medformData,
-    //           noteId: response.noteId,
-    //           createdAt: response.createdAt,
-    //         },
-    //       })
-    //     );
-    //     setIsSuccess(true);
-    //   }
-    // } catch (error) {
-    //   setIsError(true);
-    //   console.log(error);
-    // }
+    setHasUnsavedChanges(false);
+    try {
+      const response = await addNote(medformData, patientId);
+      if (response) {
+        console.log(response);
+        reduxDispatch(
+          addNewRawNote({
+            [patientId]: {
+              ...medformData,
+              noteId: response.noteId,
+              createdAt: response.createdAt,
+            },
+          })
+        );
+        setIsSuccess(true);
+      }
+    } catch (error) {
+      setIsError(true);
+      console.log(error);
+    }
   };
   const navigateAfterSuccess = () => {
     navigate(`/scribe/${patientId}`);
     sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
   };
-  const handleNext = (e) => {
+  const handleNext = async (e) => {
     e.preventDefault();
+
+    const transformedData = cleanData(medformData);
+    const formattedData = formatPatientNotes(transformedData);
+    console.log(formattedData);
+
     if (currentPage < pageTitles.length - 1) {
-      setCurrentPage((prevPage) => prevPage + 1);
+      if (currentPage === 1) {
+        setInitLoad(true);
+        try {
+          const response = await summarizeInitialPatientCase(formattedData);
+
+          if (response) {
+            console.log(response);
+            setSoap(extractSoapData(response));
+            setCurrentPage((prevPage) => prevPage + 1);
+          } else {
+            console.error("No response received");
+          }
+        } catch (error) {
+          console.error("Error during API call:", error);
+        } finally {
+          setInitLoad(false);
+        }
+      } else {
+        setCurrentPage((prevPage) => prevPage + 1);
+      }
     }
   };
+
   const handleBackPage = (e) => {
     e.preventDefault();
     if (currentPage > 0) {
@@ -713,48 +746,46 @@ const MedForm = () => {
     if (file) {
       setImageFile(file);
 
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        const base64Image = reader.result;
+        setImage(base64Image);
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
+  const handleSaveImage = (e) => {
+    e.preventDefault();
+    if (image) {
+      setMedformData((prevMedform) => ({
+        ...prevMedform,
+        iop: {
+          ...prevMedform.iop,
+          image: image,
+        },
+      }));
     }
   };
 
   const handleRemoveImage = () => {
     setImage(null);
   };
-
-  const handleUploadImage = async () => {
-    setIsLoading(true);
-    try {
-      const response = await uploadImageArchive(
-        patientId,
-        imageFile,
-        user.firebaseUid,
-        accessToken,
-        refreshToken
-      );
-      if (response) {
-        setPatientImages((prevData) => [...patientImages, response.url]);
-        reduxDispatch(
-          addNewImageArchive({
-            [patientId]: response.url,
-          })
-        );
-        setIsSuccess(true);
-        setImageFile(null);
-        setImage(null);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  console.log(image);
 
   return (
     <>
-      {isLoading && (
-        <Loader description={"Saving Patient Note, please wait..."} />
+      {(isLoading || initLoad) && (
+        <Loader
+          description={
+            isLoading
+              ? "Saving Patient Note, please wait..."
+              : "Summarizing Initial Patient Case, please wait..."
+          }
+        />
       )}
+
       <div className="w-full p-4 md:p-6 2xl:p-8 bg-bg-mc">
         <header className="flex flex-col md:flex-row text-f-dark justify-between mb-6">
           <div className="flex gap-2 font-Poppins">
@@ -3705,7 +3736,7 @@ const MedForm = () => {
                       </div>
                     </section>
                     <div className="flex gap-3 mt-3 h-64">
-                      <div className="w-1/6">
+                      <div className="w-1/4">
                         <div
                           className={`relative justify-center items-center rounded-md aspect-square ${
                             image
@@ -3743,14 +3774,6 @@ const MedForm = () => {
                             </div>
                           )}
                         </div>
-                        {image && (
-                          <button
-                            className="bg-c-primary text-f-light text-p-sm md:text-p-rg rounded-md font-semibold py-1 md:py-3 w-full mt-3"
-                            onClick={handleUploadImage}
-                          >
-                            Save
-                          </button>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -5593,7 +5616,45 @@ const MedForm = () => {
             {currentPage === 2 && (
               <div className="p-5 flex gap-5 flex-col md:flex-row w-full">
                 <div className="w-full md:w-1/2 bg-white rounded-md border p-5">
-                  <p>Subject & Objective Window</p>
+                  <div className="font-Poppins h-[600px] overflow-auto">
+                    {soap.subjective && soap.subjective.length > 0 && (
+                      <div className="mb-4">
+                        <h3 className="text-f-dark text-h-h6">Subjective</h3>
+                        {soap.subjective.map((sentence, index) => (
+                          <p key={index}>{sentence}</p>
+                        ))}
+                      </div>
+                    )}
+                    {soap.objective && soap.objective.length > 0 && (
+                      <div className="mb-4">
+                        <h3 className="text-f-dark text-h-h6">Objective</h3>
+                        {soap.objective.map((sentence, index) => (
+                          <p key={index}>{sentence}</p>
+                        ))}
+                      </div>
+                    )}
+                    <h3 className="text-f-dark text-h-h6">
+                      Recommended by EyomnAI
+                    </h3>
+                    {soap.assessment && soap.assessment.length > 0 && (
+                      <div className="mb-4">
+                        <h3 className="text-f-dark text-h-h6">Assessment</h3>
+                        {soap.assessment.map((sentence, index) => (
+                          <p key={index}>
+                            {sentence === "## Assessment" ? null : sentence}
+                          </p>
+                        ))}
+                      </div>
+                    )}
+                    {soap.plan && soap.plan.length > 0 && (
+                      <div className="mb-4">
+                        <h3 className="text-f-dark text-h-h6">Plan</h3>
+                        {soap.plan.map((sentence, index) => (
+                          <p key={index}>{sentence}</p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="w-full md:w-1/2 flex flex-col gap-5">
                   <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full">

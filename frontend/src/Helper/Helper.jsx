@@ -179,23 +179,47 @@ export const formatPatientNotes = (data) => {
   }
 
   const vitalSigns = [
-    `- BP: ${data.bp ? data.bp : ""}`,
-    `- BG: ${data.bg ? data.bg : ""}`,
-    `- HR: ${data.hr ? data.hr : ""}`,
-    `- O2 Saturation: ${data.o2_saturation ? data.o2_saturation : ""}`,
+    data.bp ? `- BP: ${data.bp} mm/Hg` : null,
+    data.bg ? `- BG: ${data.bg} mg/dL` : null,
+    data.hr ? `- HR: ${data.hr} Bpm` : null,
+    data.o2_saturation ? `- O2 Saturation: ${data.o2_saturation} %` : null,
+    data.temperature ? `- Temperature: ${data.temperature} C/F` : null,
   ];
-  notes.push(`Vital Signs: \n${vitalSigns.join("\n")}`);
+
+  const filteredVitalSigns = vitalSigns.filter(Boolean);
+
+  if (filteredVitalSigns.length) {
+    notes.push(`Vital Signs:\n${filteredVitalSigns.join("\n")}`);
+  }
 
   if (data.visual_acuity) {
     let visualAcuity = "";
 
     const formatSection = (label, values) => {
-      const { od, os, ou, additional_note } = values || {};
+      const { od, os, ou, custom_od, custom_os, custom_ou, additional_note } =
+        values || {};
       let section = [];
-      if (od) section.push(`OD ${od}`);
-      if (os) section.push(`OS ${os}`);
-      if (ou) section.push(`OU ${ou}`);
+
+      if (od && od.trim()) {
+        section.push(`OD ${od.trim()}`);
+      } else if (custom_od && custom_od.trim()) {
+        section.push(`OD ${custom_od.trim()}`);
+      }
+
+      if (os && os.trim()) {
+        section.push(`OS ${os.trim()}`);
+      } else if (custom_os && custom_os.trim()) {
+        section.push(`OS ${custom_os.trim()}`);
+      }
+
+      if (ou && ou.trim()) {
+        section.push(`OU ${ou.trim()}`);
+      } else if (custom_ou && custom_ou.trim()) {
+        section.push(`OU ${custom_ou.trim()}`);
+      }
+
       if (additional_note) section.push(`Note: ${additional_note}`);
+
       return section.length ? `${label}: ${section.join(", ")}` : "";
     };
 
@@ -225,11 +249,23 @@ export const formatPatientNotes = (data) => {
     let retinoscopy = "";
 
     const formatSection = (label, values) => {
-      const { od, os, additional_note } = values || {};
+      const { od, os, custom_od, custom_os, additional_note } = values || {};
       let section = [];
-      if (od) section.push(`OD ${od}`);
-      if (os) section.push(`OS ${os}`);
+
+      if (od && od.trim()) {
+        section.push(`OD ${od.trim()}`);
+      } else if (custom_od && custom_od.trim()) {
+        section.push(`OD ${custom_od.trim()}`);
+      }
+
+      if (os && os.trim()) {
+        section.push(`OS ${os.trim()}`);
+      } else if (custom_os && custom_os.trim()) {
+        section.push(`OS ${custom_os.trim()}`);
+      }
+
       if (additional_note) section.push(`Note: ${additional_note}`);
+
       return section.length ? `${label}: ${section.join(", ")}` : "";
     };
 
@@ -272,52 +308,105 @@ export const formatPatientNotes = (data) => {
       notes.push(pupillaryDistance);
     }
   }
-
   if (data.cover_test) {
-    const coverTest = `
-- OD with RX: ${[
-      data.cover_test.od.with_rx.near ? "Near" : "",
-      data.cover_test.od.with_rx.distance ? "Distance" : "",
-      data.cover_test.od.with_rx.tropia ? "Tropia" : "",
-      data.cover_test.od.with_rx.phoria ? "Phoria" : "",
-    ]
-      .filter(Boolean)
-      .join(", ")}`;
+    let coverTest = "";
+    let coverTestOS = "";
 
-    const coverTestWithoutRx = `
-- OD without RX: ${[
-      data.cover_test.od.without_rx.near ? "Near" : "",
-      data.cover_test.od.without_rx.distance ? "Distance" : "",
-      data.cover_test.od.without_rx.tropia ? "Tropia" : "",
-      data.cover_test.od.without_rx.phoria ? "Phoria" : "",
-    ]
-      .filter(Boolean)
-      .join(", ")}`;
+    // OD (Right Eye)
+    if (data.cover_test.od) {
+      // Check for with RX conditions
+      const odWithRXConditions = [
+        data.cover_test.od.with_rx.near,
+        data.cover_test.od.with_rx.distance,
+        data.cover_test.od.with_rx.tropia,
+        data.cover_test.od.with_rx.phoria,
+      ];
 
-    const coverTestOS = `
-- OS with RX: ${[
-      data.cover_test.os.with_rx.near ? "Near" : "",
-      data.cover_test.os.with_rx.distance ? "Distance" : "",
-      data.cover_test.os.with_rx.tropia ? "Tropia" : "",
-      data.cover_test.os.with_rx.phoria ? "Phoria" : "",
-    ]
-      .filter(Boolean)
-      .join(", ")}`;
+      if (odWithRXConditions.some(Boolean)) {
+        coverTest += `- OD with RX: ${[
+          data.cover_test.od.with_rx.near ? "Near" : "",
+          data.cover_test.od.with_rx.distance ? "Distance" : "",
+          data.cover_test.od.with_rx.tropia ? "Tropia" : "",
+          data.cover_test.od.with_rx.phoria ? "Phoria" : "",
+        ]
+          .filter(Boolean)
+          .join(", ")}`;
+      }
 
-    const coverTestWithoutRxOS = `
-- OS without RX: ${[
-      data.cover_test.os.without_rx.near ? "Near" : "",
-      data.cover_test.os.without_rx.distance ? "Distance" : "",
-      data.cover_test.os.without_rx.tropia ? "Tropia" : "",
-      data.cover_test.os.without_rx.phoria ? "Phoria" : "",
-    ]
-      .filter(Boolean)
-      .join(", ")}`;
+      // Check for without RX conditions
+      const odWithoutRXConditions = [
+        data.cover_test.od.without_rx.near,
+        data.cover_test.od.without_rx.distance,
+        data.cover_test.od.without_rx.tropia,
+        data.cover_test.od.without_rx.phoria,
+      ];
 
-    notes.push(
-      `Cover Test${coverTest}${coverTestWithoutRx}${coverTestOS}${coverTestWithoutRxOS}`
-    );
+      if (odWithoutRXConditions.some(Boolean)) {
+        if (coverTest) coverTest += "\n";
+        coverTest += `- OD without RX: ${[
+          data.cover_test.od.without_rx.near ? "Near" : "",
+          data.cover_test.od.without_rx.distance ? "Distance" : "",
+          data.cover_test.od.without_rx.tropia ? "Tropia" : "",
+          data.cover_test.od.without_rx.phoria ? "Phoria" : "",
+        ]
+          .filter(Boolean)
+          .join(", ")}`;
+      }
+
+      if (data.cover_test.additional_note_od) {
+        coverTest += `\n- Note OD: ${data.cover_test.additional_note_od}`;
+      }
+    }
+
+    if (data.cover_test.os) {
+      const osWithRXConditions = [
+        data.cover_test.os.with_rx.near,
+        data.cover_test.os.with_rx.distance,
+        data.cover_test.os.with_rx.tropia,
+        data.cover_test.os.with_rx.phoria,
+      ];
+
+      if (osWithRXConditions.some(Boolean)) {
+        coverTestOS += `- OS with RX: ${[
+          data.cover_test.os.with_rx.near ? "Near" : "",
+          data.cover_test.os.with_rx.distance ? "Distance" : "",
+          data.cover_test.os.with_rx.tropia ? "Tropia" : "",
+          data.cover_test.os.with_rx.phoria ? "Phoria" : "",
+        ]
+          .filter(Boolean)
+          .join(", ")}`;
+      }
+
+      const osWithoutRXConditions = [
+        data.cover_test.os.without_rx.near,
+        data.cover_test.os.without_rx.distance,
+        data.cover_test.os.without_rx.tropia,
+        data.cover_test.os.without_rx.phoria,
+      ];
+
+      if (osWithoutRXConditions.some(Boolean)) {
+        if (coverTestOS) coverTestOS += "\n";
+        coverTestOS += `- OS without RX: ${[
+          data.cover_test.os.without_rx.near ? "Near" : "",
+          data.cover_test.os.without_rx.distance ? "Distance" : "",
+          data.cover_test.os.without_rx.tropia ? "Tropia" : "",
+          data.cover_test.os.without_rx.phoria ? "Phoria" : "",
+        ]
+          .filter(Boolean)
+          .join(", ")}`;
+      }
+
+      // Add note for OS without RX
+      if (data.cover_test.additional_note_os) {
+        coverTestOS += `\n- Note OS: ${data.cover_test.additional_note_os}`;
+      }
+    }
+
+    if (coverTest || coverTestOS) {
+      notes.push(`Cover Test:\n${coverTest}\n${coverTestOS}`);
+    }
   }
+
   let additionalTests = "";
 
   if (data.confrontation_test) {
@@ -528,6 +617,18 @@ export const formatPatientNotes = (data) => {
       additionalTests += `- Schirmer Test : ${schirmer}\n`;
     }
   }
+  if (data.ophthalmoscopy) {
+    let ophthal = "";
+    if (data.ophthalmoscopy?.additional_note_od) {
+      ophthal += `OD ${data.ophthalmoscopy?.additional_note_od}`;
+    }
+    if (data.ophthalmoscopy?.additional_note_os) {
+      ophthal += `OS ${data.ophthalmoscopy?.additional_note_os}`;
+    }
+    if (ophthal) {
+      additionalTests += `- Ophthalmosopy ${ophthal}`;
+    }
+  }
 
   if (data.IOP) {
     let intraOcular = "";
@@ -704,9 +805,9 @@ export const formatPatientNotes = (data) => {
 
       if (data.external_examination.eyebrow.od.additional_note) {
         if (selectedOdOptions) {
-          eyebrowObservations += `, Note: ${data.external_examination.eyebrow.od.additional_note}`;
+          eyebrowObservations += `, Note: ${data.external_examination.eyebrow.od.additional_note} `;
         } else {
-          eyebrowObservations += `Note: ${data.external_examination.eyebrow.od.additional_note}`;
+          eyebrowObservations += `Note: ${data.external_examination.eyebrow.od.additional_note} `;
         }
       }
     }
@@ -763,9 +864,9 @@ export const formatPatientNotes = (data) => {
 
       if (data.external_examination.eyelashes.od.additional_note) {
         if (selectedOdOptions) {
-          eyelashesObservations += `, Note: ${data.external_examination.eyelashes.od.additional_note}`;
+          eyelashesObservations += `, Note: ${data.external_examination.eyelashes.od.additional_note} `;
         } else {
-          eyelashesObservations += `Note: ${data.external_examination.eyelashes.od.additional_note}`;
+          eyelashesObservations += `Note: ${data.external_examination.eyelashes.od.additional_note} `;
         }
       }
     }
@@ -822,7 +923,7 @@ export const formatPatientNotes = (data) => {
 
       if (data.external_examination.eyelids.od.additional_note) {
         if (selectedOdOptions) {
-          eyelidsObservations += `, Note: ${data.external_examination.eyelids.od.additional_note}`;
+          eyelidsObservations += `, Note: ${data.external_examination.eyelids.od.additional_note} `;
         } else {
           eyelidsObservations += `Note: ${data.external_examination.eyelids.od.additional_note}`;
         }
@@ -881,7 +982,7 @@ export const formatPatientNotes = (data) => {
 
       if (data.external_examination.cornea.od.additional_note) {
         if (selectedOdOptions) {
-          corneaObservations += `, Note: ${data.external_examination.cornea.od.additional_note}`;
+          corneaObservations += `, Note: ${data.external_examination.cornea.od.additional_note} `;
         } else {
           corneaObservations += `Note: ${data.external_examination.cornea.od.additional_note}`;
         }
@@ -940,7 +1041,7 @@ export const formatPatientNotes = (data) => {
 
       if (data.external_examination.limbus.od.additional_note) {
         if (selectedOdOptions) {
-          limbusObservations += `, Note: ${data.external_examination.limbus.od.additional_note}`;
+          limbusObservations += `, Note: ${data.external_examination.limbus.od.additional_note} `;
         } else {
           limbusObservations += `Note: ${data.external_examination.limbus.od.additional_note}`;
         }
@@ -998,7 +1099,7 @@ export const formatPatientNotes = (data) => {
 
       if (data.external_examination.pupil.od.additional_note) {
         if (selectedOdOptions) {
-          pupilObservations += `, Note: ${data.external_examination.pupil.od.additional_note}`;
+          pupilObservations += `, Note: ${data.external_examination.pupil.od.additional_note} `;
         } else {
           pupilObservations += `Note: ${data.external_examination.pupil.od.additional_note}`;
         }
@@ -1055,9 +1156,9 @@ export const formatPatientNotes = (data) => {
 
       if (data.external_examination.iris.od.additional_note) {
         if (selectedOdOptions) {
-          irisObservations += `, Note: ${data.external_examination.iris.od.additional_note}`;
+          irisObservations += `, Note: ${data.external_examination.iris.od.additional_note} `;
         } else {
-          irisObservations += `Note: ${data.external_examination.iris.od.additional_note}`;
+          irisObservations += `Note: ${data.external_examination.iris.od.additional_note} `;
         }
       }
     }
@@ -1115,6 +1216,116 @@ export const formatPatientNotes = (data) => {
   if (additionalTests) {
     notes.push(`Additional Tests:\n${additionalTests}`);
   }
+  if (data.diagnosis) {
+    notes.push(`Diagnosis: ${data.diagnosis}`);
+  }
+  if (data.refractive_error) {
+    notes.push(`Refractive Error: ${data.refractive_error}`);
+  }
 
+  if (data.new_prescription_od) {
+    let np_od = [];
+    let np_os = [];
+    let np_ou = [];
+    if (data.new_prescription_od?.np_ADD) {
+      np_od.push(`ADD: ${data.new_prescription_od?.np_ADD}`);
+    }
+    if (data.new_prescription_od?.np_NEAR) {
+      np_od.push(`NEAR: ${data.new_prescription_od?.np_NEAR}`);
+    }
+    if (data.new_prescription_od?.np_FAR) {
+      np_od.push(`FAR: ${data.new_prescription_od?.np_FAR}`);
+    }
+
+    if (np_od.length > 0) {
+      notes.push(`OD Prescription: ${np_od.join(", ")}`);
+    } else {
+      notes.push("OD Prescription: No prescription");
+    }
+  }
+  if (data.new_prescription_os) {
+    let np_os = [];
+
+    if (data.new_prescription_os?.np_ADD) {
+      np_os.push(`ADD: ${data.new_prescription_os?.np_ADD}`);
+    }
+    if (data.new_prescription_os?.np_NEAR) {
+      np_os.push(`NEAR: ${data.new_prescription_os?.np_NEAR}`);
+    }
+    if (data.new_prescription_os?.np_FAR) {
+      np_os.push(`FAR: ${data.new_prescription_os?.np_FAR}`);
+    }
+
+    if (np_os.length > 0) {
+      notes.push(`OS Prescription: ${np_os.join(", ")}`);
+    } else {
+      notes.push("OS Prescription: No prescription");
+    }
+  }
+  if (data.new_prescription_ou) {
+    let np_ou = [];
+
+    if (data.new_prescription_ou?.np_ADD) {
+      np_ou.push(`ADD: ${data.new_prescription_ou?.np_ADD}`);
+    }
+    if (data.new_prescription_ou?.np_NEAR) {
+      np_ou.push(`NEAR: ${data.new_prescription_ou?.np_NEAR}`);
+    }
+    if (data.new_prescription_ou?.np_FAR) {
+      np_ou.push(`FAR: ${data.new_prescription_ou?.np_FAR}`);
+    }
+
+    if (np_ou.length > 0) {
+      notes.push(`OU Prescription: ${np_ou.join(", ")}`);
+    } else {
+      notes.push("OU Prescription: No prescription");
+    }
+  }
+
+  if (data.management) {
+    notes.push(`Management: ${data.management}`);
+  }
+  if (data.followup_care) {
+    notes.push(`Follow Up Care: ${data.followup_care}`);
+  }
   return notes.join("\n\n");
+};
+
+export const extractSoapData = (inputText) => {
+  const sections = inputText.split(/\n\s*\n/);
+
+  const subjective = sections[1]
+    ? sections[1]
+        .replace(/^##?\s*Subjective\s*/i, "") // Remove the "Subjective" header
+        .split(/\.\s+/) // Split sentences by period followed by one or more spaces
+        .map((sentence) => sentence.trim() + ".") // Trim and re-append period to each sentence
+    : [];
+
+  const objective = sections[2]
+    ? sections[2]
+        .replace(/^##?\s*Objective\s*/i, "") // Remove the "Objective" header
+        .split(/\.\s+/) // Split sentences by period followed by one or more spaces
+        .map((sentence) => sentence.trim() + ".") // Trim and re-append period to each sentence
+    : [];
+
+  const assessment = sections[3]
+    ? sections[3]
+        .replace(/^##?\s*Assessment\s*/i, "") // Remove the "Assessment" header
+        .split(/\.\s+/) // Split sentences by period followed by one or more spaces
+        .map((sentence) => sentence.trim() + ".") // Trim and re-append period to each sentence
+    : [];
+
+  const plan = sections[4]
+    ? sections[4]
+        .replace(/^##?\s*Plan\s*/i, "") // Remove the "Plan" header
+        .split(/\.\s+/) // Split sentences by period followed by one or more spaces
+        .map((sentence) => sentence.trim() + ".") // Trim and re-append period to each sentence
+    : [];
+
+  return {
+    subjective,
+    objective,
+    assessment,
+    plan,
+  };
 };

@@ -67,7 +67,7 @@ const SideBar = () => {
         <img
           src={Eyomnlogo}
           alt="Sidebar Logo"
-          className={`h-14 md:h-16 lg:h-18 w-1/2 mt-1 object-contain mx-auto ${
+          className={`h-12 md:h-16 lg:h-18 w-1/2 mt-1 object-contain mx-auto ${
             isCollapsed ? "hidden" : "block"
           }`}
         />
@@ -89,7 +89,7 @@ const SideBar = () => {
       <div
         className={`flex flex-col justify-between h-full xl:space-y-3 xl:px-6 xl:pt-10 xl:pb-5 transition-transform duration-300 ease-in-out border-r border-f-gray ${roleSbColor}  ${
           isMenuOpen
-            ? " translate-x-0 max-h-screen h-full mt-2 md:mt-0 fixed xl:static w-3/4 md:w-1/3 lg:w-1/4 xl:w-auto bg-bg-sb "
+            ? " translate-x-0 max-h-screen h-full mt-3 md:mt-0 fixed xl:static w-3/4 md:w-1/3 lg:w-1/4 xl:w-auto bg-bg-sb "
             : " hidden xl:flex "
         }`}
         style={{ maxHeight: "calc(100vh - 64px)" }}
