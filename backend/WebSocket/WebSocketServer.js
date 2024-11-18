@@ -181,9 +181,9 @@ const startWebSocketServer = () => {
   wss.on("error", (error) => {
     console.error("WebSocket error:", error);
   });
+  server.listen(3000, () => {
+    console.log("WebSocket server is listening");
+  });
 };
-server.listen(3000, () => {
-  console.log("WebSocket server is listening");
-});
 
 module.exports = { startWebSocketServer };
