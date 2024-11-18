@@ -97,13 +97,13 @@ export const WebSocketProvider = ({ children }) => {
       }
     };
 
-    socket.onclose = () => {
-      console.log("WebSocket connection closed. Attempting to reconnect...");
+    // socket.onclose = () => {
+    //   console.log("WebSocket connection closed. Attempting to reconnect...");
 
-      setTimeout(() => {
-        ws.current = new WebSocket(wsUrl);
-      }, 3000);
-    };
+    //   setTimeout(() => {
+    //     ws.current = new WebSocket(wsUrl);
+    //   }, 3000);
+    // };
 
     socket.onerror = (error) => {
       console.error("WebSocket error:", error);

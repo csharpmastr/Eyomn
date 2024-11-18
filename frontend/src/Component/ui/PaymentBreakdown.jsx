@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import PaymentHistory from "./PaymentHistory";
-import { addService } from "../../Service/InventoryService";
+import { addPurchaseService, addService } from "../../Service/InventoryService";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Cookies from "universal-cookie";
 import Loader from "./Loader";
-import { addServices } from "../../Slice/InventorySlice";
+import { addPurchase, addServices } from "../../Slice/InventorySlice";
 import SuccessModal from "./SuccessModal";
 
 const PaymentBreakdown = () => {
@@ -18,10 +18,13 @@ const PaymentBreakdown = () => {
   const patients = useSelector((state) => state.reducer.patient.patients);
   const { patientId } = useParams();
   const patient = patients.find((patient) => patient.patientId === patientId);
+  let branchId =
+    (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
+    user.userId;
   const [isLoading, setIsLoading] = useState(false);
   const today = new Date().toISOString().split("T")[0];
   const [isHistoryOpen, setHistoryOpen] = useState(false);
-  const [selectType, setSelectType] = useState("Product");
+  const [selectType, setSelectType] = useState("Service");
   const [formData, setFormData] = useState({
     date: today,
     product_code: "",
@@ -121,28 +124,56 @@ const PaymentBreakdown = () => {
             addServices({ ...submittedData, id: response.serviceId })
           );
           setIsSuccess(true);
+          handleClearForm();
         }
       }
-      setIsSuccess(true);
-      setFormData({
-        date: today,
-        product_code: "",
-        product_name: "",
-        category: "",
-        product_description: "",
-        product_qty: 0,
-        product_price: 0,
-        service_type: "",
-        service_price: 0,
-        service_other: "",
-      });
-      setSelectType("Product");
+      // else {
+      //   const { service_type, service_price, service_other, ...productData } =
+      //     formData;
+
+      //   submittedData = productData;
+      //   console.log(submittedData);
+
+      //   const response = await addPurchaseService(
+      //     submittedData,
+      //     branchId,
+      //     user.userId,
+      //     user.firebaseUid,
+      //     accessToken,
+      //     refreshToken
+      //   );
+      //   if (response) {
+      //     const purchaseId = response.purchaseId;
+      //     const createdAt = response.createdAt;
+
+      //     reduxDispatch(
+      //       addPurchase({
+      //         submittedData,
+      //         purchaseId: purchaseId,
+      //         createdAt: createdAt,
+      //       })
+      //     );
+      //   }
+      // }
     } catch (error) {
     } finally {
       setIsLoading(false);
     }
   };
-
+  const handleClearForm = () => {
+    setFormData({
+      date: today,
+      product_code: "",
+      product_name: "",
+      category: "",
+      product_description: "",
+      product_qty: 0,
+      product_price: 0,
+      service_type: "",
+      service_price: 0,
+      service_other: "",
+    });
+  };
   return (
     <>
       {isLoading && <Loader />}
@@ -161,14 +192,6 @@ const PaymentBreakdown = () => {
         <div className="bg-zinc-100 border p-1 text-p-sm rounded-md">
           <button
             className={`px-2 py-1 rounded-sm ${
-              selectType === "Product" ? "bg-zinc-200" : ""
-            }`}
-            onClick={() => setSelectType("Product")}
-          >
-            Product
-          </button>
-          <button
-            className={`px-2 py-1 rounded-sm ${
               selectType === "Service" ? "bg-zinc-200" : ""
             }`}
             onClick={() => setSelectType("Service")}
@@ -177,6 +200,7 @@ const PaymentBreakdown = () => {
           </button>
         </div>
       </div>
+
       <div className="w-full h-full flex-col flex justify-between">
         <div className="w-full flex flex-col gap-2">
           <div className="flex gap-4 w-full">
@@ -196,90 +220,7 @@ const PaymentBreakdown = () => {
               />
             </section>
           </div>
-
-          {selectType === "Product" ? (
-            <>
-              <div className="flex gap-4 w-full">
-                <section className="w-1/2">
-                  <label className="text-p-sc md:text-p-sm text-c-gray3 font-medium">
-                    Product Name
-                  </label>
-                  <input
-                    type="text"
-                    name="product_name"
-                    value={formData.product_name}
-                    onChange={handleInputChange}
-                    className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
-                    placeholder="Enter product name"
-                  />
-                </section>
-                <section className="w-1/2">
-                  <label className="text-p-sc md:text-p-sm text-c-gray3 font-medium">
-                    Category
-                  </label>
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
-                  >
-                    <option value="" disabled>
-                      Select Category
-                    </option>
-                    <option value="Eye Glass">Eye Glass</option>
-                    <option value="Contact Lens">Contact Lens</option>
-                    <option value="Medication">Medication</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </section>
-              </div>
-              <section className="w-full">
-                <label className="text-p-sc md:text-p-sm text-c-gray3 font-medium">
-                  Description
-                </label>
-                <textarea
-                  name="product_description"
-                  value={formData.product_description}
-                  onChange={handleInputChange}
-                  className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary resize-none"
-                  placeholder="Enter product description"
-                  rows={2}
-                />
-              </section>
-              <div className="w-full flex gap-4">
-                <section className="w-2/5">
-                  <label className="text-p-sc md:text-p-sm text-c-gray3 font-medium">
-                    Quantity
-                  </label>
-                  <input
-                    type="number"
-                    name="product_qty"
-                    min={0}
-                    value={formData.product_qty}
-                    onChange={handleInputChange}
-                    className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
-                    placeholder="Enter quantity"
-                    disabled={!formData.product_name}
-                  />
-                </section>
-                <section className="w-3/5">
-                  <label className="text-p-sc md:text-p-sm text-c-gray3 font-medium">
-                    Price
-                  </label>
-                  <input
-                    type="number"
-                    name="product_price"
-                    min={0}
-                    value={formData.product_price}
-                    onChange={handleInputChange}
-                    className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
-                    placeholder="Enter price"
-                    disabled={!formData.product_name}
-                  />
-                </section>
-              </div>
-            </>
-          ) : (
+          {selectType === "Service" && (
             <>
               <div className="w-full gap-4 flex flex-col">
                 <div className="w-full flex gap-4">

@@ -10,9 +10,12 @@ import { useFetchData } from "../Hooks/useFetchData";
 import Cookies from "universal-cookie";
 
 const MVP = () => {
+  const user = useSelector((state) => state.reducer.user.user);
   const { fetchData } = useFetchData();
   const location = useLocation();
   const currentPath = location.pathname;
+  const hasFetched = localStorage.getItem("hasFetched");
+  const [isFetched, setIsFetched] = useState(hasFetched === "true");
 
   const tabMapping = {
     "/dashboard": {
@@ -96,10 +99,24 @@ const MVP = () => {
   if (!currentPath.startsWith("/patient")) {
     sessionStorage.removeItem("currentPatient");
   }
-
   useEffect(() => {
-    fetchData();
-  }, []);
+    const hasFetched = localStorage.getItem("hasFetched");
+
+    if (!hasFetched) {
+      console.log("Initial fetching");
+      fetchData();
+      setIsFetched(true);
+      localStorage.setItem("hasFetched", "true");
+    } else {
+      if (user.role === "2" && !isFetched) {
+        console.log("Refetching for role 2");
+        fetchData();
+        setIsFetched(true);
+      } else {
+        console.log("No fetching required");
+      }
+    }
+  }, [isFetched, user.role, fetchData]);
 
   const currentTab = getCurrentTab();
 
