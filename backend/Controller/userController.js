@@ -5,7 +5,7 @@ const {
   sendOTP,
   verifyOTP,
   forgotChangePassword,
-} = require("../Service/UserService");
+} = require("../Service/userService");
 const jwt = require("jsonwebtoken");
 
 const generateToken = (id, secret, duration) => {

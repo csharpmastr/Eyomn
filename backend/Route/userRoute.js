@@ -8,7 +8,7 @@ const {
   sendOTPHandler,
   verifyOTPHandler,
   forgotChangePasswordHandler,
-} = require("../Controller/UserController");
+} = require("../Controller/userController");
 
 router.post("/add", addUserHandler);
 router.post("/login", loginUserHandler);
