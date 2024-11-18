@@ -22,7 +22,12 @@ const startWebSocketServer = () => {
     res.writeHead(200);
     res.end("Hello from WebSocket Server");
   });
-  const wss = new WebSocket.Server({ server });
+  const wss = new WebSocket.Server({
+    server,
+    verifyClient: (info, cb) => {
+      cb(true);
+    },
+  });
 
   wss.on("connection", async (ws, req) => {
     console.log("New WebSocket connection");
@@ -177,5 +182,8 @@ const startWebSocketServer = () => {
     console.error("WebSocket error:", error);
   });
 };
+server.listen(3000, () => {
+  console.log("WebSocket server is listening");
+});
 
 module.exports = { startWebSocketServer };
