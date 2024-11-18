@@ -50,7 +50,7 @@ const Patient = () => {
           `${b.first_name} ${b.last_name}`
         )
       );
-    } else if (sortOption === "newest") {
+    } else if (sortOption === "recent") {
       filtered = filtered.sort(
         (a, b) => new Date(b.last_visit) - new Date(a.last_visit)
       );
@@ -129,8 +129,8 @@ const Patient = () => {
                     </option>
                     <option value="ascending">Ascending</option>
                     <option value="descending">Descending</option>
-                    <option value="oldest">Oldest</option>
-                    <option value="newest">Newest</option>
+                    <option value="recent">Recent Visit</option>
+                    <option value="oldest">Old Visit</option>
                   </select>
                 </div>
                 <div
@@ -163,6 +163,7 @@ const Patient = () => {
             <div className="mt-4 md:mt-6 overflow-x-auto">
               <Table
                 data={filteredPatients}
+                userRole={role}
                 handlePatientClick={handlePatientClick}
                 handleSharePatientClick={(patientId, doctorId) =>
                   handleSharePatientClick(
@@ -191,6 +192,7 @@ const Patient = () => {
       {openSharePatient && (
         <SharePatientModal
           patientId={selectedPatientId}
+          sortOption={sortOption}
           currentDoctor={attendingDoctor}
           patientName={selectedPatient} // Change here as well
           onClose={() => setIsOpenSharePatient(false)}

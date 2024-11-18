@@ -62,9 +62,9 @@ const DocDashboard = () => {
   }, []);
   return (
     <>
-      <div className="w-full flex gap-5 font-Poppins">
+      <div className="w-full flex flex-col md:flex-row gap-5 font-Poppins">
         <div
-          className="w-2/3 h-[360px] p-5 bg-cover bg-no-repeat bg-center bg-c-primary rounded-lg justify-between flex flex-col shadow-sm"
+          className="w-full md:w-2/3 h-fit md:h-[360px] p-5 bg-cover bg-no-repeat bg-center bg-c-primary rounded-lg justify-between flex flex-col shadow-sm"
           style={{ backgroundImage: `url(${BannerBg})` }}
         >
           <div className="flex w-full justify-between">
@@ -107,14 +107,14 @@ const DocDashboard = () => {
             </section>
           </div>
         </div>
-        <div className="w-1/3">
+        <div className="w-full md:w-1/3">
           <Suspense fallback={<div>Loading appointments...</div>}>
             <DbAppointment />
           </Suspense>
         </div>
       </div>
-      <div className="w-full flex gap-6">
-        <div className="w-1/2">
+      <div className="w-full flex flex-col-reverse md:flex-row gap-6">
+        <div className="w-full md:w-1/2">
           <Suspense fallback={<div>Loading graph...</div>}>
             <DbGraph
               patients={patients}
@@ -123,7 +123,7 @@ const DocDashboard = () => {
             />
           </Suspense>
         </div>
-        <div className="w-1/2">
+        <div className="w-full md:w-1/2">
           <Suspense fallback={<div>Loading table...</div>}>
             <DbTable />
           </Suspense>

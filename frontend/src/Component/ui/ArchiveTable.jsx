@@ -192,13 +192,7 @@ const ArchiveTable = () => {
                           aria-labelledby="options-menu"
                         >
                           <a
-                            className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
-                            role="menuitem"
-                          >
-                            Edit and Retrieve
-                          </a>
-                          <a
-                            className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
+                            className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-green-100 rounded-md cursor-pointer"
                             role="menuitem"
                             onClick={() =>
                               handleRetrieveProduct(productDetail.productId)

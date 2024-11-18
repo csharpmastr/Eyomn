@@ -10,7 +10,7 @@ import Fuse from "fuse.js";
 import { deleteProduct } from "../../Service/InventoryService";
 import { removeProduct } from "../../Slice/InventorySlice";
 
-const InventoryTable = ({ searchTerm, sortOption }) => {
+const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
   const products = useSelector((state) => state.reducer.inventory.products);
   const user = useSelector((state) => state.reducer.user.user);
   let branchId =
@@ -54,9 +54,15 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
     ? fuse.search(searchTerm).map((result) => result.item)
     : products;
 
+  if (selectedCategory !== "All") {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.category === selectedCategory
+    );
+  }
+
   filteredProducts = filteredProducts.filter((product) => !product.isDeleted);
 
-  if (sortOption === "ascending") {
+  if (!sortOption || sortOption === "default" || sortOption === "ascending") {
     filteredProducts = filteredProducts.sort((a, b) =>
       `${a.product_name}`.localeCompare(`${b.product_name}`)
     );

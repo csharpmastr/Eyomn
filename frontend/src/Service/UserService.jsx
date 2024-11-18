@@ -115,7 +115,7 @@ export const forgotChangePassword = async (email, newPassword) => {
 export const sendQuestion = async (question, memory) => {
   try {
     const response = await axios.post(
-      `https://csharpmastr--eyomns-rag-app-web-endpoint.modal.run`,
+      `https://csharpmastr--eyomnai-rag-chat-web-endpoint.modal.run`,
       {
         question: question,
         generation: "",

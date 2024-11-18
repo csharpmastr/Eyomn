@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 const Inventory = () => {
   const user = useSelector((state) => state.reducer.user.user);
   const products = useSelector((state) => state.reducer.inventory.products);
+  const [selected, setSelected] = useState("All");
   const productCount = products.filter(
     (product) => product.isDeleted === false
   ).length;
@@ -24,9 +25,13 @@ const Inventory = () => {
   const navigate = useNavigate();
   const { btnContentColor } = RoleColor();
 
+  const handleSelected = (section) => {
+    setSelected(section);
+  };
+
   return (
     <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppins">
-      <nav className="flex flex-col gap-4 lg:gap-0 lg:flex-row justify-between mb-8">
+      <nav className="flex flex-col gap-4 lg:gap-0 lg:flex-row justify-between mb-2">
         <div className="flex gap-3 items-center">
           <section className="bg-white flex rounded-md h-fit w-fit p-3 border shadow-sm">
             <p className="text-p-sc md:text-p-sm">
@@ -82,8 +87,29 @@ const Inventory = () => {
           )}
         </div>
       </nav>
+      <div className="w-full flex text-p-sc md:text-p-sm overflow-auto">
+        {["All", "Eye Glass", "Contact Lens", "Medication", "Other"].map(
+          (section) => (
+            <div
+              key={section}
+              className={`h-auto flex items-center px-4 py-2 cursor-pointer text-nowrap border-b-2 ${
+                selected === section
+                  ? "text-f-dark border-c-primary font-medium"
+                  : "text-f-gray2"
+              }`}
+              onClick={() => handleSelected(section)}
+            >
+              <h1>{section}</h1>
+            </div>
+          )
+        )}
+      </div>
       <main className="overflow-x-auto">
-        <InventoryTable searchTerm={searchTerm} sortOption={sortOption} />
+        <InventoryTable
+          searchTerm={searchTerm}
+          sortOption={sortOption}
+          selectedCategory={selected}
+        />
       </main>
       {isModalOpen && (
         <AddEditProduct onClose={toggleModal} title={"Add Product"} />

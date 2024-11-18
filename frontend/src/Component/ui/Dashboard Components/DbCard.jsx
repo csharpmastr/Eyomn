@@ -4,7 +4,7 @@ const DbCard = ({ title, value, percentageChange, color, bg }) => {
   return (
     <>
       <div
-        className={`py-3 lg:px-2 2xl:px-6 w-full rounded-xl text-f-dark font-Poppins border border-white text-p-sm md:text-p-rg shadow-sm ${color}`}
+        className={`py-3 px-3 2xl:px-6 w-full rounded-xl text-f-dark font-Poppins border border-white text-p-sm md:text-p-rg shadow-sm ${color}`}
         style={{
           backgroundImage: `url(${bg})`,
           backgroundSize: "cover",
