@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { sharePatient } from "../../Service/PatientService";
 import Cookies from "universal-cookie";
 import Loader from "./Loader";
+import SuccessModal from "./SuccessModal";
 
 const SharePatientModal = ({
   patientId,
@@ -13,6 +14,7 @@ const SharePatientModal = ({
 }) => {
   const cookies = new Cookies();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const accessToken = cookies.get("accessToken");
   const refreshToken = cookies.get("refreshToken");
@@ -53,8 +55,6 @@ const SharePatientModal = ({
   };
 
   const handleSharePatient = async () => {
-    console.log({ authorizedDoctor: authorizedDoctor });
-
     setIsLoading(true);
     try {
       const response = await sharePatient(
@@ -66,8 +66,8 @@ const SharePatientModal = ({
         refreshToken
       );
       if (response) {
-        console.log("success");
-        console.log(response);
+        console.log("Success:", response);
+        setIsSuccessModalOpen(true); // Open success modal on successful response
       }
     } catch (error) {
       console.log(error);
@@ -75,13 +75,21 @@ const SharePatientModal = ({
       setIsLoading(false);
     }
   };
-  console.log(user.userId);
 
   return (
     <>
       {isLoading && <Loader />}
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        title="Success!"
+        description={`Patient ${patientName} has been successfully shared.`}
+        onClose={() => {
+          setIsSuccessModalOpen(false);
+          onClose(); // Close parent modal after success
+        }}
+      />
       <div className="fixed p-4 top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-        <div className="w-[380px] md:w-1/2 xl:w-[500px] h-auto ">
+        <div className="w-[380px] md:w-1/2 xl:w-[500px] h-auto">
           <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
             <h1 className="text-p-lg text-c-secondary font-medium">{title}</h1>
             <button onClick={onClose}>&times;</button>
@@ -134,13 +142,13 @@ const SharePatientModal = ({
               Cancel
             </button>
             <button
-              className={`px-4 lg:px-12 py-3  bg-bg-con rounded-md text-f-light text-p-sm md:text-p-rg font-medium ${
+              className={`px-4 lg:px-12 py-3 bg-bg-con rounded-md text-f-light text-p-sm md:text-p-rg font-medium ${
                 authorizedDoctor.includes(user.userId)
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:bg-opacity-75 cursor-pointer"
               }`}
               type="submit"
-              disabled={authorizedDoctor.includes(user.userId)}
+              disabled={authorizedDoctor.length === 0}
               onClick={
                 authorizedDoctor.includes(user.userId)
                   ? null

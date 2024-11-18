@@ -292,7 +292,9 @@ const ScribeRecord = () => {
                   ))}
                 </>
               ) : (
-                ""
+                <div className="bg-red-200 h-1/2">
+                  <p className="text-center">No medical case record</p>
+                </div>
               )}
             </div>
           )}
@@ -360,7 +362,7 @@ const ScribeRecord = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="">
+                  <div className="bg-red-200 h-1/2">
                     <p className="text-center">
                       No images found for this patient.
                     </p>

@@ -194,7 +194,7 @@ const Patient = () => {
           patientId={selectedPatientId}
           sortOption={sortOption}
           currentDoctor={attendingDoctor}
-          patientName={selectedPatient} // Change here as well
+          patientName={selectedPatient}
           onClose={() => setIsOpenSharePatient(false)}
           title={"Share Patient"}
         />
