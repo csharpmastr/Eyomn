@@ -45,7 +45,10 @@ const OrgDashboard = () => {
   const productCount = filteredProducts.length;
   const staffCount = staffs.length;
 
-  const combinedSalesAndServices = [...filteredSales, ...filteredServices];
+  const combinedSalesAndServices = [
+    ...(filteredSales || []),
+    ...(filteredServices || []),
+  ];
 
   const filterSalesByMonth = (data, monthOffset = 0) => {
     const now = new Date();
@@ -161,9 +164,9 @@ const OrgDashboard = () => {
 
   return (
     <>
-      <div className="w-full flex gap-5 font-Poppins">
+      <div className="w-full flex flex-col md:flex-row gap-5 font-Poppins">
         <div
-          className="w-2/3 h-[360px] p-5 bg-cover bg-no-repeat bg-center bg-c-primary rounded-lg justify-between flex flex-col shadow-sm"
+          className="w-full md:w-2/3 h-fit md:h-[360px] p-5 bg-cover bg-no-repeat bg-center bg-c-primary rounded-lg justify-between flex flex-col shadow-sm"
           style={{ backgroundImage: `url(${BannerBg})` }}
         >
           <div className="flex w-full justify-between">
@@ -240,19 +243,19 @@ const OrgDashboard = () => {
             </section>
           </div>
         </div>
-        <div className="w-1/3">
+        <div className="w-full md:w-1/3">
           <Suspense fallback={<div>Loading appointments...</div>}>
             <DbAppointment />
           </Suspense>
         </div>
       </div>
-      <div className="flex w-full h-full gap-5 font-Poppins">
-        <div className="w-2/3">
+      <div className="flex flex-col md:flex-row w-full h-full gap-5 font-Poppins">
+        <div className="w-full md:w-2/3">
           <Suspense fallback={<div>Loading graph...</div>}>
             <DbGraph patients={filteredPatients} sales={filteredSales} />
           </Suspense>
         </div>
-        <div className="w-1/3">
+        <div className="w-full md:w-1/3">
           <Suspense fallback={<div>Loading products...</div>}>
             <DbProduct filteredSales={filteredSales} />
           </Suspense>

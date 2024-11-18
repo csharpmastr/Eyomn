@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MdSend } from "react-icons/md";
 import BeatLoader from "react-spinners/BeatLoader";
 import { sendQuestion } from "../../Service/UserService";
 import ChatLogo from "../../assets/Image/chatbot.png";
+import { HiMinusSm } from "react-icons/hi";
 
 const LLMChatbot = () => {
   const [isLLMOpen, setIsLLMOpen] = useState(false);
@@ -11,6 +12,7 @@ const LLMChatbot = () => {
   const [isOmnieTyping, setIsOmnieTyping] = useState(false);
   const [memory, setMemory] = useState([]);
   const [hasOpenedChat, setHasOpenedChat] = useState(false);
+  const chatContainerRef = useRef(null);
   const handleSendQuestion = async () => {
     if (userQuestion.trim()) {
       const newUserQuestion = {
@@ -48,6 +50,13 @@ const LLMChatbot = () => {
   };
 
   useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [conversation]);
+
+  useEffect(() => {
     if (!hasOpenedChat) {
       const timer = setTimeout(() => {
         setIsLLMOpen(true);
@@ -71,21 +80,24 @@ const LLMChatbot = () => {
           <div className="w-full h-fit px-3 py-2 flex items-center justify-between bg-bg-sb rounded-t-lg border border-b-f-gray">
             <h1 className="text-p-rg font-medium text-f-dark">Eyomn AI</h1>
             <button
-              className="text-p-lg px-2 rounded-ful"
+              className="text-p-lg px-2 rounded-full hover:bg-zinc-200"
               onClick={() => setIsLLMOpen(false)}
             >
-              &times;
+              <HiMinusSm />
             </button>
           </div>
-          <div className="w-full px-4 pt-4 overflow-y-scroll h-[360px] text-p-rg">
+          <div
+            ref={chatContainerRef}
+            className="w-full px-4 pt-4 overflow-y-scroll h-[360px] text-p-rg"
+          >
             {conversation.length === 0 && (
               <div className="w-full text-p-sm flex flex-col items-center p-4 gap-10">
                 <img src={ChatLogo} className="w-24 h-24" />
                 <p className="w-full text-p-sm text-center">
                   <span className="text-p-lg font-medium">Hi there! </span>
                   <br />
-                  I’m EyomnAI, ready to assist you with Eyomn software. What do
-                  you need help with?
+                  I’m an EyomnAI, ready to assist you with Eyomn software. How
+                  can I help?
                 </p>
               </div>
             )}
@@ -124,6 +136,12 @@ const LLMChatbot = () => {
               <textarea
                 value={userQuestion}
                 onChange={(e) => setUserQuestion(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendQuestion();
+                  }
+                }}
                 className="w-full pl-4 pr-8 py-3 border border-c-gray3 rounded-lg text-f-dark focus:outline-c-primary text-p-sm resize-none"
                 placeholder="Message EyomnAI"
                 rows={1}

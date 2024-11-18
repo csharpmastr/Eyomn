@@ -4,6 +4,12 @@ import PaymentBreakdown from "./PaymentBreakdown";
 import ReasonVisitCard from "./ReasonVisitCard";
 import VisitReasonModal from "./VisitReasonModal";
 
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  return date.toLocaleDateString(undefined, options);
+};
+
 const DocViewPatientProfile = ({ patient, visits }) => {
   const [isVisitOpen, setIsVisitOpen] = useState(false);
 
@@ -19,8 +25,8 @@ const DocViewPatientProfile = ({ patient, visits }) => {
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
-      <div className="h-1/2 w-full flex gap-4">
-        <div className="w-2/3 flex flex-col gap-4 h-full">
+      <div className="h-full md:h-1/2 w-full flex flex-col md:flex-row gap-4">
+        <div className="w-full md:w-2/3 flex flex-col gap-4 h-full">
           <header className="gap-4 h-1/4 w-full flex">
             <section className="bg-bg-sb border border-c-primary p-5 w-1/3 rounded-md">
               <p className="text-f-dark font-medium text-p-rg md:text-p-lg mb-2">
@@ -39,7 +45,7 @@ const DocViewPatientProfile = ({ patient, visits }) => {
                   Birthdate
                 </p>
                 <p className="text-f-dark font-medium text-p-sm md:text-p-rg">
-                  {patient.birthdate}
+                  {formatDate(patient.birthdate)}
                 </p>
               </section>
               <section className="flex-1">
@@ -119,7 +125,7 @@ const DocViewPatientProfile = ({ patient, visits }) => {
             </div>
           </div>
         </div>
-        <div className="w-1/3 h-full shadow-sm border bg-white rounded-lg font-poppins p-4 overflow-hidden pb-14">
+        <div className="w-full md:w-1/3 h-full shadow-sm border bg-white rounded-lg font-poppins p-4 overflow-hidden pb-14">
           <header className="flex w-full h-fit justify-between items-center mb-4">
             <h1 className="text-p-sm md:text-p-rg font-medium text-f-dark">
               Recent Visit
@@ -142,8 +148,8 @@ const DocViewPatientProfile = ({ patient, visits }) => {
           </div>
         </div>
       </div>
-      <div className="w-full h-1/2 flex gap-4">
-        <div className="w-2/3 h-[450px] bg-white p-5 rounded-lg shadow-sm border overflow-y-scroll">
+      <div className="h-full md:h-1/2 w-full flex flex-col md:flex-row gap-4">
+        <div className="w-full md:w-2/3 h-[450px] bg-white p-5 rounded-lg shadow-sm border overflow-y-scroll">
           <section className="mb-8 flex justify-center">
             <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary">
               Patient Medical Records
@@ -154,7 +160,7 @@ const DocViewPatientProfile = ({ patient, visits }) => {
               <h1 className="w-full text-center">Subjective</h1>
             </div>
             <div className="p-5 gap-3 flex flex-col">
-              <div className="flex gap-3">
+              <div className="flex flex-col md:flex-row gap-3">
                 <div className="p-3 rounded-lg border flex-1 text-f-dark text-p-sc md:text-p-sm bg-bg-mc">
                   <h6 className="font-medium mb-3">| Initial Obeservation</h6>
                   <article>
@@ -168,7 +174,7 @@ const DocViewPatientProfile = ({ patient, visits }) => {
                   </article>
                 </div>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-col md:flex-row gap-3">
                 <div className="p-3 rounded-lg border flex-1 text-f-dark text-p-sc md:text-p-sm bg-bg-mc">
                   <h6 className="font-medium mb-3">
                     | Occular Condition/History
@@ -186,7 +192,7 @@ const DocViewPatientProfile = ({ patient, visits }) => {
                   </article>
                 </div>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-col md:flex-row gap-3">
                 <div className="p-3 rounded-lg border flex-1 text-f-dark text-p-sc md:text-p-sm bg-bg-mc">
                   <h6 className="font-medium mb-3">| Current Medication</h6>
                   <article>
@@ -203,7 +209,7 @@ const DocViewPatientProfile = ({ patient, visits }) => {
             </div>
           </section>
         </div>
-        <div className="w-1/3 h-[450px] shadow-sm border bg-white rounded-lg font-poppins p-4 overflow-y-scroll">
+        <div className="w-full md:w-1/3 h-[450px] shadow-sm border bg-white rounded-lg font-poppins p-4 overflow-y-scroll">
           <PaymentBreakdown />
         </div>
       </div>

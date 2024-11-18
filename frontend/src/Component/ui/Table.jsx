@@ -16,7 +16,12 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString(undefined, options);
 };
 
-const Table = ({ data, handlePatientClick, handleSharePatientClick }) => {
+const Table = ({
+  data,
+  handlePatientClick,
+  handleSharePatientClick,
+  userRole,
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState({});
   const [collapsedRows, setCollapsedRows] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
@@ -72,7 +77,7 @@ const Table = ({ data, handlePatientClick, handleSharePatientClick }) => {
           <header className="flex py-5 rounded-md border-b bg-white text-f-gray2">
             <div className="flex-1 pl-8">Patient Name</div>
             <div className="flex-1">Contact</div>
-            <div className="flex-1">Email</div>
+            <div className="flex-1">Birthdate</div>
             <div className="flex-1">Last Visit</div>
             <div className="w-20"></div>
           </header>
@@ -92,7 +97,9 @@ const Table = ({ data, handlePatientClick, handleSharePatientClick }) => {
                       {patientData.first_name + " " + patientData.last_name}
                     </div>
                     <div className="flex-1">{patientData.contact_number}</div>
-                    <div className="flex-1 truncate">{patientData.email}</div>
+                    <div className="flex-1">
+                      {formatDate(patientData.birthdate)}
+                    </div>
                     <div className="flex-1">
                       {formatDate(patientData.createdAt)}
                     </div>
@@ -123,17 +130,19 @@ const Table = ({ data, handlePatientClick, handleSharePatientClick }) => {
                           >
                             View Details
                           </a>
-                          <a
-                            className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
-                            onClick={() => {
-                              handleSharePatientClick(
-                                patientData.patientId,
-                                patientData.doctorId
-                              );
-                            }}
-                          >
-                            Share Patient
-                          </a>
+                          {userRole !== "0" && (
+                            <a
+                              className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
+                              onClick={() => {
+                                handleSharePatientClick(
+                                  patientData.patientId,
+                                  patientData.doctorId
+                                );
+                              }}
+                            >
+                              Share Patient
+                            </a>
+                          )}
                         </div>
                       </div>
                     )}

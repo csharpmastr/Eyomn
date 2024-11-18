@@ -6,6 +6,12 @@ import VisitReasonModal from "./VisitReasonModal";
 import { useSelector } from "react-redux";
 import PaymentBreakdown from "./PaymentBreakdown";
 
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  return date.toLocaleDateString(undefined, options);
+};
+
 const StaffViewPatientProfile = ({ patient, visits }) => {
   const [isVisitOpen, setIsVisitOpen] = useState(false);
   const toggleModal = () => setIsVisitOpen(!isVisitOpen);
@@ -50,7 +56,7 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
                 <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
                   Birthdate
                 </p>
-                <p>{patient.birthdate}</p>
+                <p>{formatDate(patient.birthdate)}</p>
               </section>
               <section className="flex-1 text-p-sm md:text-p-rg font-medium">
                 <p className="text-f-gray mb-1 text-p-sc md:text-p-sm font-normal">
@@ -134,18 +140,9 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
                   Doctor's Name
                 </p>
                 <p className="text-f-dark font-medium text-p-sm md:text-p-rg">
-                  {patient.civil_status}
+                  -----
                 </p>
               </section>
-              <section className="flex-1">
-                <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm mb-2">
-                  Occupation
-                </p>
-                <p className="text-f-dark font-medium text-p-sm md:text-p-rg">
-                  {patient.occupation}
-                </p>
-              </section>
-              <section className="flex-1"> </section>
             </article>
           </div>
         </div>
