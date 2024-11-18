@@ -140,9 +140,6 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
                 <p className="text-c-gray3 font-medium text-p-sc md:text-h-h6 mb-2">
                   {`${patientDoc.first_name} ${patientDoc.last_name}`}
                 </p>
-                <p className="text-f-dark font-medium text-p-sm md:text-p-rg">
-                  -----
-                </p>
               </section>
             </article>
           </div>

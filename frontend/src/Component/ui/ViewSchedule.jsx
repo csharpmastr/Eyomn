@@ -124,11 +124,15 @@ const ViewSchedule = ({ onClose, appointments }) => {
                           ""
                         ) : (
                           <div className="flex flex-col justify-between opacity-100 xl:opacity-0 group-hover:opacity-100 transition-opacity duration-300 gap-2">
-                            <button
-                              onClick={() => openSetAppoinment(appointment)}
-                            >
-                              <FiEdit className="w-5 h-5 text-blue-400" />
-                            </button>
+                            {dayjs(appointment.scheduledTime).isAfter(
+                              dayjs()
+                            ) && (
+                              <button
+                                onClick={() => openSetAppoinment(appointment)}
+                              >
+                                <FiEdit className="w-5 h-5 text-blue-400" />
+                              </button>
+                            )}
                             <button
                               onClick={() => {
                                 setAppointmentToDelete(appointment.id);

@@ -60,14 +60,14 @@ const SideBar = () => {
           />
         ) : (
           <GiHamburgerMenu
-            className="text-f-light text-2xl xl:hidden"
+            className="text-f-light text-2xl xl:hidden mt-2"
             onClick={handleMenuClick}
           />
         )}
         <img
           src={Eyomnlogo}
           alt="Sidebar Logo"
-          className={`h-5 md:h-16 lg:h-18 w-1/2 mt-1 object-contain mx-auto ${
+          className={`h-8 lg:h-6 w-auto mt-5 xl:mt-6 object-cover mx-auto ${
             isCollapsed ? "hidden" : "block"
           }`}
         />
@@ -76,10 +76,10 @@ const SideBar = () => {
           onClick={handleCollapseToggle}
         >
           {isCollapsed ? (
-            <GiHamburgerMenu className="text-f-dark mt-5 hidden xl:block " />
+            <GiHamburgerMenu className="text-f-dark mt-5 hidden xl:block" />
           ) : (
             <BsLayoutSidebar
-              className="text-f-dark hidden xl:block
+              className="text-f-dark hidden xl:block mt-5
             "
             />
           )}
