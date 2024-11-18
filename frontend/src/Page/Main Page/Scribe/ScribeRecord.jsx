@@ -271,29 +271,35 @@ const ScribeRecord = () => {
             </div>
           )}
           {currentCardIndex === 1 && (
-            <div className="w-full cursor-pointer">
-              {rawNotes ? (
-                <>
-                  {rawNotes.map((note, index) => (
-                    <div
-                      key={note.noteId || index}
-                      className="px-6 py-4 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white hover:bg-bg-sub"
-                      onClick={() => handleClickRawNotes(note.noteId)}
-                    >
-                      <div className="flex items-center gap-3">
-                        <p>{note.name || `Raw Note ${index + 1}`}</p>
-                      </div>
-                      <p>
-                        {note.createdAt
-                          ? note.createdAt.split("T")[0]
-                          : "Unknown Date"}
-                      </p>
-                    </div>
-                  ))}
-                </>
+            <div>
+              {rawNotes.length > 0 ? (
+                <div className="w-full cursor-pointer">
+                  {rawNotes ? (
+                    <>
+                      {rawNotes.map((note, index) => (
+                        <div
+                          key={note.noteId || index}
+                          className="px-6 py-4 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white hover:bg-bg-sub"
+                          onClick={() => handleClickRawNotes(note.noteId)}
+                        >
+                          <div className="flex items-center gap-3">
+                            <p>{note.name || `Raw Note ${index + 1}`}</p>
+                          </div>
+                          <p>
+                            {note.createdAt
+                              ? note.createdAt.split("T")[0]
+                              : "Unknown Date"}
+                          </p>
+                        </div>
+                      ))}
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </div>
               ) : (
-                <div className="bg-red-200 h-1/2">
-                  <p className="text-center">No medical case record</p>
+                <div className="w-full">
+                  <p className="text-center">No medical case record found.</p>
                 </div>
               )}
             </div>
@@ -362,7 +368,7 @@ const ScribeRecord = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="bg-red-200 h-1/2">
+                  <div>
                     <p className="text-center">
                       No images found for this patient.
                     </p>

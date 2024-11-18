@@ -26,26 +26,21 @@ const HelpCenter = () => {
   return (
     <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppins h-full gap-6 overflow-clip">
       <nav className="w-full flex gap-4 overflow-x-auto pb-2 ">
-        {[
-          "Getting Started",
-          "Account",
-          "Billing",
-          "FAQ's",
-          "Features",
-          "Changelog",
-        ].map((section) => (
-          <div
-            key={section}
-            className={`h-auto flex items-center rounded-full px-4 py-2 cursor-pointer text-nowrap ${
-              selected === section
-                ? helpBtn
-                : "text-f-gray2 font-medium border bg-f-light"
-            }`}
-            onClick={() => handleSelected(section)}
-          >
-            <h1>{section}</h1>
-          </div>
-        ))}
+        {["Getting Started", "Account", "FAQ's", "Features", "Changelog"].map(
+          (section) => (
+            <div
+              key={section}
+              className={`h-auto flex items-center rounded-full px-4 py-2 cursor-pointer text-nowrap ${
+                selected === section
+                  ? helpBtn
+                  : "text-f-gray2 font-medium border bg-f-light"
+              }`}
+              onClick={() => handleSelected(section)}
+            >
+              <h1>{section}</h1>
+            </div>
+          )
+        )}
       </nav>
       <div className="flex flex-col lg:flex-row h-full pt-4 pb-12">
         <section className="w-full md:w-1/3 lg:flex flex-row lg:flex-col justify-between h-fit md:h-full hidden text-f-dark">

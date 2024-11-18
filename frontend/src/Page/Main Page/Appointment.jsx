@@ -11,6 +11,7 @@ const Appointment = () => {
   const [isModalViewApp, setIsModalViewApp] = useState(false);
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [selectedDayAppointments, setSelectedDayAppointments] = useState([]);
+  const role = useSelector((state) => state.reducer.user.user.role);
 
   const appointments = useSelector(
     (state) => state.reducer.appointment.appointment
@@ -117,13 +118,15 @@ const Appointment = () => {
             &gt;
           </button>
         </div>
-        <div
-          className={`ml-2 h-fit flex justify-center items-center rounded-md px-4 py-3 text-f-light font-md hover:cursor-pointer  ${btnContentColor} `}
-          onClick={handleOpenSetApp}
-        >
-          <FiPlus className="h-5 w-5 md:mr-2" />
-          <h1 className="md:block hidden">Set Appointment</h1>
-        </div>
+        {role !== "0" && (
+          <div
+            className={`ml-2 h-fit flex justify-center items-center rounded-md px-4 py-3 text-f-light font-md hover:cursor-pointer  ${btnContentColor} `}
+            onClick={handleOpenSetApp}
+          >
+            <FiPlus className="h-5 w-5 md:mr-2" />
+            <h1 className="md:block hidden">Set Appointment</h1>
+          </div>
+        )}
       </div>
       <div className="grid grid-cols-7 text-center pt-3 md:pt-6 pb-3 font-medium bg-bg-sb border border-c-gray3 mt-4 md:mt-6 rounded-t-md">
         <div>Sun</div>
