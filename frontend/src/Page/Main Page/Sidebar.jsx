@@ -67,7 +67,7 @@ const SideBar = () => {
         <img
           src={Eyomnlogo}
           alt="Sidebar Logo"
-          className={`h-12 md:h-16 lg:h-18 w-1/2 mt-1 object-contain mx-auto ${
+          className={`h-5 md:h-16 lg:h-18 w-1/2 mt-1 object-contain mx-auto ${
             isCollapsed ? "hidden" : "block"
           }`}
         />
