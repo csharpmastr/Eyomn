@@ -16,13 +16,15 @@ const inventoryRoute = require("./Route/inventoryRoute");
 const notificationRoute = require("./Route/notificationRoute");
 //Middleware
 app.use(express.json());
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+
+const corsOptions = {
+  origin: "http://localhost:5173",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization", "x-refresh-token"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(cookieParser());
 
 app.use("/api", sheetRoutes);
