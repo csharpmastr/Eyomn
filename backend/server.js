@@ -26,6 +26,11 @@ app.use("/api/v1/organization", organizationRoute);
 app.use("/api/v1/appointment", appointmentRoute);
 app.use("/api/v1/inventory", inventoryRoute);
 app.use("/api/v1/notification", notificationRoute);
+
+app.get("/", (req, res) => {
+  return res.send("Server Confirmed!");
+});
+
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
