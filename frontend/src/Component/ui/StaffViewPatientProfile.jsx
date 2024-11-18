@@ -15,7 +15,8 @@ const formatDate = (dateString) => {
 const StaffViewPatientProfile = ({ patient, visits }) => {
   const [isVisitOpen, setIsVisitOpen] = useState(false);
   const toggleModal = () => setIsVisitOpen(!isVisitOpen);
-
+  const doctors = useSelector((state) => state.reducer.doctor.doctor);
+  const patientDoc = doctors.find((doc) => doc.staffId === patient.doctorId);
   const reduxDispatch = useDispatch();
   const formattedDate = patient.createdAt
     ? new Date(patient.createdAt).toLocaleDateString("en-US", {
@@ -136,8 +137,8 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
             </h1>
             <article className="flex w-full">
               <section className="flex-1">
-                <p className="text-c-gray3 font-medium text-p-sc md:text-p-sm mb-2">
-                  Doctor's Name
+                <p className="text-c-gray3 font-medium text-p-sc md:text-h-h6 mb-2">
+                  {`${patientDoc.first_name} ${patientDoc.last_name}`}
                 </p>
                 <p className="text-f-dark font-medium text-p-sm md:text-p-rg">
                   -----

@@ -2,7 +2,11 @@ const { notificationCollection } = require("../Config/FirebaseConfig");
 const { v4: uuid } = require("uuid");
 const { serverTimestamp } = require("firebase/firestore");
 const { decryptData, encryptData } = require("../Security/DataHashing");
-const { verifyFirebaseUid, generateUniqueId } = require("../Helper/Helper");
+const {
+  verifyFirebaseUid,
+  generateUniqueId,
+  decryptDocument,
+} = require("../Helper/Helper");
 
 const pushNotification = async (userId, type, data) => {
   try {
@@ -81,4 +85,37 @@ const updateNotification = async (
   }
 };
 
-module.exports = { pushNotification, updateNotification };
+const getNotifications = async (id, firebaseUid) => {
+  try {
+    verifyFirebaseUid(firebaseUid);
+
+    const notificationRef = notificationCollection.doc(id).collection("notifs");
+
+    const notifSnapshot = await notificationRef.get();
+
+    if (notifSnapshot.empty) {
+      return [];
+    }
+
+    const notifications = notifSnapshot.docs.map((doc) => {
+      const decryptedData = decryptDocument(doc.data(), [
+        "patientId",
+        "doctorId",
+        "branchId",
+        "createdAt",
+        "type",
+        "notificationId",
+        "read",
+      ]);
+
+      return decryptedData;
+    });
+
+    return notifications;
+  } catch (error) {
+    console.error("Error getting notifications:", error);
+    throw new Error("Failed to fetch notifications");
+  }
+};
+
+module.exports = { pushNotification, updateNotification, getNotifications };

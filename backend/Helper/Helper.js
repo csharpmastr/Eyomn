@@ -389,6 +389,7 @@ const sendEmail = async ({ to, subject, text }) => {
     throw error;
   }
 };
+
 const generateOTP = () => {
   const length = 6;
   const numbers = "0123456789";
@@ -410,6 +411,45 @@ const generateOTP = () => {
   return OTP.join("");
 };
 
+const extractSoapData = (inputText) => {
+  const sections = inputText.split(/\n\s*\n/);
+
+  const subjective = sections[1]
+    ? sections[1]
+        .replace(/^##?\s*Subjective\s*/i, "")
+        .split(/\.\s+/)
+        .map((sentence) => sentence.trim() + ".")
+    : [];
+
+  const objective = sections[2]
+    ? sections[2]
+        .replace(/^##?\s*Objective\s*/i, "")
+        .split(/\.\s+/)
+        .map((sentence) => sentence.trim() + ".")
+    : [];
+
+  const assessment = sections[3]
+    ? sections[3]
+        .replace(/^##?\s*Assessment\s*/i, "")
+        .split(/\.\s+/)
+        .map((sentence) => sentence.trim() + ".")
+    : [];
+
+  const plan = sections[4]
+    ? sections[4]
+        .replace(/^##?\s*Plan\s*/i, "")
+        .split(/\.\s+/)
+        .map((sentence) => sentence.trim() + ".")
+    : [];
+
+  return {
+    subjective,
+    objective,
+    assessment,
+    plan,
+  };
+};
+
 module.exports = {
   getOrganizationName,
   getPatients,
@@ -427,4 +467,5 @@ module.exports = {
   generatePassword,
   sendEmail,
   generateOTP,
+  extractSoapData,
 };

@@ -3,6 +3,10 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 import PaymentBreakdown from "./PaymentBreakdown";
 import ReasonVisitCard from "./ReasonVisitCard";
 import VisitReasonModal from "./VisitReasonModal";
+import { getPatientNotes } from "../../Service/PatientService";
+import Cookies from "universal-cookie";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -11,8 +15,15 @@ const formatDate = (dateString) => {
 };
 
 const DocViewPatientProfile = ({ patient, visits }) => {
+  const { patientId } = useParams();
   const [isVisitOpen, setIsVisitOpen] = useState(false);
-
+  const user = useSelector((state) => state.reducer.user.user);
+  const cookies = new Cookies();
+  const accessToken = cookies.get("accessToken");
+  const refreshToken = cookies.get("refreshToken");
+  const [isLoading, setIsLoading] = useState(false);
+  const reduxDispatch = useDispatch();
+  const [rawNotes, setRawNotes] = useState([]);
   const formattedDate = patient.createdAt
     ? new Date(patient.createdAt).toLocaleDateString("en-US", {
         year: "numeric",
@@ -20,6 +31,36 @@ const DocViewPatientProfile = ({ patient, visits }) => {
         day: "numeric",
       })
     : "N/A";
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      setIsLoading(true);
+      console.log(patientId);
+
+      try {
+        const notesResponse = await getPatientNotes(
+          patientId,
+          user.firebaseUid,
+          accessToken,
+          refreshToken
+        );
+
+        if (notesResponse && Array.isArray(notesResponse)) {
+          reduxDispatch(setRawNotes({ [patientId]: notesResponse }));
+        } else {
+          console.error("Unexpected or empty response:", notesResponse);
+        }
+      } catch (error) {
+        console.log("Error fetching patient notes:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (patientId && user.firebaseUid) {
+      fetchNotes();
+    }
+  }, [patientId]);
 
   const toggleModal = () => setIsVisitOpen(!isVisitOpen);
 

@@ -140,13 +140,12 @@ const ScribeRecord = () => {
           );
           if (notesResponse) {
             reduxDispatch(setRawNotes({ [patientId]: notesResponse }));
-            setRaw(notesResponse); // Set raw notes
+            setRaw(notesResponse);
           }
         } else {
-          setRaw(rawNotes); // Use redux data if available
+          setRaw(rawNotes);
         }
 
-        // Fetch images if they are not in redux
         if (!imagesUrl || imagesUrl.length === 0) {
           const imagesResponse = await getPatientImageArchive(
             patientId,
@@ -167,7 +166,7 @@ const ScribeRecord = () => {
             console.log("No images found");
           }
         } else {
-          setPatientImages(imagesUrl); // Use redux images if available
+          setPatientImages(imagesUrl);
         }
       } catch (error) {
         console.log("Error fetching data:", error);

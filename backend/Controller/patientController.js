@@ -12,6 +12,7 @@ const {
   getImagesForPatient,
   getDoctorPatient,
   sharePatient,
+  generateSoap,
 } = require("../Service/patientService");
 
 const addPatientHandler = async (req, res) => {
@@ -306,6 +307,28 @@ const sharePatientHandler = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+const generateStoreSoapHandler = async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+    const { firebaseUid } = req.query;
+    const { formattedSoap } = req.body;
+    if (!patientId) {
+      return res.status(400).json({ message: "No Patient ID provided" });
+    }
+    const soapId = await generateSoap(formattedSoap, patientId, firebaseUid);
+
+    if (soapId) {
+      return res
+        .status(200)
+        .json({ message: "Patient SOAP Note stored successfully" });
+    }
+  } catch (error) {
+    console.error("Error adding patient soap record:", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   addPatientHandler,
   getPatientsByDoctorHandler,
@@ -320,4 +343,5 @@ module.exports = {
   uploadImageArchiveHandler,
   getImages,
   sharePatientHandler,
+  generateStoreSoapHandler,
 };

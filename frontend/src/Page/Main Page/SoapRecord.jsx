@@ -15,12 +15,16 @@ const SoapRecord = () => {
 
     sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
   };
-
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return date.toLocaleDateString(undefined, options);
+  };
   const patientData = {
-    name: "John Doe",
-    age: 65,
-    gender: "Male",
-    date: "11/07/2024",
+    name: `${patient.first_name} ${patient.last_name}`,
+    age: `${patient.age}`,
+    gender: `${patient.sex}`,
+    date: `${formatDate(patient.createdAt)}`,
     subjective:
       "Patient reports blurred vision in the left eye for the past two weeks, worse at night. Denies eye pain, redness, or discharge. No recent trauma or changes in medication. Family history of glaucoma and macular degeneration.",
     objective:

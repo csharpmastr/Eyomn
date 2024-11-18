@@ -124,12 +124,12 @@ export const formatPatientNotes = (data) => {
     }
     generalHealthHx += healthOptions.join(", ");
 
-    if (data.general_health_hx.additional_note) {
-      generalHealthHx += `, ${data.general_health_hx.additional_note}`;
+    if (data.general_health_hx?.additional_note) {
+      generalHealthHx += `, ${data.general_health_hx?.additional_note}`;
     }
 
-    if (data.general_health_hx.last_exam) {
-      generalHealthHx += `, Last Exam: ${data.general_health_hx.last_exam}`;
+    if (data.general_health_hx?.last_exam) {
+      generalHealthHx += `, Last Exam: ${data.general_health_hx?.last_exam}`;
     }
 
     notes.push(generalHealthHx);
@@ -137,36 +137,36 @@ export const formatPatientNotes = (data) => {
 
   if (data.ocular_history) {
     let ocularHistory = `Ocular History: ${Object.keys(
-      data.ocular_history.option || {}
+      data.ocular_history?.option || {}
     )
-      .filter((option) => data.ocular_history.option[option])
+      .filter((option) => data.ocular_history?.option[option])
       .join(", ")}`;
 
-    if (data.ocular_history.additional_note) {
-      ocularHistory += `, ${data.ocular_history.additional_note}`;
+    if (data.ocular_history?.additional_note) {
+      ocularHistory += `, ${data.ocular_history?.additional_note}`;
     }
 
-    if (data.ocular_history.last_exam) {
-      ocularHistory += `, Last Exam: ${data.ocular_history.last_exam}`;
+    if (data.ocular_history?.last_exam) {
+      ocularHistory += `, Last Exam: ${data.ocular_history?.last_exam}`;
     }
     notes.push(ocularHistory);
   }
 
   if (data.fam_ocular_history) {
     let famOcularHistory = `Family Ocular History: ${Object.keys(
-      data.fam_ocular_history.option || {}
+      data.fam_ocular_history?.option || {}
     )
-      .filter((option) => data.fam_ocular_history.option[option])
+      .filter((option) => data.fam_ocular_history?.option[option])
       .join(", ")}`;
 
-    if (data.fam_ocular_history.additional_note) {
-      famOcularHistory += `, ${data.fam_ocular_history.additional_note}`;
+    if (data.fam_ocular_history?.additional_note) {
+      famOcularHistory += `, ${data.fam_ocular_history?.additional_note}`;
     }
 
     notes.push(famOcularHistory);
 
-    if (data.fam_ocular_history.last_exam) {
-      notes.push(`Last Exam: ${data.fam_ocular_history.last_exam}`);
+    if (data.fam_ocular_history?.last_exam) {
+      notes.push(`Last Exam: ${data.fam_ocular_history?.last_exam}`);
     }
   }
 
@@ -294,14 +294,14 @@ export const formatPatientNotes = (data) => {
   if (data.pupillary_distance) {
     let pupillaryDistance = "Pupillary Distance:";
 
-    if (data.pupillary_distance.od) {
-      pupillaryDistance += ` OD ${data.pupillary_distance.od}`;
+    if (data.pupillary_distance?.od) {
+      pupillaryDistance += ` OD ${data.pupillary_distance?.od}`;
     }
-    if (data.pupillary_distance.os) {
-      pupillaryDistance += `, OS ${data.pupillary_distance.os}`;
+    if (data.pupillary_distance?.os) {
+      pupillaryDistance += `, OS ${data.pupillary_distance?.os}`;
     }
-    if (data.pupillary_distance.ou) {
-      pupillaryDistance += `, OU ${data.pupillary_distance.ou}`;
+    if (data.pupillary_distance?.ou) {
+      pupillaryDistance += `, OU ${data.pupillary_distance?.ou}`;
     }
 
     if (pupillaryDistance.trim() !== "Pupillary Distance:") {
@@ -316,18 +316,18 @@ export const formatPatientNotes = (data) => {
     if (data.cover_test.od) {
       // Check for with RX conditions
       const odWithRXConditions = [
-        data.cover_test.od.with_rx.near,
-        data.cover_test.od.with_rx.distance,
-        data.cover_test.od.with_rx.tropia,
-        data.cover_test.od.with_rx.phoria,
+        data.cover_test.od.with_rx?.near,
+        data.cover_test.od.with_rx?.distance,
+        data.cover_test.od.with_rx?.tropia,
+        data.cover_test.od.with_rx?.phoria,
       ];
 
       if (odWithRXConditions.some(Boolean)) {
         coverTest += `- OD with RX: ${[
-          data.cover_test.od.with_rx.near ? "Near" : "",
-          data.cover_test.od.with_rx.distance ? "Distance" : "",
-          data.cover_test.od.with_rx.tropia ? "Tropia" : "",
-          data.cover_test.od.with_rx.phoria ? "Phoria" : "",
+          data.cover_test.od.with_rx?.near ? "Near" : "",
+          data.cover_test.od.with_rx?.distance ? "Distance" : "",
+          data.cover_test.od.with_rx?.tropia ? "Tropia" : "",
+          data.cover_test.od.with_rx?.phoria ? "Phoria" : "",
         ]
           .filter(Boolean)
           .join(", ")}`;
@@ -335,70 +335,70 @@ export const formatPatientNotes = (data) => {
 
       // Check for without RX conditions
       const odWithoutRXConditions = [
-        data.cover_test.od.without_rx.near,
-        data.cover_test.od.without_rx.distance,
-        data.cover_test.od.without_rx.tropia,
-        data.cover_test.od.without_rx.phoria,
+        data.cover_test.od.without_rx?.near,
+        data.cover_test.od.without_rx?.distance,
+        data.cover_test.od.without_rx?.tropia,
+        data.cover_test.od.without_rx?.phoria,
       ];
 
       if (odWithoutRXConditions.some(Boolean)) {
         if (coverTest) coverTest += "\n";
         coverTest += `- OD without RX: ${[
-          data.cover_test.od.without_rx.near ? "Near" : "",
-          data.cover_test.od.without_rx.distance ? "Distance" : "",
-          data.cover_test.od.without_rx.tropia ? "Tropia" : "",
-          data.cover_test.od.without_rx.phoria ? "Phoria" : "",
+          data.cover_test.od.without_rx?.near ? "Near" : "",
+          data.cover_test.od.without_rx?.distance ? "Distance" : "",
+          data.cover_test.od.without_rx?.tropia ? "Tropia" : "",
+          data.cover_test.od.without_rx?.phoria ? "Phoria" : "",
         ]
           .filter(Boolean)
           .join(", ")}`;
       }
 
-      if (data.cover_test.additional_note_od) {
-        coverTest += `\n- Note OD: ${data.cover_test.additional_note_od}`;
+      if (data.cover_test?.additional_note_od) {
+        coverTest += `\n- Note OD: ${data.cover_test?.additional_note_od}`;
       }
     }
 
     if (data.cover_test.os) {
       const osWithRXConditions = [
-        data.cover_test.os.with_rx.near,
-        data.cover_test.os.with_rx.distance,
-        data.cover_test.os.with_rx.tropia,
-        data.cover_test.os.with_rx.phoria,
+        data.cover_test.os.with_rx?.near,
+        data.cover_test.os.with_rx?.distance,
+        data.cover_test.os.with_rx?.tropia,
+        data.cover_test.os.with_rx?.phoria,
       ];
 
       if (osWithRXConditions.some(Boolean)) {
         coverTestOS += `- OS with RX: ${[
-          data.cover_test.os.with_rx.near ? "Near" : "",
-          data.cover_test.os.with_rx.distance ? "Distance" : "",
-          data.cover_test.os.with_rx.tropia ? "Tropia" : "",
-          data.cover_test.os.with_rx.phoria ? "Phoria" : "",
+          data.cover_test.os.with_rx?.near ? "Near" : "",
+          data.cover_test.os.with_rx?.distance ? "Distance" : "",
+          data.cover_test.os.with_rx?.tropia ? "Tropia" : "",
+          data.cover_test.os.with_rx?.phoria ? "Phoria" : "",
         ]
           .filter(Boolean)
           .join(", ")}`;
       }
 
       const osWithoutRXConditions = [
-        data.cover_test.os.without_rx.near,
-        data.cover_test.os.without_rx.distance,
-        data.cover_test.os.without_rx.tropia,
-        data.cover_test.os.without_rx.phoria,
+        data.cover_test.os.without_rx?.near,
+        data.cover_test.os.without_rx?.distance,
+        data.cover_test.os.without_rx?.tropia,
+        data.cover_test.os.without_rx?.phoria,
       ];
 
       if (osWithoutRXConditions.some(Boolean)) {
         if (coverTestOS) coverTestOS += "\n";
         coverTestOS += `- OS without RX: ${[
-          data.cover_test.os.without_rx.near ? "Near" : "",
-          data.cover_test.os.without_rx.distance ? "Distance" : "",
-          data.cover_test.os.without_rx.tropia ? "Tropia" : "",
-          data.cover_test.os.without_rx.phoria ? "Phoria" : "",
+          data.cover_test.os.without_rx?.near ? "Near" : "",
+          data.cover_test.os.without_rx?.distance ? "Distance" : "",
+          data.cover_test.os.without_rx?.tropia ? "Tropia" : "",
+          data.cover_test.os.without_rx?.phoria ? "Phoria" : "",
         ]
           .filter(Boolean)
           .join(", ")}`;
       }
 
       // Add note for OS without RX
-      if (data.cover_test.additional_note_os) {
-        coverTestOS += `\n- Note OS: ${data.cover_test.additional_note_os}`;
+      if (data.cover_test?.additional_note_os) {
+        coverTestOS += `\n- Note OS: ${data.cover_test?.additional_note_os}`;
       }
     }
 
@@ -412,12 +412,12 @@ export const formatPatientNotes = (data) => {
   if (data.confrontation_test) {
     let confrontationTest = "";
 
-    if (data.confrontation_test.od) {
-      confrontationTest += `OD ${data.confrontation_test.od}, `;
+    if (data.confrontation_test?.od) {
+      confrontationTest += `OD ${data.confrontation_test?.od}, `;
     }
 
-    if (data.confrontation_test.os) {
-      confrontationTest += `OS ${data.confrontation_test.os}`;
+    if (data.confrontation_test?.os) {
+      confrontationTest += `OS ${data.confrontation_test?.os}`;
     }
 
     if (confrontationTest) {
@@ -427,33 +427,33 @@ export const formatPatientNotes = (data) => {
   if (data.stereopsis) {
     let stereopsis = "";
 
-    if (data.stereopsis.stereopsis_score) {
-      if (data.stereopsis.stereopsis_score.od) {
-        stereopsis += `OD Score: ${data.stereopsis.stereopsis_score.od}, `;
+    if (data.stereopsis?.stereopsis_score) {
+      if (data.stereopsis?.stereopsis_score.od) {
+        stereopsis += `OD Score: ${data.stereopsis.stereopsis_score?.od}, `;
       }
       if (data.stereopsis.stereopsis_score.os) {
-        stereopsis += `OS Score: ${data.stereopsis.stereopsis_score.os}, `;
+        stereopsis += `OS Score: ${data.stereopsis.stereopsis_score?.os}, `;
       }
     }
 
-    if (data.stereopsis.perceived_DO) {
-      if (data.stereopsis.perceived_DO.od) {
-        const odPerceived = data.stereopsis.perceived_DO.od.yes
+    if (data.stereopsis?.perceived_DO) {
+      if (data.stereopsis.perceived_DO?.od) {
+        const odPerceived = data.stereopsis.perceived_DO.od?.yes
           ? "Perceived DO: Yes"
           : "Perceived DO: No";
         stereopsis += `OD: ${odPerceived}, `;
       }
 
-      if (data.stereopsis.perceived_DO.os) {
-        const osPerceived = data.stereopsis.perceived_DO.os.yes
+      if (data.stereopsis.perceived_DO?.os) {
+        const osPerceived = data.stereopsis.perceived_DO.os?.yes
           ? "Perceived DO: Yes"
           : "Perceived DO: No";
         stereopsis += `OS: ${osPerceived}, `;
       }
     }
 
-    if (data.stereopsis.additional_note) {
-      stereopsis += `Note: ${data.stereopsis.additional_note}`;
+    if (data.stereopsis?.additional_note) {
+      stereopsis += `Note: ${data.stereopsis?.additional_note}`;
     }
 
     if (stereopsis) {
@@ -463,14 +463,14 @@ export const formatPatientNotes = (data) => {
   if (data.diplopia_test) {
     let diplopiaTest = "";
 
-    if (data.diplopia_test.present) {
+    if (data.diplopia_test?.present) {
       diplopiaTest = "Present";
-    } else if (data.diplopia_test.absent) {
+    } else if (data.diplopia_test?.absent) {
       diplopiaTest = "Absent";
     }
 
-    if (data.diplopia_test.additional_note) {
-      diplopiaTest += `, Note: ${data.diplopia_test.additional_note}`;
+    if (data.diplopia_test?.additional_note) {
+      diplopiaTest += `, Note: ${data.diplopia_test?.additional_note}`;
     }
 
     if (diplopiaTest) {
@@ -480,24 +480,24 @@ export const formatPatientNotes = (data) => {
   if (data.corneal_reflex_test) {
     let cornealReflexTest = "";
 
-    if (data.corneal_reflex_test.od) {
-      if (data.corneal_reflex_test.od.present) {
+    if (data.corneal_reflex_test?.od) {
+      if (data.corneal_reflex_test.od?.present) {
         cornealReflexTest += "OD Present, ";
-      } else if (data.corneal_reflex_test.od.absent) {
+      } else if (data.corneal_reflex_test.od?.absent) {
         cornealReflexTest += "OD Absent, ";
       }
     }
 
-    if (data.corneal_reflex_test.os) {
-      if (data.corneal_reflex_test.os.present) {
+    if (data.corneal_reflex_test?.os) {
+      if (data.corneal_reflex_test.os?.present) {
         cornealReflexTest += "OS Present, ";
-      } else if (data.corneal_reflex_test.os.absent) {
+      } else if (data.corneal_reflex_test.os?.absent) {
         cornealReflexTest += "OS Absent, ";
       }
     }
 
-    if (data.corneal_reflex_test.additional_note) {
-      cornealReflexTest += `Note: ${data.corneal_reflex_test.additional_note}`;
+    if (data.corneal_reflex_test?.additional_note) {
+      cornealReflexTest += `Note: ${data.corneal_reflex_test?.additional_note}`;
     }
 
     if (cornealReflexTest) {
@@ -508,24 +508,24 @@ export const formatPatientNotes = (data) => {
   if (data.motility_test) {
     let motilityTest = "";
 
-    if (data.motility_test.od) {
-      if (data.motility_test.od.normal) {
+    if (data.motility_test?.od) {
+      if (data.motility_test.od?.normal) {
         motilityTest += "OD Normal, ";
-      } else if (data.motility_test.od.abnormal) {
+      } else if (data.motility_test.od?.abnormal) {
         motilityTest += "OD Abnormal, ";
       }
     }
 
-    if (data.motility_test.os) {
-      if (data.motility_test.os.normal) {
+    if (data.motility_test?.os) {
+      if (data.motility_test.os?.normal) {
         motilityTest += "OS Normal, ";
-      } else if (data.motility_test.os.abnormal) {
+      } else if (data.motility_test.os?.abnormal) {
         motilityTest += "OS Abnormal, ";
       }
     }
 
-    if (data.motility_test.additional_note) {
-      motilityTest += `Note: ${data.motility_test.additional_note}`;
+    if (data.motility_test?.additional_note) {
+      motilityTest += `Note: ${data.motility_test?.additional_note}`;
     }
 
     if (motilityTest) {
@@ -536,23 +536,23 @@ export const formatPatientNotes = (data) => {
   if (data.saccadic_test) {
     let saccadicTest = "";
 
-    if (data.saccadic_test.od) {
-      if (data.saccadic_test.od.present) {
+    if (data.saccadic_test?.od) {
+      if (data.saccadic_test.od?.present) {
         saccadicTest += "OD Present, ";
-      } else if (data.saccadic_test.od.absent) {
+      } else if (data.saccadic_test.od?.absent) {
         saccadicTest += "OD Absent, ";
       }
     }
-    if (data.saccadic_test.os) {
-      if (data.saccadic_test.os.present) {
+    if (data.saccadic_test?.os) {
+      if (data.saccadic_test.os?.present) {
         saccadicTest += "OS Present, ";
-      } else if (data.saccadic_test.os.absent) {
+      } else if (data.saccadic_test.os?.absent) {
         saccadicTest += "OS Absent, ";
       }
     }
 
-    if (data.saccadic_test.additional_note) {
-      saccadicTest += `Note: ${data.saccadic_test.additional_note}`;
+    if (data.saccadic_test?.additional_note) {
+      saccadicTest += `Note: ${data.saccadic_test?.additional_note}`;
     }
 
     if (saccadicTest) {
@@ -562,14 +562,14 @@ export const formatPatientNotes = (data) => {
 
   if (data.amsler_grid) {
     let amslerGrid = "";
-    if (data.amsler_grid.od) {
-      amslerGrid += `OD ${data.amsler_grid.od}, `;
+    if (data.amsler_grid?.od) {
+      amslerGrid += `OD ${data.amsler_grid?.od}, `;
     }
     if (data.amsler_grid.os) {
-      amslerGrid += `OD ${data.amsler_grid.os}, `;
+      amslerGrid += `OD ${data.amsler_grid?.os}, `;
     }
-    if (data.amsler_grid.additional_note) {
-      amslerGrid += `Note: ${data.amsler_grid.additional_note}`;
+    if (data.amsler_grid?.additional_note) {
+      amslerGrid += `Note: ${data.amsler_grid?.additional_note}`;
     }
     if (amslerGrid) {
       additionalTests += `- Amsler Grid : ${amslerGrid}\n`;
@@ -578,11 +578,11 @@ export const formatPatientNotes = (data) => {
 
   if (data.worths_FD) {
     let worths = "";
-    if (data.worths_FD.od) {
-      worths += `OD ${data.worths_FD.od}, `;
+    if (data.worths_FD?.od) {
+      worths += `OD ${data.worths_FD?.od}, `;
     }
-    if (data.worths_FD.os) {
-      worths += `OD ${data.worths_FD.os}`;
+    if (data.worths_FD?.os) {
+      worths += `OD ${data.worths_FD?.os}`;
     }
 
     if (worths) {
@@ -592,11 +592,11 @@ export const formatPatientNotes = (data) => {
 
   if (data.ishihara_test) {
     let ishihara = "";
-    if (data.ishihara_test.od) {
-      ishihara += `OD ${data.ishihara_test.od}, `;
+    if (data.ishihara_test?.od) {
+      ishihara += `OD ${data.ishihara_test?.od}, `;
     }
-    if (data.worths_FD.os) {
-      ishihara += `OD ${data.ishihara_test.os}`;
+    if (data.ishihara_test?.os) {
+      ishihara += `OD ${data.ishihara_test?.os}`;
     }
 
     if (ishihara) {
@@ -606,11 +606,11 @@ export const formatPatientNotes = (data) => {
 
   if (data.schirmer_test) {
     let schirmer = "";
-    if (data.schirmer_test.od) {
-      schirmer += `OD ${data.schirmer_test.od}, `;
+    if (data.schirmer_test?.od) {
+      schirmer += `OD ${data.schirmer_test?.od}, `;
     }
     if (data.worths_FD.os) {
-      schirmer += `OD ${data.schirmer_test.os}`;
+      schirmer += `OD ${data.schirmer_test?.os}`;
     }
 
     if (schirmer) {
@@ -632,10 +632,10 @@ export const formatPatientNotes = (data) => {
 
   if (data.IOP) {
     let intraOcular = "";
-    if (data.IOP.od) {
+    if (data.IOP?.od) {
       intraOcular += `OD ${data.IOP.od}, `;
     }
-    if (data.IOP.os) {
+    if (data.IOP?.os) {
       intraOcular += `OD ${data.IOP.os}`;
     }
 
@@ -649,10 +649,10 @@ export const formatPatientNotes = (data) => {
   if (data.internal_examination && data.internal_examination.cup_disc_ratio) {
     let cdr = "";
     if (data.internal_examination.cup_disc_ratio?.od) {
-      cdr += `OD ${data.internal_examination.cup_disc_ratio.od}, `;
+      cdr += `OD ${data.internal_examination.cup_disc_ratio?.od}, `;
     }
     if (data.internal_examination.cup_disc_ratio?.os) {
-      cdr += `OS ${data.internal_examination.cup_disc_ratio.os}`;
+      cdr += `OS ${data.internal_examination.cup_disc_ratio?.os}`;
     }
     if (cdr) {
       internalExaminations += `- Cup Disk Ratio: ${cdr}\n`;
@@ -788,9 +788,9 @@ export const formatPatientNotes = (data) => {
   if (data.external_examination && data.external_examination.eyebrow) {
     let eyebrowObservations = "";
 
-    if (data.external_examination.eyebrow.od) {
+    if (data.external_examination.eyebrow?.od) {
       const selectedOdOptions = Object.keys(
-        data.external_examination.eyebrow.od.options || {}
+        data.external_examination.eyebrow.od?.options || {}
       )
         .filter(
           (option) =>
@@ -803,22 +803,22 @@ export const formatPatientNotes = (data) => {
         eyebrowObservations += `OD: ${selectedOdOptions}`;
       }
 
-      if (data.external_examination.eyebrow.od.additional_note) {
+      if (data.external_examination.eyebrow.od?.additional_note) {
         if (selectedOdOptions) {
-          eyebrowObservations += `, Note: ${data.external_examination.eyebrow.od.additional_note} `;
+          eyebrowObservations += `, Note: ${data.external_examination.eyebrow.od?.additional_note} `;
         } else {
-          eyebrowObservations += `Note: ${data.external_examination.eyebrow.od.additional_note} `;
+          eyebrowObservations += `Note: ${data.external_examination.eyebrow.od?.additional_note} `;
         }
       }
     }
 
-    if (data.external_examination.eyebrow.os) {
+    if (data.external_examination.eyebrow?.os) {
       const selectedOsOptions = Object.keys(
-        data.external_examination.eyebrow.os.options || {}
+        data.external_examination.eyebrow.os?.options || {}
       )
         .filter(
           (option) =>
-            data.external_examination.eyebrow.os.options[option] === true
+            data.external_examination.eyebrow.os?.options[option] === true
         )
         .map(sanitizeOption)
         .join(", ");
@@ -830,11 +830,11 @@ export const formatPatientNotes = (data) => {
         eyebrowObservations += `OS: ${selectedOsOptions}`;
       }
 
-      if (data.external_examination.eyebrow.os.additional_note) {
+      if (data.external_examination.eyebrow.os?.additional_note) {
         if (selectedOsOptions) {
-          eyebrowObservations += `, Note: ${data.external_examination.eyebrow.os.additional_note}`;
+          eyebrowObservations += `, Note: ${data.external_examination.eyebrow.os?.additional_note}`;
         } else {
-          eyebrowObservations += `Note: ${data.external_examination.eyebrow.os.additional_note}`;
+          eyebrowObservations += `Note: ${data.external_examination.eyebrow.os?.additional_note}`;
         }
       }
     }
@@ -844,16 +844,16 @@ export const formatPatientNotes = (data) => {
     }
   }
 
-  if (data.external_examination && data.external_examination.eyelashes) {
+  if (data.external_examination && data.external_examination?.eyelashes) {
     let eyelashesObservations = "";
 
-    if (data.external_examination.eyelashes.od) {
+    if (data.external_examination.eyelashes?.od) {
       const selectedOdOptions = Object.keys(
-        data.external_examination.eyelashes.od.options || {}
+        data.external_examination.eyelashes.od?.options || {}
       )
         .filter(
           (option) =>
-            data.external_examination.eyelashes.od.options[option] === true
+            data.external_examination.eyelashes.od?.options[option] === true
         )
         .map(sanitizeOption)
         .join(", ");
@@ -862,22 +862,22 @@ export const formatPatientNotes = (data) => {
         eyelashesObservations += `OD: ${selectedOdOptions}`;
       }
 
-      if (data.external_examination.eyelashes.od.additional_note) {
+      if (data.external_examination.eyelashes.od?.additional_note) {
         if (selectedOdOptions) {
-          eyelashesObservations += `, Note: ${data.external_examination.eyelashes.od.additional_note} `;
+          eyelashesObservations += `, Note: ${data.external_examination.eyelashes.od?.additional_note} `;
         } else {
-          eyelashesObservations += `Note: ${data.external_examination.eyelashes.od.additional_note} `;
+          eyelashesObservations += `Note: ${data.external_examination.eyelashes.od?.additional_note} `;
         }
       }
     }
 
-    if (data.external_examination.eyelashes.os) {
+    if (data.external_examination.eyelashes?.os) {
       const selectedOsOptions = Object.keys(
-        data.external_examination.eyelashes.os.options || {}
+        data.external_examination.eyelashes.os?.options || {}
       )
         .filter(
           (option) =>
-            data.external_examination.eyelashes.os.options[option] === true
+            data.external_examination.eyelashes.os?.options[option] === true
         )
         .map(sanitizeOption)
         .join(", ");
@@ -889,11 +889,11 @@ export const formatPatientNotes = (data) => {
         eyelashesObservations += `OS: ${selectedOsOptions}`;
       }
 
-      if (data.external_examination.eyelashes.os.additional_note) {
+      if (data.external_examination.eyelashes.os?.additional_note) {
         if (selectedOsOptions) {
-          eyelashesObservations += `, Note: ${data.external_examination.eyelashes.os.additional_note}`;
+          eyelashesObservations += `, Note: ${data.external_examination.eyelashes.os?.additional_note}`;
         } else {
-          eyelashesObservations += `Note: ${data.external_examination.eyelashes.os.additional_note}`;
+          eyelashesObservations += `Note: ${data.external_examination.eyelashes.os?.additional_note}`;
         }
       }
     }
@@ -903,16 +903,16 @@ export const formatPatientNotes = (data) => {
     }
   }
 
-  if (data.external_examination && data.external_examination.eyelids) {
+  if (data.external_examination && data.external_examination?.eyelids) {
     let eyelidsObservations = "";
 
-    if (data.external_examination.eyelids.od) {
+    if (data.external_examination.eyelids?.od) {
       const selectedOdOptions = Object.keys(
-        data.external_examination.eyelids.od.options || {}
+        data.external_examination.eyelids.od?.options || {}
       )
         .filter(
           (option) =>
-            data.external_examination.eyelids.od.options[option] === true
+            data.external_examination.eyelids.od?.options[option] === true
         )
         .map(sanitizeOption)
         .join(", ");
@@ -921,22 +921,22 @@ export const formatPatientNotes = (data) => {
         eyelidsObservations += `OD: ${selectedOdOptions}`;
       }
 
-      if (data.external_examination.eyelids.od.additional_note) {
+      if (data.external_examination.eyelids.od?.additional_note) {
         if (selectedOdOptions) {
-          eyelidsObservations += `, Note: ${data.external_examination.eyelids.od.additional_note} `;
+          eyelidsObservations += `, Note: ${data.external_examination.eyelids.od?.additional_note} `;
         } else {
-          eyelidsObservations += `Note: ${data.external_examination.eyelids.od.additional_note}`;
+          eyelidsObservations += `Note: ${data.external_examination.eyelids.od?.additional_note}`;
         }
       }
     }
 
-    if (data.external_examination.eyelids.os) {
+    if (data.external_examination.eyelids?.os) {
       const selectedOsOptions = Object.keys(
-        data.external_examination.eyelids.os.options || {}
+        data.external_examination.eyelids.os?.options || {}
       )
         .filter(
           (option) =>
-            data.external_examination.eyelids.os.options[option] === true
+            data.external_examination.eyelids.os?.options[option] === true
         )
         .map(sanitizeOption)
         .join(", ");
@@ -948,11 +948,11 @@ export const formatPatientNotes = (data) => {
         eyelidsObservations += `OS: ${selectedOsOptions}`;
       }
 
-      if (data.external_examination.eyelids.os.additional_note) {
+      if (data.external_examination.eyelids.os?.additional_note) {
         if (selectedOsOptions) {
-          eyelidsObservations += `, Note: ${data.external_examination.eyelids.os.additional_note}`;
+          eyelidsObservations += `, Note: ${data.external_examination.eyelids.os?.additional_note}`;
         } else {
-          eyelidsObservations += `Note: ${data.external_examination.eyelids.os.additional_note}`;
+          eyelidsObservations += `Note: ${data.external_examination.eyelids.os?.additional_note}`;
         }
       }
     }
@@ -962,16 +962,16 @@ export const formatPatientNotes = (data) => {
     }
   }
 
-  if (data.external_examination && data.external_examination.cornea) {
+  if (data.external_examination && data.external_examination?.cornea) {
     let corneaObservations = "";
 
-    if (data.external_examination.cornea.od) {
+    if (data.external_examination.cornea?.od) {
       const selectedOdOptions = Object.keys(
-        data.external_examination.cornea.od.options || {}
+        data.external_examination.cornea.od?.options || {}
       )
         .filter(
           (option) =>
-            data.external_examination.cornea.od.options[option] === true
+            data.external_examination.cornea.od?.options[option] === true
         )
         .map(sanitizeOption)
         .join(", ");
@@ -980,22 +980,22 @@ export const formatPatientNotes = (data) => {
         corneaObservations += `OD: ${selectedOdOptions}`;
       }
 
-      if (data.external_examination.cornea.od.additional_note) {
+      if (data.external_examination.cornea.od?.additional_note) {
         if (selectedOdOptions) {
-          corneaObservations += `, Note: ${data.external_examination.cornea.od.additional_note} `;
+          corneaObservations += `, Note: ${data.external_examination.cornea.od?.additional_note} `;
         } else {
-          corneaObservations += `Note: ${data.external_examination.cornea.od.additional_note}`;
+          corneaObservations += `Note: ${data.external_examination.cornea.od?.additional_note}`;
         }
       }
     }
 
-    if (data.external_examination.cornea.os) {
+    if (data.external_examination.cornea?.os) {
       const selectedOsOptions = Object.keys(
-        data.external_examination.cornea.os.options || {}
+        data.external_examination.cornea.os?.options || {}
       )
         .filter(
           (option) =>
-            data.external_examination.cornea.os.options[option] === true
+            data.external_examination.cornea.os?.options[option] === true
         )
         .map(sanitizeOption)
         .join(", ");
@@ -1007,11 +1007,11 @@ export const formatPatientNotes = (data) => {
         corneaObservations += `OS: ${selectedOsOptions}`;
       }
 
-      if (data.external_examination.cornea.os.additional_note) {
+      if (data.external_examination.cornea.os?.additional_note) {
         if (selectedOsOptions) {
-          corneaObservations += `, Note: ${data.external_examination.cornea.os.additional_note}`;
+          corneaObservations += `, Note: ${data.external_examination.cornea.os?.additional_note}`;
         } else {
-          corneaObservations += `Note: ${data.external_examination.cornea.os.additional_note}`;
+          corneaObservations += `Note: ${data.external_examination.cornea.os?.additional_note}`;
         }
       }
     }
@@ -1021,16 +1021,16 @@ export const formatPatientNotes = (data) => {
     }
   }
 
-  if (data.external_examination && data.external_examination.limbus) {
+  if (data.external_examination && data.external_examination?.limbus) {
     let limbusObservations = "";
 
-    if (data.external_examination.limbus.od) {
+    if (data.external_examination.limbus?.od) {
       const selectedOdOptions = Object.keys(
-        data.external_examination.limbus.od.options || {}
+        data.external_examination.limbus.od?.options || {}
       )
         .filter(
           (option) =>
-            data.external_examination.limbus.od.options[option] === true
+            data.external_examination.limbus.od?.options[option] === true
         )
         .map(sanitizeOption)
         .join(", ");
@@ -1039,22 +1039,22 @@ export const formatPatientNotes = (data) => {
         limbusObservations += `OD: ${selectedOdOptions}`;
       }
 
-      if (data.external_examination.limbus.od.additional_note) {
+      if (data.external_examination.limbus.od?.additional_note) {
         if (selectedOdOptions) {
-          limbusObservations += `, Note: ${data.external_examination.limbus.od.additional_note} `;
+          limbusObservations += `, Note: ${data.external_examination.limbus.od?.additional_note} `;
         } else {
-          limbusObservations += `Note: ${data.external_examination.limbus.od.additional_note}`;
+          limbusObservations += `Note: ${data.external_examination.limbus.od?.additional_note}`;
         }
       }
     }
 
-    if (data.external_examination.limbus.os) {
+    if (data.external_examination.limbus?.os) {
       const selectedOsOptions = Object.keys(
-        data.external_examination.limbus.os.options || {}
+        data.external_examination.limbus.os?.options || {}
       )
         .filter(
           (option) =>
-            data.external_examination.limbus.os.options[option] === true
+            data.external_examination.limbus.os?.options[option] === true
         )
         .map(sanitizeOption)
         .join(", ");
@@ -1066,11 +1066,11 @@ export const formatPatientNotes = (data) => {
         limbusObservations += `OS: ${selectedOsOptions}`;
       }
 
-      if (data.external_examination.limbus.os.additional_note) {
+      if (data.external_examination.limbus.os?.additional_note) {
         if (selectedOsOptions) {
-          limbusObservations += `, Note: ${data.external_examination.limbus.os.additional_note}`;
+          limbusObservations += `, Note: ${data.external_examination.limbus.os?.additional_note}`;
         } else {
-          limbusObservations += `Note: ${data.external_examination.limbus.os.additional_note}`;
+          limbusObservations += `Note: ${data.external_examination.limbus.os?.additional_note}`;
         }
       }
     }
@@ -1079,16 +1079,16 @@ export const formatPatientNotes = (data) => {
       externalExamination += `- Limbus: ${limbusObservations}\n`;
     }
   }
-  if (data.external_examination && data.external_examination.pupil) {
+  if (data.external_examination && data.external_examination?.pupil) {
     let pupilObservations = "";
 
-    if (data.external_examination.pupil.od) {
+    if (data.external_examination.pupil?.od) {
       const selectedOdOptions = Object.keys(
-        data.external_examination.pupil.od.options || {}
+        data.external_examination.pupil.od?.options || {}
       )
         .filter(
           (option) =>
-            data.external_examination.pupil.od.options[option] === true
+            data.external_examination.pupil.od?.options[option] === true
         )
         .map(sanitizeOption)
         .join(", ");
@@ -1097,22 +1097,22 @@ export const formatPatientNotes = (data) => {
         pupilObservations += `OD: ${selectedOdOptions}`;
       }
 
-      if (data.external_examination.pupil.od.additional_note) {
+      if (data.external_examination.pupil.od?.additional_note) {
         if (selectedOdOptions) {
-          pupilObservations += `, Note: ${data.external_examination.pupil.od.additional_note} `;
+          pupilObservations += `, Note: ${data.external_examination.pupil.od?.additional_note} `;
         } else {
-          pupilObservations += `Note: ${data.external_examination.pupil.od.additional_note}`;
+          pupilObservations += `Note: ${data.external_examination.pupil.od?.additional_note}`;
         }
       }
     }
 
-    if (data.external_examination.pupil.os) {
+    if (data.external_examination.pupil?.os) {
       const selectedOsOptions = Object.keys(
-        data.external_examination.pupil.os.options || {}
+        data.external_examination.pupil.os?.options || {}
       )
         .filter(
           (option) =>
-            data.external_examination.pupil.os.options[option] === true
+            data.external_examination.pupil.os?.options[option] === true
         )
         .map(sanitizeOption)
         .join(", ");
@@ -1124,11 +1124,11 @@ export const formatPatientNotes = (data) => {
         pupilObservations += `OS: ${selectedOsOptions}`;
       }
 
-      if (data.external_examination.pupil.os.additional_note) {
+      if (data.external_examination.pupil.os?.additional_note) {
         if (selectedOsOptions) {
-          pupilObservations += `, Note: ${data.external_examination.pupil.os.additional_note}`;
+          pupilObservations += `, Note: ${data.external_examination.pupil.os?.additional_note}`;
         } else {
-          pupilObservations += `Note: ${data.external_examination.pupil.os.additional_note}`;
+          pupilObservations += `Note: ${data.external_examination.pupil.os?.additional_note}`;
         }
       }
     }
@@ -1137,15 +1137,16 @@ export const formatPatientNotes = (data) => {
       externalExamination += `- Pupil: ${pupilObservations}\n`;
     }
   }
-  if (data.external_examination && data.external_examination.iris) {
+  if (data.external_examination && data.external_examination?.iris) {
     let irisObservations = "";
 
-    if (data.external_examination.iris.od) {
+    if (data.external_examination.iris?.od) {
       const selectedOdOptions = Object.keys(
-        data.external_examination.iris.od.options || {}
+        data.external_examination.iris.od?.options || {}
       )
         .filter(
-          (option) => data.external_examination.iris.od.options[option] === true
+          (option) =>
+            data.external_examination.iris.od?.options[option] === true
         )
         .map(sanitizeOption)
         .join(", ");
@@ -1154,21 +1155,22 @@ export const formatPatientNotes = (data) => {
         irisObservations += `OD: ${selectedOdOptions}`;
       }
 
-      if (data.external_examination.iris.od.additional_note) {
+      if (data.external_examination.iris.od?.additional_note) {
         if (selectedOdOptions) {
-          irisObservations += `, Note: ${data.external_examination.iris.od.additional_note} `;
+          irisObservations += `, Note: ${data.external_examination.iris.od?.additional_note} `;
         } else {
-          irisObservations += `Note: ${data.external_examination.iris.od.additional_note} `;
+          irisObservations += `Note: ${data.external_examination.iris.od?.additional_note} `;
         }
       }
     }
 
-    if (data.external_examination.iris.os) {
+    if (data.external_examination.iris?.os) {
       const selectedOsOptions = Object.keys(
-        data.external_examination.iris.os.options || {}
+        data.external_examination.iris.os?.options || {}
       )
         .filter(
-          (option) => data.external_examination.iris.os.options[option] === true
+          (option) =>
+            data.external_examination.iris.os?.options[option] === true
         )
         .map(sanitizeOption)
         .join(", ");
@@ -1180,11 +1182,11 @@ export const formatPatientNotes = (data) => {
         irisObservations += `OS: ${selectedOsOptions}`;
       }
 
-      if (data.external_examination.iris.os.additional_note) {
+      if (data.external_examination.iris.os?.additional_note) {
         if (selectedOsOptions) {
-          irisObservations += `, Note: ${data.external_examination.iris.os.additional_note}`;
+          irisObservations += `, Note: ${data.external_examination.iris.os?.additional_note}`;
         } else {
-          irisObservations += `Note: ${data.external_examination.iris.os.additional_note}`;
+          irisObservations += `Note: ${data.external_examination.iris.os?.additional_note}`;
         }
       }
     }
@@ -1225,8 +1227,6 @@ export const formatPatientNotes = (data) => {
 
   if (data.new_prescription_od) {
     let np_od = [];
-    let np_os = [];
-    let np_ou = [];
     if (data.new_prescription_od?.np_ADD) {
       np_od.push(`ADD: ${data.new_prescription_od?.np_ADD}`);
     }

@@ -311,5 +311,39 @@ export const summarizeInitialPatientCase = async (medformData) => {
       }
     );
     return response.data;
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const storeGeneratedSoap = async (
+  medformData,
+  patientId,
+  firebaseUid
+) => {
+  try {
+    const response = await axios.post(
+      `${PATIENT_API_BASE_URL}/add-soad/${patientId}`,
+      {
+        patient_data: medformData,
+        summarized_data: {
+          subjective: "",
+          objective: "",
+          assessment: "",
+          plan: "",
+        },
+        halu_score: Number(10),
+        feedback: [],
+        markdown_output: "",
+      },
+      {
+        params: {
+          firebaseUid,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
 };

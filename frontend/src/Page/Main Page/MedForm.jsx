@@ -25,7 +25,10 @@ import {
   formatPatientNotes,
   mergeDeep,
 } from "../../Helper/Helper";
-import { summarizeInitialPatientCase } from "../../Service/PatientService";
+import {
+  storeGeneratedSoap,
+  summarizeInitialPatientCase,
+} from "../../Service/PatientService";
 
 const MedForm = () => {
   const { patientId } = useParams();
@@ -33,6 +36,7 @@ const MedForm = () => {
   const rawNotes = useSelector(
     (state) => state.reducer.note.rawNotes[patientId]
   );
+  const user = useSelector((state) => state.reducer.user.user);
   const [currentPage, setCurrentPage] = useState(0);
   const pageTitles = ["Subjective", "Objective", "Assessment", "Plan"];
   const reduxDispatch = useDispatch();
@@ -46,7 +50,7 @@ const MedForm = () => {
   const [isError, setIsError] = useState(false);
   const [image, setImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
-  const [soap, setSoap] = useState([]);
+  const [soap, setSoap] = useState(null);
   const [canvasImages, setCanvasImages] = useState({
     OD: "",
     OS: "",
@@ -585,6 +589,11 @@ const MedForm = () => {
     setHasUnsavedChanges(false);
     try {
       const response = await addNote(medformData, patientId);
+      const soapId = await storeGeneratedSoap(
+        formattedData,
+        patientId,
+        user.firebaseUid
+      );
       if (response) {
         console.log(response);
         reduxDispatch(
@@ -607,30 +616,35 @@ const MedForm = () => {
     navigate(`/scribe/${patientId}`);
     sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
   };
+  console.log(soap);
+
   const handleNext = async (e) => {
     e.preventDefault();
 
     const transformedData = cleanData(medformData);
     const formattedData = formatPatientNotes(transformedData);
-    console.log(formattedData);
-
+    // setCurrentPage((prevPage) => prevPage + 1);
     if (currentPage < pageTitles.length - 1) {
       if (currentPage === 1) {
-        setInitLoad(true);
-        try {
-          const response = await summarizeInitialPatientCase(formattedData);
+        if (!soap && !noteId) {
+          setInitLoad(true);
+          try {
+            const response = await summarizeInitialPatientCase(formattedData);
 
-          if (response) {
-            console.log(response);
-            setSoap(extractSoapData(response));
-            setCurrentPage((prevPage) => prevPage + 1);
-          } else {
-            console.error("No response received");
+            if (response) {
+              console.log(response);
+              setSoap(extractSoapData(response));
+              setCurrentPage((prevPage) => prevPage + 1);
+            } else {
+              console.error("No response received");
+            }
+          } catch (error) {
+            console.error("Error during API call:", error);
+          } finally {
+            setInitLoad(false);
           }
-        } catch (error) {
-          console.error("Error during API call:", error);
-        } finally {
-          setInitLoad(false);
+        } else {
+          setCurrentPage((prevPage) => prevPage + 1);
         }
       } else {
         setCurrentPage((prevPage) => prevPage + 1);
@@ -5617,42 +5631,50 @@ const MedForm = () => {
               <div className="p-5 flex gap-5 flex-col md:flex-row w-full">
                 <div className="w-full md:w-1/2 bg-white rounded-md border p-5">
                   <div className="font-Poppins h-[600px] overflow-auto">
-                    {soap.subjective && soap.subjective.length > 0 && (
-                      <div className="mb-4">
-                        <h3 className="text-f-dark text-h-h6">Subjective</h3>
-                        {soap.subjective.map((sentence, index) => (
-                          <p key={index}>{sentence}</p>
-                        ))}
-                      </div>
-                    )}
-                    {soap.objective && soap.objective.length > 0 && (
-                      <div className="mb-4">
-                        <h3 className="text-f-dark text-h-h6">Objective</h3>
-                        {soap.objective.map((sentence, index) => (
-                          <p key={index}>{sentence}</p>
-                        ))}
-                      </div>
-                    )}
-                    <h3 className="text-f-dark text-h-h6">
-                      Recommended by EyomnAI
-                    </h3>
-                    {soap.assessment && soap.assessment.length > 0 && (
-                      <div className="mb-4">
-                        <h3 className="text-f-dark text-h-h6">Assessment</h3>
-                        {soap.assessment.map((sentence, index) => (
-                          <p key={index}>
-                            {sentence === "## Assessment" ? null : sentence}
-                          </p>
-                        ))}
-                      </div>
-                    )}
-                    {soap.plan && soap.plan.length > 0 && (
-                      <div className="mb-4">
-                        <h3 className="text-f-dark text-h-h6">Plan</h3>
-                        {soap.plan.map((sentence, index) => (
-                          <p key={index}>{sentence}</p>
-                        ))}
-                      </div>
+                    {soap && (
+                      <>
+                        {soap.subjective && soap.subjective.length > 0 && (
+                          <div className="mb-4">
+                            <h3 className="text-f-dark text-h-h6">
+                              Subjective
+                            </h3>
+                            {soap.subjective.map((sentence, index) => (
+                              <p key={index}>{sentence}</p>
+                            ))}
+                          </div>
+                        )}
+                        {soap.objective && soap.objective.length > 0 && (
+                          <div className="mb-4">
+                            <h3 className="text-f-dark text-h-h6">Objective</h3>
+                            {soap.objective.map((sentence, index) => (
+                              <p key={index}>{sentence}</p>
+                            ))}
+                          </div>
+                        )}
+                        <h3 className="text-f-dark text-h-h6">
+                          Recommended by EyomnAI
+                        </h3>
+                        {soap.assessment && soap.assessment.length > 0 && (
+                          <div className="mb-4">
+                            <h3 className="text-f-dark text-h-h6">
+                              Assessment
+                            </h3>
+                            {soap.assessment.map((sentence, index) => (
+                              <p key={index}>
+                                {sentence === "## Assessment" ? null : sentence}
+                              </p>
+                            ))}
+                          </div>
+                        )}
+                        {soap.plan && soap.plan.length > 0 && (
+                          <div className="mb-4">
+                            <h3 className="text-f-dark text-h-h6">Plan</h3>
+                            {soap.plan.map((sentence, index) => (
+                              <p key={index}>{sentence}</p>
+                            ))}
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>

@@ -22,3 +22,30 @@ export const updateNotification = async (
     throw new Error("Failed to update notification read status.");
   }
 };
+
+export const getUserNotification = async (
+  staffId,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.get(
+      `${NOTIFICATION_API_BASE_URL}/get-notifications`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+        params: {
+          staffId,
+          firebaseUid,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error getting notification:", error.message);
+    throw new Error("Failed to get notifications.");
+  }
+};

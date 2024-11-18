@@ -1,5 +1,6 @@
 const admin = require("firebase-admin");
 const { v4: uuidv4 } = require("uuid");
+const axios = require("axios");
 const { encryptData, decryptData } = require("../Security/DataHashing");
 const {
   db,
@@ -17,6 +18,7 @@ const {
   removeNullValues,
   verifyFirebaseUid,
   deepDecrypt,
+  extractSoapData,
 } = require("../Helper/Helper");
 const { pushNotification } = require("./notificationService");
 
@@ -508,6 +510,47 @@ const getPatientsWithAuthorizedDoctor = async (doctorId) => {
     throw error;
   }
 };
+const generateSoap = async (soapString, patientId, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+    console.log(soapString);
+
+    const soapNoteRef = noteCollection.doc(patientId).collection("soapNotes");
+    const soapId = await generateUniqueId(soapNoteRef);
+
+    const soapGenerator =
+      "https://csharpmastr--eyomnai-medical-team-agent-web-endpoint.modal.run";
+
+    const data = {
+      patient_data: soapString,
+      summarized_data: {
+        subjective: "",
+        objective: "",
+        assessment: "",
+        plan: "",
+      },
+      halu_score: Number(10),
+      feedback: [],
+      markdown_output: "",
+    };
+    const response = await axios.post(soapGenerator, data);
+
+    const dictSoap = extractSoapData(response.data);
+    console.log(response.data);
+    const encrypytedSoap = {
+      subjective: dictSoap.subjective.map((item) => encryptData(item)),
+      objective: dictSoap.objective.map((item) => encryptData(item)),
+      assessment: dictSoap.assessment.map((item) => encryptData(item)),
+      plan: dictSoap.plan.map((item) => encryptData(item)),
+    };
+
+    await soapNoteRef.doc(soapId).set(encrypytedSoap);
+
+    return soapId;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 module.exports = {
   addPatient,
@@ -525,4 +568,5 @@ module.exports = {
   // getPatients,
   getDoctorPatient,
   sharePatient,
+  generateSoap,
 };

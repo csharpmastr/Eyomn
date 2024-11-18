@@ -23,6 +23,8 @@ import {
   getDoctorList,
   getStaffs,
 } from "../Service/organizationService";
+import { getUserNotification } from "../Service/NotificationService";
+import { setNotifications } from "../Slice/NotificationSlice";
 
 export const useFetchData = () => {
   const user = useSelector((state) => state.reducer.user.user);
@@ -180,6 +182,16 @@ export const useFetchData = () => {
               ),
             type: "branch",
           },
+          {
+            call: () =>
+              getUserNotification(
+                user.userId,
+                firebaseUid,
+                accessToken,
+                refreshToken
+              ),
+            type: "notifications",
+          },
         ];
       default:
         return [];
@@ -212,6 +224,9 @@ export const useFetchData = () => {
                 break;
               case "staffs":
                 reduxDispatch(setStaffs(result));
+                break;
+              case "notifications":
+                reduxDispatch(setNotifications(result));
                 break;
               case "branch":
                 reduxDispatch(setBranch(result));
