@@ -1,5 +1,6 @@
 require("dotenv").config();
 const WebSocket = require("ws");
+const https = require("https");
 const jwt = require("jsonwebtoken");
 const { decryptDocument } = require("../Helper/Helper");
 const {
@@ -17,7 +18,11 @@ const {
 } = require("../Config/FirebaseClientSDK");
 
 const startWebSocketServer = () => {
-  const wss = new WebSocket.Server({ port: 8080 });
+  const server = https.createServer((req, res) => {
+    res.writeHead(200);
+    res.end("Hello from WebSocket Server");
+  });
+  const wss = new WebSocket.Server({ server });
 
   wss.on("connection", async (ws, req) => {
     console.log("New WebSocket connection");
