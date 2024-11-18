@@ -9,7 +9,7 @@ const {
   getOrgProductSales,
   getBranchNameDoc,
 } = require("../Service/organizationService");
-const { EmailAlreadyExistsError } = require("../Service/UserService");
+const { EmailAlreadyExistsError } = require("../Service/userService");
 
 const addStaffHandler = async (req, res) => {
   try {
