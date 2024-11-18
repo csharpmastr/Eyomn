@@ -17,17 +17,17 @@ const {
   dbClient,
 } = require("../Config/FirebaseClientSDK");
 
+const credentials = {
+  key: process.env.PRIVATE_KEY,
+  cert: process.env.CERTIFICATE,
+};
+const server = https.createServer(credentials, (req, res) => {
+  res.writeHead(200);
+  res.end("Hello from WebSocket Server");
+});
+
 const startWebSocketServer = () => {
-  const server = https.createServer((req, res) => {
-    res.writeHead(200);
-    res.end("Hello from WebSocket Server");
-  });
-  const wss = new WebSocket.Server({
-    server,
-    verifyClient: (info, cb) => {
-      cb(true);
-    },
-  });
+  const wss = new WebSocket.Server({ server });
 
   wss.on("connection", async (ws, req) => {
     console.log("New WebSocket connection");
@@ -180,9 +180,6 @@ const startWebSocketServer = () => {
 
   wss.on("error", (error) => {
     console.error("WebSocket error:", error);
-  });
-  server.listen(3000, () => {
-    console.log("WebSocket server is listening");
   });
 };
 
