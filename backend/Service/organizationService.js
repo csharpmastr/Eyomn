@@ -14,7 +14,7 @@ const {
   hashPassword,
   decryptData,
 } = require("../Security/DataHashing");
-const { EmailAlreadyExistsError } = require("./UserService");
+const { EmailAlreadyExistsError } = require("./userService");
 const {
   getStaffs,
   getPatients,
