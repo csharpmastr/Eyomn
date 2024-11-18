@@ -18,7 +18,7 @@ const notificationRoute = require("./Route/notificationRoute");
 app.use(express.json());
 
 const corsOptions = {
-  origin: "https://eyomn.com/",
+  origin: "https://eyomn.com",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization", "x-refresh-token"],
   credentials: true,
