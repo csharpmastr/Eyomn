@@ -17,6 +17,7 @@ const StaffAddPatientPage = () => {
   const doctorsList = useSelector((state) => state.reducer.doctor.doctor);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const branch = useSelector((state) => state.reducer.user.user.branches);
+
   const branchId = branch[0].branchId;
   const [formData, setFormData] = useState({
     first_name: "",
@@ -39,6 +40,33 @@ const StaffAddPatientPage = () => {
     const selected = doctorsList.find((doc) => doc.staffId === doctorId);
     setSelectedDoctor(selected);
   };
+  const currentDay = new Date()
+    .toLocaleString("en-US", { weekday: "long" })
+    .toLowerCase();
+
+  const currentTime = new Date();
+  const currentHour = currentTime.getHours();
+  const currentMinute = currentTime.getMinutes();
+
+  const availableDoctors = doctorsList.filter((doctor) => {
+    return doctor.schedule?.some((schedule) => {
+      if (schedule.day === currentDay) {
+        const [startHour, startMinute] = schedule.in.split(":").map(Number);
+        const [endHour, endMinute] = schedule.out.split(":").map(Number);
+
+        const currentTimeInMinutes = currentHour * 60 + currentMinute;
+        const startTimeInMinutes = startHour * 60 + startMinute;
+        const endTimeInMinutes = endHour * 60 + endMinute;
+
+        return (
+          currentTimeInMinutes >= startTimeInMinutes &&
+          currentTimeInMinutes <= endTimeInMinutes
+        );
+      }
+      return false;
+    });
+  });
+  console.log(availableDoctors);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -495,11 +523,14 @@ const StaffAddPatientPage = () => {
                   <option value="" disabled>
                     Select Doctor
                   </option>
-                  {doctorsList.map((doctor) => (
-                    <option key={doctor.staffId} value={doctor.staffId}>
-                      {doctor.first_name} {doctor.last_name} ({doctor.position})
-                    </option>
-                  ))}
+                  {availableDoctors.map((doctor) => {
+                    return (
+                      <option key={doctor.staffId} value={doctor.staffId}>
+                        {doctor.first_name} {doctor.last_name} (
+                        {doctor.position})
+                      </option>
+                    );
+                  })}
                 </select>
 
                 <label

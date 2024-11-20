@@ -32,6 +32,12 @@ const OrgDashboard = () => {
   const filteredSales = selectedBranch
     ? sales.filter((sale) => sale.branchId === selectedBranch)
     : sales;
+  const filteredStaffs = selectedBranch
+    ? staffs.filter((staff) =>
+        staff.branches.some((branch) => branch.branchId === selectedBranch)
+      )
+    : staffs;
+  console.log(staffs);
 
   const filteredProducts = selectedBranch
     ? products
@@ -41,9 +47,10 @@ const OrgDashboard = () => {
   const filteredServices = selectedBranch
     ? services.filter((service) => service.branchId === selectedBranch)
     : services;
+
   const patientCount = filteredPatients.length;
   const productCount = filteredProducts.length;
-  const staffCount = staffs.length;
+  const staffCount = filteredStaffs.length;
 
   const combinedSalesAndServices = [
     ...(filteredSales || []),
@@ -184,7 +191,7 @@ const OrgDashboard = () => {
             </article>
             <div className="flex gap-5 font-Poppins">
               {user.role === "0" && (
-                <div className="flex flex-col justify-between bg-white p-4 h-fit w-fit  gap-4 rounded-lg text-f-dark bg-[rgba(169,182,178,0.20)]  border">
+                <div className="flex flex-col justify-between bg-white p-4 h-fit w-fit  gap-4 rounded-lg text-f-dark bg-[rgba(169,182,178,0.10)]  border">
                   <div className="text-p-sc md:text-p-sm flex justify-between">
                     <p className="flex gap-1 items-center">
                       <FiCalendar /> {currentDateTime.date}

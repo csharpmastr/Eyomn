@@ -2,16 +2,14 @@ const express = require("express");
 const router = express.Router();
 const {
   addProductHandler,
-
   deleteProductHandler,
   updateProductHandler,
   addPurchaseHandler,
-
   getOrgProductSalesHandler,
   retrieveProductHandler,
   addServiceFeeHandler,
-
   getBranchInventoryHandler,
+  getPatientProductServicesAvailHandler,
 } = require("../Controller/inventoryController");
 
 router.post("/add/:branchId", addProductHandler);
@@ -22,4 +20,5 @@ router.get("/get-branch-inventory", getBranchInventoryHandler);
 router.get("/get-inventory", getOrgProductSalesHandler);
 router.patch("/retrieve-product/:branchId", retrieveProductHandler);
 router.post("/add-service/:branchId", addServiceFeeHandler);
+router.get("/get-patient-avail", getPatientProductServicesAvailHandler);
 module.exports = router;

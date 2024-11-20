@@ -128,7 +128,9 @@ const DocumentSoap = ({ patientData }) => {
                 paddingHorizontal: 8,
               }}
             >
-              <Text style={styles.doctorLabel}>Doctor</Text>
+              <Text style={styles.doctorLabel}>
+                Doctor {patientData.doctor}
+              </Text>
             </View>
           </View>
         </View>

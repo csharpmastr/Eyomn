@@ -58,6 +58,19 @@ const pushNotification = async (userId, type, data) => {
         patientId: data.patientId,
       };
     }
+    if (type === "soapNote") {
+      const message = `Patient ${data.patientName} generated SOAP is ready`;
+      const encryptedMessage = encryptData(message);
+
+      notificationData = {
+        ...notificationData,
+        type: "soapNote",
+        message: encryptedMessage,
+        doctorId: data.doctorId,
+        patientId: data.patientId,
+      };
+    }
+
     await notificationCol.doc(notificationId).set(notificationData);
     console.log(`Notification of type "${type}" added for user ${userId}`);
   } catch (error) {

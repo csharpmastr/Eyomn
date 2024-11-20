@@ -159,7 +159,7 @@ const DbGraph = ({ patients, sales }) => {
         <h1 className="font-medium text-nowrap text-c-secondary">
           {user.role !== "2"
             ? selectedDataType === "sales"
-              ? "| Inventory Graph"
+              ? "| Inventory Sales Graph"
               : "| Patient Graph"
             : "| Patient Graph"}
         </h1>

@@ -18,6 +18,8 @@ const PaymentBreakdown = () => {
   const patients = useSelector((state) => state.reducer.patient.patients);
   const { patientId } = useParams();
   const patient = patients.find((patient) => patient.patientId === patientId);
+  console.log(patient);
+
   let branchId =
     (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
     user.userId;
@@ -45,7 +47,10 @@ const PaymentBreakdown = () => {
     "Low Vision & Strabismus": 1200,
   };
 
-  const handleToggle = () => setHistoryOpen(!isHistoryOpen);
+  const handleToggle = (e) => {
+    e.preventDefault();
+    setHistoryOpen(!isHistoryOpen);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -78,6 +83,7 @@ const PaymentBreakdown = () => {
   };
 
   const handleSubmit = async () => {
+    console.log("handleSubmit triggered");
     if (
       selectType === "Product" &&
       (!formData.product_name || formData.product_qty <= 0)
@@ -109,6 +115,7 @@ const PaymentBreakdown = () => {
         } = formData;
 
         submittedData = serviceData;
+        console.log(patient.branchId, patient.doctorId);
 
         const response = await addService(
           patient.branchId,
@@ -126,35 +133,34 @@ const PaymentBreakdown = () => {
           setIsSuccess(true);
           handleClearForm();
         }
+      } else {
+        const { service_type, service_price, service_other, ...productData } =
+          formData;
+
+        submittedData = productData;
+        console.log(submittedData);
+
+        const response = await addPurchaseService(
+          submittedData,
+          branchId,
+          user.userId,
+          user.firebaseUid,
+          accessToken,
+          refreshToken
+        );
+        if (response) {
+          const purchaseId = response.purchaseId;
+          const createdAt = response.createdAt;
+
+          reduxDispatch(
+            addPurchase({
+              submittedData,
+              purchaseId: purchaseId,
+              createdAt: createdAt,
+            })
+          );
+        }
       }
-      // else {
-      //   const { service_type, service_price, service_other, ...productData } =
-      //     formData;
-
-      //   submittedData = productData;
-      //   console.log(submittedData);
-
-      //   const response = await addPurchaseService(
-      //     submittedData,
-      //     branchId,
-      //     user.userId,
-      //     user.firebaseUid,
-      //     accessToken,
-      //     refreshToken
-      //   );
-      //   if (response) {
-      //     const purchaseId = response.purchaseId;
-      //     const createdAt = response.createdAt;
-
-      //     reduxDispatch(
-      //       addPurchase({
-      //         submittedData,
-      //         purchaseId: purchaseId,
-      //         createdAt: createdAt,
-      //       })
-      //     );
-      //   }
-      // }
     } catch (error) {
     } finally {
       setIsLoading(false);
@@ -293,13 +299,13 @@ const PaymentBreakdown = () => {
             )}
           </button>
         </div>
-        {isHistoryOpen && <PaymentHistory onClose={handleToggle} />}
         <SuccessModal
           isOpen={isSuccess}
           title={"Payment Success"}
           description={`Patient's product or service fee has been paid successfully.`}
           onClose={handleClose}
-        />
+        />{" "}
+        {isHistoryOpen && <PaymentHistory onClose={handleToggle} />}
       </div>
     </>
   );

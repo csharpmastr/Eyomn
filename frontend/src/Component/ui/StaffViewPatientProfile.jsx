@@ -15,8 +15,7 @@ const formatDate = (dateString) => {
 const StaffViewPatientProfile = ({ patient, visits }) => {
   const [isVisitOpen, setIsVisitOpen] = useState(false);
   const toggleModal = () => setIsVisitOpen(!isVisitOpen);
-  const doctors = useSelector((state) => state.reducer.doctor.doctor);
-  const patientDoc = doctors.find((doc) => doc.staffId === patient.doctorId);
+
   const reduxDispatch = useDispatch();
   const formattedDate = patient.createdAt
     ? new Date(patient.createdAt).toLocaleDateString("en-US", {
@@ -26,6 +25,12 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
       })
     : "N/A";
   const role = useSelector((state) => state.reducer.user.user.role);
+  const staffs = useSelector((state) => state.reducer.staff.staffs);
+  const doctors = useSelector((state) => state.reducer.doctor.doctor);
+  const doctor =
+    role === "2"
+      ? doctors.find((doc) => doc.staffId === patient.doctorId)
+      : staffs.find((staff) => staff.staffId === patient.doctorId);
 
   return (
     <div className="w-full h-full flex gap-4">
@@ -133,12 +138,12 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
           <hr />
           <div>
             <h1 className="text-p-sm md:text-p-rg font-medium text-f-dark mb-4">
-              | Attending Doctor(s)
+              | Attending Doctor
             </h1>
             <article className="flex w-full">
               <section className="flex-1">
                 <p className="text-c-gray3 font-medium text-p-sc md:text-h-h6 mb-2">
-                  {`${patientDoc.first_name} ${patientDoc.last_name}`}
+                  {`${doctor.first_name} ${doctor.last_name}`}
                 </p>
               </section>
             </article>
@@ -173,7 +178,7 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
           </div>
         </div>
         <div className="w-full h-1/2 shadow-sm border bg-white rounded-lg font-poppins p-4 overflow-y-scroll">
-          <PaymentBreakdown />
+          <PaymentBreakdown patient={patient} />
         </div>
       </div>
       {isVisitOpen && <VisitReasonModal onClose={toggleModal} />}

@@ -161,6 +161,8 @@ const AddEditPatient = ({ onClose, title }) => {
 
     return Object.keys(newErrors).length === 0;
   };
+  console.log("hello?");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 

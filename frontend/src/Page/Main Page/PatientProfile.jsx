@@ -97,13 +97,15 @@ const PatientProfile = () => {
             </span>
           </p>
         </div>
-        <button
-          className="flex px-6 py-3 bg-c-branch rounded-md text-f-light gap-3 items-center"
-          onClick={handleOpenModal}
-        >
-          <FiEdit className="h-5 w-5" />
-          <p className="font-medium text-p-sm md:text-p-rg">Edit</p>
-        </button>
+        {role !== "0" && (
+          <button
+            className="flex px-6 py-3 bg-c-branch rounded-md text-f-light gap-3 items-center"
+            onClick={handleOpenModal}
+          >
+            <FiEdit className="h-5 w-5" />
+            <p className="font-medium text-p-sm md:text-p-rg">Edit</p>
+          </button>
+        )}
       </div>
       {currentPatient ? (
         role === "2" ? (

@@ -412,41 +412,35 @@ const generateOTP = () => {
 };
 
 const extractSoapData = (inputText) => {
-  const sections = inputText.split(/\n\s*\n/);
+  const sectionRegex = /##?\s*(Subjective|Objective|Assessment|Plan)\s*/i;
+  const sections = inputText.split(sectionRegex);
 
-  const subjective = sections[1]
-    ? sections[1]
-        .replace(/^##?\s*Subjective\s*/i, "")
-        .split(/\.\s+/)
-        .map((sentence) => sentence.trim() + ".")
-    : [];
-
-  const objective = sections[2]
-    ? sections[2]
-        .replace(/^##?\s*Objective\s*/i, "")
-        .split(/\.\s+/)
-        .map((sentence) => sentence.trim() + ".")
-    : [];
-
-  const assessment = sections[3]
-    ? sections[3]
-        .replace(/^##?\s*Assessment\s*/i, "")
-        .split(/\.\s+/)
-        .map((sentence) => sentence.trim() + ".")
-    : [];
-
-  const plan = sections[4]
-    ? sections[4]
-        .replace(/^##?\s*Plan\s*/i, "")
-        .split(/\.\s+/)
-        .map((sentence) => sentence.trim() + ".")
-    : [];
+  const findSection = (keyword) => {
+    const index = sections.findIndex(
+      (section) => section.toLowerCase().trim() === keyword.toLowerCase()
+    );
+    if (index !== -1 && sections[index + 1]) {
+      return sections[index + 1]
+        .trim()
+        .split(/(?<!Dr|Mr|Ms|St)\.\s+/)
+        .map(
+          (sentence) => sentence.trim() + (sentence.endsWith(".") ? "" : ".")
+        )
+        .filter(
+          (sentence) =>
+            !sentence.match(
+              /^(Hallucination Score|\*\*Hallucination Score\*\*|\d+\.|Management|diagnosis|refractive error)/i // Exclude diagnosis and refractive error
+            )
+        );
+    }
+    return [];
+  };
 
   return {
-    subjective,
-    objective,
-    assessment,
-    plan,
+    subjective: findSection("Subjective"),
+    objective: findSection("Objective"),
+    assessment: findSection("Assessment"),
+    plan: findSection("Plan"),
   };
 };
 

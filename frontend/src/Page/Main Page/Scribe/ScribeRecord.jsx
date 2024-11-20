@@ -29,12 +29,18 @@ const ScribeRecord = () => {
   const user = useSelector((state) => state.reducer.user.user);
   const [patientImages, setPatientImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const scribeNotes = useSelector(
+    (state) => state.reducer.note.medicalScribeNotes[patientId] || []
+  );
   const rawNotes = useSelector(
-    (state) => state.reducer.note.rawNotes[patientId]
+    (state) => state.reducer.note.rawNotes[patientId] || []
   );
   const imagesUrl = useSelector(
-    (state) => state.reducer.note.images[patientId]
+    (state) => state.reducer.note.images[patientId] || []
   );
+  const patient = patients.find((patient) => patient.patientId === patientId);
+  console.log(patient);
+
   const cookies = new Cookies();
   const accessToken = cookies.get("accessToken", { path: "/" });
   const refreshToken = cookies.get("refreshToken", { path: "/" });
@@ -46,6 +52,7 @@ const ScribeRecord = () => {
   const location = useLocation();
   const [image, setImage] = useState(null);
   const [raw, setRaw] = useState(null);
+  const [scribe, setScribe] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const reduxDispatch = useDispatch();
   const medicalRecords = [
@@ -131,7 +138,10 @@ const ScribeRecord = () => {
       setIsLoading(true);
 
       try {
-        if (!rawNotes || rawNotes.length === 0) {
+        if (
+          (!rawNotes || rawNotes.length === 0) &&
+          (!scribeNotes || scribeNotes.length === 0)
+        ) {
           const notesResponse = await getPatientNotes(
             patientId,
             user.firebaseUid,
@@ -142,12 +152,15 @@ const ScribeRecord = () => {
             console.log(notesResponse);
 
             const { rawNotes, soapNotes } = notesResponse;
+            console.log(soapNotes);
+
             reduxDispatch(setRawNotes({ [patientId]: rawNotes }));
             reduxDispatch(setMedicalScribeNotes({ [patientId]: soapNotes }));
             setRaw(notesResponse);
           }
         } else {
           setRaw(rawNotes);
+          setScribe(scribeNotes);
         }
 
         if (!imagesUrl || imagesUrl.length === 0) {
@@ -175,11 +188,10 @@ const ScribeRecord = () => {
       } catch (error) {
         console.log("Error fetching data:", error);
       } finally {
-        setIsLoading(false); // Stop loading after data fetch
+        setIsLoading(false);
       }
     };
 
-    // Ensure patientId and user.firebaseUid are available before fetching data
     if (patientId && user.firebaseUid) {
       fetchData();
     }
@@ -193,9 +205,12 @@ const ScribeRecord = () => {
     );
   };
 
-  const handleClickSoap = (patientId) => {
-    navigate(`/scribe/soap-record/${patientId}`);
-    sessionStorage.setItem("currentPath", `/scribe/soap-record/${patientId}`);
+  const handleClickSoap = (noteId) => {
+    navigate(`/scribe/soap-record/${patientId}/${noteId}`);
+    sessionStorage.setItem(
+      "currentPath",
+      `/scribe/soap-record/${patientId}/${noteId}`
+    );
   };
 
   return (
@@ -260,18 +275,36 @@ const ScribeRecord = () => {
           </nav>
           {currentCardIndex === 0 && (
             <div className="w-full cursor-pointer">
-              {medicalRecords.map((record) => (
-                <div
-                  key={record.id}
-                  className="px-6 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white hover:bg-bg-sub"
-                  onClick={() => handleClickSoap(patientId)}
-                >
-                  <div className="flex items-center gap-3">
-                    <p>{record.name}</p>
-                  </div>
-                  <p>{record.date}</p>
+              {scribeNotes.length > 0 ? (
+                <div className="w-full cursor-pointer">
+                  {scribeNotes ? (
+                    <>
+                      {scribeNotes.map((note, index) => (
+                        <div
+                          key={note.noteId || index}
+                          className="px-6 py-4 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white hover:bg-bg-sub"
+                          onClick={() => handleClickSoap(note.noteId)}
+                        >
+                          <div className="flex items-center gap-3">
+                            <p>{note.name || `Scribe Note ${index + 1}`}</p>
+                          </div>
+                          <p>
+                            {note.createdAt
+                              ? note.createdAt.split("T")[0]
+                              : "Unknown Date"}
+                          </p>
+                        </div>
+                      ))}
+                    </>
+                  ) : (
+                    ""
+                  )}
                 </div>
-              ))}
+              ) : (
+                <div className="w-full">
+                  <p className="text-center">No medical case record found.</p>
+                </div>
+              )}
             </div>
           )}
           {currentCardIndex === 1 && (

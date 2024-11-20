@@ -13,6 +13,7 @@ const {
   getDoctorPatient,
   sharePatient,
   generateSoap,
+  getPatientProductServicesAvail,
 } = require("../Service/patientService");
 
 const addPatientHandler = async (req, res) => {
@@ -319,9 +320,7 @@ const generateStoreSoapHandler = async (req, res) => {
     const soapId = await generateSoap(formattedSoap, patientId, firebaseUid);
 
     if (soapId) {
-      return res
-        .status(200)
-        .json({ message: "Patient SOAP Note stored successfully" });
+      return res.status(200).json({ soapId: soapId });
     }
   } catch (error) {
     console.error("Error adding patient soap record:", error);
