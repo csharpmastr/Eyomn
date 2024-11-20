@@ -2,7 +2,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import Cookies from "universal-cookie";
 
-const INVENTORY_API_BASE_URL = "https://eyomn.vercel.app/api/v1/inventory";
+const INVENTORY_API_BASE_URL = "http://localhost:3000/api/v1/inventory";
 const cookies = new Cookies();
 
 const accessToken = cookies.get("accessToken", { path: "/" });
@@ -259,6 +259,35 @@ export const addService = async (
     return response.data;
   } catch (error) {
     console.error("Error adding service fee: ", error);
+    throw error;
+  }
+};
+
+export const getPatientProductServiceAvail = async (
+  branchId,
+  patientId,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.get(
+      `${INVENTORY_API_BASE_URL}/get-patient-avail`,
+      {
+        params: {
+          branchId,
+          firebaseUid,
+          patientId,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error patient products and services avail: ", error);
     throw error;
   }
 };

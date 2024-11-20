@@ -10,6 +10,7 @@ const {
   noteCollection,
   bucket,
   staffCollection,
+  inventoryCollection,
 } = require("../Config/FirebaseConfig");
 const {
   encryptDocument,
@@ -276,17 +277,18 @@ const getNotes = async (patientId, firebaseUid) => {
           const soapDetails = doc.data();
 
           const decryptedSoap = {
+            noteId: soapDetails.noteId,
             subjective: soapDetails.subjective
-              ? soapDetails.subjective.map((item) => encryptData(item))
+              ? soapDetails.subjective.map((item) => decryptData(item))
               : [],
             objective: soapDetails.objective
-              ? soapDetails.objective.map((item) => encryptData(item))
+              ? soapDetails.objective.map((item) => decryptData(item))
               : [],
             assessment: soapDetails.assessment
-              ? soapDetails.assessment.map((sentence) => encryptData(sentence))
+              ? soapDetails.assessment.map((sentence) => decryptData(sentence))
               : [],
             plan: soapDetails.plan
-              ? soapDetails.plan.map((item) => encryptData(item))
+              ? soapDetails.plan.map((item) => decryptData(item))
               : [],
           };
 
@@ -537,13 +539,23 @@ const getPatientsWithAuthorizedDoctor = async (doctorId) => {
     throw error;
   }
 };
-const generateSoap = async (soapString, patientId, firebaseUid) => {
+const generateSoap = async (soapString, patientId, doctorId, firebaseUid) => {
   try {
+    const currentDate = new Date();
     await verifyFirebaseUid(firebaseUid);
-    console.log(soapString);
+    console.log({ soapString });
 
     const soapNoteRef = noteCollection.doc(patientId).collection("soapNotes");
+    const patientProfile = await patientCollection.doc(patientId).get();
     const soapId = await generateUniqueId(soapNoteRef);
+    // const dictSoap = extractSoapData(soapString);
+
+    // const encryptedSoap = Object.fromEntries(
+    //   Object.entries(dictSoap).map(([key, value]) => [
+    //     key,
+    //     Array.isArray(value) ? value.map((item) => encryptData(item)) : value,
+    //   ])
+    // );
 
     const soapGenerator =
       "https://csharpmastr--eyomnai-medical-team-agent-web-endpoint.modal.run";
@@ -569,9 +581,30 @@ const generateSoap = async (soapString, patientId, firebaseUid) => {
       objective: dictSoap.objective.map((item) => encryptData(item)),
       assessment: dictSoap.assessment.map((item) => encryptData(item)),
       plan: dictSoap.plan.map((item) => encryptData(item)),
+      createdAt: currentDate.toISOString(),
+      noteId: soapId,
     };
 
     await soapNoteRef.doc(soapId).set(encrypytedSoap);
+
+    if (patientProfile.exists) {
+      const patientData = patientProfile.data();
+      const firstName = decryptData(patientData.first_name);
+      const lastName = decryptData(patientData.last_name);
+      const patientName = `${firstName} ${lastName}`;
+
+      const notificationData = {
+        patientName: patientName,
+        patientId: patientId,
+        doctorId: doctorId,
+      };
+      await pushNotification(doctorId, "soapNote", notificationData);
+      console.log(
+        `Notification sent to Doctor ${doctorId} for patient ${patientName}`
+      );
+    } else {
+      console.error("Patient profile not found.");
+    }
 
     return soapId;
   } catch (error) {

@@ -57,6 +57,7 @@ export const useLogout = () => {
       reduxDispatch(clearRawNotes());
       reduxDispatch(clearServices());
       reduxDispatch(clearMedicalScribeNotes());
+      sessionStorage.removeItem("currentTab");
       sessionStorage.removeItem("medformData");
       sessionStorage.removeItem("currentPatientId");
       sessionStorage.removeItem("currentPath");

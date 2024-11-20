@@ -10,6 +10,7 @@ const {
   getOrgProductSalesWithServices,
   getBranchGross,
   getBranchInventory,
+  getPatientProductServicesAvail,
 } = require("../Service/inventoryService");
 
 const addProductHandler = async (req, res) => {
@@ -175,6 +176,8 @@ const addServiceFeeHandler = async (req, res) => {
     if (!branchId) {
       return res.status(400).json({ message: "No Branch ID provided." });
     }
+    console.log(serviceDetails);
+    console.log("why it is triggering?");
     const serviceId = await addServiceFee(
       branchId,
       doctorId,
@@ -191,6 +194,25 @@ const addServiceFeeHandler = async (req, res) => {
       .json({ message: "Server error while adding data." + error });
   }
 };
+const getPatientProductServicesAvailHandler = async (req, res) => {
+  try {
+    const { firebaseUid, branchId, patientId } = req.query;
+    console.log(firebaseUid, branchId, patientId);
+
+    if (!branchId || !patientId) {
+      return res.status(400).json({ message: "No Branch/Patient ID provided" });
+    }
+    const patientAvail = await getPatientProductServicesAvail(
+      branchId,
+      patientId,
+      firebaseUid
+    );
+
+    if (patientAvail) {
+      return res.status(200).json(patientAvail);
+    }
+  } catch (error) {}
+};
 
 module.exports = {
   addProductHandler,
@@ -202,4 +224,5 @@ module.exports = {
   getOrgProductSalesHandler,
   retrieveProductHandler,
   addServiceFeeHandler,
+  getPatientProductServicesAvailHandler,
 };

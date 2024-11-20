@@ -395,7 +395,7 @@ const ProfileSettingSection = ({ selected }) => {
               <input
                 type="text"
                 name="contact_number"
-                value={user.contact}
+                value={user.contact || user.contact_number}
                 onChange={handleChange}
                 className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                 placeholder="Enter contact number"

@@ -412,6 +412,7 @@ const addServiceFee = async (
 ) => {
   try {
     await verifyFirebaseUid(firebaseUid);
+    console.log("why it is triggering?");
 
     const currentDate = new Date();
     const servicesColRef = inventoryCollection
@@ -482,6 +483,58 @@ const getServiceFees = async (branchId, firebaseUid) => {
     throw error;
   }
 };
+const getPatientProductServicesAvail = async (
+  branchId,
+  patientId,
+  firebaseUid
+) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const purchasesRef = inventoryCollection
+      .doc(branchId)
+      .collection("purchases");
+    const servicesRef = inventoryCollection
+      .doc(branchId)
+      .collection("services");
+
+    const [purchasesSnapshot, servicesSnapshot] = await Promise.all([
+      purchasesRef.where("patientId", "==", patientId).get(),
+      servicesRef.where("patientId", "==", patientId).get(),
+    ]);
+
+    const purchasesData = purchasesSnapshot.empty
+      ? []
+      : purchasesSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+    const servicesData = servicesSnapshot.empty
+      ? []
+      : servicesSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...decryptDocument(doc.data(), [
+            "createdAt",
+            "date",
+            "doctorId",
+            "patientId",
+            "service_price",
+          ]),
+        }));
+    console.log(`hehehe ${servicesData}`);
+
+    return {
+      purchases: purchasesData,
+      services: servicesData,
+    };
+  } catch (error) {
+    console.error("Error fetching patient data:", error);
+    throw new Error(
+      "Unable to fetch patient product and service availability."
+    );
+  }
+};
 
 module.exports = {
   addProduct,
@@ -493,4 +546,5 @@ module.exports = {
   getOrgProductSalesWithServices,
   retrieveProduct,
   addServiceFee,
+  getPatientProductServicesAvail,
 };

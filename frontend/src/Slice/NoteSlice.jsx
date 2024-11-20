@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   rawNotes: {},
-  medicalScribeNotes: [],
+  medicalScribeNotes: {},
   images: {},
 };
 
@@ -37,11 +37,20 @@ const noteSlice = createSlice({
     },
 
     setMedicalScribeNotes: (state, action) => {
-      state.medicalScribeNotes = action.payload;
+      const newNotes = action.payload;
+      const patientId = Object.keys(newNotes)[0];
+
+      state.medicalScribeNotes[patientId] =
+        state.medicalScribeNotes[patientId] || [];
+
+      state.medicalScribeNotes[patientId] = [
+        ...state.medicalScribeNotes[patientId],
+        ...newNotes[patientId],
+      ];
     },
 
     clearMedicalScribeNotes: (state) => {
-      state.medicalScribeNotes = [];
+      state.medicalScribeNotes = {};
     },
 
     addNewMedicalScribeNote: (state, action) => {

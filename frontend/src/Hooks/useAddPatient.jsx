@@ -32,6 +32,8 @@ export const useAddPatient = () => {
         reduxDispatch(
           addPatient({
             ...data,
+            branchId: branchId,
+            doctorId: doctorId,
             patientId: response.data.id,
             createdAt: response.data.createdAt,
           })
