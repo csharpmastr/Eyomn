@@ -460,6 +460,13 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
                         .toISOString()
                         .split("T")[0]
                     }
+                    max={
+                      new Date(
+                        new Date().setFullYear(new Date().getFullYear() + 1)
+                      )
+                        .toISOString()
+                        .split("T")[0]
+                    }
                     value={date}
                     onChange={handleChange}
                     className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
