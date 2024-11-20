@@ -589,11 +589,7 @@ const MedForm = () => {
     setHasUnsavedChanges(false);
     try {
       const response = await addNote(medformData, patientId);
-      const soapId = await storeGeneratedSoap(
-        formattedData,
-        patientId,
-        user.firebaseUid
-      );
+
       if (response) {
         console.log(response);
         reduxDispatch(
@@ -606,6 +602,7 @@ const MedForm = () => {
           })
         );
         setIsSuccess(true);
+        storeGeneratedSoap(formattedData, patientId, user.firebaseUid);
       }
     } catch (error) {
       setIsError(true);

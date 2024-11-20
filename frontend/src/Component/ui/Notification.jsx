@@ -4,7 +4,7 @@ import NotificationContent from "../../Component/ui/NotificationContent";
 import { updateNotification } from "../../Service/NotificationService";
 import { useDispatch, useSelector } from "react-redux";
 import { updateNotificationRead } from "../../Slice/NotificationSlice";
-import { setRawNotes } from "../../Slice/NoteSlice";
+import { setMedicalScribeNotes, setRawNotes } from "../../Slice/NoteSlice";
 import { getPatientNotes } from "../../Service/PatientService";
 import Cookies from "universal-cookie";
 
@@ -38,7 +38,9 @@ const Notification = ({ data, setNotifOpen }) => {
               refreshToken
             );
             if (response) {
-              reduxDispatch(setRawNotes({ [patientId]: response }));
+              const { rawNotes, soapNotes } = notesResponse;
+              reduxDispatch(setRawNotes({ [patientId]: rawNotes }));
+              reduxDispatch(setMedicalScribeNotes({ [patientId]: soapNotes }));
             }
             const responseNotif = await updateNotification(
               user.staffId,

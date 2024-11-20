@@ -258,18 +258,45 @@ const getNotes = async (patientId, firebaseUid) => {
     await verifyFirebaseUid(firebaseUid);
 
     const noteRef = noteCollection.doc(patientId).collection("rawNotes");
+    const soapRef = noteCollection.doc(patientId).collection("soapNotes");
 
     const noteSnapshot = await noteRef.get();
-    if (noteSnapshot.empty) {
-      return [];
-    }
+    const soapSnapshot = await soapRef.get();
 
-    const finalDecryptedData = noteSnapshot.docs.map((doc) => {
-      const noteDetails = doc.data();
-      return deepDecrypt(noteDetails);
-    });
+    const finalRawNotes = noteSnapshot.empty
+      ? []
+      : noteSnapshot.docs.map((doc) => {
+          const noteDetails = doc.data();
+          return deepDecrypt(noteDetails);
+        });
 
-    return finalDecryptedData;
+    const finalSoapNotes = soapSnapshot.empty
+      ? []
+      : soapSnapshot.docs.map((doc) => {
+          const soapDetails = doc.data();
+
+          const decryptedSoap = {
+            subjective: soapDetails.subjective
+              ? soapDetails.subjective.map((item) => encryptData(item))
+              : [],
+            objective: soapDetails.objective
+              ? soapDetails.objective.map((item) => encryptData(item))
+              : [],
+            assessment: soapDetails.assessment
+              ? soapDetails.assessment.map((sentence) => encryptData(sentence))
+              : [],
+            plan: soapDetails.plan
+              ? soapDetails.plan.map((item) => encryptData(item))
+              : [],
+          };
+
+          return decryptedSoap;
+        });
+
+    return {
+      rawNotes: finalRawNotes,
+      soapNotes: finalSoapNotes,
+    };
   } catch (error) {
     if (error.code === "auth/user-not-found") {
       console.error("User not found:", error);

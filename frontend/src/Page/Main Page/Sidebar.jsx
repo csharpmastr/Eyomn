@@ -48,7 +48,7 @@ const SideBar = () => {
 
   return (
     <div
-      className={`h-16 w-full xl:h-screen z-50 font-Poppins ${btnBgColor}  transition-all duration-300 ease-in-out  ${roleSbColor} ${
+      className={`h-16 w-full xl:h-screen z-50 font-Poppins ${btnBgColor}  transition-all duration-300 ease-in-out   ${roleSbColor} ${
         isCollapsed ? "xl:w-24" : "xl:w-64"
       }`}
     >
@@ -87,7 +87,7 @@ const SideBar = () => {
       </div>
 
       <div
-        className={`flex flex-col justify-between h-full xl:space-y-3 xl:px-6 xl:pt-10 xl:pb-5 transition-transform duration-300 ease-in-out border-r border-f-gray ${roleSbColor}  ${
+        className={`flex flex-col justify-between h-full mt-10 md:mt-3 lg:mt-5  xl:space-y-3 xl:px-6 xl:pt-10 xl:pb-5 transition-transform duration-300 ease-in-out border-r border-f-gray ${roleSbColor}  ${
           isMenuOpen
             ? " translate-x-0 max-h-screen h-full mt-3 md:mt-0 fixed xl:static w-3/4 md:w-1/3 lg:w-1/4 xl:w-auto bg-bg-sb "
             : " hidden xl:flex "

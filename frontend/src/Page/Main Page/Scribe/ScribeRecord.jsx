@@ -18,6 +18,7 @@ import SuccessModal from "../../../Component/ui/SuccessModal";
 import {
   addNewImageArchive,
   setImagesArchive,
+  setMedicalScribeNotes,
   setRawNotes,
 } from "../../../Slice/NoteSlice";
 
@@ -127,10 +128,9 @@ const ScribeRecord = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true); // Start loading at the beginning of the request
+      setIsLoading(true);
 
       try {
-        // Fetch raw notes if they are not in redux
         if (!rawNotes || rawNotes.length === 0) {
           const notesResponse = await getPatientNotes(
             patientId,
@@ -139,7 +139,11 @@ const ScribeRecord = () => {
             refreshToken
           );
           if (notesResponse) {
-            reduxDispatch(setRawNotes({ [patientId]: notesResponse }));
+            console.log(notesResponse);
+
+            const { rawNotes, soapNotes } = notesResponse;
+            reduxDispatch(setRawNotes({ [patientId]: rawNotes }));
+            reduxDispatch(setMedicalScribeNotes({ [patientId]: soapNotes }));
             setRaw(notesResponse);
           }
         } else {

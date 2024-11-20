@@ -316,14 +316,10 @@ export const summarizeInitialPatientCase = async (medformData) => {
   }
 };
 
-export const storeGeneratedSoap = async (
-  medformData,
-  patientId,
-  firebaseUid
-) => {
+export const storeGeneratedSoap = (medformData, patientId, firebaseUid) => {
   try {
-    const response = await axios.post(
-      `${PATIENT_API_BASE_URL}/add-soad/${patientId}`,
+    axios.post(
+      `${PATIENT_API_BASE_URL}/add-soap/${patientId}`,
       {
         patient_data: medformData,
         summarized_data: {
@@ -342,7 +338,6 @@ export const storeGeneratedSoap = async (
         },
       }
     );
-    return response.data;
   } catch (error) {
     console.log(error);
   }

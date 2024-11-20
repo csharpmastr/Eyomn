@@ -64,7 +64,7 @@ export const getBranchInventory = async (
     );
     return response.data;
   } catch (error) {
-    console.error("Error getting products : ", err);
+    console.error("Error getting products : ", error);
     throw err;
   }
 };
