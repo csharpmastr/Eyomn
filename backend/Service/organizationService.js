@@ -26,6 +26,7 @@ const {
   getOrganizationName,
 } = require("../Helper/Helper");
 const { getAppointments } = require("./appointmentService");
+const { EmailAlreadyExistsError } = require("./userService");
 
 const addStaff = async (organizationId, staffData, firebaseUid) => {
   try {
