@@ -16,6 +16,7 @@ const DocDashboard = () => {
   const user = useSelector((state) => state.reducer.user.user);
   const patientCount = patients.length;
   const [greeting, setGreeting] = useState("");
+  const [isGraphCollapsed, setIsGraphCollapsed] = useState(false);
 
   const dummyData = [
     {
@@ -60,6 +61,11 @@ const DocDashboard = () => {
     const intervalId = setInterval(updateDateTimeAndGreeting, 1000);
     return () => clearInterval(intervalId);
   }, []);
+
+  const handleCollapseToggle = () => {
+    setIsGraphCollapsed((prevState) => !prevState);
+  };
+
   return (
     <>
       <div className="w-full flex flex-col md:flex-row gap-5 font-Poppins">
@@ -81,9 +87,10 @@ const DocDashboard = () => {
               a productive day!
             </p>
             <section className="flex w-full gap-5">
-              {dummyData.map((data, index) =>
-                data.title === "Number of Staffs" &&
-                user.role === "3" ? null : (
+              {dummyData.map((data, index) => {
+                if (data.title === "Number of Staffs" && user.role === "3")
+                  return null;
+                return (
                   <Suspense
                     fallback={<div>Loading cards...</div>}
                     key={data.title}
@@ -94,16 +101,12 @@ const DocDashboard = () => {
                       percentageChange={data.percentageChange}
                       color={cardColor[index % cardColor.length] || "#000000"}
                       bg={
-                        index === 0
-                          ? BgCard1
-                          : index === 1
-                          ? BgCard2
-                          : index === 2 && BgCard3
+                        index === 0 ? BgCard1 : index === 1 ? BgCard2 : BgCard3
                       }
                     />
                   </Suspense>
-                )
-              )}
+                );
+              })}
             </section>
           </div>
         </div>
@@ -114,16 +117,31 @@ const DocDashboard = () => {
         </div>
       </div>
       <div className="w-full flex flex-col-reverse md:flex-row gap-6">
-        <div className="w-full md:w-1/2">
+        <div
+          className={`w-full transition-all duration-500 ease-in-out ${
+            isGraphCollapsed ? "md:w-8" : "md:w-1/2"
+          } relative`}
+        >
+          <div
+            onClick={handleCollapseToggle}
+            className="w-8 h-8 rounded-full bg-f-light border shadow-sm hidden md:flex items-center justify-center absolute -right-3 top-1/2 cursor-pointer"
+          >
+            {isGraphCollapsed ? ">" : "<"}
+          </div>
           <Suspense fallback={<div>Loading graph...</div>}>
             <DbGraph
               patients={patients}
               sales={user.role === "doctor" ? null : null}
               selectedDataType={user.role === "2" ? "patients" : undefined}
+              isCollapsed={isGraphCollapsed}
             />
           </Suspense>
         </div>
-        <div className="w-full md:w-1/2">
+        <div
+          className={`w-full transition-all duration-500 ease-in-out ${
+            isGraphCollapsed ? "md:w-full" : "md:w-1/2"
+          }`}
+        >
           <Suspense fallback={<div>Loading table...</div>}>
             <DbTable />
           </Suspense>
