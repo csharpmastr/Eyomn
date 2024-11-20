@@ -29,12 +29,14 @@ const DbTable = () => {
   };
 
   return (
-    <div className="text-p-rg h-[500px] rounded-lg bg-white p-4 overflow-clip shadow-sm text-f-dark">
+    <div className="text-p-sm md:text-p-rg h-[500px] rounded-lg bg-white p-4 overflow-clip shadow-sm text-f-dark">
       <header className="flex justify-between items-center text-c-secondary">
-        <h1 className="font-medium text-nowrap">| Recent Patients</h1>
+        <h1 className="font-medium text-nowrap text-c-secondary">
+          | Recent Patients
+        </h1>
         <button
           onClick={viewAll}
-          className="px-2 py-1 border border-c-primary text-c-primary rounded-md"
+          className="px-2 py-1 border border-c-secondary text-c-secondary rounded-md"
         >
           View All
         </button>

@@ -1,41 +1,56 @@
 import React from "react";
-import Signup from "../Component/sections/Signup";
 import Login from "../Component/sections/Login";
-import { FaArrowLeft } from "react-icons/fa";
+import SigninImg from "../assets/Image/signin_img.png";
+import Aguila from "../assets/Image/aguila.png";
 import Logo from "../assets/Image/logo.png";
-import { FaInstagram, FaLock } from "react-icons/fa";
-import { MdOutlineEmail, MdOutlineLock } from "react-icons/md";
+import { FaInstagram } from "react-icons/fa";
+import { MdOutlineEmail } from "react-icons/md";
 
-const AuthenticationPage = ({ type }) => {
+const AuthenticationPage = () => {
   return (
-    <div className="h-screen w-full bg-bg-mc flex justify-between items-center p-10 gap-10 font-Poppins">
-      <div
-        className="w-full h-full p-5 rounded-xl flex flex-col justify-between bg-black"
-        style={{
-          background: "linear-gradient(to top, #2C3E50, #ABF2FF, #1E8282)",
-          clipPath: "polygon(0 0, 100% 0, 90% 100%, 00% 100%)",
-        }}
-      >
-        <div>
-          <div className="bg-[#C0C5CA] w-fit p-1 flex gap-2 rounded-full items-center">
-            <FaArrowLeft className="bg-white py-2 px-4 h-auto w-auto rounded-full" />
-            <h1 className="text-p-rg font-bold mr-3">Go Back</h1>
-          </div>
+    <div className="h-screen w-full bg-bg-mc flex justify-between items-center p-0 lg:p-6 xl:p-8 2xl:p-10 gap-0 lg:gap-6 xl:gap-8 2xl:gap-10 font-Poppins relative">
+      <div className="w-full lg:w-3/5 h-full relative">
+        <div className="absolute inset-0 bg-f-dark bg-opacity-50 lg:opacity-0"></div>
+        <img src={Aguila} alt="" className="absolute h-12 m-4" />
+        <div className="w-full h-full flex lg:rounded-xl items-center justify-center overflow-hidden">
+          <img
+            src={SigninImg}
+            alt="SI IMG"
+            className="w-full h-full object-cover"
+          />
         </div>
-        <h1 className="text-[150px] w-full text-center">Image</h1>
-        <section className="flex w-full justify-between text-p-sm text-f-light pr-20 2xl:pr-28">
-          <p>© 2024 Eyomn AI. All rights reserved.</p>
-          <p>Privacy Policy and Terms of Service.</p>
-        </section>
+        <article className="absolute bottom-5 left-4 text-p-sc font-normal text-f-light">
+          <p>
+            Photo by{" "}
+            <span>
+              <a
+                href="https://unsplash.com/@arteum?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+                target="_blank"
+              >
+                <u>Arteum.ro</u>
+              </a>
+            </span>{" "}
+            Fet on{" "}
+            <span>
+              <a
+                href="https://unsplash.com/photos/person-showing-green-and-black-eyelid-closeup-photography-7H41oiADqqg?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+                target="_blank"
+              >
+                <u>Unsplash</u>
+              </a>
+            </span>
+          </p>
+        </article>
       </div>
-
-      <div className="h-full w-fit flex flex-col justify-between">
-        <div className="text-f-dark text-p-rg w-full flex flex-col items-end">
+      <div className="h-full w-full lg:w-2/5 flex flex-col items-center justify-between absolute lg:static">
+        <div className="text-f-light lg:text-f-dark text-p-sm lg:text-p-rg w-full flex flex-col items-end pr-4 pt-4 lg:p-0">
           <img src={Logo} alt="" className="object-fill" />
           <p>Smart Solutions for Better Healthcare</p>
         </div>
-        {type === "signup" ? <Signup /> : <Login />}
-        <div className="text-c-gray3 text-p-sm w-full items-end flex flex-col gap-2">
+        <div className="w-full px-8 md:px-20 xl:px-8 2xl:px-10">
+          <Login />
+        </div>
+        <div className="text-f-light lg:text-c-gray3 text-p-sm w-full items-end flex flex-col gap-2 pr-4 pb-4 lg:p-0">
           <section className="flex gap-2">
             <p>Eyomn AI</p>
             <FaInstagram className="h-6 w-6" />

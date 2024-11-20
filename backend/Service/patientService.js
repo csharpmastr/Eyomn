@@ -1,5 +1,6 @@
 const admin = require("firebase-admin");
 const { v4: uuidv4 } = require("uuid");
+const axios = require("axios");
 const { encryptData, decryptData } = require("../Security/DataHashing");
 const {
   db,
@@ -8,6 +9,7 @@ const {
   visitCollection,
   noteCollection,
   bucket,
+  staffCollection,
 } = require("../Config/FirebaseConfig");
 const {
   encryptDocument,
@@ -16,6 +18,7 @@ const {
   removeNullValues,
   verifyFirebaseUid,
   deepDecrypt,
+  extractSoapData,
 } = require("../Helper/Helper");
 const { pushNotification } = require("./notificationService");
 
@@ -125,6 +128,7 @@ const getPatients = async (
         "organizationId",
         "createdAt",
         "isDeleted",
+        "authorizedDoctor",
       ]);
 
       return decryptedPatientData;
@@ -207,7 +211,7 @@ const addRawNote = async (patientId, noteDetails, firebaseUid) => {
   try {
     await verifyFirebaseUid(firebaseUid);
     const noteId = await generateUniqueId(
-      patientCollection.doc(patientId).collection("rawNotes")
+      noteCollection.doc(patientId).collection("rawNotes")
     );
     const noteCol = noteCollection.doc(patientId).collection("rawNotes");
     const cleanedNote = removeNullValues(noteDetails);
@@ -253,20 +257,46 @@ const getNotes = async (patientId, firebaseUid) => {
   try {
     await verifyFirebaseUid(firebaseUid);
 
-    const noteRef = noteCollection.doc(patientId).collection("notes");
+    const noteRef = noteCollection.doc(patientId).collection("rawNotes");
+    const soapRef = noteCollection.doc(patientId).collection("soapNotes");
 
     const noteSnapshot = await noteRef.get();
+    const soapSnapshot = await soapRef.get();
 
-    if (noteSnapshot.empty) {
-      return [];
-    }
+    const finalRawNotes = noteSnapshot.empty
+      ? []
+      : noteSnapshot.docs.map((doc) => {
+          const noteDetails = doc.data();
+          return deepDecrypt(noteDetails);
+        });
 
-    const finalDecryptedData = noteSnapshot.docs.map((doc) => {
-      const noteDetails = doc.data();
-      return deepDecrypt(noteDetails);
-    });
+    const finalSoapNotes = soapSnapshot.empty
+      ? []
+      : soapSnapshot.docs.map((doc) => {
+          const soapDetails = doc.data();
 
-    return finalDecryptedData;
+          const decryptedSoap = {
+            subjective: soapDetails.subjective
+              ? soapDetails.subjective.map((item) => encryptData(item))
+              : [],
+            objective: soapDetails.objective
+              ? soapDetails.objective.map((item) => encryptData(item))
+              : [],
+            assessment: soapDetails.assessment
+              ? soapDetails.assessment.map((sentence) => encryptData(sentence))
+              : [],
+            plan: soapDetails.plan
+              ? soapDetails.plan.map((item) => encryptData(item))
+              : [],
+          };
+
+          return decryptedSoap;
+        });
+
+    return {
+      rawNotes: finalRawNotes,
+      soapNotes: finalSoapNotes,
+    };
   } catch (error) {
     if (error.code === "auth/user-not-found") {
       console.error("User not found:", error);
@@ -385,6 +415,169 @@ const getImagesForPatient = async (patientId, firebaseUid) => {
     throw new Error(`Error fetching images: ${error.message}`);
   }
 };
+const getDoctorPatient = async (organizationId, doctorId, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const doctorSnapshot = await staffCollection.doc(doctorId).get();
+    if (!doctorSnapshot.exists) {
+      throw new Error("Doctor not found");
+    }
+
+    const doctorData = doctorSnapshot.data();
+    const branches = doctorData.branches;
+
+    const allBranchPatients = await Promise.all(
+      branches.map(async (branch) => {
+        const branchId = branch.branchId;
+        return await getPatients(
+          organizationId,
+          branchId,
+          doctorId,
+          doctorData.role,
+          firebaseUid
+        );
+      })
+    );
+
+    const branchPatients = allBranchPatients.flat();
+
+    const authorizedDoctorPatients = await getPatientsWithAuthorizedDoctor(
+      doctorId
+    );
+
+    const allPatients = [...branchPatients, ...authorizedDoctorPatients];
+
+    const uniquePatients = Array.from(
+      new Map(
+        allPatients.map((patient) => [patient.patientId, patient])
+      ).values()
+    );
+
+    return uniquePatients;
+  } catch (error) {
+    console.error(
+      "Error fetching doctor patients with authorized doctors:",
+      error
+    );
+    throw error;
+  }
+};
+
+const sharePatient = async (
+  authorizedDoctor,
+  doctorId,
+  patientId,
+  firebaseUid
+) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const patientRef = patientCollection.doc(patientId);
+    const patientSnapshot = await patientCollection.doc(patientId).get();
+    const doctorSnapshot = await staffCollection.doc(doctorId).get();
+
+    let doctorName = "";
+    let patientName = "";
+
+    if (patientSnapshot.exists) {
+      const patientData = patientSnapshot.data();
+      const firstName = decryptData(patientData.first_name);
+      const lastName = decryptData(patientData.last_name);
+      patientName = `${firstName} ${lastName}`;
+    }
+
+    if (doctorSnapshot.exists) {
+      const doctorData = doctorSnapshot.data();
+      const firstName = decryptData(doctorData.first_name);
+      const lastName = decryptData(doctorData.last_name);
+      doctorName = `${firstName} ${lastName}`;
+    }
+
+    await patientRef.set({ authorizedDoctor }, { merge: true });
+
+    for (const authorizedDoctorId of authorizedDoctor) {
+      await pushNotification(authorizedDoctorId, "sharedPatient", {
+        doctorId: authorizedDoctorId,
+        patientId,
+        doctorName,
+        patientName,
+      });
+    }
+  } catch (error) {
+    console.error("Error sharing patient:", error.message);
+    throw error; // Rethrow to be caught in the handler
+  }
+};
+const getPatientsWithAuthorizedDoctor = async (doctorId) => {
+  try {
+    const patientsSnapshot = await patientCollection
+      .where("authorizedDoctor", "array-contains", doctorId)
+      .get();
+
+    const patients = patientsSnapshot.docs.map((doc) => {
+      const patientData = doc.data();
+
+      const decryptedPatientData = decryptDocument(patientData, [
+        "patientId",
+        "branchId",
+        "doctorId",
+        "organizationId",
+        "createdAt",
+        "isDeleted",
+        "authorizedDoctor",
+      ]);
+
+      return decryptedPatientData;
+    });
+
+    return patients;
+  } catch (error) {
+    console.error("Error fetching patients with authorized doctor:", error);
+    throw error;
+  }
+};
+const generateSoap = async (soapString, patientId, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+    console.log(soapString);
+
+    const soapNoteRef = noteCollection.doc(patientId).collection("soapNotes");
+    const soapId = await generateUniqueId(soapNoteRef);
+
+    const soapGenerator =
+      "https://csharpmastr--eyomnai-medical-team-agent-web-endpoint.modal.run";
+
+    const data = {
+      patient_data: soapString,
+      summarized_data: {
+        subjective: "",
+        objective: "",
+        assessment: "",
+        plan: "",
+      },
+      halu_score: Number(10),
+      feedback: [],
+      markdown_output: "",
+    };
+    const response = await axios.post(soapGenerator, data);
+
+    const dictSoap = extractSoapData(response.data);
+    console.log(response.data);
+    const encrypytedSoap = {
+      subjective: dictSoap.subjective.map((item) => encryptData(item)),
+      objective: dictSoap.objective.map((item) => encryptData(item)),
+      assessment: dictSoap.assessment.map((item) => encryptData(item)),
+      plan: dictSoap.plan.map((item) => encryptData(item)),
+    };
+
+    await soapNoteRef.doc(soapId).set(encrypytedSoap);
+
+    return soapId;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 module.exports = {
   addPatient,
@@ -400,4 +593,7 @@ module.exports = {
   getImagesForPatient,
   // getPatientsByDoctor,
   // getPatients,
+  getDoctorPatient,
+  sharePatient,
+  generateSoap,
 };

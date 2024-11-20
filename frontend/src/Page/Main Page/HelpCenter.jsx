@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import HelpSections from "../../Component/ui/HelpSections";
+import RoleColor from "../../assets/Util/RoleColor";
 
 const HelpCenter = () => {
   const [selected, setSelected] = useState("Getting Started");
@@ -20,29 +21,26 @@ const HelpCenter = () => {
       ?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const { helpBtn, helpSection } = RoleColor();
+
   return (
     <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppins h-full gap-6 overflow-clip">
       <nav className="w-full flex gap-4 overflow-x-auto pb-2 ">
-        {[
-          "Getting Started",
-          "Account",
-          "Billing",
-          "FAQ's",
-          "Features",
-          "Changelog",
-        ].map((section) => (
-          <div
-            key={section}
-            className={`h-auto flex items-center rounded-full px-4 py-2 cursor-pointer text-nowrap ${
-              selected === section
-                ? "bg-[#E0EAEA] text-c-primary border border-c-primary font-semibold"
-                : "text-f-dark font-medium border  bg-white"
-            }`}
-            onClick={() => handleSelected(section)}
-          >
-            <h1>{section}</h1>
-          </div>
-        ))}
+        {["Getting Started", "Account", "FAQ's", "Features", "Changelog"].map(
+          (section) => (
+            <div
+              key={section}
+              className={`h-auto flex items-center rounded-full px-4 py-2 cursor-pointer text-nowrap ${
+                selected === section
+                  ? helpBtn
+                  : "text-f-gray2 font-medium border bg-f-light"
+              }`}
+              onClick={() => handleSelected(section)}
+            >
+              <h1>{section}</h1>
+            </div>
+          )
+        )}
       </nav>
       <div className="flex flex-col lg:flex-row h-full pt-4 pb-12">
         <section className="w-full md:w-1/3 lg:flex flex-row lg:flex-col justify-between h-fit md:h-full hidden text-f-dark">
@@ -64,8 +62,8 @@ const HelpCenter = () => {
                       key={section_part}
                       className={`w-fit pl-2 py-2  cursor-pointer ${
                         selectedPart === section_part
-                          ? " border-l-2 border-c-primary font-semibold text-c-primary"
-                          : " border-l-2 border-f-gray font-medium text-c-gray3"
+                          ? ` border-l-2 font-medium ${helpSection} `
+                          : " border-l-2 border-f-gray font-medium text-f-gray2"
                       }`}
                       onClick={() => handleSectionPart(section_part)}
                     >
@@ -76,10 +74,12 @@ const HelpCenter = () => {
               )}
             </section>
           </div>
-          <div className="w-2/3 h-fit bg-c-primary rounded-lg px-4 py-4  text-f-light text-p-rg">
+          <div className="w-2/3 h-fit bg-c-primary rounded-lg px-4 py-4  text-f-light text-p-sm md:text-p-rg">
             <section>
               <h1 className="font-semibold">Do you still need our help?</h1>
-              <p className="text-p-sm">Send you request via email.</p>
+              <p className="text-p-sc md:text-p-sm">
+                Send you request via email.
+              </p>
             </section>
             <div className="h-fit w-fit items-center justify-center rounded-md px-4 py-2 font-md bg-f-light text-f-dark font-semibold mt-4">
               <a

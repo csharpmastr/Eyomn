@@ -6,8 +6,12 @@ const StaffCard = ({ staffData, showImage = true, onClick }) => {
       className="min-w-[350px] rounded-lg overflow-hidden shadow-sm hover:cursor-pointer font-Poppins text-f-dark"
       onClick={onClick}
     >
-      <div className="bg-[#BBD8C5] h-fit p-3">
-        <h1 className="text-p-sm text-f-dark font-medium">
+      <div
+        className={` h-fit p-3 ${
+          staffData.position !== "Staff" ? "bg-c-primary" : "bg-c-staff"
+        }`}
+      >
+        <h1 className="text-p-sc md:text-p-sm text-f-light font-medium">
           {staffData.position}
         </h1>
       </div>
@@ -24,10 +28,10 @@ const StaffCard = ({ staffData, showImage = true, onClick }) => {
           />
         )}
         <div>
-          <h3 className="text-p-lg font-semibold text-f-dark">
+          <h3 className="text-p-rg md:text-p-lg font-semibold text-f-dark">
             {staffData.first_name + " " + staffData.last_name}
           </h3>
-          <p className="text-p-rg">{staffData.email}</p>
+          <p className="text-p-sm md:text-p-rg">{staffData.email}</p>
         </div>
       </div>
     </div>

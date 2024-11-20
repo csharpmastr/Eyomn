@@ -62,13 +62,16 @@ export const WebSocketProvider = ({ children }) => {
       return;
     }
 
-    const wsUrl = `wss://eyomn.vercel.app/${organizationId}/${branchId}/${doctorId}/?token=${accessToken}`;
+    const wsUrl = `wss://api.eyomn.com:3000/${organizationId}/${branchId}/${doctorId}/?token=${accessToken}`;
 
-    ws.current = new WebSocket(wsUrl);
+    const socket = new WebSocket(wsUrl);
+    ws.current = socket;
 
-    ws.current.onopen = () => {};
+    socket.onopen = () => {
+      console.log("WebSocket connection established");
+    };
 
-    ws.current.onmessage = (event) => {
+    socket.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data);
 
@@ -94,20 +97,24 @@ export const WebSocketProvider = ({ children }) => {
       }
     };
 
-    ws.current.onclose = () => {
-      console.log("WebSocket connection closed");
-    };
+    // socket.onclose = () => {
+    //   console.log("WebSocket connection closed. Attempting to reconnect...");
 
-    ws.current.onerror = (error) => {
+    //   setTimeout(() => {
+    //     ws.current = new WebSocket(wsUrl);
+    //   }, 3000);
+    // };
+
+    socket.onerror = (error) => {
       console.error("WebSocket error:", error);
     };
 
     return () => {
-      if (ws.current) {
-        ws.current.close();
+      if (socket) {
+        socket.close();
       }
     };
-  }, [organizationId, branchId, doctorId, reduxDispatch, role]);
+  }, [organizationId, branchId, doctorId, reduxDispatch, role, accessToken]);
 
   return (
     <WebSocketContext.Provider value={ws.current}>

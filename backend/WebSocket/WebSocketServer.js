@@ -1,5 +1,6 @@
 require("dotenv").config();
 const WebSocket = require("ws");
+const https = require("https");
 const jwt = require("jsonwebtoken");
 const { decryptDocument } = require("../Helper/Helper");
 const {
@@ -8,6 +9,7 @@ const {
   onSnapshot,
   collection,
   doc,
+  or,
 } = require("firebase/firestore");
 const {
   patientCol,
@@ -16,7 +18,11 @@ const {
 } = require("../Config/FirebaseClientSDK");
 
 const startWebSocketServer = () => {
-  const wss = new WebSocket.Server({ port: 8080 });
+  const server = https.createServer((req, res) => {
+    res.writeHead(200);
+    res.end("Hello from WebSocket Server");
+  });
+  const wss = new WebSocket.Server({ server });
 
   wss.on("connection", async (ws, req) => {
     console.log("New WebSocket connection");
@@ -50,7 +56,13 @@ const startWebSocketServer = () => {
     const sentPatientIds = new Set();
 
     try {
-      const patientQuery = query(patientCol, where("doctorId", "==", staffId));
+      const patientQuery = query(
+        patientCol,
+        or(
+          where("doctorId", "==", staffId),
+          where("authorizedDoctor", "array-contains", staffId)
+        )
+      );
 
       unsubscribePatients = onSnapshot(patientQuery, (snapshot) => {
         try {
@@ -59,7 +71,7 @@ const startWebSocketServer = () => {
           snapshot.docChanges().forEach((change) => {
             const patientId = change.doc.id;
 
-            if (change.type === "added") {
+            if (change.type === "added" || change.type === "modified") {
               const newPatient = change.doc.data();
               const decryptedPatientData = decryptDocument(newPatient, [
                 "patientId",
@@ -68,6 +80,7 @@ const startWebSocketServer = () => {
                 "organizationId",
                 "createdAt",
                 "isDeleted",
+                "authorizedDoctor",
               ]);
               if (!sentPatientIds.has(patientId)) {
                 patients.push(decryptedPatientData);

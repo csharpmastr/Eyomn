@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   products: [],
   purchases: [],
+  services: [],
 };
 
 const inventorySlice = createSlice({
@@ -25,6 +26,18 @@ const inventorySlice = createSlice({
       if (productIndex !== -1) {
         state.products[productIndex].isDeleted = true;
       }
+    },
+    retrieveProduct: (state, action) => {
+      const productIdsToRetrieve = action.payload;
+      productIdsToRetrieve.forEach((productId) => {
+        const productIndex = state.products.findIndex(
+          (product) => product.productId === productId
+        );
+
+        if (productIndex !== -1) {
+          state.products[productIndex].isDeleted = false;
+        }
+      });
     },
 
     updateProduct: (state, action) => {
@@ -83,6 +96,18 @@ const inventorySlice = createSlice({
     clearPurchases: (state) => {
       state.purchases = [];
     },
+    setServices: (state, action) => {
+      state.services = action.payload;
+    },
+    addServices: (state, action) => {
+      if (!Array.isArray(state.services)) {
+        state.services = [];
+      }
+      state.services.push(action.payload);
+    },
+    clearServices: (state) => {
+      state.services = [];
+    },
   },
 });
 
@@ -96,6 +121,10 @@ export const {
   addPurchase,
   setPurchases,
   clearPurchases,
+  retrieveProduct,
+  setServices,
+  addServices,
+  clearServices,
 } = inventorySlice.actions;
 
 export default inventorySlice.reducer;

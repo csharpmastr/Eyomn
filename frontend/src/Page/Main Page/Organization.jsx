@@ -7,41 +7,50 @@ import { FiPlus } from "react-icons/fi";
 
 const Organization = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const branch = useSelector((state) => state.reducer.branch.branch);
-  const location = useLocation();
+  const [branchToEdit, setBranchToEdit] = useState(null);
   const [hasSelectedBranch, setHasSelectedBranch] = useState(false);
 
+  const branch = useSelector((state) => state.reducer.branch.branch);
+  const location = useLocation();
   const navigate = useNavigate();
 
   const handleOpenStaffModal = () => {
     setIsModalOpen(true);
+    setBranchToEdit(null);
   };
 
   const handleCloseStaffModal = () => {
     setIsModalOpen(false);
+    setBranchToEdit(null);
   };
 
   const handleBranchClick = (branchId) => {
     setHasSelectedBranch(true);
-
     navigate(`/organization/${branchId}`);
   };
+
   useEffect(() => {
     if (location.state && location.state.resetSelected) {
       setHasSelectedBranch(false);
     }
   }, [location.state]);
 
+  const handleEditStaff = (branchId) => {
+    const branchToEdit = branch.find((branch) => branch.branchId === branchId);
+    setBranchToEdit(branchToEdit);
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="w-full h-full flex flex-col items-center p-4 md:p-6 2xl:p-8 font-Poppins">
       {!hasSelectedBranch ? (
         <>
           <div className="w-full flex items-center justify-between">
-            <h1 className="text-c-secondary font-medium text-p-lg">
+            <h1 className="text-c-secondary font-medium text-p-rg md:text-p-lg">
               Organization Branches
             </h1>
             <div
-              className="h-fit flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light hover:cursor-pointer"
+              className="h-fit flex justify-center text-p-sm md:text-p-rg items-center rounded-md px-4 py-3 bg-c-secondary text-f-light hover:cursor-pointer hover:bg-opacity-75"
               onClick={handleOpenStaffModal}
             >
               <FiPlus className="h-5 w-5 mr-2" />
@@ -52,13 +61,12 @@ const Organization = () => {
             <>
               <div className="flex flex-wrap justify-center gap-4 mt-4 md:items-center w-full md:h-full">
                 {branch.map((branchItem) => (
-                  <div
-                    key={branchItem.branchId}
-                    onClick={() => handleBranchClick(branchItem.branchId)}
-                  >
+                  <div key={branchItem.branchId}>
                     <BranchCard
                       name={branchItem.name}
                       municipality={branchItem.municipality}
+                      onClick={() => handleBranchClick(branchItem.branchId)}
+                      clickEdit={() => handleEditStaff(branchItem.branchId)}
                     />
                   </div>
                 ))}
@@ -72,7 +80,12 @@ const Organization = () => {
             </div>
           )}
 
-          {isModalOpen && <AddBranchModel onClose={handleCloseStaffModal} />}
+          {isModalOpen && (
+            <AddBranchModel
+              onClose={handleCloseStaffModal}
+              branchToEdit={branchToEdit}
+            />
+          )}
         </>
       ) : (
         <Outlet />

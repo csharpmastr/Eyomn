@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import Nodatafound from "../../assets/Image/nodatafound.png";
+import RoleColor from "../../assets/Util/RoleColor";
 
 const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
   const products = useSelector((state) => state.reducer.inventory.products);
@@ -13,8 +14,12 @@ const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
     .filter((product) => product.isDeleted === false)
     .filter(
       (product) =>
-        product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.productSKU.toLowerCase().includes(searchTerm.toLowerCase())
+        (product.product_name &&
+          product.product_name
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())) ||
+        (product.productSKU &&
+          product.productSKU.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
   if (sortOption === "ascending") {
@@ -26,9 +31,9 @@ const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
       `${a.product_name}`.localeCompare(`${b.product_name}`)
     );
   } else if (sortOption === "price-l") {
-    filteredProducts = filteredProducts.sort((a, b) => b.quantity - a.quantity);
+    filteredProducts = filteredProducts.sort((a, b) => a.price - b.price);
   } else if (sortOption === "price-h") {
-    filteredProducts = filteredProducts.sort((a, b) => a.quantity - b.quantity);
+    filteredProducts = filteredProducts.sort((a, b) => b.price - a.price);
   }
 
   const paginatedProducts = filteredProducts.slice(
@@ -43,70 +48,91 @@ const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
   const startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
   const endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
 
+  const { btnContentColor } = RoleColor();
+
   return (
     <>
       {filteredProducts.length > 0 ? (
-        <div className="h-full text-p-rg">
-          {paginatedProducts.map((productDetail, index) => {
-            const isOutOfStock = productDetail.quantity === 0;
-            return (
-              <section
-                className={`flex py-5 text-p-rg text-f-dark border-b cursor-pointer rounded-md ${
-                  index % 2 === 0 ? "bg-none border-none" : `bg-white border-b`
-                } ${isOutOfStock ? "opacity-50 cursor-not-allowed" : ""}`}
-                key={productDetail.productId}
-                onClick={() => !isOutOfStock && onProductSelect(productDetail)}
-              >
-                <div className="w-1/6 pl-4">{productDetail.productSKU}</div>
-                <div className="flex-1 pl-4">{productDetail.product_name}</div>
-                <div className="flex-1 pl-4">{productDetail.category}</div>
-                <div className="w-1/6 pl-4">Php {productDetail.price || 0}</div>
-                <div className="w-1/6 pl-4">
-                  {isOutOfStock ? "Out of stock" : productDetail.quantity}
-                </div>
-              </section>
-            );
-          })}
-          <div className="flex justify-end mt-6 mb-4">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`px-4 py-2 mx-1 rounded ${
-                currentPage === 1
-                  ? "bg-gray-400 text-f-light"
-                  : "bg-gray-200 text-f-gray2"
-              }`}
-            >
-              &lt;
-            </button>
-            {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+        <>
+          <div className="w-fit md:w-full text-f-dark overflow-x-auto font-Poppins text-p-sm md:text-p-rg">
+            <header className="w-full py-5 rounded-md flex border-b bg-white text-f-gray2">
+              <div className="w-1/5 pl-4">Code</div>
+              <div className="w-1/5 pl-4">Product Name</div>
+              <div className="w-1/5 pl-4">Category</div>
+              <div className="w-1/5 pl-4">Price</div>
+              <div className="w-1/5 pl-4">Quantity</div>
+            </header>
+            <div>
+              {paginatedProducts.map((productDetail, index) => {
+                const isOutOfStock = productDetail.quantity === 0;
+                return (
+                  <section
+                    className={`py-5 cursor-pointer flex w-full rounded-md ${
+                      index % 2 === 0
+                        ? "bg-none border-none"
+                        : `bg-white border-b`
+                    } ${isOutOfStock ? "opacity-50 cursor-not-allowed" : ""}`}
+                    key={productDetail.productId}
+                    onClick={() =>
+                      !isOutOfStock && onProductSelect(productDetail)
+                    }
+                  >
+                    <div className="w-1/5 pl-4">{productDetail.productSKU}</div>
+                    <div className="w-1/5 pl-4">
+                      {productDetail.product_name}
+                    </div>
+                    <div className="w-1/5 pl-4">{productDetail.category}</div>
+                    <div className="w-1/5 pl-4">
+                      Php {productDetail.price || 0}
+                    </div>
+                    <div className="w-1/5 pl-4">
+                      {isOutOfStock ? "Out of stock" : productDetail.quantity}
+                    </div>
+                  </section>
+                );
+              })}
+            </div>
+            <div className="flex justify-end mt-6 mb-4">
               <button
-                key={index}
-                onClick={() => handlePageChange(startPage + index)}
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
                 className={`px-4 py-2 mx-1 rounded ${
-                  currentPage === startPage + index
-                    ? "bg-c-secondary text-f-light"
+                  currentPage === 1
+                    ? "bg-gray-400 text-f-light"
                     : "bg-gray-200 text-f-gray2"
                 }`}
               >
-                {startPage + index}
+                &lt;
               </button>
-            ))}
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className={`px-4 py-2 mx-1 rounded ${
-                currentPage === totalPages
-                  ? "bg-gray-400 text-f-light"
-                  : "bg-gray-200 text-f-gray2"
-              }`}
-            >
-              &gt;
-            </button>
+              {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                <button
+                  key={index}
+                  onClick={() => handlePageChange(startPage + index)}
+                  className={`px-4 py-2 mx-1 rounded ${
+                    currentPage === startPage + index
+                      ? `${btnContentColor} text-f-light`
+                      : "bg-gray-200 text-f-gray2"
+                  }`}
+                >
+                  {startPage + index}
+                </button>
+              ))}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`px-4 py-2 mx-1 rounded ${
+                  currentPage === totalPages
+                    ? "bg-gray-400 text-f-light"
+                    : "bg-gray-200 text-f-gray2"
+                }`}
+              >
+                &gt;
+              </button>
+            </div>
           </div>
-        </div>
+        </>
       ) : (
-        <div className="w-full mt-24 flex flex-col items-center justify-center text-center text-[#96B4B4] text-p-lg font-medium gap-4">
+        <div className="w-full mt-24 flex flex-col items-center justify-center text-center text-[#96B4B4] text-p-rg md:text-p-lg font-medium gap-4">
           <img src={Nodatafound} alt="no data image" className="w-80" />
           <p>Oops! No products found.</p>
         </div>

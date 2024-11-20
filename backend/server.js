@@ -16,7 +16,15 @@ const inventoryRoute = require("./Route/inventoryRoute");
 const notificationRoute = require("./Route/notificationRoute");
 //Middleware
 app.use(express.json());
-app.use(cors());
+
+const corsOptions = {
+  origin: ["https://eyomn.com", "http://localhost:5173"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization", "x-refresh-token"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(cookieParser());
 
 app.use("/api", sheetRoutes);
@@ -26,6 +34,11 @@ app.use("/api/v1/organization", organizationRoute);
 app.use("/api/v1/appointment", appointmentRoute);
 app.use("/api/v1/inventory", inventoryRoute);
 app.use("/api/v1/notification", notificationRoute);
+
+app.get("/", (req, res) => {
+  return res.send("Server Confirmed!");
+});
+
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });

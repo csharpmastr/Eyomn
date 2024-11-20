@@ -10,10 +10,18 @@ import { clearStaffs } from "../Slice/StaffSlice";
 import { removeUser } from "../Slice/UserSlice";
 import { clearBranch } from "../Slice/BranchSlice";
 import { clearAppointment } from "../Slice/AppointmentSlice";
-import { clearProducts, clearPurchases } from "../Slice/InventorySlice";
+import {
+  clearProducts,
+  clearPurchases,
+  clearServices,
+} from "../Slice/InventorySlice";
 import { clearNotifications } from "../Slice/NotificationSlice";
 import { clearVisits } from "../Slice/VisitSlice";
-import { clearMedicalScribeNotes, clearRawNotes } from "../Slice/NoteSlice";
+import {
+  clearImages,
+  clearMedicalScribeNotes,
+  clearRawNotes,
+} from "../Slice/NoteSlice";
 
 export const useLogout = () => {
   const { dispatch } = useAuthContext();
@@ -45,6 +53,13 @@ export const useLogout = () => {
       reduxDispatch(clearMedicalScribeNotes());
       reduxDispatch(clearPurchases());
       reduxDispatch(clearBranch());
+      reduxDispatch(clearImages());
+      reduxDispatch(clearRawNotes());
+      reduxDispatch(clearServices());
+      reduxDispatch(clearMedicalScribeNotes());
+      sessionStorage.removeItem("medformData");
+      sessionStorage.removeItem("currentPatientId");
+      sessionStorage.removeItem("currentPath");
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred during logout.");

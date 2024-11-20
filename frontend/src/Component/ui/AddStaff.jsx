@@ -11,6 +11,8 @@ import { useAddStaff } from "../../Hooks/useAddStaff";
 import Loader from "./Loader";
 import SuccessModal from "./SuccessModal";
 import { addStaff } from "../../Slice/StaffSlice";
+import { FiTrash } from "react-icons/fi";
+import ConfirmationModal from "./ConfirmationModal";
 
 const AddStaff = ({ onClose, staffData }) => {
   const [image, setImage] = useState(null);
@@ -35,6 +37,7 @@ const AddStaff = ({ onClose, staffData }) => {
   const [isSatOn, setIsSatOn] = useState(false);
   const [isSunOn, setIsSunOn] = useState(false);
   const [branchAssignment, setBranchAssignment] = useState("");
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -46,9 +49,11 @@ const AddStaff = ({ onClose, staffData }) => {
     email: "",
     contact_number: "",
     position: "",
-    password: "",
     branches: [],
   });
+
+  const openConfirmation = () =>
+    setIsConfirmationModalOpen(!isConfirmationModalOpen);
 
   //Viewing staff details
   useEffect(() => {
@@ -264,7 +269,6 @@ const AddStaff = ({ onClose, staffData }) => {
     }));
 
   const handleNext = () => {
-    setCurrentCardIndex(currentCardIndex + 1);
     const isValid = validateForm();
     if (isValid) {
       setCurrentCardIndex(currentCardIndex + 1);
@@ -272,7 +276,6 @@ const AddStaff = ({ onClose, staffData }) => {
   };
 
   const handleBack = () => {
-    setCurrentCardIndex(currentCardIndex - 1);
     if (currentCardIndex > 0) {
       setCurrentCardIndex(currentCardIndex - 1);
     }
@@ -313,18 +316,6 @@ const AddStaff = ({ onClose, staffData }) => {
     } else if (currentCardIndex === 2) {
       if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
         newErrors.email = "(Valid email is required)";
-
-      if (
-        !formData.password ||
-        !/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$/.test(
-          formData.password
-        )
-      )
-        newErrors.password =
-          "(Invalid password. Ensure it has at least 8 characters, including uppercase, lowercase, numbers, and special characters)";
-
-      if (formData.password !== repeatPass)
-        newErrors.confirmpassword = "(Passwords do not match)";
     }
 
     setErrors(newErrors);
@@ -336,9 +327,9 @@ const AddStaff = ({ onClose, staffData }) => {
   const handleSubmitStaff = async (e) => {
     e.preventDefault();
 
-    // if (!validateForm()) {
-    //   return false;
-    // }
+    if (!validateForm()) {
+      return false;
+    }
 
     console.log(formData);
 
@@ -361,7 +352,7 @@ const AddStaff = ({ onClose, staffData }) => {
         <div className="fixed p-4 top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
           <div className="w-[500px] md:w-[600px] md:mr-8">
             <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-              <h1 className="text-p-lg text-c-secondary font-semibold">
+              <h1 className="text-p-rg md:text-p-lg text-c-secondary font-semibold">
                 {currentCardIndex === 0 && "Personal Information & Contact"}
                 {currentCardIndex === 1 && "Job Role & Working Hours"}
                 {currentCardIndex === 2 && "Login Credentials"}
@@ -420,14 +411,14 @@ const AddStaff = ({ onClose, staffData }) => {
                   </label>
                   <div className="mb-5">
                     <header>
-                      <h1 className="text-p-rg font-medium text-c-secondary mb-5">
+                      <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-5">
                         | Personal Information
                       </h1>
                     </header>
                     <section>
                       <label
                         htmlFor="first_name"
-                        className="text-p-sm text-c-gray3 font-medium"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         First Name:{" "}
                         <span className="text-red-400">
@@ -451,7 +442,7 @@ const AddStaff = ({ onClose, staffData }) => {
                     <section>
                       <label
                         htmlFor="last_name"
-                        className="text-p-sm text-c-gray3 font-medium"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Last Name:{" "}
                         <span className="text-red-400">
@@ -475,7 +466,7 @@ const AddStaff = ({ onClose, staffData }) => {
                     <section>
                       <label
                         htmlFor="middle_name"
-                        className="text-p-sm text-c-gray3 font-medium"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Middle Name (Optional)
                       </label>
@@ -491,7 +482,7 @@ const AddStaff = ({ onClose, staffData }) => {
                     <section>
                       <label
                         htmlFor="birthdate"
-                        className="text-p-sm text-c-gray3 font-medium"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Date of Birth:{" "}
                         <span className="text-red-400">
@@ -514,7 +505,7 @@ const AddStaff = ({ onClose, staffData }) => {
                   </div>
                   <div>
                     <header>
-                      <h1 className="text-p-rg font-medium text-c-secondary mb-4">
+                      <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-4">
                         | Contact Information
                       </h1>
                     </header>
@@ -522,7 +513,7 @@ const AddStaff = ({ onClose, staffData }) => {
                       <div className="w-1/2">
                         <label
                           htmlFor="province"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Province
                         </label>
@@ -537,7 +528,7 @@ const AddStaff = ({ onClose, staffData }) => {
                       <div className="w-1/2">
                         <label
                           htmlFor="municipality"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Municipality
                         </label>
@@ -555,7 +546,7 @@ const AddStaff = ({ onClose, staffData }) => {
                     <section>
                       <label
                         htmlFor="contact"
-                        className="text-p-sm text-c-gray3 font-medium"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Contact Number:{" "}
                         <span className="text-red-400">
@@ -584,14 +575,14 @@ const AddStaff = ({ onClose, staffData }) => {
                 <div className="p-6 bg-white h-[500px] md:h-[600px] overflow-y-scroll">
                   <div className="mb-5">
                     <header>
-                      <h1 className="text-p-rg font-medium text-c-secondary mb-4">
+                      <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-4">
                         | Position Information
                       </h1>
                     </header>
                     <section>
                       <label
                         htmlFor="role"
-                        className="text-p-sm text-c-gray3 font-medium"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Role:{" "}
                         <span className="text-red-400">
@@ -620,7 +611,7 @@ const AddStaff = ({ onClose, staffData }) => {
                     <section>
                       <label
                         htmlFor="branch_ass"
-                        className="text-p-sm text-c-gray3 font-medium"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Branch Assignment{" "}
                         <span className="text-red-400">
@@ -648,7 +639,7 @@ const AddStaff = ({ onClose, staffData }) => {
                   <div>
                     <header className="flex justify-between ">
                       <div>
-                        <h1 className="text-p-rg font-medium text-c-secondary mb-4">
+                        <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-4">
                           | Working Hours
                         </h1>
                       </div>
@@ -673,7 +664,7 @@ const AddStaff = ({ onClose, staffData }) => {
                         </div>
                         <label
                           htmlFor="mon"
-                          className="text-p-rg text-c-secondary font-medium"
+                          className="text-p-sm md:text-p-rg text-c-secondary font-medium"
                         >
                           Monday
                         </label>
@@ -718,7 +709,7 @@ const AddStaff = ({ onClose, staffData }) => {
                             </div>
                           </>
                         ) : (
-                          <span className="text-p-rg text-c-gray3">
+                          <span className="text-p-sm md:text-p-rg text-c-gray3">
                             Not working this day
                           </span>
                         )}
@@ -740,7 +731,7 @@ const AddStaff = ({ onClose, staffData }) => {
                         </div>
                         <label
                           htmlFor="tues"
-                          className="text-p-rg text-c-secondary font-medium"
+                          className="text-p-sm md:text-p-rg text-c-secondary font-medium"
                         >
                           Tuesday
                         </label>
@@ -782,7 +773,7 @@ const AddStaff = ({ onClose, staffData }) => {
                             </div>
                           </>
                         ) : (
-                          <span className="text-p-rg text-c-gray3">
+                          <span className="text-p-sm md:text-p-rg text-c-gray3">
                             Not working this day
                           </span>
                         )}
@@ -804,7 +795,7 @@ const AddStaff = ({ onClose, staffData }) => {
                         </div>
                         <label
                           htmlFor="wed"
-                          className="text-p-rg text-c-secondary font-medium"
+                          className="text-p-sm md:text-p-rg text-c-secondary font-medium"
                         >
                           Wednesday
                         </label>
@@ -847,7 +838,7 @@ const AddStaff = ({ onClose, staffData }) => {
                             </div>
                           </>
                         ) : (
-                          <span className="text-p-rg text-c-gray3">
+                          <span className="text-p-sm md:text-p-rg text-c-gray3">
                             Not working this day
                           </span>
                         )}
@@ -869,7 +860,7 @@ const AddStaff = ({ onClose, staffData }) => {
                         </div>
                         <label
                           htmlFor="thu"
-                          className="text-p-rg text-c-secondary font-medium"
+                          className="text-p-sm md:text-p-rg text-c-secondary font-medium"
                         >
                           Thursday
                         </label>
@@ -912,7 +903,7 @@ const AddStaff = ({ onClose, staffData }) => {
                             </div>
                           </>
                         ) : (
-                          <span className="text-p-rg text-c-gray3">
+                          <span className="text-p-sm md:text-p-rg text-c-gray3">
                             Not working this day
                           </span>
                         )}
@@ -934,7 +925,7 @@ const AddStaff = ({ onClose, staffData }) => {
                         </div>
                         <label
                           htmlFor="fri"
-                          className="text-p-rg text-c-secondary font-medium"
+                          className="text-p-sm md:text-p-rg text-c-secondary font-medium"
                         >
                           Friday
                         </label>
@@ -977,7 +968,7 @@ const AddStaff = ({ onClose, staffData }) => {
                             </div>
                           </>
                         ) : (
-                          <span className="text-p-rg text-c-gray3">
+                          <span className="text-p-sm md:text-p-rg text-c-gray3">
                             Not working this day
                           </span>
                         )}
@@ -999,7 +990,7 @@ const AddStaff = ({ onClose, staffData }) => {
                         </div>
                         <label
                           htmlFor="sat"
-                          className="text-p-rg text-c-secondary font-medium"
+                          className="text-p-sm md:text-p-rg text-c-secondary font-medium"
                         >
                           Saturday
                         </label>
@@ -1042,7 +1033,7 @@ const AddStaff = ({ onClose, staffData }) => {
                             </div>
                           </>
                         ) : (
-                          <span className="text-p-rg text-c-gray3">
+                          <span className="text-p-sm md:text-p-rg text-c-gray3">
                             Not working this day
                           </span>
                         )}
@@ -1064,7 +1055,7 @@ const AddStaff = ({ onClose, staffData }) => {
                         </div>
                         <label
                           htmlFor="sun"
-                          className="text-p-rg text-c-secondary font-medium"
+                          className="text-p-sm md:text-p-rg text-c-secondary font-medium"
                         >
                           Sunday
                         </label>
@@ -1107,7 +1098,7 @@ const AddStaff = ({ onClose, staffData }) => {
                             </div>
                           </>
                         ) : (
-                          <span className="text-p-rg text-c-gray3">
+                          <span className="text-p-sm md:text-p-rg text-c-gray3">
                             Not working this day
                           </span>
                         )}
@@ -1120,14 +1111,14 @@ const AddStaff = ({ onClose, staffData }) => {
                 <div className="p-6 bg-white h-[500px] md:h-[600px] overflow-y-scroll">
                   <div className="mb-5">
                     <header>
-                      <h1 className="text-p-rg font-medium text-c-secondary mb-4">
+                      <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-4">
                         | Email & Password
                       </h1>
                     </header>
                     <section>
                       <label
                         htmlFor="email"
-                        className="text-p-sm text-c-gray3 font-medium"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Email Address:{" "}
                         <span className="text-red-400">
@@ -1148,86 +1139,30 @@ const AddStaff = ({ onClose, staffData }) => {
                         placeholder="Enter email"
                       />
                     </section>
-                    <section>
-                      <label
-                        htmlFor="password"
-                        className="text-p-sm text-c-gray3 font-medium"
-                      >
-                        Password:{" "}
-                        <span className="text-red-400">
-                          {(formData.password === "" || errors.password) &&
-                            errors.password}
-                        </span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={passVisible ? "text" : "password"}
-                          name="password"
-                          onChange={handleChange}
-                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                            errors.password
-                              ? "border-red-400 focus:outline-red-400"
-                              : "border-c-gray3 focus:outline-c-primary"
-                          }`}
-                          placeholder="Enter password"
-                        />
-                        <button
-                          type="button"
-                          className="absolute top-4 right-2 text-[#999999]"
-                          onClick={() => setPassVisible(!passVisible)}
-                        >
-                          {passVisible ? (
-                            <MdOutlineRemoveRedEye className="w-6 h-6" />
-                          ) : (
-                            <FaRegEyeSlash className="w-6 h-6" />
-                          )}
-                        </button>
-                      </div>
-                    </section>
-                    <section>
-                      <label
-                        htmlFor="confirmpassword"
-                        className="text-p-sm text-c-gray3 font-medium"
-                      >
-                        Confirm Password:{" "}
-                        <span className="text-red-400">
-                          {(repeatPass === "" || errors.confirmpassword) &&
-                            errors.confirmpassword}
-                        </span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={cpVisible ? "text" : "password"}
-                          name="confirmpassword"
-                          onChange={handleChange}
-                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                            errors.confirmpassword
-                              ? "border-red-400 focus:outline-red-400"
-                              : "border-c-gray3 focus:outline-c-primary"
-                          }`}
-                          placeholder="Confirm password"
-                        />
-                        <button
-                          type="button"
-                          className="absolute top-4 right-2 text-[#999999]"
-                          onClick={() => setCpVisible(!cpVisible)}
-                        >
-                          {cpVisible ? (
-                            <MdOutlineRemoveRedEye className="w-6 h-6" />
-                          ) : (
-                            <FaRegEyeSlash className="w-6 h-6" />
-                          )}
-                        </button>
-                      </div>
-                    </section>
                   </div>
                 </div>
               )}
             </form>
             <footer className="flex justify-end px-4 py-3 gap-4 bg-white border-2 border-t-f-gray rounded-b-lg">
-              {currentCardIndex > 0 && (
+              {currentCardIndex === 0 ? (
+                <div className="w-full flex justify-between">
+                  {staffData ? (
+                    <button onClick={openConfirmation}>
+                      <FiTrash className="w-5 h-5 text-red-500" />
+                    </button>
+                  ) : (
+                    <div></div>
+                  )}
+                  <button
+                    className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
+                    onClick={onClose}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
                 <button
-                  className="px-4 py-2 text-f-dark text-p-rg font-medium rounded-md border border-c-gray3"
+                  className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
                   onClick={handleBack}
                 >
                   Go Back
@@ -1236,7 +1171,7 @@ const AddStaff = ({ onClose, staffData }) => {
 
               {currentCardIndex < 2 && (
                 <button
-                  className="px-4 py-2 bg-c-secondary text-f-light text-p-rg font-semibold rounded-md"
+                  className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md hover:bg-opacity-75"
                   onClick={handleNext}
                 >
                   Continue
@@ -1245,7 +1180,7 @@ const AddStaff = ({ onClose, staffData }) => {
 
               {currentCardIndex === 2 && (
                 <button
-                  className="px-4 py-2 bg-c-primary text-f-light text-p-rg font-semibold rounded-md"
+                  className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md hover:bg-opacity-75"
                   onClick={handleSubmitStaff}
                 >
                   Add Staff
@@ -1264,6 +1199,12 @@ const AddStaff = ({ onClose, staffData }) => {
         title="Adding Success"
         description="The staff has been registered in the system."
       />
+      {isConfirmationModalOpen && (
+        <ConfirmationModal
+          onClose={() => setIsConfirmationModalOpen(false)}
+          title={"Delete Branch"}
+        />
+      )}
     </>,
     document.body
   );

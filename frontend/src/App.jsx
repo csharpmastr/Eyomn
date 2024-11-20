@@ -33,6 +33,7 @@ import { useAuthContext } from "./Hooks/useAuthContext";
 import OrgStaff from "./Page/Main Page/OrgStaff";
 import ScribeRecord from "./Page/Main Page/Scribe/ScribeRecord";
 import MedForm from "./Page/Main Page/MedForm";
+import SoapRecord from "./Page/Main Page/SoapRecord";
 import PatientProfile from "./Page/Main Page/PatientProfile";
 let persistor = persistStore(store);
 
@@ -105,6 +106,7 @@ const AppRoutes = () => {
           <Route path=":patientId" element={<ScribeRecord />} />
           <Route path="new-record/:patientId" element={<MedForm />} />
           <Route path="raw-note/:patientId/:noteId" element={<MedForm />} />
+          <Route path="soap-record/:patientId" element={<SoapRecord />} />
         </Route>
 
         <Route path="patient" element={<Patient />}>

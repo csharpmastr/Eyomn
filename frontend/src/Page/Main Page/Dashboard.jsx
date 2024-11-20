@@ -7,7 +7,7 @@ const Dashboard = () => {
   const role = useSelector((state) => state.reducer.user.user.role);
 
   return (
-    <div className="w-full h-full flex flex-col items-center font-Poppins p-4 gap-4 md:p-6 md:gap-6 2xl:p-8 overflow-auto">
+    <div className="w-full h-full flex flex-col items-center font-Poppins p-4 md:p-6 gap-4 md:gap-5 overflow-auto">
       {role === "2" ? <DocDashboard /> : <OrgDashboard />}
     </div>
   );

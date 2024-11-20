@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { FaEllipsisV } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AddEditProduct from "../../Component/ui/AddEditProduct";
 import ConfirmationModal from "../../Component/ui/ConfirmationModal";
 import Nodatafound from "../../assets/Image/nodatafound.png";
+import RoleColor from "../../assets/Util/RoleColor";
+import Fuse from "fuse.js";
+import { deleteProduct } from "../../Service/InventoryService";
+import { removeProduct } from "../../Slice/InventorySlice";
 
-const InventoryTable = ({ searchTerm, sortOption }) => {
+const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
   const products = useSelector((state) => state.reducer.inventory.products);
+  const user = useSelector((state) => state.reducer.user.user);
+  let branchId =
+    (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
+    user.userId;
   const [collapsedProducts, setCollapsedProducts] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -18,7 +26,9 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [productId, setProductId] = useState("");
-
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const reduxDispatch = useDispatch();
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   const toggleOpen = (productId) => {
@@ -35,15 +45,24 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
     }));
   };
 
-  let filteredProducts = products
-    .filter((product) => product.isDeleted === false)
-    .filter(
-      (product) =>
-        product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.productSKU.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  const fuse = new Fuse(products, {
+    keys: ["product_name", "productSKU"],
+    threshold: 0.3,
+  });
 
-  if (sortOption === "ascending") {
+  let filteredProducts = searchTerm
+    ? fuse.search(searchTerm).map((result) => result.item)
+    : products;
+
+  if (selectedCategory !== "All") {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.category === selectedCategory
+    );
+  }
+
+  filteredProducts = filteredProducts.filter((product) => !product.isDeleted);
+
+  if (!sortOption || sortOption === "default" || sortOption === "ascending") {
     filteredProducts = filteredProducts.sort((a, b) =>
       `${a.product_name}`.localeCompare(`${b.product_name}`)
     );
@@ -102,6 +121,27 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
     };
   }, [isMenuOpen]);
 
+  const { btnContentColor } = RoleColor();
+
+  const handleDelete = async (productId) => {
+    setIsLoading(true);
+    try {
+      const response = await deleteProduct(
+        branchId,
+        productId,
+        { isDeleted: true },
+        user.firebaseUid
+      );
+      if (response) {
+        setIsSuccess(true);
+        reduxDispatch(removeProduct(productId));
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <>
       {filteredProducts.length > 0 ? (
@@ -130,7 +170,7 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
                         : `bg-white border-b`
                     }`}
                   >
-                    <div className="flex text-p-rg py-5">
+                    <div className="flex text-p-sm md:text-p-rg py-5">
                       <div className="flex-1 pl-4">
                         {productDetail.product_name}
                       </div>
@@ -173,7 +213,7 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
                               aria-labelledby="options-menu"
                             >
                               <a
-                                className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
+                                className="block px-4 py-2 text-p-sc md:text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
                                 role="menuitem"
                                 onClick={() =>
                                   handleEditProduct(productDetail.productId)
@@ -182,7 +222,7 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
                                 Edit
                               </a>
                               <a
-                                className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-red-500 hover:text-f-light rounded-md cursor-pointer"
+                                className="block px-4 py-2 text-p-sc md:text-p-sm text-f-gray2 hover:bg-red-500 hover:text-f-light rounded-md cursor-pointer"
                                 role="menuitem"
                                 onClick={() =>
                                   handleDeleteProduct(productDetail.productId)
@@ -198,18 +238,18 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
                     {!isCollapsed && (
                       <div className={`py-5 flex border-b`}>
                         <div className="flex-1 pl-4">
-                          <p className="text-p-sm">
+                          <p className="text-p-sc md:text-p-sm">
                             SKU: <span>{productDetail.productSKU}</span>
                           </p>
                         </div>
                         <div className="flex-1 pl-4">
-                          <p className="text-p-sm">
+                          <p className="text-p-sc md:text-p-sm">
                             Expiration Date:{" "}
                             <span>{productDetail.expirationDate}</span>
                           </p>
                         </div>
                         <div className="flex-1 pl-4">
-                          <p className="text-p-sm">
+                          <p className="text-p-sc md:text-p-sm">
                             Material: <span>{productDetail.ct_material}</span>
                           </p>
                         </div>
@@ -233,6 +273,11 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
               <ConfirmationModal
                 productId={productId}
                 onClose={() => setIsConfirmationModalOpen(false)}
+                title={"Delete Product"}
+                handleDelete={() => handleDelete(productId)}
+                isLoading={isLoading}
+                actionSuccessMessage={"Product Successfully Deleted!"}
+                isSuccessModalOpen={isSuccess}
               />
             )}
           </div>
@@ -254,7 +299,7 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
                 onClick={() => handlePageChange(startPage + index)}
                 className={`px-4 py-2 mx-1 rounded ${
                   currentPage === startPage + index
-                    ? "bg-c-secondary text-f-light"
+                    ? `${btnContentColor} text-f-light`
                     : "bg-gray-200 text-f-gray2"
                 }`}
               >
@@ -275,7 +320,7 @@ const InventoryTable = ({ searchTerm, sortOption }) => {
           </div>
         </>
       ) : (
-        <div className="w-full mt-24 flex flex-col items-center justify-center text-center text-[#96B4B4] text-p-lg font-medium gap-4">
+        <div className="w-full mt-24 flex flex-col items-center justify-center text-center text-[#96B4B4] text-p-rg md:text-p-lg font-medium gap-4">
           <img src={Nodatafound} alt="no data image" className="w-80" />
           <p>Oops! No products found.</p>
         </div>

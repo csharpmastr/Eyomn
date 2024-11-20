@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { IoMdCloseCircleOutline, IoMdSearch } from "react-icons/io";
-import { FiFilter } from "react-icons/fi";
+import { IoMdSearch } from "react-icons/io";
 import PosTable from "../../Component/ui/PosTable";
 import { useDispatch, useSelector } from "react-redux";
 import { useAddPurchase } from "../../Hooks/useAddPurchase";
 import Loader from "../../Component/ui/Loader";
 import SuccessModal from "../../Component/ui/SuccessModal";
 import { addPurchase } from "../../Slice/InventorySlice";
-import Modal from "../../Component/ui/Modal";
+import ErrorModal from "../../Component/ui/ErrorModal";
+import { FiArrowLeft } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 const PointOfSale = () => {
   const [selectedProducts, setSelectedProducts] = React.useState([]);
@@ -18,6 +19,7 @@ const PointOfSale = () => {
   const { addPurchaseHook, isLoading, error } = useAddPurchase();
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const navigate = useNavigate();
   let branchId =
     (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
     user.userId ||
@@ -44,6 +46,11 @@ const PointOfSale = () => {
     }
   };
   const handlePurchase = async () => {
+    if (selectedProducts.length === 0) {
+      setIsError(true);
+      return;
+    }
+
     const purchaseDetails = selectedProducts.map(
       ({ productId, productSKU, quantity, price }) => ({
         productId,
@@ -107,54 +114,58 @@ const PointOfSale = () => {
         <Loader description={"Saving Purchase Information, please wait..."} />
       )}
       <div className="text-f-dark font-Poppins flex flex-col md:flex-row h-full">
-        <div className="flex flex-col md:w-3/4 w-full p-4 md:p-6 2xl:p-8">
-          <div className="flex flex-row gap-3 mb-6">
-            <div className="flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-bg-sub text-c-gray3 font-normal hover:cursor-pointer">
-              <select
-                className="hover:cursor-pointer focus:outline-none bg-bg-sub w-fit"
-                value={sortOption}
-                onChange={(e) => setSortOption(e.target.value)}
+        <div className="flex flex-col w-full md:w-3/4 p-4 md:p-6 2xl:p-8">
+          <div className="flex flex-row gap-3 mb-6 items-center">
+            <div className="mb-2 w-2/5">
+              <button
+                className="flex items-center gap-2"
+                onClick={() => navigate("/inventory")}
               >
-                <option value="" disabled selected>
-                  Sort by
-                </option>
-                <option value="ascending">Ascending</option>
-                <option value="descending">Descending</option>
-                <option value="price-l">Low (Price)</option>
-                <option value="price-h">High (Price)</option>
-              </select>
+                <FiArrowLeft />
+                Go back
+              </button>
             </div>
-            <div className="flex flex-row border border-f-gray bg-bg-sub px-4 rounded-md justify-center items-center w-full gap-2">
-              <IoMdSearch className="h-8 w-8 text-c-secondary" />
-              <input
-                type="text"
-                className="w-full focus:outline-none placeholder-f-gray2 bg-bg-sub text-p-rg"
-                placeholder="Search product... "
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+            <div className="w-3/5 flex gap-4">
+              <div className="flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-bg-sub text-c-gray3 font-normal hover:cursor-pointer">
+                <select
+                  className="hover:cursor-pointer focus:outline-none bg-bg-sub w-fit"
+                  value={sortOption}
+                  onChange={(e) => setSortOption(e.target.value)}
+                >
+                  <option value="" disabled selected>
+                    Sort by
+                  </option>
+                  <option value="ascending">Ascending</option>
+                  <option value="descending">Descending</option>
+                  <option value="price-l">Low (Price)</option>
+                  <option value="price-h">High (Price)</option>
+                </select>
+              </div>
+              <div className="flex flex-row border border-f-gray  px-4 rounded-md justify-center items-center w-full gap-2">
+                <IoMdSearch className="h-8 w-8 text-c-secondary" />
+                <input
+                  type="text"
+                  className="w-full focus:outline-none placeholder-f-gray2 bg-bg-mc text-p-sm md:text-p-rg"
+                  placeholder="Search product... "
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
             </div>
           </div>
-          <header className="flex py-5 bg-white border-b rounded-md sticky">
-            <div className="w-1/6 pl-4">Code</div>
-            <div className="flex-1 pl-4">Product Name</div>
-            <div className="flex-1 pl-4">Category</div>
-            <div className="w-1/6 pl-4">Price</div>
-            <div className="w-1/6 pl-4">Quantity</div>
-          </header>
-          <div className="overflow-y-scroll">
-            <div className="rounded-lg">
-              <PosTable
-                onProductSelect={handleProductSelect}
-                searchTerm={searchTerm}
-                sortOption={sortOption}
-              />
-            </div>
+          <div className="overflow-auto w-full">
+            <PosTable
+              onProductSelect={handleProductSelect}
+              searchTerm={searchTerm}
+              sortOption={sortOption}
+            />
           </div>
         </div>
         <div className="w-full md:w-2/5 h-full border border-l-f-gray bg-white flex flex-col">
           <header className="p-6">
-            <h1 className="text-p-lg font-semibold text-f-dark">Order List</h1>
+            <h1 className="text-p-rg md:text-p-lg font-semibold text-f-dark">
+              Checkout List
+            </h1>
           </header>
           <div className="h-full overflow-y-scroll">
             {selectedProducts.map((product) => (
@@ -170,7 +181,7 @@ const PointOfSale = () => {
                 </button>
                 <div className="w-full">
                   <div className="flex justify-between">
-                    <h1 className="text-p-rg font-semibold">
+                    <h1 className="text-p-sm md:text-p-rg font-semibold">
                       {product.product_name}
                     </h1>
                     <div className="flex items-center gap-2">
@@ -218,10 +229,10 @@ const PointOfSale = () => {
             </div>
             <div className="px-6 pb-6">
               <button
-                className="w-full h-12 bg-[#31d19c] text-f-light text-p-rg font-semibold rounded-lg"
+                className="w-full h-12 bg-bg-con text-f-light text-p-sm md:text-p-rg font-semibold rounded-md"
                 onClick={handlePurchase}
               >
-                Process Purchase
+                Process Checkout
               </button>
             </div>
           </div>
@@ -235,16 +246,14 @@ const PointOfSale = () => {
         isOpen={isSuccess}
         onClose={handleClose}
       />
-      <Modal
+
+      <ErrorModal
+        title={"No Products Selected"}
+        description={
+          "Please select at least one product before proceeding to checkout."
+        }
         isOpen={isError}
         onClose={handleCloseError}
-        title={"Invalid Request"}
-        description={"We can't process your request at this moment."}
-        icon={<IoMdCloseCircleOutline className="w-24 h-24 text-red-700" />}
-        className="w-[600px] h-auto p-4"
-        overlayDescriptionClassName={
-          "text-center font-Poppins pt-5 text-black text-[18px]"
-        }
       />
     </>
   );

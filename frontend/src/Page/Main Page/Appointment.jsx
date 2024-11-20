@@ -4,12 +4,14 @@ import { FiPlus } from "react-icons/fi";
 import SetAppointment from "../../Component/ui/SetAppointment";
 import ViewSchedule from "../../Component/ui/ViewSchedule";
 import { useSelector } from "react-redux";
+import RoleColor from "../../assets/Util/RoleColor";
 
 const Appointment = () => {
   const [isModalSetApp, setIsModalSetApp] = useState(false);
   const [isModalViewApp, setIsModalViewApp] = useState(false);
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [selectedDayAppointments, setSelectedDayAppointments] = useState([]);
+  const role = useSelector((state) => state.reducer.user.user.role);
 
   const appointments = useSelector(
     (state) => state.reducer.appointment.appointment
@@ -39,12 +41,16 @@ const Appointment = () => {
       .sort((a, b) => dayjs(a.scheduledTime) - dayjs(b.scheduledTime));
   };
 
-  // Function to generate a pastel color
-  const getPastelColor = () => {
-    const r = Math.floor(Math.random() * 128 + 127);
-    const g = Math.floor(Math.random() * 128 + 127);
-    const b = Math.floor(Math.random() * 128 + 127);
-    return `rgb(${r}, ${g}, ${b})`;
+  const getAppointmentColor = (scheduledTime) => {
+    const now = dayjs();
+    const appointmentDate = dayjs(scheduledTime);
+    const diffInDays = appointmentDate.diff(now, "day");
+
+    if (diffInDays < 0) return "bg-red-300";
+
+    if (diffInDays <= 7) return "bg-green-300";
+
+    return "bg-green-100";
   };
 
   const renderDays = () => {
@@ -74,8 +80,9 @@ const Appointment = () => {
                 {getAppointmentsForDay(i).map((appointment, index) => (
                   <div
                     key={index}
-                    className="text-rg text-f-dark font-medium py-2 rounded-md mb-2"
-                    style={{ backgroundColor: getPastelColor() }}
+                    className={`text-rg text-f-dark font-medium py-2 rounded-md mb-2 ${getAppointmentColor(
+                      appointment.scheduledTime
+                    )}`}
                   >
                     {dayjs(appointment.scheduledTime).format("h:mm A")}
                   </div>
@@ -89,8 +96,10 @@ const Appointment = () => {
     return days;
   };
 
+  const { btnContentColor } = RoleColor();
+
   return (
-    <div className="p-4 md:p-6 2xl:p-8 text-c-secondary text-p-rg font-Poppins">
+    <div className="p-4 md:p-6 2xl:p-8 text-f-dark text-p-sm md:text-p-rg font-Poppins">
       <div className="flex justify-between items-center">
         <div>
           <button
@@ -109,13 +118,15 @@ const Appointment = () => {
             &gt;
           </button>
         </div>
-        <div
-          className="ml-2 h-fit flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light font-md hover:cursor-pointer"
-          onClick={handleOpenSetApp}
-        >
-          <FiPlus className="h-5 w-5 md:mr-2" />
-          <h1 className="md:block hidden">Set Appointment</h1>
-        </div>
+        {role !== "0" && (
+          <div
+            className={`ml-2 h-fit flex justify-center items-center rounded-md px-4 py-3 text-f-light font-md hover:cursor-pointer  ${btnContentColor} `}
+            onClick={handleOpenSetApp}
+          >
+            <FiPlus className="h-5 w-5 md:mr-2" />
+            <h1 className="md:block hidden">Set Appointment</h1>
+          </div>
+        )}
       </div>
       <div className="grid grid-cols-7 text-center pt-3 md:pt-6 pb-3 font-medium bg-bg-sb border border-c-gray3 mt-4 md:mt-6 rounded-t-md">
         <div>Sun</div>

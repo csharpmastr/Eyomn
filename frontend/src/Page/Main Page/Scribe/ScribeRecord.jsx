@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { TiUpload } from "react-icons/ti";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FileUploader } from "react-drag-drop-files";
 import EnlargeImg from "../../../Component/ui/EnlargeImg";
@@ -9,11 +9,18 @@ import SampleImage from "../../../assets/Image/eyomn_logoS1-2-06.jpg";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import {
   getPatientImageArchive,
+  getPatientNotes,
   uploadImageArchive,
 } from "../../../Service/PatientService";
 import Cookies from "universal-cookie";
 import Loader from "../../../Component/ui/Loader";
 import SuccessModal from "../../../Component/ui/SuccessModal";
+import {
+  addNewImageArchive,
+  setImagesArchive,
+  setMedicalScribeNotes,
+  setRawNotes,
+} from "../../../Slice/NoteSlice";
 
 const ScribeRecord = () => {
   const { patientId } = useParams();
@@ -25,6 +32,9 @@ const ScribeRecord = () => {
   const rawNotes = useSelector(
     (state) => state.reducer.note.rawNotes[patientId]
   );
+  const imagesUrl = useSelector(
+    (state) => state.reducer.note.images[patientId]
+  );
   const cookies = new Cookies();
   const accessToken = cookies.get("accessToken", { path: "/" });
   const refreshToken = cookies.get("refreshToken", { path: "/" });
@@ -35,12 +45,13 @@ const ScribeRecord = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [image, setImage] = useState(null);
+  const [raw, setRaw] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
+  const reduxDispatch = useDispatch();
   const medicalRecords = [
-    { id: 1, name: "Medical Scribe Record 1", date: "2024-01-01" },
-    { id: 2, name: "Medical Scribe Record 2", date: "2024-01-02" },
+    { id: 1, name: "Medical s Record 1", date: "2024-01-01" },
+    { id: 2, name: "Medical b Record 2", date: "2024-01-02" },
   ];
-  console.log(rawNotes);
 
   const handleNewRecord = () => {
     navigate(`/scribe/new-record/${patientId}`);
@@ -98,6 +109,12 @@ const ScribeRecord = () => {
         refreshToken
       );
       if (response) {
+        setPatientImages((prevData) => [...patientImages, response.url]);
+        reduxDispatch(
+          addNewImageArchive({
+            [patientId]: response.url,
+          })
+        );
         setIsSuccess(true);
         setImageFile(null);
         setImage(null);
@@ -110,38 +127,63 @@ const ScribeRecord = () => {
   };
 
   useEffect(() => {
-    const fetchImages = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
-      try {
-        const response = await getPatientImageArchive(
-          patientId,
-          user.firebaseUid,
-          accessToken,
-          refreshToken
-        );
-        console.log(response);
 
-        if (
-          response &&
-          response.imageUrls &&
-          Array.isArray(response.imageUrls)
-        ) {
-          setIsLoading(false);
-          setPatientImages(response.imageUrls);
+      try {
+        if (!rawNotes || rawNotes.length === 0) {
+          const notesResponse = await getPatientNotes(
+            patientId,
+            user.firebaseUid,
+            accessToken,
+            refreshToken
+          );
+          if (notesResponse) {
+            console.log(notesResponse);
+
+            const { rawNotes, soapNotes } = notesResponse;
+            reduxDispatch(setRawNotes({ [patientId]: rawNotes }));
+            reduxDispatch(setMedicalScribeNotes({ [patientId]: soapNotes }));
+            setRaw(notesResponse);
+          }
         } else {
-          console.log("No images found");
+          setRaw(rawNotes);
+        }
+
+        if (!imagesUrl || imagesUrl.length === 0) {
+          const imagesResponse = await getPatientImageArchive(
+            patientId,
+            user.firebaseUid,
+            accessToken,
+            refreshToken
+          );
+          if (
+            imagesResponse &&
+            imagesResponse.imageUrls &&
+            Array.isArray(imagesResponse.imageUrls)
+          ) {
+            setPatientImages(imagesResponse.imageUrls);
+            reduxDispatch(
+              setImagesArchive({ [patientId]: imagesResponse.imageUrls })
+            );
+          } else {
+            console.log("No images found");
+          }
+        } else {
+          setPatientImages(imagesUrl);
         }
       } catch (error) {
-        console.log("Error fetching images:", error);
+        console.log("Error fetching data:", error);
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); // Stop loading after data fetch
       }
     };
 
+    // Ensure patientId and user.firebaseUid are available before fetching data
     if (patientId && user.firebaseUid) {
-      fetchImages();
+      fetchData();
     }
-  }, [patientId, user.firebaseUid, accessToken, refreshToken]);
+  }, [patientId]);
 
   const handleClickRawNotes = (noteId) => {
     navigate(`/scribe/raw-note/${patientId}/${noteId}`);
@@ -150,19 +192,25 @@ const ScribeRecord = () => {
       `/scribe/raw-note/${patientId}/${noteId}`
     );
   };
+
+  const handleClickSoap = (patientId) => {
+    navigate(`/scribe/soap-record/${patientId}`);
+    sessionStorage.setItem("currentPath", `/scribe/soap-record/${patientId}`);
+  };
+
   return (
     <>
       {isLoading && <Loader />}
-      <div className="p-4 md:p-6 lg:p-8 h-full font-Poppins">
+      <div className="p-4 md:p-6 lg:p-8 h-full font-Poppins text-f-dark">
         <div className="flex justify-between mb-8">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col">
             <p
-              className="flex gap-2 text-p-rg  hover:cursor-pointer"
+              className="flex gap-2 text-p-sc md:text-p-sm  hover:cursor-pointer"
               onClick={handleBack}
             >
-              <AiOutlineArrowLeft className="h-6 w-6" /> Back
+              <AiOutlineArrowLeft className="h-5 w-5" /> Back
             </p>
-            <h1 className="text-p-lg font-semibold flex justify-center items-center">
+            <h1 className="text-p-sm md:text-p-rg font-medium flex justify-center items-center">
               {currentPatient
                 ? `${currentPatient.first_name} ${currentPatient.last_name}`
                 : "Loading..."}
@@ -182,8 +230,8 @@ const ScribeRecord = () => {
             <button
               className={`w-44 flex items-center justify-center rounded-t-lg transition-all duration-300 ease-in-out font-medium ${
                 currentCardIndex === 0
-                  ? `h-12 bg-[#FFF8DF] text-p-rg`
-                  : `h-8 bg-[#D2D2D2] text-p-sm opacity-70`
+                  ? `h-12 bg-[#FFF8DF] text-p-sm md:text-p-rg`
+                  : `h-8 bg-[#D2D2D2] text-p-sc md:text-p-sm opacity-70`
               }`}
               onClick={() => setCurrentCardIndex(0)}
             >
@@ -192,8 +240,8 @@ const ScribeRecord = () => {
             <button
               className={`w-44 flex items-center justify-center rounded-t-lg transition-all duration-300 ease-in-out font-medium ${
                 currentCardIndex === 1
-                  ? `h-12 bg-[#FFF8DF] text-p-rg`
-                  : `h-8 bg-[#D2D2D2] text-p-sm opacity-70`
+                  ? `h-12 bg-[#FFF8DF] text-p-sm md:text-p-rg`
+                  : `h-8 bg-[#D2D2D2] text-p-sc md:text-p-sm opacity-70`
               }`}
               onClick={() => setCurrentCardIndex(1)}
             >
@@ -202,8 +250,8 @@ const ScribeRecord = () => {
             <button
               className={`w-44 flex items-center justify-center rounded-t-lg transition-all duration-300 ease-in-out font-medium ${
                 currentCardIndex === 2
-                  ? `h-12 bg-[#FFF8DF] text-p-rg`
-                  : `h-8 bg-[#D2D2D2] text-p-sm opacity-70`
+                  ? `h-12 bg-[#FFF8DF] text-p-sm md:text-p-rg`
+                  : `h-8 bg-[#D2D2D2] text-p-sc md:text-p-sm opacity-70`
               }`}
               onClick={() => setCurrentCardIndex(2)}
             >
@@ -211,14 +259,14 @@ const ScribeRecord = () => {
             </button>
           </nav>
           {currentCardIndex === 0 && (
-            <div className="w-full">
+            <div className="w-full cursor-pointer">
               {medicalRecords.map((record) => (
                 <div
                   key={record.id}
-                  className="px-6 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white"
+                  className="px-6 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white hover:bg-bg-sub"
+                  onClick={() => handleClickSoap(patientId)}
                 >
                   <div className="flex items-center gap-3">
-                    <input type="checkbox" className="w-6 h-6" />
                     <p>{record.name}</p>
                   </div>
                   <p>{record.date}</p>
@@ -227,24 +275,37 @@ const ScribeRecord = () => {
             </div>
           )}
           {currentCardIndex === 1 && (
-            <div className="w-full cursor-pointer">
-              {rawNotes.map((note, index) => (
-                <div
-                  key={note.noteId || index}
-                  className="px-6 py-4 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white"
-                  onClick={() => handleClickRawNotes(note.noteId)}
-                >
-                  <div className="flex items-center gap-3">
-                    <input type="checkbox" className="w-6 h-6" />
-                    <p>{note.name || `Raw Note ${index + 1}`}</p>
-                  </div>
-                  <p>
-                    {note.createdAt
-                      ? note.createdAt.split("T")[0]
-                      : "Unknown Date"}
-                  </p>
+            <div>
+              {rawNotes.length > 0 ? (
+                <div className="w-full cursor-pointer">
+                  {rawNotes ? (
+                    <>
+                      {rawNotes.map((note, index) => (
+                        <div
+                          key={note.noteId || index}
+                          className="px-6 py-4 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white hover:bg-bg-sub"
+                          onClick={() => handleClickRawNotes(note.noteId)}
+                        >
+                          <div className="flex items-center gap-3">
+                            <p>{note.name || `Raw Note ${index + 1}`}</p>
+                          </div>
+                          <p>
+                            {note.createdAt
+                              ? note.createdAt.split("T")[0]
+                              : "Unknown Date"}
+                          </p>
+                        </div>
+                      ))}
+                    </>
+                  ) : (
+                    ""
+                  )}
                 </div>
-              ))}
+              ) : (
+                <div className="w-full">
+                  <p className="text-center">No medical case record found.</p>
+                </div>
+              )}
             </div>
           )}
           {currentCardIndex === 2 && (
@@ -266,7 +327,7 @@ const ScribeRecord = () => {
                     >
                       <div className="flex flex-col justify-center items-center w-full h-full text-c-gray3 gap-2">
                         <TiUpload className="h-10 w-10" />
-                        <h1 className="text-p-rg text-center hidden md:block">
+                        <h1 className="text-p-sm md:text-p-rg text-center hidden md:block">
                           Upload an Image
                         </h1>
                       </div>
@@ -289,7 +350,7 @@ const ScribeRecord = () => {
                 </div>
                 {image && (
                   <button
-                    className="bg-c-primary text-f-light text-p-rg rounded-md font-semibold py-1 md:py-3 w-full mt-3"
+                    className="bg-c-primary text-f-light text-p-sm md:text-p-rg rounded-md font-semibold py-1 md:py-3 w-full mt-3"
                     onClick={handleUploadImage}
                   >
                     Save
@@ -311,7 +372,7 @@ const ScribeRecord = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="">
+                  <div>
                     <p className="text-center">
                       No images found for this patient.
                     </p>

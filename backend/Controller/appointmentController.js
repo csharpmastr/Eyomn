@@ -3,6 +3,7 @@ const {
   deleteSchedule,
   getAppointments,
   getDoctorAppointments,
+  updateAppointment,
 } = require("../Service/appointmentService");
 
 const addScheduleHandler = async (req, res) => {
@@ -33,7 +34,7 @@ const addScheduleHandler = async (req, res) => {
 };
 const deleteScheduleHandler = async (req, res) => {
   try {
-    const { branchId, appointmentId } = req.query;
+    const { branchId, appointmentId, firebaseUid } = req.query;
 
     console.log(branchId, appointmentId);
 
@@ -42,7 +43,7 @@ const deleteScheduleHandler = async (req, res) => {
         .status(400)
         .json({ message: "Branch ID  and Schedule ID are required." });
     }
-    await deleteSchedule(branchId, appointmentId);
+    await deleteSchedule(branchId, appointmentId, firebaseUid);
     res.status(200).json({ message: "Schedule deleted sucessfully" });
   } catch (error) {
     res.status(error.status || 500).json({ message: error.message });
@@ -65,9 +66,6 @@ const getAppoitmentsHandler = async (req, res) => {
 
     return res.status(200).json(appointments);
   } catch (error) {
-    if (error.status === 404) {
-      res.status(error.status || 400).json({ message: error.message });
-    }
     res.status(error.status || 500).json({ message: error.message });
   }
 };
@@ -81,12 +79,33 @@ const getDoctorAppointmentHandler = async (req, res) => {
     console.log(appointments);
 
     return res.status(200).json(appointments);
-  } catch (error) {}
+  } catch (error) {
+    return res.status(error.status || 500).json({ message: error.message });
+  }
 };
+const updateAppointmentHandler = async (req, res) => {
+  try {
+    const { firebaseUid, branchId, appointmentId } = req.query;
+    const appointmentDetails = req.body;
 
+    await updateAppointment(
+      branchId,
+      appointmentId,
+      appointmentDetails,
+      firebaseUid
+    );
+
+    return res
+      .status(200)
+      .json({ message: "Appointment Update Successfully!" });
+  } catch (error) {
+    return res.status(error.status || 500).json({ message: error.message });
+  }
+};
 module.exports = {
   addScheduleHandler,
   deleteScheduleHandler,
   getAppoitmentsHandler,
   getDoctorAppointmentHandler,
+  updateAppointmentHandler,
 };

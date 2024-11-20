@@ -47,18 +47,18 @@ const OrgStaff = () => {
         <div className="w-full flex justify-between">
           <div>
             <div
-              className="flex items-center cursor-pointer gap-1 text-p-sm"
+              className="flex items-center cursor-pointer gap-1 text-p-sc md:text-p-sm"
               onClick={handleBackBranch}
             >
               <FiArrowLeft className="h-5 w-5" />
               <h1>Go back</h1>
             </div>
-            <h1 className="font-medium text-p-lg text-c-secondary">
+            <h1 className="font-medium text-p-sm md:text-p-rg text-c-secondary">
               Branch Staffs
             </h1>
           </div>
           <div
-            className="h-auto flex justify-center items-center rounded-md px-4 py-3 bg-c-secondary text-f-light hover:cursor-pointer"
+            className="h-auto flex justify-center text-p-sm md:text-p-rg items-center rounded-md px-4 py-3 bg-c-secondary text-f-light hover:cursor-pointer hover:bg-opacity-75"
             onClick={handleOpenStaffModal}
           >
             <FiPlus className="h-5 w-5 mr-2" />

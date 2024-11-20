@@ -4,8 +4,12 @@ const {
   deleteProduct,
   updateProduct,
   addPurchase,
-  getPurchases,
-  getOrgProductSales,
+
+  retrieveProduct,
+  addServiceFee,
+  getOrgProductSalesWithServices,
+  getBranchGross,
+  getBranchInventory,
 } = require("../Service/inventoryService");
 
 const addProductHandler = async (req, res) => {
@@ -40,24 +44,6 @@ const addProductHandler = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Error adding product.", error: error.message });
-  }
-};
-
-const getProductsHandler = async (req, res) => {
-  try {
-    const { branchId, firebaseUid } = req.query;
-    if (!branchId) {
-      return res.status(400).json({ message: "No Branch ID provided" });
-    }
-
-    const products = await getProducts(branchId, firebaseUid);
-
-    return res.status(200).json(products);
-  } catch (error) {
-    console.error("Error getting products: ", error);
-    res
-      .status(500)
-      .json({ message: "Error getting products.", error: error.message });
   }
 };
 
@@ -127,19 +113,37 @@ const addPurchaseHandler = async (req, res) => {
       .json({ message: "Error adding purchase", error: error.message });
   }
 };
-const getPurchasesHandler = async (req, res) => {
+const getBranchInventoryHandler = async (req, res) => {
   try {
     const { firebaseUid, branchId } = req.query;
-    const purchases = await getPurchases(branchId, firebaseUid);
-    return res.status(200).json(purchases);
-  } catch (error) {}
+
+    if (!firebaseUid || !branchId) {
+      return res.status(400).json({
+        message:
+          "Missing required query parameters: 'firebaseUid' or 'branchId'.",
+      });
+    }
+
+    const inventory = await getBranchInventory(branchId, firebaseUid);
+
+    return res.status(200).json(inventory);
+  } catch (error) {
+    console.error("Error in getBranchInventoryHandler:", error);
+    return res.status(error.status || 500).json({
+      message:
+        error.message || "An error occurred while fetching branch inventory.",
+    });
+  }
 };
 
 const getOrgProductSalesHandler = async (req, res) => {
   try {
     const { organizationId, firebaseUid } = req.query;
 
-    const inventoryData = await getOrgProductSales(organizationId, firebaseUid);
+    const inventoryData = await getOrgProductSalesWithServices(
+      organizationId,
+      firebaseUid
+    );
 
     return res.status(200).json(inventoryData);
   } catch (error) {
@@ -148,13 +152,54 @@ const getOrgProductSalesHandler = async (req, res) => {
       .json({ message: "Server error while fetching data." + error });
   }
 };
+const retrieveProductHandler = async (req, res) => {
+  try {
+    const { firebaseUid } = req.query;
+    const branchId = req.params.branchId;
+    const products = req.body.products;
+
+    await retrieveProduct(branchId, products, firebaseUid);
+    return res.status(200).json({ message: "Product retrieved" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Server error while retrieving data." + error });
+  }
+};
+const addServiceFeeHandler = async (req, res) => {
+  try {
+    const branchId = req.params.branchId;
+    const { firebaseUid, patientId, doctorId } = req.query;
+    const serviceDetails = req.body;
+
+    if (!branchId) {
+      return res.status(400).json({ message: "No Branch ID provided." });
+    }
+    const serviceId = await addServiceFee(
+      branchId,
+      doctorId,
+      patientId,
+      serviceDetails,
+      firebaseUid
+    );
+    if (serviceId) {
+      return res.status(200).json({ serviceId: serviceId });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Server error while adding data." + error });
+  }
+};
 
 module.exports = {
   addProductHandler,
-  getProductsHandler,
+
   deleteProductHandler,
   updateProductHandler,
   addPurchaseHandler,
-  getPurchasesHandler,
+  getBranchInventoryHandler,
   getOrgProductSalesHandler,
+  retrieveProductHandler,
+  addServiceFeeHandler,
 };

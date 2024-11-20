@@ -2,12 +2,11 @@ import React, { useState } from "react";
 import Select from "react-select";
 import { useSelector } from "react-redux";
 import PhList from "../../assets/Data/location_list.json";
-import ReactDOM from "react-dom";
 import { useAddPatient } from "../../Hooks/useAddPatient";
 import Loader from "./Loader";
 import SuccessModal from "./SuccessModal";
 
-const AddEditPatient = ({ onClose }) => {
+const AddEditPatient = ({ onClose, title }) => {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -164,6 +163,11 @@ const AddEditPatient = ({ onClose }) => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     try {
       const response = await addPatientHook(
         formData,
@@ -183,8 +187,8 @@ const AddEditPatient = ({ onClose }) => {
         <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
           <div className="w-[380px] md:w-[600px]">
             <header className="p-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-              <h1 className="text-p-lg text-c-secondary font-semibold">
-                Patient Information
+              <h1 className="text-p-rg md:text-p-lg text-c-secondary font-medium">
+                {title}
               </h1>
               <button onClick={onClose}>&times;</button>
             </header>
@@ -193,7 +197,7 @@ const AddEditPatient = ({ onClose }) => {
                 <div className="p-3 md:p-6 ">
                   <header className="flex justify-between">
                     <h1
-                      className={`text-p-rg font-medium text-c-secondary flex justify-center items-center ${
+                      className={`text-p-sm md:text-p-rg font-medium text-c-secondary flex justify-center items-center ${
                         user.role === "2" ? "" : "mb-5"
                       }`}
                     >
@@ -230,7 +234,7 @@ const AddEditPatient = ({ onClose }) => {
                   <section>
                     <label
                       htmlFor="first_name"
-                      className="text-p-sm text-c-gray3 font-medium"
+                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                     >
                       First Name{" "}
                       <span className="text-red-400">
@@ -254,7 +258,7 @@ const AddEditPatient = ({ onClose }) => {
                   <section>
                     <label
                       htmlFor="last_name"
-                      className="text-p-sm text-c-gray3 font-medium"
+                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                     >
                       Last Name{" "}
                       <span className="text-red-400">
@@ -278,7 +282,7 @@ const AddEditPatient = ({ onClose }) => {
                   <section>
                     <label
                       htmlFor="middle_name"
-                      className="text-p-sm text-c-gray3 font-medium"
+                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                     >
                       Middle Name (Optional)
                     </label>
@@ -295,7 +299,7 @@ const AddEditPatient = ({ onClose }) => {
                     <div className="w-1/2">
                       <label
                         htmlFor="age"
-                        className="text-p-sm text-c-gray3 font-medium"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Age{" "}
                         <span className="text-red-400">
@@ -319,7 +323,7 @@ const AddEditPatient = ({ onClose }) => {
                     <div className="w-1/2">
                       <label
                         htmlFor="sex"
-                        className="text-p-sm text-c-gray3 font-medium"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Sex{" "}
                         <span className="text-red-400">
@@ -348,7 +352,7 @@ const AddEditPatient = ({ onClose }) => {
                   <section>
                     <label
                       htmlFor="birthdate"
-                      className="text-p-sm text-c-gray3 font-medium"
+                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                     >
                       Date of Birth{" "}
                       <span className="text-red-400">
@@ -373,14 +377,14 @@ const AddEditPatient = ({ onClose }) => {
                 <div className="p-3 md:p-6">
                   <div className="mb-4">
                     <header>
-                      <h1 className="text-p-rg font-medium text-c-secondary mb-4">
+                      <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-4">
                         | Status Information
                       </h1>
                     </header>
                     <section>
                       <label
                         htmlFor="civil_status"
-                        className="text-p-sm text-c-gray3 font-medium"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Civil Status{" "}
                         <span className="text-red-400">
@@ -410,7 +414,7 @@ const AddEditPatient = ({ onClose }) => {
                     <section>
                       <label
                         htmlFor="occupation"
-                        className="text-p-sm text-c-gray3 font-medium"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Occupation (Optional)
                       </label>
@@ -434,7 +438,7 @@ const AddEditPatient = ({ onClose }) => {
                   </div>
                   <div>
                     <header>
-                      <h1 className="text-p-rg font-medium text-c-secondary mb-4">
+                      <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-4">
                         | Contact Information
                       </h1>
                     </header>
@@ -442,7 +446,7 @@ const AddEditPatient = ({ onClose }) => {
                       <div className="w-1/2">
                         <label
                           htmlFor="province"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Province
                         </label>
@@ -457,7 +461,7 @@ const AddEditPatient = ({ onClose }) => {
                       <div className="w-1/2">
                         <label
                           htmlFor="municipality"
-                          className="text-p-sm text-c-gray3 font-medium"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
                           Municipality
                         </label>
@@ -475,7 +479,7 @@ const AddEditPatient = ({ onClose }) => {
                     <section>
                       <label
                         htmlFor="contact_number"
-                        className="text-p-sm text-c-gray3 font-medium"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Contact Number{" "}
                         <span className="text-red-400">
@@ -500,7 +504,7 @@ const AddEditPatient = ({ onClose }) => {
                     <section>
                       <label
                         htmlFor="email"
-                        className="text-p-sm text-c-gray3 font-medium"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Email Address{" "}
                         <span className="text-red-400">
@@ -525,12 +529,17 @@ const AddEditPatient = ({ onClose }) => {
                 </div>
               )}
             </form>
-            <footer className="flex justify-end p-4 gap-4 bg-white border border-t-f-gray rounded-b-lg">
+            <footer className="flex justify-end px-4 py-3 gap-4 bg-white border border-t-f-gray rounded-b-lg">
               {currentCardIndex == 0 ? (
-                ""
+                <button
+                  className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
+                  onClick={onClose}
+                >
+                  Cancel
+                </button>
               ) : (
                 <button
-                  className="px-4 py-2 text-f-dark text-p-rg font-medium rounded-md border border-c-gray3"
+                  className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
                   onClick={handleBack}
                   disabled={currentCardIndex === 0}
                 >
@@ -539,7 +548,7 @@ const AddEditPatient = ({ onClose }) => {
               )}
               {currentCardIndex == 0 ? (
                 <button
-                  className="px-4 py-2 bg-c-secondary  text-f-light text-p-rg font-medium rounded-md"
+                  className="px-4 lg:px-12 py-2 bg-bg-con  text-f-light text-p-sm md:text-p-rg font-medium rounded-md  hover:bg-opacity-75"
                   onClick={handleNext}
                   disabled={currentCardIndex === 1}
                 >
@@ -547,7 +556,7 @@ const AddEditPatient = ({ onClose }) => {
                 </button>
               ) : (
                 <button
-                  className="px-4 py-2 bg-c-secondary text-f-light text-p-rg font-medium rounded-md"
+                  className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-medium rounded-md  hover:bg-opacity-75"
                   onClick={handleSubmit}
                   disabled={currentCardIndex !== 1}
                 >

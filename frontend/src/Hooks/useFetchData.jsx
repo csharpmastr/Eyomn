@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
-import { getPatients } from "../Service/PatientService";
+import { getPatients, getPatientsByDoctor } from "../Service/PatientService";
 import { useDispatch, useSelector } from "react-redux";
 import { setPatients } from "../Slice/PatientSlice";
 import { setDoctor } from "../Slice/doctorSlice";
 import { setBranch } from "../Slice/BranchSlice";
 import { setStaffs } from "../Slice/StaffSlice";
+import { getBranchInventory, getInventory } from "../Service/InventoryService";
 import {
-  getProducts,
-  getProductsSales,
-  getPurchases,
-} from "../Service/InventoryService";
-import { setProducts, setPurchases } from "../Slice/InventorySlice";
+  setProducts,
+  setPurchases,
+  setServices,
+} from "../Slice/InventorySlice";
 import {
   getAppointments,
   getDoctorAppointments,
@@ -19,9 +19,12 @@ import {
 import { setAppointments } from "../Slice/AppointmentSlice";
 import {
   getBranchData,
+  getBranchName,
   getDoctorList,
   getStaffs,
 } from "../Service/organizationService";
+import { getUserNotification } from "../Service/NotificationService";
+import { setNotifications } from "../Slice/NotificationSlice";
 
 export const useFetchData = () => {
   const user = useSelector((state) => state.reducer.user.user);
@@ -29,11 +32,13 @@ export const useFetchData = () => {
   const cookies = new Cookies();
   const accessToken = cookies.get("accessToken");
   const refreshToken = cookies.get("refreshToken");
-
+  const [fetching, setFetching] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const buildApiCalls = () => {
     let organizationId = user.role === "0" ? user.userId : user.organizationId;
+    let staffId = user.userId || user.staffId;
+
     let branchId =
       (user.branches &&
         user.branches.length > 0 &&
@@ -72,18 +77,18 @@ export const useFetchData = () => {
           },
           {
             call: () =>
-              getProducts(branchId, accessToken, refreshToken, firebaseUid),
-            type: "products",
+              getBranchInventory(
+                branchId,
+                accessToken,
+                refreshToken,
+                firebaseUid
+              ),
+            type: "inventory",
           },
           {
             call: () =>
               getAppointments(branchId, accessToken, refreshToken, firebaseUid),
             type: "appointments",
-          },
-          {
-            call: () =>
-              getPurchases(branchId, firebaseUid, accessToken, refreshToken),
-            type: "purchases",
           },
           {
             call: () =>
@@ -124,7 +129,7 @@ export const useFetchData = () => {
           },
           {
             call: () =>
-              getProductsSales(
+              getInventory(
                 organizationId,
                 firebaseUid,
                 accessToken,
@@ -145,6 +150,48 @@ export const useFetchData = () => {
               ),
             type: "appointments",
           },
+          {
+            call: () =>
+              getDoctorList(
+                organizationId,
+                branchId,
+                accessToken,
+                refreshToken,
+                firebaseUid
+              ),
+            type: "doctors",
+          },
+          {
+            call: () =>
+              getPatientsByDoctor(
+                organizationId,
+                staffId,
+                firebaseUid,
+                accessToken,
+                refreshToken
+              ),
+            type: "patients",
+          },
+          {
+            call: () =>
+              getBranchName(
+                user.userId,
+                firebaseUid,
+                accessToken,
+                refreshToken
+              ),
+            type: "branch",
+          },
+          {
+            call: () =>
+              getUserNotification(
+                user.userId,
+                firebaseUid,
+                accessToken,
+                refreshToken
+              ),
+            type: "notifications",
+          },
         ];
       default:
         return [];
@@ -152,7 +199,7 @@ export const useFetchData = () => {
   };
 
   const fetchData = async () => {
-    setLoading(true); // Set loading to true when starting to fetch data
+    setLoading(true);
     try {
       const apiCalls = buildApiCalls();
       await Promise.all(
@@ -178,27 +225,56 @@ export const useFetchData = () => {
               case "staffs":
                 reduxDispatch(setStaffs(result));
                 break;
+              case "notifications":
+                reduxDispatch(setNotifications(result));
+                break;
+              case "branch":
+                reduxDispatch(setBranch(result));
+                break;
               case "inventory":
                 let allPurchases = [];
                 let allProducts = [];
-                Object.entries(result).forEach(
-                  ([branchId, { purchases, products }]) => {
-                    const formattedPurchases = purchases.map((purchase) => ({
-                      ...purchase,
-                      branchId,
-                    }));
-                    allPurchases = [...allPurchases, ...formattedPurchases];
+                let allServices = [];
 
-                    const formattedProducts = products.map((product) => ({
-                      ...product,
-                      branchId,
-                    }));
-                    allProducts = [...allProducts, ...formattedProducts];
-                  }
-                );
+                if (user.role === "0") {
+                  Object.entries(result).forEach(
+                    ([branchId, { purchases, products, services }]) => {
+                      //purchases
+                      const formattedPurchases = purchases.map((purchase) => ({
+                        ...purchase,
+                        branchId,
+                      }));
+                      allPurchases = [...allPurchases, ...formattedPurchases];
+
+                      //products
+                      const formattedProducts = products.map((product) => ({
+                        ...product,
+                        branchId,
+                      }));
+                      allProducts = [...allProducts, ...formattedProducts];
+
+                      //services
+                      if (services) {
+                        const formattedServices = services.map((service) => ({
+                          ...service,
+                          branchId,
+                        }));
+                        allServices = [...allServices, ...formattedServices];
+                      }
+                    }
+                  );
+                } else {
+                  allProducts = result.products;
+                  allPurchases = result.purchases;
+                  allServices = result.services;
+                }
+
                 reduxDispatch(setPurchases(allPurchases));
                 reduxDispatch(setProducts(allProducts));
+                reduxDispatch(setServices(allServices));
+
                 break;
+
               case "branches":
                 reduxDispatch(setBranch(result));
                 const staffs = result.flatMap((branch) => branch.staffs || []);
@@ -208,6 +284,13 @@ export const useFetchData = () => {
                     uniqueStaffsMap.set(staff.staffId, staff);
                   }
                 });
+                const appointments = result.flatMap((branch) =>
+                  (branch.appointments || []).map((appointment) => ({
+                    ...appointment,
+                    branchId: branch.branchId,
+                  }))
+                );
+                reduxDispatch(setAppointments(appointments));
                 reduxDispatch(setStaffs(Array.from(uniqueStaffsMap.values())));
                 break;
               default:

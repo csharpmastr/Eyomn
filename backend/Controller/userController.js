@@ -1,5 +1,12 @@
+const {
+  addUser,
+  loginUser,
+  changeUserPassword,
+  sendOTP,
+  verifyOTP,
+  forgotChangePassword,
+} = require("../Service/userService");
 const jwt = require("jsonwebtoken");
-const { addUser, loginUser } = require("../Service/userService");
 
 const generateToken = (id, secret, duration) => {
   return jwt.sign({ id }, secret, { expiresIn: duration });
@@ -154,5 +161,101 @@ const getNewAccessToken = (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+const changeUserPasswordHandler = async (req, res) => {
+  const { organizationId, branchId, staffId, role, password, newPassword } =
+    req.body;
+  const { firebaseUid } = req.query;
+  let userId;
+  try {
+    if (!password || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "Current password and new password are required." });
+    }
 
-module.exports = { addUserHandler, loginUserHandler, getNewAccessToken };
+    if (organizationId) {
+      userId = organizationId;
+    } else if (branchId) {
+      userId = branchId;
+    } else if (staffId) {
+      userId = staffId;
+    } else {
+      return res.status(400).json({
+        message:
+          "Either organizationId, branchId, or staffId must be provided.",
+      });
+    }
+    await changeUserPassword(
+      organizationId,
+      branchId,
+      staffId,
+      role,
+      firebaseUid,
+      password,
+      newPassword
+    );
+
+    return res.status(200).json({ message: "Password updated successfully." });
+  } catch (error) {
+    console.error("Error changing password:", error);
+    if (error.status === 400) {
+      return res.status(400).json({ message: error.message });
+    }
+    return res
+      .status(500)
+      .json({ message: "Server error, please try again later." });
+  }
+};
+const sendOTPHandler = async (req, res) => {
+  try {
+    const email = req.body.email;
+
+    await sendOTP(email);
+    res.status(200).json({ message: "OTP sent successfully!" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Server error, please try again later." });
+  }
+};
+const verifyOTPHandler = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const verificationResult = verifyOTP(email, otp);
+
+    if (verificationResult === true) {
+      return res.status(200).json({ message: "OTP verified successfully." });
+    } else if (verificationResult === "OTP has expired.") {
+      return res.status(400).json({ message: "OTP has expired." });
+    } else if (verificationResult === "OTP not found.") {
+      return res.status(400).json({ message: "OTP not found." });
+    } else {
+      return res.status(400).json({ message: "Invalid OTP." });
+    }
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+const forgotChangePasswordHandler = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    await forgotChangePassword(email, newPassword);
+    return res.status(200).json({ message: "Passwor changed successfully" });
+  } catch (error) {
+    console.error("Error changing:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+module.exports = {
+  addUserHandler,
+  loginUserHandler,
+  getNewAccessToken,
+  changeUserPasswordHandler,
+  sendOTPHandler,
+  verifyOTPHandler,
+  forgotChangePasswordHandler,
+};

@@ -101,3 +101,72 @@ export const getDoctorAppointments = async (
     throw error;
   }
 };
+
+export const updateAppointment = async (
+  branchId,
+  appointmentId,
+  appointmentDetails,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.patch(
+      `${APPOINTMENT_API_BASE_URL}/update-appointment`,
+      appointmentDetails,
+      {
+        params: {
+          firebaseUid,
+          branchId,
+          appointmentId,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    if (error.response) {
+      console.error("Server error:", error.response.data);
+    } else if (error.request) {
+      console.error("No response received:", error.request);
+    } else {
+      console.error("Error:", error.message);
+    }
+    throw error;
+  }
+};
+
+export const deleteAppointment = async (
+  branchId,
+  appointmentId,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.delete(`${APPOINTMENT_API_BASE_URL}/delete`, {
+      params: {
+        branchId,
+        appointmentId,
+        firebaseUid,
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+      },
+    });
+    return response;
+  } catch (error) {
+    if (error.response) {
+      console.error("Server error:", error.response.data);
+    } else if (error.request) {
+      console.error("No response received:", error.request);
+    } else {
+      console.error("Error:", error.message);
+    }
+    throw error;
+  }
+};

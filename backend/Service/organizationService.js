@@ -1,4 +1,5 @@
 const admin = require("firebase-admin");
+const nodemailer = require("nodemailer");
 const {
   db,
   userCollection,
@@ -13,12 +14,16 @@ const {
   hashPassword,
   decryptData,
 } = require("../Security/DataHashing");
-
+const { EmailAlreadyExistsError } = require("./userService");
 const {
   getStaffs,
   getPatients,
   decryptDocument,
   verifyFirebaseUid,
+  generateUniqueId,
+  generatePassword,
+  sendEmail,
+  getOrganizationName,
 } = require("../Helper/Helper");
 const { getAppointments } = require("./appointmentService");
 const { EmailAlreadyExistsError } = require("./userService");
@@ -33,14 +38,20 @@ const addStaff = async (organizationId, staffData, firebaseUid) => {
     if (!emailQuery.empty) {
       throw { status: 400, message: "Email already exists." };
     }
+    const password = generatePassword();
+    console.log(password);
+    const hashedPassword = await hashPassword(password);
+    console.log(hashedPassword);
+    const orgName = await getOrganizationName(organizationId);
 
     const newUser = await admin.auth().createUser({
       email: staffData.email,
-      password: staffData.password,
+      password: password,
       displayName: `${staffData.firstName} ${staffData.lastName}`,
     });
 
-    const staffId = uuidv4();
+    const staffId = await generateUniqueId(staffCollection);
+
     const encryptedStaffData = {
       staffId,
       organizationId,
@@ -52,12 +63,11 @@ const addStaff = async (organizationId, staffData, firebaseUid) => {
       email: staffData.email,
       organizationId,
       firebaseUid: newUser.uid,
+      password: hashedPassword,
     };
 
     for (const [key, value] of Object.entries(staffData)) {
-      if (key === "password") {
-        staffCredentials.password = await hashPassword(value);
-      } else if (key === "email") {
+      if (key === "email") {
         encryptedStaffData.email = value;
       } else if (key === "branches") {
         encryptedStaffData.branches = value;
@@ -76,6 +86,21 @@ const addStaff = async (organizationId, staffData, firebaseUid) => {
       encryptedStaffData.role = "3";
       staffCredentials.role = "3";
     }
+    await sendEmail({
+      to: staffData.email,
+      subject: "Your New Account Credentials",
+      text: `Hello ${staffData.first_name},
+
+      Your account has been successfully created. Here are your login credentials:
+      
+      Email: ${staffData.email}
+      Password: ${password}
+      
+      Please log in and change your password after your first login.
+      
+      Best regards,
+      ${orgName}`,
+    });
 
     const userRef = userCollection.doc(staffId);
     const staffRef = staffCollection.doc(staffId);
@@ -97,7 +122,7 @@ const addStaff = async (organizationId, staffData, firebaseUid) => {
   }
 };
 
-const addBranch = async (ogrId, branchData, firebaseUid) => {
+const addBranch = async (organizationId, branchData, firebaseUid) => {
   try {
     await verifyFirebaseUid(firebaseUid);
 
@@ -106,7 +131,10 @@ const addBranch = async (ogrId, branchData, firebaseUid) => {
       password: branchData.password,
       displayName: `${branchData.name}`,
     });
-    const branchId = uuidv4();
+    const branchId = await generateUniqueId(branchCollection);
+    const password = generatePassword();
+    const hashedPassword = await hashPassword(password);
+    const orgName = getOrganizationName(organizationId);
     const encryptedBranchData = {
       branchId: branchId,
       firebaseUid: newUser.uid,
@@ -116,9 +144,10 @@ const addBranch = async (ogrId, branchData, firebaseUid) => {
     const encryptedBranchCredentials = {
       email: branchData.email,
       firebaseUid: newUser.uid,
-      organizationId: ogrId,
+      organizationId: organizationId,
       role: "1",
       branchId: branchId,
+      password: hashedPassword,
     };
 
     const branchQuerySnapshot = await branchCollection
@@ -136,18 +165,31 @@ const addBranch = async (ogrId, branchData, firebaseUid) => {
     }
 
     for (const [key, value] of Object.entries(branchData)) {
-      if (key === "password") {
-        encryptedBranchCredentials["password"] = await hashPassword(value);
-      } else if (key === "email" || key === "clinicId") {
+      if (key === "email" || key === "clinicId") {
         encryptedBranchData[key] = value;
       } else {
         encryptedBranchData[key] = encryptData(value);
       }
     }
+    await sendEmail({
+      to: branchData.email,
+      subject: "Your New Account Credentials",
+      text: `Hello ${branchData.name},
+
+      Your account has been successfully created. Here are your login credentials:
+      
+      Email: ${branchData.email}
+      Password: ${password}
+      
+      Please log in and change your password after your first login.
+      
+      Best regards,
+      ${orgName}`,
+    });
 
     const userRef = userCollection.doc(branchId);
     const branchRef = branchCollection.doc(branchId);
-    const orgRef = organizationCollection.doc(ogrId);
+    const orgRef = organizationCollection.doc(organizationId);
 
     await orgRef.update({
       branch: admin.firestore.FieldValue.arrayUnion(branchId),
@@ -319,11 +361,46 @@ const getBranchStaffs = async (organizationId, branchId, firebaseUid) => {
   }
 };
 
+const getBranchNameDoc = async (staffId) => {
+  try {
+    const staffRef = staffCollection.doc(staffId);
+    const staffSnapshot = await staffRef.get();
+
+    if (!staffSnapshot.exists) {
+      throw new Error("Staff not found");
+    }
+    const staffData = staffSnapshot.data();
+    const branches = staffData.branches;
+
+    let decryptedBranchName = [];
+
+    for (const branch of branches) {
+      const branchRef = branchCollection.doc(branch.branchId);
+      const branchSnap = await branchRef.get();
+
+      if (!branchSnap.exists) {
+        throw new Error("Branch not found");
+      }
+
+      const branchData = branchSnap.data();
+      decryptedBranchName.push({
+        branchName: decryptData(branchData.name),
+        branchId: branch.branchId,
+      });
+    }
+    return decryptedBranchName;
+  } catch (error) {
+    console.error("Error fetching branch name: ", error);
+    throw error;
+  }
+};
+
 module.exports = {
   addStaff,
   getBranchData,
   // getAllStaff,
   // getDoctorsList,
   addBranch,
+  getBranchNameDoc,
   getBranchStaffs,
 };

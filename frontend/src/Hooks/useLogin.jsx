@@ -44,7 +44,8 @@ export const useLogin = () => {
       } else if (role === "1") {
         const name = branchData.name;
         const email = branchData.email;
-        const location = branchData.location;
+        const municipality = branchData.municipality;
+        const province = branchData.province;
 
         reduxDispatch(
           setUser({
@@ -53,7 +54,8 @@ export const useLogin = () => {
             role,
             name,
             email,
-            location,
+            municipality,
+            province,
             organizationId,
             firebaseUid,
           })

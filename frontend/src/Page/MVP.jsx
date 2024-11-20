@@ -10,6 +10,7 @@ import { useFetchData } from "../Hooks/useFetchData";
 import Cookies from "universal-cookie";
 
 const MVP = () => {
+  const user = useSelector((state) => state.reducer.user.user);
   const { fetchData } = useFetchData();
   const location = useLocation();
   const currentPath = location.pathname;
@@ -38,7 +39,7 @@ const MVP = () => {
       sub: "Configure your clinic’s structure and operational settings.",
     },
     "/add-patient": {
-      main: "Add Patient",
+      main: "Add New Patient",
       sub: "Easily add new patient information to your records.",
     },
     "/appointment": {
@@ -98,15 +99,24 @@ const MVP = () => {
   if (!currentPath.startsWith("/patient")) {
     sessionStorage.removeItem("currentPatient");
   }
-
   useEffect(() => {
-    if (!isFetched) {
-      console.log("Testing");
+    const hasFetched = localStorage.getItem("hasFetched");
+
+    if (!hasFetched) {
+      console.log("Initial fetching");
       fetchData();
       setIsFetched(true);
-      localStorage.setItem("hasFetched", true);
+      localStorage.setItem("hasFetched", "true");
+    } else {
+      if (user.role === "2" && !isFetched) {
+        console.log("Refetching for role 2");
+        fetchData();
+        setIsFetched(true);
+      } else {
+        console.log("No fetching required");
+      }
     }
-  }, [isFetched, fetchData]);
+  }, [isFetched, user.role, fetchData]);
 
   const currentTab = getCurrentTab();
 
@@ -128,7 +138,7 @@ const MVP = () => {
           </div>
           <div className="flex-1 overflow-auto bg-bg-mc">
             <Outlet />
-            {currentTab != "Dashboard" && <LLMChatbot />}
+            {<LLMChatbot />}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-const { getBranchDoctors, getStaffs } = require("../Helper/Helper");
+const { getBranchDoctors } = require("../Helper/Helper");
 const {
   addStaff,
   getAllStaff,
@@ -7,6 +7,7 @@ const {
   getBranchData,
   getBranchStaffs,
   getOrgProductSales,
+  getBranchNameDoc,
 } = require("../Service/organizationService");
 const { EmailAlreadyExistsError } = require("../Service/userService");
 
@@ -73,11 +74,7 @@ const getDoctorsListHandler = async (req, res) => {
       branchId,
       firebaseUid
     );
-    if (!doctors || doctors.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No doctors found for the provided clinic ID." });
-    }
+
     return res.status(200).json(doctors);
   } catch (err) {
     console.error("Error fetching doctors:", err);
@@ -154,6 +151,18 @@ const getOrgProductSalesHandler = async (req, res) => {
   }
 };
 
+const getBranchNameHandler = async (req, res) => {
+  try {
+    const { firebaseUid, staffId } = req.query;
+    console.log(staffId, firebaseUid);
+
+    const branches = await getBranchNameDoc(staffId, firebaseUid);
+    return res.status(200).json(branches);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addStaffHandler,
   getStaffsHandler,
@@ -161,4 +170,5 @@ module.exports = {
   addBranchHandler,
   getBranchDataHandler,
   getOrgProductSalesHandler,
+  getBranchNameHandler,
 };

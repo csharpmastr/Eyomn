@@ -1,9 +1,12 @@
 import React, { useMemo } from "react";
 import Chart from "react-apexcharts";
 import { useSelector } from "react-redux";
+import RoleColor from "../../../assets/Util/RoleColor";
 
 const DbProduct = ({ filteredSales }) => {
   const products = useSelector((state) => state.reducer.inventory.products);
+
+  const { barColor } = RoleColor();
 
   const productSales = useMemo(() => {
     const productTotals = {};
@@ -57,7 +60,7 @@ const DbProduct = ({ filteredSales }) => {
         distributed: true,
       },
     },
-    colors: ["#A2A98F", "#7A9E9F", "#A0A0A0"],
+    colors: [barColor[0], barColor[1], barColor[2]],
     xaxis: {
       categories: chartData.categories,
       title: {
@@ -88,14 +91,16 @@ const DbProduct = ({ filteredSales }) => {
   };
 
   return (
-    <div className="rounded-lg h-[500px] bg-white text-f-dark font-poppins border text-p-rg py-4 overflow-clip shadow-sm p-4">
+    <div className="rounded-lg h-[360px] bg-white text-f-dark font-poppins border text-p-sm md:text-p-rg py-4 overflow-clip shadow-sm p-4">
       <header className="flex justify-between px-4 pt-2 mb-4 text-c-secondary">
-        <h1 className="font-medium text-nowrap">| Top Selling Products</h1>
+        <h1 className="font-medium text-nowrap text-c-secondary">
+          | Top Selling Products
+        </h1>
       </header>
-      <div className="w-full">
+      <div className="w-full pl-5">
         <Chart
           type="bar"
-          height={420}
+          height={280}
           width="100%"
           series={chartData.series}
           options={chartOptions}

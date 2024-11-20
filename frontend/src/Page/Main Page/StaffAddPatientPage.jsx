@@ -83,9 +83,9 @@ const StaffAddPatientPage = () => {
     e.preventDefault();
     console.log(formData);
 
-    // if (!validateForm()) {
-    //   return;
-    // }
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       const res = await addPatientHook(
@@ -220,12 +220,12 @@ const StaffAddPatientPage = () => {
       <div className="h-full w-full flex justify-center bg-bg-mc overflow-auto p-4 md:p-12 font-Poppins">
         <div>
           <form className="flex flex-col h-auto w-auto" onSubmit={handleSubmit}>
-            <div className="p-8 w-full lg:w-[660px] rounded-lg bg-white mb-6">
-              <label className="text-p-lg font-semibold text-c-primary">
+            <div className="p-8 w-full lg:w-[660px] rounded-lg bg-white mb-6 shadow-sm">
+              <label className="text-p-rg md:text-p-lg font-medium text-c-secondary">
                 | Personal Information
               </label>
               <div className="mt-3 text-c-gray3">
-                <label htmlFor="first_name" className="text-p-sm">
+                <label htmlFor="first_name" className="text-p-sc md:text-p-sm">
                   First Name{" "}
                   <span className="text-red-400">
                     {(formData.first_name === "" || errors.first_name) &&
@@ -244,7 +244,7 @@ const StaffAddPatientPage = () => {
                   }`}
                   placeholder="Enter first name"
                 />
-                <label htmlFor="last_name" className="text-p-sm">
+                <label htmlFor="last_name" className="text-p-sc md:text-p-sm">
                   Last Name{" "}
                   <span className="text-red-400">
                     {(formData.last_name === "" || errors.last_name) &&
@@ -263,7 +263,7 @@ const StaffAddPatientPage = () => {
                   }`}
                   placeholder="Enter last name"
                 />
-                <label htmlFor="middle_name" className="text-p-sm">
+                <label htmlFor="middle_name" className="text-p-sc md:text-p-sm">
                   Middle Name (Optional)
                 </label>
                 <input
@@ -276,7 +276,7 @@ const StaffAddPatientPage = () => {
                 />
                 <div className="flex gap-4">
                   <div className="w-1/2">
-                    <label htmlFor="age" className="text-p-sm">
+                    <label htmlFor="age" className="text-p-sc md:text-p-sm">
                       Age{" "}
                       <span className="text-red-400">
                         {(formData.age === "" || errors.age) && errors.age}
@@ -297,7 +297,7 @@ const StaffAddPatientPage = () => {
                     />
                   </div>
                   <div className="w-1/2">
-                    <label htmlFor="sex" className="text-p-sm">
+                    <label htmlFor="sex" className="text-p-sc md:text-p-sm">
                       Sex{" "}
                       <span className="text-red-400">
                         {(formData.sex === "" || errors.sex) && errors.sex}
@@ -322,7 +322,7 @@ const StaffAddPatientPage = () => {
                     </select>
                   </div>
                 </div>
-                <label htmlFor="birthdate" className="text-p-sm">
+                <label htmlFor="birthdate" className="text-p-sc md:text-p-sm">
                   Date of Birth{" "}
                   <span className="text-red-400">
                     {(formData.birthdate === "" || errors.birthdate) &&
@@ -342,12 +342,15 @@ const StaffAddPatientPage = () => {
                 />
               </div>
             </div>
-            <div className="p-8  w-full lg:w-[660px] rounded-lg bg-white mb-6">
-              <label className="text-p-lg font-semibold text-c-primary">
+            <div className="p-8  w-full lg:w-[660px] rounded-lg bg-white mb-6 shadow-sm">
+              <label className="text-p-rg md:text-p-lg font-medium text-c-secondary">
                 | Status Infomation
               </label>
               <div className="mt-3 text-c-gray3">
-                <label htmlFor="civil_status" className="text-p-sm">
+                <label
+                  htmlFor="civil_status"
+                  className="text-p-sc md:text-p-sm"
+                >
                   Civil Status{" "}
                   <span className="text-red-400">
                     {(formData.civil_status === "" || errors.civil_status) &&
@@ -372,7 +375,7 @@ const StaffAddPatientPage = () => {
                   <option value="Widowed">Widowed</option>
                 </select>
 
-                <label htmlFor="occupation" className="text-p-sm">
+                <label htmlFor="occupation" className="text-p-sc md:text-p-sm">
                   Occupation (Optional)
                 </label>
                 <select
@@ -393,14 +396,17 @@ const StaffAddPatientPage = () => {
                 </select>
               </div>
             </div>
-            <div className="p-8 w-full lg:w-[660px] rounded-lg bg-white mb-6">
-              <label className="text-p-lg font-semibold text-c-primary">
+            <div className="p-8 w-full lg:w-[660px] rounded-lg bg-white mb-6 shadow-sm">
+              <label className="text-p-rg md:text-p-lg font-medium text-c-secondary">
                 | Contact Information
               </label>
               <div className="mt-3 text-c-gray3">
                 <div className="flex gap-4 mb-4">
                   <div className="w-1/2">
-                    <label htmlFor="province" className="block text-p-sm mb-1">
+                    <label
+                      htmlFor="province"
+                      className="block text-p-sc md:text-p-sm mb-1"
+                    >
                       Province
                     </label>
                     <Select
@@ -414,7 +420,7 @@ const StaffAddPatientPage = () => {
                   <div className="w-1/2">
                     <label
                       htmlFor="municipality"
-                      className="block text-p-sm mb-1"
+                      className="block text-p-sc md:text-p-sm mb-1"
                     >
                       Municipality
                     </label>
@@ -429,7 +435,10 @@ const StaffAddPatientPage = () => {
                     />
                   </div>
                 </div>
-                <label htmlFor="contact_number" className="text-p-sm">
+                <label
+                  htmlFor="contact_number"
+                  className="text-p-sc md:text-p-sm"
+                >
                   Contact Number{" "}
                   <span className="text-red-400">
                     {(formData.contact_number === "" ||
@@ -449,7 +458,7 @@ const StaffAddPatientPage = () => {
                   }`}
                   placeholder="Enter contact number"
                 />
-                <label htmlFor="email" className="text-p-sm">
+                <label htmlFor="email" className="text-p-sc md:text-p-sm">
                   Email Address{" "}
                   <span className="text-red-400">
                     {(formData.email === "" || errors.email) && errors.email}
@@ -469,12 +478,12 @@ const StaffAddPatientPage = () => {
                 />
               </div>
             </div>
-            <div className="p-8  w-full lg:w-[660px] rounded-lg bg-white mb-6">
-              <label className="text-p-lg font-semibold text-c-primary">
+            <div className="p-8  w-full lg:w-[660px] rounded-lg bg-white mb-6 shadow-sm">
+              <label className="text-p-rg md:text-p-lg font-medium text-c-secondary">
                 | Appoint a Doctor
               </label>
               <div className="mt-3 text-c-gray3">
-                <label htmlFor="doctorId" className="text-p-sm">
+                <label htmlFor="doctorId" className="text-p-sc md:text-p-sm">
                   Attending Doctor
                 </label>
                 <select
@@ -493,7 +502,10 @@ const StaffAddPatientPage = () => {
                   ))}
                 </select>
 
-                <label htmlFor="reason_visit" className="text-p-sm">
+                <label
+                  htmlFor="reason_visit"
+                  className="text-p-sc md:text-p-sm"
+                >
                   Reason for Visit{" "}
                   <span className="text-red-400">
                     {(formData.reason_visit === "" || errors.reason_visit) &&

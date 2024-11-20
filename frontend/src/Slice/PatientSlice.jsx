@@ -12,7 +12,13 @@ const patientSlice = createSlice({
       if (!Array.isArray(state.patients)) {
         state.patients = [];
       }
-      state.patients.push(action.payload);
+      const existingPatient = state.patients.find(
+        (patient) => patient.patientId === action.payload.patientId
+      );
+
+      if (!existingPatient) {
+        state.patients.push(action.payload);
+      }
     },
 
     removePatient: (state, action) => {

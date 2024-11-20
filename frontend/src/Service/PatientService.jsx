@@ -38,8 +38,9 @@ export const addPatientService = async (
 };
 
 export const getPatientsByDoctor = async (
-  clinicId,
-  doctorId,
+  organizationId,
+  staffId,
+  firebaseUid,
   accessToken,
   refreshToken
 ) => {
@@ -48,8 +49,9 @@ export const getPatientsByDoctor = async (
       `${PATIENT_API_BASE_URL}/patients-doctor`,
       {
         params: {
-          clinicId,
-          doctorId,
+          organizationId,
+          staffId,
+          firebaseUid,
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -87,7 +89,6 @@ export const getPatients = async (
         "x-refresh-token": refreshToken,
       },
     });
-    console.log(firebaseUid);
 
     return response.data;
   } catch (err) {
@@ -260,5 +261,84 @@ export const getPatientImageArchive = async (
     return response.data;
   } catch (error) {
     console.error("Error getting patient images:", error);
+  }
+};
+
+export const sharePatient = async (
+  doctorId,
+  authorizedDoctor,
+  patientId,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.patch(
+      `${PATIENT_API_BASE_URL}/share-patient/${patientId}`,
+      { authorizedDoctor },
+      {
+        params: {
+          firebaseUid,
+          doctorId,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error sharing patient", error);
+  }
+};
+
+export const summarizeInitialPatientCase = async (medformData) => {
+  try {
+    const response = await axios.post(
+      "https://csharpmastr--eyomnai-medical-team-agent-web-endpoint.modal.run",
+      {
+        patient_data: medformData,
+        summarized_data: {
+          subjective: "",
+          objective: "",
+          assessment: "",
+          plan: "",
+        },
+        halu_score: Number(10),
+        feedback: [],
+        markdown_output: "",
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const storeGeneratedSoap = (medformData, patientId, firebaseUid) => {
+  try {
+    axios.post(
+      `${PATIENT_API_BASE_URL}/add-soap/${patientId}`,
+      {
+        patient_data: medformData,
+        summarized_data: {
+          subjective: "",
+          objective: "",
+          assessment: "",
+          plan: "",
+        },
+        halu_score: Number(10),
+        feedback: [],
+        markdown_output: "",
+      },
+      {
+        params: {
+          firebaseUid,
+        },
+      }
+    );
+  } catch (error) {
+    console.log(error);
   }
 };
