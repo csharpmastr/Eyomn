@@ -6,6 +6,22 @@ import { useAddPatient } from "../../Hooks/useAddPatient";
 import Loader from "./Loader";
 import SuccessModal from "./SuccessModal";
 
+const calculateAge = (birthdate) => {
+  const today = new Date();
+  const birthDate = new Date(birthdate);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDifference = today.getMonth() - birthDate.getMonth();
+
+  if (
+    monthDifference < 0 ||
+    (monthDifference === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+
+  return age;
+};
+
 const AddEditPatient = ({ onClose, title }) => {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
@@ -55,10 +71,15 @@ const AddEditPatient = ({ onClose, title }) => {
       }));
     }
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData) => {
+      const updatedData = { ...prevData, [name]: value };
+
+      if (name === "birthdate") {
+        updatedData.age = calculateAge(value);
+      }
+
+      return updatedData;
+    });
   };
 
   const handleProvinceChange = (selectedOption) => {
@@ -132,9 +153,6 @@ const AddEditPatient = ({ onClose, title }) => {
         !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.last_name)
       )
         newErrors.last_name = "(Last name is required)";
-
-      if (!formData.age || formData.age <= 0 || formData.age > 120)
-        newErrors.age = "(Age must be between 1 and 120)";
 
       if (!formData.sex) newErrors.sex = "(Sex is required)";
 
@@ -297,16 +315,50 @@ const AddEditPatient = ({ onClose, title }) => {
                       placeholder="Enter middle name"
                     />
                   </section>
+                  <section>
+                    <label
+                      htmlFor="birthdate"
+                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                    >
+                      Date of Birth{" "}
+                      <span className="text-red-400">
+                        {(formData.birthdate === "" || errors.birthdate) &&
+                          errors.birthdate}
+                      </span>
+                    </label>
+                    <input
+                      type="date"
+                      name="birthdate"
+                      value={formData.birthdate}
+                      onChange={handleChange}
+                      max={
+                        new Date(
+                          new Date().setFullYear(new Date().getFullYear() - 2)
+                        )
+                          .toISOString()
+                          .split("T")[0]
+                      }
+                      min={
+                        new Date(
+                          new Date().setFullYear(new Date().getFullYear() - 120)
+                        )
+                          .toISOString()
+                          .split("T")[0]
+                      }
+                      className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                        errors.birthdate
+                          ? "border-red-400 focus:outline-red-400"
+                          : "border-c-gray3 focus:outline-c-primary"
+                      }`}
+                    />
+                  </section>
                   <div className="flex gap-4">
                     <div className="w-1/2">
                       <label
                         htmlFor="age"
                         className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
-                        Age{" "}
-                        <span className="text-red-400">
-                          {(formData.age === "" || errors.age) && errors.age}
-                        </span>
+                        Age
                       </label>
                       <input
                         type="number"
@@ -314,11 +366,8 @@ const AddEditPatient = ({ onClose, title }) => {
                         min={0}
                         value={formData.age}
                         onChange={handleChange}
-                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                          errors.age
-                            ? "border-red-400 focus:outline-red-400"
-                            : "border-c-gray3 focus:outline-c-primary"
-                        }`}
+                        className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
+                        disabled
                         placeholder="Enter age"
                       />
                     </div>
@@ -336,7 +385,7 @@ const AddEditPatient = ({ onClose, title }) => {
                         name="sex"
                         value={formData.sex}
                         onChange={handleChange}
-                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
                           errors.sex
                             ? "border-red-400 focus:outline-red-400"
                             : "border-c-gray3 focus:outline-c-primary"
@@ -351,29 +400,6 @@ const AddEditPatient = ({ onClose, title }) => {
                       </select>
                     </div>
                   </div>
-                  <section>
-                    <label
-                      htmlFor="birthdate"
-                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                    >
-                      Date of Birth{" "}
-                      <span className="text-red-400">
-                        {(formData.birthdate === "" || errors.birthdate) &&
-                          errors.birthdate}
-                      </span>
-                    </label>
-                    <input
-                      type="date"
-                      name="birthdate"
-                      value={formData.birthdate}
-                      onChange={handleChange}
-                      className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
-                        errors.birthdate
-                          ? "border-red-400 focus:outline-red-400"
-                          : "border-c-gray3 focus:outline-c-primary"
-                      }`}
-                    />
-                  </section>
                 </div>
               ) : (
                 <div className="p-3 md:p-6">

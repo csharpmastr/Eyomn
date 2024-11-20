@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { useSelector } from "react-redux";
 import RoleColor from "../../../assets/Util/RoleColor";
 
-const DbGraph = ({ patients, sales }) => {
+const DbGraph = ({ patients, sales, isCollapsed }) => {
   const user = useSelector((state) => state.reducer.user.user);
   const [selectedFilter, setSelectedFilter] = useState("filter2");
   const [selectedDataType, setSelectedDataType] = useState(
@@ -155,42 +155,46 @@ const DbGraph = ({ patients, sales }) => {
         user.role !== "2" ? "h-[360px]" : "h-[500px]"
       }`}
     >
-      <header className="flex justify-between h-fit w-full items-center mb-4">
-        <h1 className="font-medium text-nowrap text-c-secondary">
-          {user.role !== "2"
-            ? selectedDataType === "sales"
-              ? "| Inventory Sales Graph"
-              : "| Patient Graph"
-            : "| Patient Graph"}
-        </h1>
-        <div className="flex gap-2">
-          {user.role !== "2" && (
+      {!isCollapsed && (
+        <header className="flex justify-between h-fit w-full items-center mb-4">
+          <h1 className="font-medium text-nowrap text-c-secondary">
+            {user.role !== "2"
+              ? selectedDataType === "sales"
+                ? "| Inventory Graph"
+                : "| Patient Graph"
+              : "| Patient Graph"}
+          </h1>
+          <div className="flex gap-2">
+            {user.role !== "2" && (
+              <select
+                value={selectedDataType}
+                onChange={handleDataTypeChange}
+                className="hover:cursor-pointer focus:outline-none bg-bg-sub p-1 rounded-md border border-f-gray"
+              >
+                <option value="sales">Sales</option>
+                <option value="patients">Patients</option>
+              </select>
+            )}
             <select
-              value={selectedDataType}
-              onChange={handleDataTypeChange}
+              value={selectedFilter}
+              onChange={handleFilterChange}
               className="hover:cursor-pointer focus:outline-none bg-bg-sub p-1 rounded-md border border-f-gray"
             >
-              <option value="sales">Sales</option>
-              <option value="patients">Patients</option>
+              <option value="filter1">Today</option>
+              <option value="filter2">This Month</option>
+              <option value="filter3">This Year</option>
             </select>
-          )}
-          <select
-            value={selectedFilter}
-            onChange={handleFilterChange}
-            className="hover:cursor-pointer focus:outline-none bg-bg-sub p-1 rounded-md border border-f-gray"
-          >
-            <option value="filter1">Today</option>
-            <option value="filter2">This Month</option>
-            <option value="filter3">This Year</option>
-          </select>
-        </div>
-      </header>
-      <Chart
-        options={chartOptions}
-        series={chartSeries}
-        type="line"
-        height={graphHeight}
-      />
+          </div>
+        </header>
+      )}
+      {!isCollapsed && (
+        <Chart
+          options={chartOptions}
+          series={chartSeries}
+          type="line"
+          height={graphHeight}
+        />
+      )}
     </div>
   );
 };
