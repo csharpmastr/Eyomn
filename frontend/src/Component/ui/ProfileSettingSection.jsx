@@ -590,7 +590,7 @@ const ProfileSettingSection = ({ selected }) => {
               </button>
             </div>
           </div>
-          <div className="w-full border border-red-400 bg-white rounded-lg p-10 h-fit flex flex-col justify-between">
+          {/* <div className="w-full border border-red-400 bg-white rounded-lg p-10 h-fit flex flex-col justify-between">
             <label className="text-p-rg md:text-p-lg font-semibold text-c-secondary">
               | Delete Account
             </label>
@@ -601,7 +601,7 @@ const ProfileSettingSection = ({ selected }) => {
             <button className="px-5 w-fit py-3 mt-8 bg-red-50 border-2 border-red-400 text-red-400 text-p-sm md:text-p-rg font-semibold rounded-md">
               Delete Account
             </button>
-          </div>
+          </div> */}
         </div>
       )}
       {selected === "Product Archive" && <ArchiveTable />}
