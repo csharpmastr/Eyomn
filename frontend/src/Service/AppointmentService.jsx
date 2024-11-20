@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const APPOINTMENT_API_BASE_URL = "https://eyomn.vercel.app/api/v1/appointment";
+const APPOINTMENT_API_BASE_URL = "https://api.eyomn.com/api/v1/appointment";
 
 export const addAppointmentService = async (
   branchId,

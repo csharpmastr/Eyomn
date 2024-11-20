@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const ORGANIZATION_API_BASE_URL =
-  "https://eyomn.vercel.app/api/v1/organization";
+const ORGANIZATION_API_BASE_URL = "https://api.eyomn.com/api/v1/organization";
 export const getStaffs = async (
   organizationId,
   branchId,
