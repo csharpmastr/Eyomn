@@ -155,6 +155,8 @@ const updateProduct = async (branchId, productId, productDetails) => {
 
 const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
   try {
+    console.log(purchaseDetails);
+
     await verifyFirebaseUid(firebaseUid);
 
     const currentDate = new Date();
@@ -184,6 +186,8 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
           }
 
           const productData = productDoc.data();
+          console.log(productData);
+
           const decryptedProductData = decryptDocument(productData, [
             "quantity",
             "expirationDate",
@@ -193,6 +197,7 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
             "isDeleted",
             "retail_price",
           ]);
+          console.log("1");
 
           if (decryptedProductData.quantity < product.quantity) {
             throw {
@@ -200,7 +205,7 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
               message: `Insufficient stock for product: ${product.productId}`,
             };
           }
-
+          console.log("2");
           return {
             productRef,
             decryptedProductData,
@@ -211,7 +216,7 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
 
       // proceed with the writes
       // create purchase record
-
+      console.log("3");
       transaction.set(purchaseRef, {
         staffId,
         purchaseDetails,
@@ -233,6 +238,7 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
               "productSKU",
               "productId",
               "isDeleted",
+              "retail_price",
             ]
           );
 
@@ -240,6 +246,7 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
         }
       );
     });
+    console.log("5");
     return { purchaseId, createdAt };
   } catch (error) {
     console.error("Error during purchase:", error);
