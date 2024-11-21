@@ -14,6 +14,7 @@ const {
   sharePatient,
   generateSoap,
   getPatientProductServicesAvail,
+  getAllVisits,
 } = require("../Service/patientService");
 
 const addPatientHandler = async (req, res) => {
@@ -338,6 +339,24 @@ const generateStoreSoapHandler = async (req, res) => {
   }
 };
 
+const getAllPatientVisitsHandler = async (req, res) => {
+  try {
+    const { firebaseUid, staffId } = req.query;
+
+    if (!staffId) {
+      return res.status(400).json({ message: "No Doctor ID provided" });
+    }
+    const visits = await getAllVisits(staffId, firebaseUid);
+
+    if (visits) {
+      return res.status(200).json(visits);
+    }
+  } catch (error) {
+    console.error("Error getting patients visits:", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   addPatientHandler,
   getPatientsByDoctorHandler,
@@ -353,4 +372,5 @@ module.exports = {
   getImages,
   sharePatientHandler,
   generateStoreSoapHandler,
+  getAllPatientVisitsHandler,
 };

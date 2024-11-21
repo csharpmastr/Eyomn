@@ -624,6 +624,29 @@ const generateSoap = async (
     console.log(error);
   }
 };
+const getAllVisits = async (doctorId, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const visitsColRef = visitCollection;
+
+    const visitsSnapshot = await visitsColRef
+      .where("doctorId", "==", doctorId)
+      .get();
+
+    if (visitsSnapshot.empty) {
+      console.log("No visits found for this doctor.");
+      return [];
+    }
+
+    const visits = visitsSnapshot.docs.map((doc) => doc.data());
+
+    return visits;
+  } catch (error) {
+    console.error("Error fetching visits:", error);
+    throw new Error("Unable to fetch visits.");
+  }
+};
 
 module.exports = {
   addPatient,
@@ -642,4 +665,5 @@ module.exports = {
   getDoctorPatient,
   sharePatient,
   generateSoap,
+  getAllVisits,
 };
