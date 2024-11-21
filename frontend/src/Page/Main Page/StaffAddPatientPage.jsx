@@ -8,6 +8,21 @@ import { useAddPatient } from "../../Hooks/useAddPatient";
 import Loader from "../../Component/ui/Loader";
 import SuccessModal from "../../Component/ui/SuccessModal";
 
+const calculateAge = (birthdate) => {
+  const today = new Date();
+  const birthDate = new Date(birthdate);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDifference = today.getMonth() - birthDate.getMonth();
+
+  if (
+    monthDifference < 0 ||
+    (monthDifference === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+  return age;
+};
+
 const StaffAddPatientPage = () => {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const { addPatientHook, isLoading, error } = useAddPatient();
@@ -66,11 +81,9 @@ const StaffAddPatientPage = () => {
       return false;
     });
   });
-  console.log(availableDoctors);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(value);
 
     if (errors[name]) {
       setErrors((prevErrors) => ({
@@ -79,10 +92,16 @@ const StaffAddPatientPage = () => {
       }));
     }
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData) => {
+      const updatedData = { ...prevData, [name]: value };
+
+      if (name === "birthdate") {
+        updatedData.age = `${calculateAge(value)}`;
+        console.log("Calculated Age:", updatedData.age);
+      }
+
+      return updatedData;
+    });
   };
 
   const handleProvinceChange = (selectedOption) => {
@@ -303,28 +322,7 @@ const StaffAddPatientPage = () => {
                   placeholder="Enter middle name"
                 />
                 <div className="flex gap-4">
-                  <div className="w-1/2">
-                    <label htmlFor="age" className="text-p-sc md:text-p-sm">
-                      Age{" "}
-                      <span className="text-red-400">
-                        {(formData.age === "" || errors.age) && errors.age}
-                      </span>
-                    </label>
-                    <input
-                      type="number"
-                      name="age"
-                      min={0}
-                      value={formData.age}
-                      onChange={handleChange}
-                      className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                        errors.first_name
-                          ? "border-red-400 focus:outline-red-400"
-                          : "border-c-gray3 focus:outline-c-primary"
-                      }`}
-                      placeholder="Enter age"
-                    />
-                  </div>
-                  <div className="w-1/2">
+                  <div className="w-full">
                     <label htmlFor="sex" className="text-p-sc md:text-p-sm">
                       Sex{" "}
                       <span className="text-red-400">

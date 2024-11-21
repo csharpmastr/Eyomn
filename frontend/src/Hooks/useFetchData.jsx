@@ -198,10 +198,20 @@ export const useFetchData = () => {
     }
   };
 
-  const fetchData = async () => {
+  const fetchData = async (fetchTypes = []) => {
     setLoading(true);
+
     try {
-      const apiCalls = buildApiCalls();
+      let apiCalls;
+
+      if (fetchTypes.length === 0) {
+        apiCalls = buildApiCalls();
+      } else {
+        apiCalls = buildApiCalls().filter((apiCall) =>
+          fetchTypes.includes(apiCall.type)
+        );
+      }
+
       await Promise.all(
         apiCalls.map(async (apiCall) => {
           try {
@@ -268,11 +278,9 @@ export const useFetchData = () => {
                   allPurchases = result.purchases;
                   allServices = result.services;
                 }
-
                 reduxDispatch(setPurchases(allPurchases));
                 reduxDispatch(setProducts(allProducts));
                 reduxDispatch(setServices(allServices));
-
                 break;
 
               case "branches":

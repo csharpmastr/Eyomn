@@ -177,9 +177,11 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
             )}
           </div>
         </div>
-        <div className="w-full h-1/2 shadow-sm border bg-white rounded-lg font-poppins p-4 overflow-y-scroll">
-          <PaymentBreakdown patient={patient} />
-        </div>
+        {role !== "0" && (
+          <div className="w-full h-1/2 shadow-sm border bg-white rounded-lg font-poppins p-4 overflow-y-scroll">
+            <PaymentBreakdown patient={patient} />
+          </div>
+        )}
       </div>
       {isVisitOpen && <VisitReasonModal onClose={toggleModal} />}
     </div>

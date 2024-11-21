@@ -36,6 +36,12 @@ const MedForm = () => {
   const rawNotes = useSelector(
     (state) => state.reducer.note.rawNotes[patientId]
   );
+  const patients = useSelector((state) => state.reducer.patient.patients);
+  const patient = patients.find((patient) => patient.patientId === patientId);
+
+  const doctors = useSelector((state) => state.reducer.doctor.doctor);
+  const doctor = doctors.find((doc) => doc.staffId === patient.doctorId);
+
   const user = useSelector((state) => state.reducer.user.user);
   const [currentPage, setCurrentPage] = useState(0);
   const pageTitles = ["Subjective", "Objective", "Assessment", "Plan"];
@@ -60,6 +66,7 @@ const MedForm = () => {
     FRONT_OD: "",
     FRONT_OS: "",
   });
+
   const initialMedFormData = {
     //Subjective
     initial_observation: {
@@ -581,12 +588,14 @@ const MedForm = () => {
   const handleSubmitNote = async (e) => {
     e.preventDefault();
     const transformedData = cleanData(medformData);
-    const formattedData = formatPatientNotes(transformedData);
+    const formattedSoap = formatPatientNotes(transformedData);
     console.log(transformedData);
 
-    console.log(formattedData);
+    console.log(formattedSoap);
 
     setHasUnsavedChanges(false);
+    console.log(user.firebaseUid);
+
     try {
       const response = await addNote(medformData, patientId);
 
@@ -602,18 +611,24 @@ const MedForm = () => {
           })
         );
         setIsSuccess(true);
-        storeGeneratedSoap(formattedData, patientId, user.firebaseUid);
+        storeGeneratedSoap(
+          formattedSoap,
+          patientId,
+          doctor.staffId,
+          user.firebaseUid,
+          response.noteId
+        );
       }
     } catch (error) {
       setIsError(true);
       console.log(error);
     }
   };
+
   const navigateAfterSuccess = () => {
     navigate(`/scribe/${patientId}`);
     sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
   };
-  console.log(soap);
 
   const handleNext = async (e) => {
     e.preventDefault();
@@ -624,27 +639,35 @@ const MedForm = () => {
 
     if (currentPage < pageTitles.length - 1) {
       if (currentPage === 1) {
-        setCurrentPage((prevPage) => prevPage + 1);
-        // if (!soap && !noteId) {
-        //   setInitLoad(true);
-        //   try {
-        //     const response = await summarizeInitialPatientCase(formattedData);
-        //     if (response) {
-        //       console.log(response);
-        //       setSoap(extractSoapData(response));
-        //       setCurrentPage((prevPage) => prevPage + 1);
-        //     } else {
-        //       console.error("No response received");
-        //     }
-        //   } catch (error) {
-        //     console.error("Error during API call:", error);
-        //   } finally {
-        //     setInitLoad(false);
-        //   }
-        // } else {
-        //   setCurrentPage((prevPage) => prevPage + 1);
-        // }
+        if (!noteId) {
+          if (!soap) {
+            setInitLoad(true);
+            try {
+              const response = await summarizeInitialPatientCase(formattedData);
+              if (response) {
+                console.log(response);
+                setSoap(extractSoapData(response));
+                setCurrentPage((prevPage) => prevPage + 1);
+              } else {
+                console.error("No response received");
+              }
+            } catch (error) {
+              console.error("Error during API call:", error);
+            } finally {
+              setInitLoad(false);
+            }
+          } else {
+            console.log("running");
+
+            setCurrentPage((prevPage) => prevPage + 1);
+          }
+        } else {
+          console.log("log");
+
+          setCurrentPage((prevPage) => prevPage + 1);
+        }
       } else {
+        console.log("why");
         setCurrentPage((prevPage) => prevPage + 1);
       }
     }
@@ -784,7 +807,6 @@ const MedForm = () => {
   const handleRemoveImage = () => {
     setImage(null);
   };
-  console.log(image);
 
   return (
     <>

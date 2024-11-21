@@ -38,6 +38,7 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
   const [selectedBranch, setSelectedBranchId] = useState(null);
   const reduxDispatch = useDispatch();
   const [availableDoctors, setAvailableDoctors] = useState([]);
+  const [availableBranch, setAvailableBranch] = useState([]);
 
   let branchId =
     (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
@@ -71,6 +72,8 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
         setTime(scheduledTime.toTimeString().split(" ")[0].substring(0, 5));
       }
     } else {
+      console.log(user);
+
       if (appointmentToEdit) {
         setDocFormData({
           patient_name: appointmentToEdit.patient_name,
@@ -346,7 +349,6 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
       setIsLoading(false);
     }
   };
-  console.log(appointmentToEdit);
 
   const filterAvailableDoctors = (date, time) => {
     return doctors.filter((doctor) => {
@@ -390,9 +392,35 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
     });
   };
 
+  const filterAvailableBranchesForDoctor = (date, time) => {
+    return user.branches.filter((branch) => {
+      const branchScheduleForDay = branch.schedule.find((scheduleEntry) => {
+        const scheduleDay = scheduleEntry.day.toLowerCase();
+        const inputDay = new Date(date)
+          .toLocaleString("en-GB", { weekday: "long" })
+          .toLowerCase();
+        return scheduleDay === inputDay;
+      });
+
+      if (!branchScheduleForDay) {
+        return false;
+      }
+
+      const { in: branchStartTime, out: branchEndTime } = branchScheduleForDay;
+      const branchStart = new Date(`1970-01-01T${branchStartTime}:00Z`);
+      const branchEnd = new Date(`1970-01-01T${branchEndTime}:00Z`);
+      branchEnd.setMinutes(branchEnd.getMinutes() - 30);
+
+      const inputTime = new Date(`1970-01-01T${time}:00Z`);
+
+      return inputTime >= branchStart && inputTime <= branchEnd;
+    });
+  };
+
   useEffect(() => {
     if (date && time) {
       setAvailableDoctors(filterAvailableDoctors(date, time));
+      setAvailableBranch(filterAvailableBranchesForDoctor(date, time));
     }
   }, [date, time, appointments, doctors]);
 
@@ -573,12 +601,17 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
                     <option value="" disabled className="text-c-gray3">
                       Available Branches
                     </option>
-                    {branches.map((branch, key) => (
-                      <option
-                        key={key}
-                        value={branch.branchId}
-                      >{`${branch.branchName}`}</option>
-                    ))}
+                    {availableBranch.length > 0 ? (
+                      branches.map((branch, key) => (
+                        <option key={key} value={branch.branchId}>
+                          {`${branch.branchName}`}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="" disabled>
+                        No branches available
+                      </option>
+                    )}
                   </select>
                 </section>
               )}

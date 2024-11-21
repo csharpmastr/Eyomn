@@ -27,7 +27,10 @@ const patientSlice = createSlice({
       );
     },
     updatePatient: (state, action) => {
-      const index = state.patients.findIndex((p) => p.id === action.payload.id);
+      const index = state.patients.findIndex(
+        (p) => p.patientId === action.payload.patientId
+      );
+
       if (index !== -1) {
         state.patients[index] = {
           ...state.patients[index],
@@ -35,6 +38,7 @@ const patientSlice = createSlice({
         };
       }
     },
+
     setPatients: (state, action) => {
       state.patients = action.payload;
     },
