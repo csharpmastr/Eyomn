@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import Cookies from "universal-cookie";
 
 const INVENTORY_API_BASE_URL = "https://api.eyomn.com/api/v1/inventory";
-const cookies = new Cookies();
 
+const cookies = new Cookies();
 const accessToken = cookies.get("accessToken", { path: "/" });
 const refreshToken = cookies.get("refreshToken", { path: "/" });
 
