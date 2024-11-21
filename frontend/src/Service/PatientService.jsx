@@ -366,3 +366,26 @@ export const storeGeneratedSoap = (
     console.log(error);
   }
 };
+
+export const getAllVisits = async (
+  staffId,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.get(`${PATIENT_API_BASE_URL}/get-all-visits`, {
+      params: {
+        firebaseUid,
+        staffId,
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

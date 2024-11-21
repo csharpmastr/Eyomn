@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
-import { getPatients, getPatientsByDoctor } from "../Service/PatientService";
+import {
+  getAllVisits,
+  getPatients,
+  getPatientsByDoctor,
+} from "../Service/PatientService";
 import { useDispatch, useSelector } from "react-redux";
 import { setPatients } from "../Slice/PatientSlice";
 import { setDoctor } from "../Slice/doctorSlice";
@@ -25,6 +29,7 @@ import {
 } from "../Service/organizationService";
 import { getUserNotification } from "../Service/NotificationService";
 import { setNotifications } from "../Slice/NotificationSlice";
+import { setVisits } from "../Slice/VisitSlice";
 
 export const useFetchData = () => {
   const user = useSelector((state) => state.reducer.user.user);
@@ -192,6 +197,11 @@ export const useFetchData = () => {
               ),
             type: "notifications",
           },
+          {
+            call: () =>
+              getAllVisits(user.userId, firebaseUid, accessToken, refreshToken),
+            type: "visits",
+          },
         ];
       default:
         return [];
@@ -226,6 +236,9 @@ export const useFetchData = () => {
               case "doctors":
                 reduxDispatch(setDoctor(result));
                 break;
+              case "visits":
+                reduxDispatch(setVisits(result));
+                breaks;
               case "products":
                 reduxDispatch(setProducts(result));
                 break;

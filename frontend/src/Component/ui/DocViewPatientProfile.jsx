@@ -7,6 +7,7 @@ import { getPatientNotes } from "../../Service/PatientService";
 import Cookies from "universal-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { addNewMedicalScribeNote, addNewRawNote } from "../../Slice/NoteSlice";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -18,12 +19,14 @@ const DocViewPatientProfile = ({ patient, visits }) => {
   const { patientId } = useParams();
   const [isVisitOpen, setIsVisitOpen] = useState(false);
   const user = useSelector((state) => state.reducer.user.user);
+  const rNotes = useSelector((state) => state.reducer.note.rawNotes[patientId]);
+
   const cookies = new Cookies();
   const accessToken = cookies.get("accessToken");
   const refreshToken = cookies.get("refreshToken");
   const [isLoading, setIsLoading] = useState(false);
   const reduxDispatch = useDispatch();
-  const [rawNotes, setRawNotes] = useState([]);
+  const [raw, setRaw] = useState([]);
   const formattedDate = patient.createdAt
     ? new Date(patient.createdAt).toLocaleDateString("en-US", {
         year: "numeric",
@@ -45,8 +48,26 @@ const DocViewPatientProfile = ({ patient, visits }) => {
           refreshToken
         );
 
-        if (notesResponse && Array.isArray(notesResponse)) {
-          reduxDispatch(setRawNotes({ [patientId]: notesResponse }));
+        if (notesResponse) {
+          const { rawNotes = [], soapNotes = [] } = notesResponse; // Default to empty arrays if missing
+          console.log(rawNotes);
+
+          // Dispatch raw notes if available
+          rawNotes.forEach((note) => {
+            // Ensure the patientId and note structure is correct before dispatching
+            reduxDispatch(addNewRawNote({ [patientId]: note }));
+          });
+
+          // Dispatch soap notes if available
+          soapNotes.forEach((note) => {
+            // Ensure the soapNote structure is correct before dispatching
+            reduxDispatch(
+              addNewMedicalScribeNote({ patientId, noteData: note })
+            );
+          });
+
+          // Set raw state after dispatching
+          setRaw(rawNotes);
         } else {
           console.error("Unexpected or empty response:", notesResponse);
         }
@@ -57,10 +78,26 @@ const DocViewPatientProfile = ({ patient, visits }) => {
       }
     };
 
-    if (patientId && user.firebaseUid) {
+    if (patientId) {
       fetchNotes();
     }
   }, [patientId]);
+
+  const earliestNote = (data) => {
+    if (!data || data.length === 0) return null;
+
+    const dates = data.map((item) => new Date(item.createdAt));
+    const earliestDate = new Date(Math.min(...dates));
+
+    const notesWithEarliestCreatedAt = data.filter(
+      (item) => new Date(item.createdAt).getTime() === earliestDate.getTime()
+    );
+
+    return notesWithEarliestCreatedAt[0];
+  };
+
+  const notesWithEarliestDate =
+    raw && raw.length > 0 ? earliestNote(raw) : null;
 
   const toggleModal = () => setIsVisitOpen(!isVisitOpen);
 
@@ -205,13 +242,61 @@ const DocViewPatientProfile = ({ patient, visits }) => {
                 <div className="p-3 rounded-lg border flex-1 text-f-dark text-p-sc md:text-p-sm bg-bg-mc">
                   <h6 className="font-medium mb-3">| Initial Obeservation</h6>
                   <article>
-                    <p>Content</p>
+                    {notesWithEarliestDate?.initial_observation?.options
+                      ? Object.entries(
+                          notesWithEarliestDate.initial_observation.options
+                        )
+                          .filter(([key, value]) => value === true)
+                          .map(([key]) => key).length > 0
+                        ? Object.entries(
+                            notesWithEarliestDate.initial_observation.options
+                          )
+                            .filter(([key, value]) => value === true)
+                            .map(([key]) => key)
+                            .join(", ")
+                        : "No relevant symptoms"
+                      : "No data available"}
+
+                    {notesWithEarliestDate?.initial_observation
+                      ?.additional_note && (
+                      <p className="mt-2">
+                        Additional Note:{" "}
+                        {
+                          notesWithEarliestDate.initial_observation
+                            .additional_note
+                        }
+                      </p>
+                    )}
                   </article>
                 </div>
                 <div className="p-3 rounded-lg border flex-1 text-f-dark text-p-sc md:text-p-sm bg-bg-mc">
                   <h6 className="font-medium mb-3">| General Health Hx</h6>
                   <article>
-                    <p>Content</p>
+                    <article>
+                      {
+                        notesWithEarliestDate?.general_health_hx?.option
+                          ? Object.entries(
+                              notesWithEarliestDate.general_health_hx.option
+                            )
+                              .filter(([key, value]) => value === true) // Filter for the 'true' values
+                              .map(([key]) => key).length > 0 // Get the keys of the 'true' values // Check if there are any 'true' values
+                            ? Object.entries(
+                                notesWithEarliestDate.general_health_hx.option
+                              )
+                                .filter(([key, value]) => value === true)
+                                .map(([key]) => key)
+                                .join(", ") // Join the true values with commas
+                            : "No relevant symptoms" // If no true values, display this message
+                          : "No data available" // If no general_health_hx or options exist
+                      }
+
+                      {notesWithEarliestDate?.general_health_hx?.last_exam && (
+                        <p className="mt-2">
+                          Last Exam:{" "}
+                          {notesWithEarliestDate.general_health_hx.last_exam}
+                        </p>
+                      )}
+                    </article>
                   </article>
                 </div>
               </div>
@@ -221,7 +306,30 @@ const DocViewPatientProfile = ({ patient, visits }) => {
                     | Occular Condition/History
                   </h6>
                   <article>
-                    <p>Content</p>
+                    {
+                      notesWithEarliestDate?.ocular_history?.option
+                        ? Object.entries(
+                            notesWithEarliestDate.ocular_history.option
+                          )
+                            .filter(([key, value]) => value === true) // Filter for 'true' values
+                            .map(([key]) => key).length > 0 // Map to the keys of 'true' values // If there are any 'true' values
+                          ? Object.entries(
+                              notesWithEarliestDate.ocular_history.option
+                            )
+                              .filter(([key, value]) => value === true)
+                              .map(([key]) => key)
+                              .join(", ") // Join keys with commas
+                          : "No relevant symptoms" // If no 'true' values, display this message
+                        : "No data available" // If no ocular_history or option
+                    }
+
+                    {/* Display Last Exam for ocular_history */}
+                    {notesWithEarliestDate?.ocular_history?.last_exam && (
+                      <p className="mt-2">
+                        Last Exam:{" "}
+                        {notesWithEarliestDate.ocular_history.last_exam}
+                      </p>
+                    )}
                   </article>
                 </div>
                 <div className="p-3 rounded-lg border flex-1 text-f-dark text-p-sc md:text-p-sm bg-bg-mc">
@@ -229,7 +337,34 @@ const DocViewPatientProfile = ({ patient, visits }) => {
                     | Family Occular Conditon
                   </h6>
                   <article>
-                    <p>Content</p>
+                    {
+                      notesWithEarliestDate?.fam_ocular_history?.option
+                        ? Object.entries(
+                            notesWithEarliestDate.fam_ocular_history.option
+                          )
+                            .filter(([key, value]) => value === true) // Filter for 'true' values
+                            .map(([key]) => key).length > 0 // Map to the keys of 'true' values // If there are any 'true' values
+                          ? Object.entries(
+                              notesWithEarliestDate.fam_ocular_history.option
+                            )
+                              .filter(([key, value]) => value === true)
+                              .map(([key]) => key)
+                              .join(", ") // Join keys with commas
+                          : "No relevant symptoms" // If no 'true' values, display this message
+                        : "No data available" // If no fam_ocular_history or option
+                    }
+
+                    {/* Display Additional Note for fam_ocular_history */}
+                    {notesWithEarliestDate?.fam_ocular_history
+                      ?.additional_note && (
+                      <p className="mt-2">
+                        Additional Note:{" "}
+                        {
+                          notesWithEarliestDate.fam_ocular_history
+                            .additional_note
+                        }
+                      </p>
+                    )}
                   </article>
                 </div>
               </div>
@@ -237,13 +372,45 @@ const DocViewPatientProfile = ({ patient, visits }) => {
                 <div className="p-3 rounded-lg border flex-1 text-f-dark text-p-sc md:text-p-sm bg-bg-mc">
                   <h6 className="font-medium mb-3">| Current Medication</h6>
                   <article>
-                    <p>Content</p>
+                    {notesWithEarliestDate?.current_medication && (
+                      <p className="mt-2">
+                        {notesWithEarliestDate.current_medication
+                          .split("\n")
+                          .map((med, index) => (
+                            <span key={index}>
+                              {med}
+                              {index !==
+                                notesWithEarliestDate.current_medication.split(
+                                  "\n"
+                                ).length -
+                                  1 && <br />}
+                            </span>
+                          ))}
+                      </p>
+                    )}
                   </article>
                 </div>
                 <div className="p-3 rounded-lg border flex-1 text-f-dark text-p-sc md:text-p-sm bg-bg-mc">
                   <h6 className="font-medium mb-3">| Lifestyle</h6>
                   <article>
-                    <p>Content</p>
+                    {notesWithEarliestDate?.lifestyle &&
+                    notesWithEarliestDate.lifestyle.trim() !== "" ? (
+                      <p className="mt-2">
+                        {notesWithEarliestDate.lifestyle
+                          .split("\n")
+                          .map((med, index) => (
+                            <span key={index}>
+                              {med}
+                              {index !==
+                                notesWithEarliestDate.lifestyle.split("\n")
+                                  .length -
+                                  1 && <br />}
+                            </span>
+                          ))}
+                      </p>
+                    ) : (
+                      <p>No input</p>
+                    )}
                   </article>
                 </div>
               </div>

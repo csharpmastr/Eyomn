@@ -139,9 +139,12 @@ const ScribeRecord = () => {
 
       try {
         if (
-          (!rawNotes || rawNotes.length === 0) &&
-          (!scribeNotes || scribeNotes.length === 0)
+          !rawNotes ||
+          rawNotes.length === 0 ||
+          !scribeNotes ||
+          scribeNotes.length === 0
         ) {
+          console.log("fetching notes");
           const notesResponse = await getPatientNotes(
             patientId,
             user.firebaseUid,
@@ -164,6 +167,8 @@ const ScribeRecord = () => {
         }
 
         if (!imagesUrl || imagesUrl.length === 0) {
+          console.log("fetching image");
+
           const imagesResponse = await getPatientImageArchive(
             patientId,
             user.firebaseUid,

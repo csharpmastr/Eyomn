@@ -14,10 +14,9 @@ const noteSlice = createSlice({
       const newNotes = action.payload;
       const patientId = Object.keys(newNotes)[0];
 
-      state.rawNotes[patientId] = state.rawNotes[patientId] || [];
+      const existingNotes = state.rawNotes[patientId] || [];
       state.rawNotes[patientId] = [
-        ...state.rawNotes[patientId],
-        ...newNotes[patientId],
+        ...new Set([...existingNotes, ...newNotes[patientId]]),
       ];
     },
 
@@ -33,19 +32,18 @@ const noteSlice = createSlice({
         state.rawNotes[patientId] = [];
       }
 
-      state.rawNotes[patientId].push(noteData);
+      if (!state.rawNotes[patientId].includes(noteData)) {
+        state.rawNotes[patientId].push(noteData);
+      }
     },
 
     setMedicalScribeNotes: (state, action) => {
       const newNotes = action.payload;
       const patientId = Object.keys(newNotes)[0];
 
-      state.medicalScribeNotes[patientId] =
-        state.medicalScribeNotes[patientId] || [];
-
+      const existingNotes = state.medicalScribeNotes[patientId] || [];
       state.medicalScribeNotes[patientId] = [
-        ...state.medicalScribeNotes[patientId],
-        ...newNotes[patientId],
+        ...new Set([...existingNotes, ...newNotes[patientId]]),
       ];
     },
 
@@ -54,17 +52,29 @@ const noteSlice = createSlice({
     },
 
     addNewMedicalScribeNote: (state, action) => {
-      state.medicalScribeNotes.push(action.payload);
+      const patientId = action.payload.patientId;
+      const noteData = action.payload.noteData;
+
+      if (!state.medicalScribeNotes[patientId]) {
+        state.medicalScribeNotes[patientId] = [];
+      }
+
+      if (
+        !state.medicalScribeNotes[patientId].some(
+          (note) => note.noteId === noteData.noteId
+        )
+      ) {
+        state.medicalScribeNotes[patientId].push(noteData);
+      }
     },
+
     setImagesArchive: (state, action) => {
       const newImages = action.payload;
       const patientId = Object.keys(newImages)[0];
 
-      state.images[patientId] = state.images[patientId] || [];
-
+      const existingImages = state.images[patientId] || [];
       state.images[patientId] = [
-        ...state.images[patientId],
-        ...newImages[patientId],
+        ...new Set([...existingImages, ...newImages[patientId]]),
       ];
     },
 
@@ -80,7 +90,9 @@ const noteSlice = createSlice({
         state.images[patientId] = [];
       }
 
-      state.images[patientId].push(imageUrl);
+      if (!state.images[patientId].includes(imageUrl)) {
+        state.images[patientId].push(imageUrl);
+      }
     },
   },
 });
