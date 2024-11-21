@@ -277,6 +277,7 @@ const getNotes = async (patientId, firebaseUid) => {
           const soapDetails = doc.data();
 
           const decryptedSoap = {
+            rawNoteId: soapDetails.rawNoteId,
             noteId: soapDetails.noteId,
             subjective: soapDetails.subjective
               ? soapDetails.subjective.map((item) => decryptData(item))
@@ -542,8 +543,16 @@ const getPatientsWithAuthorizedDoctor = async (doctorId) => {
     throw error;
   }
 };
-const generateSoap = async (soapString, patientId, doctorId, firebaseUid) => {
+const generateSoap = async (
+  soapString,
+  patientId,
+  doctorId,
+  firebaseUid,
+  noteId
+) => {
   try {
+    console.log(noteId);
+
     const currentDate = new Date();
     await verifyFirebaseUid(firebaseUid);
     console.log({ soapString });
@@ -586,6 +595,7 @@ const generateSoap = async (soapString, patientId, doctorId, firebaseUid) => {
       plan: dictSoap.plan.map((item) => encryptData(item)),
       createdAt: currentDate.toISOString(),
       noteId: soapId,
+      rawNoteId: noteId,
     };
 
     await soapNoteRef.doc(soapId).set(encrypytedSoap);

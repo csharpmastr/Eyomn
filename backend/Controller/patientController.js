@@ -314,8 +314,10 @@ const sharePatientHandler = async (req, res) => {
 const generateStoreSoapHandler = async (req, res) => {
   try {
     const patientId = req.params.patientId;
-    const { firebaseUid, doctorId } = req.query;
+    const { firebaseUid, doctorId, noteId } = req.query;
     const { formattedSoap } = req.body;
+    console.log(firebaseUid, doctorId, noteId);
+
     if (!patientId) {
       return res.status(400).json({ message: "No Patient ID provided" });
     }
@@ -323,7 +325,8 @@ const generateStoreSoapHandler = async (req, res) => {
       formattedSoap,
       patientId,
       doctorId,
-      firebaseUid
+      firebaseUid,
+      noteId
     );
 
     if (soapId) {
