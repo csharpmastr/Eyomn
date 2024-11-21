@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const NOTIFICATION_API_BASE_URL = `http://localhost:3000/api/v1/notification`;
+
+const NOTIFICATION_API_BASE_URL = `https://api.eyomn.com/api/v1/notification`;
 
 export const updateNotification = async (
   staffId,
