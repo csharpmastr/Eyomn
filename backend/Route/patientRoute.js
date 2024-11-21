@@ -26,7 +26,7 @@ router.post(
 );
 router.get("/patients-doctor", getPatientsByDoctorHandler);
 router.get("/get-patients", validateToken, getPatientsHandler);
-router.put("/update/:patientId", updatePatientHandler);
+router.patch("/update/:patientId", updatePatientHandler);
 router.put("/delete/:patientId", deletePatientHandler);
 router.put("/retrieve/:patientId", retrievePatientHandler);
 router.post("/add-note/:patientId", addNoteHandler);

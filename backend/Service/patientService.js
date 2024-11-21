@@ -314,8 +314,11 @@ const getNotes = async (patientId, firebaseUid) => {
   }
 };
 
-const updatePatientDetails = async (patientId, patientData) => {
+const updatePatientDetails = async (patientId, patientData, firebaseUid) => {
   try {
+    console.log(patientData);
+
+    await verifyFirebaseUid(firebaseUid);
     const patientDocRef = patientCollection.doc(patientId);
 
     const encryptedPatientData = {};

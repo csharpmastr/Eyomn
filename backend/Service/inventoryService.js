@@ -412,7 +412,6 @@ const addServiceFee = async (
 ) => {
   try {
     await verifyFirebaseUid(firebaseUid);
-    console.log("why it is triggering?");
 
     const currentDate = new Date();
     const servicesColRef = inventoryCollection
@@ -522,7 +521,6 @@ const getPatientProductServicesAvail = async (
             "service_price",
           ]),
         }));
-    console.log(`hehehe ${servicesData}`);
 
     return {
       purchases: purchasesData,

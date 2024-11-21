@@ -59,6 +59,7 @@ const getPatientsByDoctorHandler = async (req, res) => {
   try {
     const { organizationId, staffId, firebaseUid } = req.query;
     console.log(organizationId, staffId, firebaseUid);
+    console.log("haha");
 
     const patients = await getDoctorPatient(
       organizationId,
@@ -102,12 +103,13 @@ const updatePatientHandler = async (req, res) => {
   try {
     const patientData = req.body;
     const patientId = req.params.patientId;
+    const { firebaseUid } = req.query;
     if (!patientId || !patientData) {
       return res.status(400).json({
         message: "Invalid request. Missing patientId or patientData.",
       });
     }
-    await updatePatientDetails(patientId, patientData);
+    await updatePatientDetails(patientId, patientData, firebaseUid);
     return res.status(200).json({ message: "Patient details updated" });
   } catch (error) {
     console.error("Error updating patient details: ", error);
@@ -312,12 +314,17 @@ const sharePatientHandler = async (req, res) => {
 const generateStoreSoapHandler = async (req, res) => {
   try {
     const patientId = req.params.patientId;
-    const { firebaseUid } = req.query;
+    const { firebaseUid, doctorId } = req.query;
     const { formattedSoap } = req.body;
     if (!patientId) {
       return res.status(400).json({ message: "No Patient ID provided" });
     }
-    const soapId = await generateSoap(formattedSoap, patientId, firebaseUid);
+    const soapId = await generateSoap(
+      formattedSoap,
+      patientId,
+      doctorId,
+      firebaseUid
+    );
 
     if (soapId) {
       return res.status(200).json({ soapId: soapId });
