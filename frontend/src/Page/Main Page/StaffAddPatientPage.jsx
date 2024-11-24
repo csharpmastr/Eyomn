@@ -8,6 +8,22 @@ import { useAddPatient } from "../../Hooks/useAddPatient";
 import Loader from "../../Component/ui/Loader";
 import SuccessModal from "../../Component/ui/SuccessModal";
 
+const calculateAge = (birthdate) => {
+  const today = new Date();
+  const birthDate = new Date(birthdate);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDifference = today.getMonth() - birthDate.getMonth();
+
+  if (
+    monthDifference < 0 ||
+    (monthDifference === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+
+  return age;
+};
+
 const StaffAddPatientPage = () => {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const { addPatientHook, isLoading, error } = useAddPatient();
@@ -70,7 +86,6 @@ const StaffAddPatientPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(value);
 
     if (errors[name]) {
       setErrors((prevErrors) => ({
@@ -79,10 +94,15 @@ const StaffAddPatientPage = () => {
       }));
     }
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData) => {
+      const updatedData = { ...prevData, [name]: value };
+
+      if (name === "birthdate") {
+        updatedData.age = calculateAge(value);
+      }
+
+      return updatedData;
+    });
   };
 
   const handleProvinceChange = (selectedOption) => {
@@ -302,25 +322,50 @@ const StaffAddPatientPage = () => {
                   className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                   placeholder="Enter middle name"
                 />
+                <label htmlFor="birthdate" className="text-p-sc md:text-p-sm">
+                  Date of Birth{" "}
+                  <span className="text-red-400">
+                    {(formData.birthdate === "" || errors.birthdate) &&
+                      errors.birthdate}
+                  </span>
+                </label>
+                <input
+                  type="date"
+                  name="birthdate"
+                  value={formData.birthdate}
+                  max={
+                    new Date(
+                      new Date().setFullYear(new Date().getFullYear() - 2)
+                    )
+                      .toISOString()
+                      .split("T")[0]
+                  }
+                  min={
+                    new Date(
+                      new Date().setFullYear(new Date().getFullYear() - 120)
+                    )
+                      .toISOString()
+                      .split("T")[0]
+                  }
+                  onChange={handleChange}
+                  className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                    errors.first_name
+                      ? "border-red-400 focus:outline-red-400"
+                      : "border-c-gray3 focus:outline-c-primary"
+                  }`}
+                />
                 <div className="flex gap-4">
                   <div className="w-1/2">
                     <label htmlFor="age" className="text-p-sc md:text-p-sm">
-                      Age{" "}
-                      <span className="text-red-400">
-                        {(formData.age === "" || errors.age) && errors.age}
-                      </span>
+                      Age
                     </label>
                     <input
                       type="number"
                       name="age"
-                      min={0}
+                      disabled
                       value={formData.age}
                       onChange={handleChange}
-                      className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                        errors.first_name
-                          ? "border-red-400 focus:outline-red-400"
-                          : "border-c-gray3 focus:outline-c-primary"
-                      }`}
+                      className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 border-c-gray3 focus:outline-c-primary"
                       placeholder="Enter age"
                     />
                   </div>
@@ -350,24 +395,6 @@ const StaffAddPatientPage = () => {
                     </select>
                   </div>
                 </div>
-                <label htmlFor="birthdate" className="text-p-sc md:text-p-sm">
-                  Date of Birth{" "}
-                  <span className="text-red-400">
-                    {(formData.birthdate === "" || errors.birthdate) &&
-                      errors.birthdate}
-                  </span>
-                </label>
-                <input
-                  type="date"
-                  name="birthdate"
-                  value={formData.birthdate}
-                  onChange={handleChange}
-                  className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                    errors.first_name
-                      ? "border-red-400 focus:outline-red-400"
-                      : "border-c-gray3 focus:outline-c-primary"
-                  }`}
-                />
               </div>
             </div>
             <div className="p-8  w-full lg:w-[660px] rounded-lg bg-white mb-6 shadow-sm">
