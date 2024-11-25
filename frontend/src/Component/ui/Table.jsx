@@ -130,19 +130,21 @@ const Table = ({
                           >
                             View Details
                           </a>
-                          {userRole !== "0" && (
-                            <a
-                              className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
-                              onClick={() => {
-                                handleSharePatientClick(
-                                  patientData.patientId,
-                                  patientData.doctorId
-                                );
-                              }}
-                            >
-                              Share Patient
-                            </a>
-                          )}
+                          {userRole !== "0" &&
+                            userRole !== "1" &&
+                            userRole !== "3" && (
+                              <a
+                                className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
+                                onClick={() => {
+                                  handleSharePatientClick(
+                                    patientData.patientId,
+                                    patientData.doctorId
+                                  );
+                                }}
+                              >
+                                Share Patient
+                              </a>
+                            )}
                         </div>
                       </div>
                     )}

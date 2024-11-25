@@ -17,7 +17,14 @@ const UserProfile = () => {
     branch.schedule.forEach(({ day }) => uniqueDays.add(day));
     return uniqueDays;
   }, new Set()).size;
-
+  let name = "";
+  if (user.role === "0") {
+    name = user.organization;
+  } else if (user.role === "1") {
+    name = user.name;
+  } else {
+    name = `${user.first_name} ${user.last_name}`;
+  }
   return (
     <div className="w-full h-full text-f-dark p-4 md:p-10 font-Poppins flex flex-col gap-4 md:gap-6">
       <header className="w-full h-fit flex justify-between items-center">
@@ -28,7 +35,9 @@ const UserProfile = () => {
             alt="Profile Image"
           />
           <div>
-            <h1 className="text-p-rg md:text-p-lg font-semibold mb-2">{`${user.first_name} ${user.last_name}`}</h1>
+            <h1 className="text-p-rg md:text-p-lg font-semibold mb-2">
+              {name}
+            </h1>
             <h3 className="text-p-sm md:text-p-rg text-f-gray">
               {user.position}
             </h3>

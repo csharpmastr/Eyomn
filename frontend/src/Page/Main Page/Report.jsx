@@ -107,23 +107,15 @@ const Report = () => {
               />
             </div>
           </div>
-          <button className="rounded-md font-medium px-4 py-2 h-fit bg-blue-400 text-f-light">
+          {/* <button className="rounded-md font-medium px-4 py-2 h-fit bg-blue-400 text-f-light">
             Export
-          </button>
+          </button> */}
         </div>
         {selected === "Patients" ? (
-          <>
-            <div className="flex gap-5 h-80">
-              <RCLineGraph />
-              <RCPieChart />
-              <div className="w-1/4 h-full rounded-md bg-c-primary">
-                Bar Graph (Returnee / New)
-              </div>
-            </div>
-          </>
+          <></>
         ) : selected === "Inventory" ? (
           <>
-            <div className="flex gap-5 h-80">
+            {/* <div className="flex gap-5 h-80">
               <RCLineGraph />
               <RCPieChart />
               <div className="w-1/4 h-full flex flex-col gap-5">
@@ -137,11 +129,11 @@ const Report = () => {
                   No. Low Stock
                 </div>
               </div>
-            </div>
+            </div> */}
           </>
         ) : selected === "Sales" ? (
           <>
-            <div className="flex gap-5 h-80">
+            {/* <div className="flex gap-5 h-80">
               <RCLineGraph />
               <RCPieChart />
               <div className="w-1/4 h-full flex flex-col gap-5">
@@ -152,17 +144,17 @@ const Report = () => {
                   No. Sale Product
                 </div>
               </div>
-            </div>
+            </div> */}
           </>
         ) : (
           <>
-            <div className="flex gap-5 h-28">
+            {/* <div className="flex gap-5 h-28">
               <div className="w-1/5 rounded-md bg-c-primary">{staffCount}</div>
               <div className="w-1/5 rounded-md bg-c-primary">{secCount}</div>
               <div className="w-1/5 rounded-md bg-c-primary">{docCount}</div>
               <div className="w-1/5 rounded-md bg-c-primary">{rotate}</div>
               <div className="w-1/5 rounded-md bg-c-primary">{station}</div>
-            </div>
+            </div> */}
           </>
         )}
         <section className="w-full flex items-center justify-between font-medium">

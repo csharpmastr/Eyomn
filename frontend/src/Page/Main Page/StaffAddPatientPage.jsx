@@ -360,6 +360,20 @@ const StaffAddPatientPage = () => {
                   name="birthdate"
                   value={formData.birthdate}
                   onChange={handleChange}
+                  max={
+                    new Date(
+                      new Date().setFullYear(new Date().getFullYear() - 2)
+                    )
+                      .toISOString()
+                      .split("T")[0]
+                  }
+                  min={
+                    new Date(
+                      new Date().setFullYear(new Date().getFullYear() - 124)
+                    )
+                      .toISOString()
+                      .split("T")[0]
+                  }
                   className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
                     errors.first_name
                       ? "border-red-400 focus:outline-red-400"

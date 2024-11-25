@@ -37,7 +37,7 @@ const AddEditPatient = ({ onClose, title, patient }) => {
   const { addPatientHook, isLoading, error } = useAddPatient();
   const [isUpdateLoading, setIsUpdateLoading] = useState(false);
   const branches = user.branches;
-  const doctorId = user.userId;
+  const doctorId = user.role === "3" ? patient.doctorId : user.userId;
   const reduxDispatch = useDispatch();
   const [selectedBranchId, setSelectedBranchId] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
@@ -219,6 +219,7 @@ const AddEditPatient = ({ onClose, title, patient }) => {
       branchId,
       createdAt,
       isDeleted,
+      authorizedDoctor,
       ...sanitizedData
     } = formData;
     return sanitizedData;

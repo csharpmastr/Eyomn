@@ -260,7 +260,7 @@ const SideBar = () => {
                   Other
                 </h1>
               )}
-              {role != 3 && role != 0 && role != 1 && (
+              {role != 3 && role != 1 && (
                 <NavLink
                   className={`ml-4 xl:ml-0 flex items-center text-p-sm md:text-p-rg py-3 px-4 text-f-dark rounded-md 
             ${btnHoverColor}

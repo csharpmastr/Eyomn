@@ -272,7 +272,10 @@ const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
             {isConfirmationModalOpen && (
               <ConfirmationModal
                 productId={productId}
-                onClose={() => setIsConfirmationModalOpen(false)}
+                onClose={() => {
+                  setIsConfirmationModalOpen(false);
+                  setIsSuccess(false);
+                }}
                 title={"Delete Product"}
                 handleDelete={() => handleDelete(productId)}
                 isLoading={isLoading}
