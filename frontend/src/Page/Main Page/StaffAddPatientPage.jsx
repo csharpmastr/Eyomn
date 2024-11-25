@@ -20,6 +20,7 @@ const calculateAge = (birthdate) => {
   ) {
     age--;
   }
+
   return age;
 };
 
@@ -97,7 +98,6 @@ const StaffAddPatientPage = () => {
 
       if (name === "birthdate") {
         updatedData.age = `${calculateAge(value)}`;
-        console.log("Calculated Age:", updatedData.age);
       }
 
       return updatedData;
@@ -320,6 +320,38 @@ const StaffAddPatientPage = () => {
                   onChange={handleChange}
                   className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
                   placeholder="Enter middle name"
+                />
+                <label htmlFor="birthdate" className="text-p-sc md:text-p-sm">
+                  Date of Birth{" "}
+                  <span className="text-red-400">
+                    {(formData.birthdate === "" || errors.birthdate) &&
+                      errors.birthdate}
+                  </span>
+                </label>
+                <input
+                  type="date"
+                  name="birthdate"
+                  value={formData.birthdate}
+                  max={
+                    new Date(
+                      new Date().setFullYear(new Date().getFullYear() - 2)
+                    )
+                      .toISOString()
+                      .split("T")[0]
+                  }
+                  min={
+                    new Date(
+                      new Date().setFullYear(new Date().getFullYear() - 120)
+                    )
+                      .toISOString()
+                      .split("T")[0]
+                  }
+                  onChange={handleChange}
+                  className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                    errors.first_name
+                      ? "border-red-400 focus:outline-red-400"
+                      : "border-c-gray3 focus:outline-c-primary"
+                  }`}
                 />
                 <div className="flex gap-4">
                   <div className="w-full">
