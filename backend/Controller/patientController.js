@@ -14,6 +14,7 @@ const {
   sharePatient,
   generateSoap,
   getPatientProductServicesAvail,
+  getAllVisits,
 } = require("../Service/patientService");
 
 const addPatientHandler = async (req, res) => {
@@ -59,6 +60,7 @@ const getPatientsByDoctorHandler = async (req, res) => {
   try {
     const { organizationId, staffId, firebaseUid } = req.query;
     console.log(organizationId, staffId, firebaseUid);
+    console.log("haha");
 
     const patients = await getDoctorPatient(
       organizationId,
@@ -102,12 +104,13 @@ const updatePatientHandler = async (req, res) => {
   try {
     const patientData = req.body;
     const patientId = req.params.patientId;
+    const { firebaseUid } = req.query;
     if (!patientId || !patientData) {
       return res.status(400).json({
         message: "Invalid request. Missing patientId or patientData.",
       });
     }
-    await updatePatientDetails(patientId, patientData);
+    await updatePatientDetails(patientId, patientData, firebaseUid);
     return res.status(200).json({ message: "Patient details updated" });
   } catch (error) {
     console.error("Error updating patient details: ", error);
@@ -312,18 +315,44 @@ const sharePatientHandler = async (req, res) => {
 const generateStoreSoapHandler = async (req, res) => {
   try {
     const patientId = req.params.patientId;
-    const { firebaseUid } = req.query;
+    const { firebaseUid, doctorId, noteId } = req.query;
     const { formattedSoap } = req.body;
+    console.log(firebaseUid, doctorId, noteId);
+
     if (!patientId) {
       return res.status(400).json({ message: "No Patient ID provided" });
     }
-    const soapId = await generateSoap(formattedSoap, patientId, firebaseUid);
+    const soapId = await generateSoap(
+      formattedSoap,
+      patientId,
+      doctorId,
+      firebaseUid,
+      noteId
+    );
 
     if (soapId) {
       return res.status(200).json({ soapId: soapId });
     }
   } catch (error) {
     console.error("Error adding patient soap record:", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const getAllPatientVisitsHandler = async (req, res) => {
+  try {
+    const { firebaseUid, staffId } = req.query;
+
+    if (!staffId) {
+      return res.status(400).json({ message: "No Doctor ID provided" });
+    }
+    const visits = await getAllVisits(staffId, firebaseUid);
+
+    if (visits) {
+      return res.status(200).json(visits);
+    }
+  } catch (error) {
+    console.error("Error getting patients visits:", error);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -343,4 +372,5 @@ module.exports = {
   getImages,
   sharePatientHandler,
   generateStoreSoapHandler,
+  getAllPatientVisitsHandler,
 };

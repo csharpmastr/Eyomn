@@ -200,12 +200,6 @@ const ArchiveTable = () => {
                           >
                             Retrieve
                           </a>
-                          <a
-                            className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-red-500 hover:text-f-light rounded-md cursor-pointer"
-                            role="menuitem"
-                          >
-                            Permanent Delete
-                          </a>
                         </div>
                       </div>
                     )}
@@ -218,17 +212,21 @@ const ArchiveTable = () => {
             <div className="flex gap-4">
               {selectedProducts.length > 0 && (
                 <>
-                  <div className="flex flex-col items-center gap-2 hover:text-red-400 cursor-pointer text-f-gray2">
-                    <FiTrash className="w-5 h-5" />
-                    <p className="text-p-sm">Delete</p>
-                  </div>
-                  <div
-                    className="flex flex-col items-center gap-2 hover:text-blue-400 cursor-pointer text-f-gray2"
-                    onClick={handleRetrieveMultipleProducts}
-                  >
-                    <FiRefreshCcw className="w-5 h-5" />
-                    <p className="text-p-sm">Retrieve</p>
-                  </div>
+                  {user.role !== "0" && (
+                    <>
+                      {/* <div className="flex flex-col items-center gap-2 hover:text-red-400 cursor-pointer text-f-gray2">
+                        <FiTrash className="w-5 h-5" />
+                        <p className="text-p-sm">Delete</p>
+                      </div> */}
+                      <div
+                        className="flex flex-col items-center gap-2 hover:text-blue-400 cursor-pointer text-f-gray2"
+                        onClick={handleRetrieveMultipleProducts}
+                      >
+                        <FiRefreshCcw className="w-5 h-5" />
+                        <p className="text-p-sm">Retrieve</p>
+                      </div>
+                    </>
+                  )}
                 </>
               )}
             </div>

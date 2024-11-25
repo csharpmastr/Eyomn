@@ -13,7 +13,7 @@ const visitSlice = createSlice({
     },
     removeVisit: (state, action) => {
       state.visits = state.visits.filter(
-        (visit) => visit.id !== action.payload
+        (visit) => visit.visitId !== action.payload
       );
     },
     setVisits: (state, action) => {

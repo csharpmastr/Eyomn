@@ -104,19 +104,15 @@ const MVP = () => {
 
     if (!hasFetched) {
       console.log("Initial fetching");
-      fetchData();
+      fetchData([]);
       setIsFetched(true);
       localStorage.setItem("hasFetched", "true");
+    } else if (user.role === "2") {
+      fetchData(["patients", "notifications"]);
     } else {
-      if (user.role === "2" && !isFetched) {
-        console.log("Refetching for role 2");
-        fetchData();
-        setIsFetched(true);
-      } else {
-        console.log("No fetching required");
-      }
+      console.log("No fetching required");
     }
-  }, [isFetched, user.role, fetchData]);
+  }, []);
 
   const currentTab = getCurrentTab();
 

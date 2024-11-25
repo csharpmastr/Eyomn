@@ -14,6 +14,7 @@ const {
   getImages,
   sharePatientHandler,
   generateStoreSoapHandler,
+  getAllPatientVisitsHandler,
 } = require("../Controller/patientController");
 const { validateToken } = require("../Wrapper/Wrapper");
 const multer = require("multer");
@@ -26,7 +27,7 @@ router.post(
 );
 router.get("/patients-doctor", getPatientsByDoctorHandler);
 router.get("/get-patients", validateToken, getPatientsHandler);
-router.put("/update/:patientId", updatePatientHandler);
+router.patch("/update/:patientId", updatePatientHandler);
 router.put("/delete/:patientId", deletePatientHandler);
 router.put("/retrieve/:patientId", retrievePatientHandler);
 router.post("/add-note/:patientId", addNoteHandler);
@@ -41,4 +42,5 @@ router.post(
 router.get("/image-archive", getImages);
 router.patch("/share-patient/:patientId", sharePatientHandler);
 router.post("/add-soap/:patientId", generateStoreSoapHandler);
+router.get("/get-all-visits", getAllPatientVisitsHandler);
 module.exports = router;

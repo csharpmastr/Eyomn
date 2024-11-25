@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useSelector } from "react-redux";
 
-const PATIENT_API_BASE_URL = "http://localhost:3000/api/v1/patient";
+const PATIENT_API_BASE_URL = "https://api.eyomn.com/api/v1/patient";
 
 export const addPatientService = async (
   patientData,
@@ -34,6 +34,33 @@ export const addPatientService = async (
   } catch (err) {
     console.error("Error adding patient : ", err);
     throw err;
+  }
+};
+export const updatePatientData = async (
+  patientData,
+  patientId,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.patch(
+      `${PATIENT_API_BASE_URL}/update/${patientId}`,
+      patientData,
+      {
+        params: {
+          firebaseUid,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error updating patient : ", error);
+    throw error;
   }
 };
 
@@ -316,28 +343,48 @@ export const summarizeInitialPatientCase = async (medformData) => {
   }
 };
 
-export const storeGeneratedSoap = (medformData, patientId, firebaseUid) => {
+export const storeGeneratedSoap = (
+  formattedSoap,
+  patientId,
+  doctorId,
+  firebaseUid,
+  noteId
+) => {
   try {
     axios.post(
       `${PATIENT_API_BASE_URL}/add-soap/${patientId}`,
-      {
-        patient_data: medformData,
-        summarized_data: {
-          subjective: "",
-          objective: "",
-          assessment: "",
-          plan: "",
-        },
-        halu_score: Number(10),
-        feedback: [],
-        markdown_output: "",
-      },
+      { formattedSoap },
       {
         params: {
           firebaseUid,
+          doctorId,
+          noteId,
         },
       }
     );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAllVisits = async (
+  staffId,
+  firebaseUid,
+  accessToken,
+  refreshToken
+) => {
+  try {
+    const response = await axios.get(`${PATIENT_API_BASE_URL}/get-all-visits`, {
+      params: {
+        firebaseUid,
+        staffId,
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+      },
+    });
+    return response.data;
   } catch (error) {
     console.log(error);
   }

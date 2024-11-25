@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Select from "react-select";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PhList from "../../assets/Data/location_list.json";
 import { useAddPatient } from "../../Hooks/useAddPatient";
 import Loader from "./Loader";
 import SuccessModal from "./SuccessModal";
+import Cookies from "universal-cookie";
+import { updatePatientData } from "../../Service/PatientService";
+import { updatePatient } from "../../Slice/PatientSlice";
 
 const calculateAge = (birthdate) => {
   const today = new Date();
@@ -19,18 +22,23 @@ const calculateAge = (birthdate) => {
     age--;
   }
 
-  return age;
+  return age.toString();
 };
 
-const AddEditPatient = ({ onClose, title }) => {
+const AddEditPatient = ({ onClose, title, patient }) => {
+  const cookies = new Cookies();
+  const accessToken = cookies.get("accessToken");
+  const refreshToken = cookies.get("refreshToken");
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [errors, setErrors] = useState({});
   const user = useSelector((state) => state.reducer.user.user);
   const { addPatientHook, isLoading, error } = useAddPatient();
+  const [isUpdateLoading, setIsUpdateLoading] = useState(false);
   const branches = user.branches;
-  const doctorId = user.userId;
+  const doctorId = user.role === "3" ? patient.doctorId : user.userId;
+  const reduxDispatch = useDispatch();
   const [selectedBranchId, setSelectedBranchId] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [formData, setFormData] = useState({
@@ -48,6 +56,30 @@ const AddEditPatient = ({ onClose, title }) => {
     email: "",
     reason_visit: "check up",
   });
+
+  useEffect(() => {
+    if (patient) {
+      setFormData({ ...patient });
+      setSelectedBranchId(patient.branchId);
+      console.log(patient.branchId);
+      if (patient.province) {
+        const initialProvince = {
+          value: patient.province,
+          label: patient.province,
+        };
+        setSelectedProvince(initialProvince);
+      }
+
+      if (patient.municipality) {
+        const initialMunicipality = {
+          value: patient.municipality,
+          label: patient.municipality,
+        };
+        setSelectedMunicipality(initialMunicipality);
+      }
+    }
+  }, [patient]);
+
   const handleChangeBranch = (e) => {
     const branchId = e.target.value;
 
@@ -75,7 +107,7 @@ const AddEditPatient = ({ onClose, title }) => {
       const updatedData = { ...prevData, [name]: value };
 
       if (name === "birthdate") {
-        updatedData.age = calculateAge(value);
+        updatedData.age = `${calculateAge(value)}`;
       }
 
       return updatedData;
@@ -179,7 +211,19 @@ const AddEditPatient = ({ onClose, title }) => {
 
     return Object.keys(newErrors).length === 0;
   };
-  console.log("hello?");
+  const sanitizeFormData = (formData) => {
+    const {
+      patientId,
+      doctorId,
+      organizationId,
+      branchId,
+      createdAt,
+      isDeleted,
+      authorizedDoctor,
+      ...sanitizedData
+    } = formData;
+    return sanitizedData;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -189,19 +233,48 @@ const AddEditPatient = ({ onClose, title }) => {
     }
 
     try {
-      const response = await addPatientHook(
-        formData,
-        doctorId,
-        selectedBranchId
-      );
-      if (response) {
-        setIsSuccess(true);
+      if (!patient) {
+        const response = await addPatientHook(
+          formData,
+          doctorId,
+          selectedBranchId
+        );
+        if (response) {
+          setIsSuccess(true);
+        }
+      } else {
+        console.log("Updating an existing patient");
+        const sanitizedData = sanitizeFormData(formData);
+        console.log(sanitizedData);
+
+        setIsUpdateLoading(true);
+
+        const response = await updatePatientData(
+          sanitizedData,
+          patient.patientId,
+          user.firebaseUid,
+          accessToken,
+          refreshToken
+        );
+        if (response) {
+          reduxDispatch(
+            updatePatient({
+              patientId: patient.patientId,
+              data: sanitizedData,
+            })
+          );
+          setIsSuccess(true);
+        }
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsUpdateLoading(false);
+    }
   };
   return (
     <>
-      {isLoading ? (
+      {isLoading || isUpdateLoading ? (
         <Loader description={"Saving Patient Information, please wait..."} />
       ) : (
         <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
@@ -583,13 +656,30 @@ const AddEditPatient = ({ onClose, title }) => {
                   Continue
                 </button>
               ) : (
-                <button
-                  className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-medium rounded-md  hover:bg-opacity-75"
-                  onClick={handleSubmit}
-                  disabled={currentCardIndex !== 1}
-                >
-                  Add Patient
-                </button>
+                <>
+                  {patient ? (
+                    <>
+                      {" "}
+                      <button
+                        className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-medium rounded-md  hover:bg-opacity-75"
+                        onClick={handleSubmit}
+                        disabled={currentCardIndex !== 1}
+                      >
+                        Update Patient
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-medium rounded-md  hover:bg-opacity-75"
+                        onClick={handleSubmit}
+                        disabled={currentCardIndex !== 1}
+                      >
+                        Add Patient
+                      </button>
+                    </>
+                  )}
+                </>
               )}
             </footer>
           </div>
@@ -597,8 +687,12 @@ const AddEditPatient = ({ onClose, title }) => {
       )}
       <SuccessModal
         isOpen={isSuccess}
-        title={"Patient Added!"}
-        description={`The patient has been successfully registered in the system.`}
+        title={patient ? `Patient Updated` : "Patient Added!"}
+        description={
+          patient
+            ? `The patient data has been successfully updated in the system.`
+            : `The patient has been successfully registered in the system.`
+        }
         onClose={() => onClose()}
       />
     </>

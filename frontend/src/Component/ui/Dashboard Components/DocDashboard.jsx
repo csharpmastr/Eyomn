@@ -12,24 +12,110 @@ const DbAppointment = lazy(() => import("./DbAppointment"));
 const DbTable = lazy(() => import("./DbTable"));
 
 const DocDashboard = () => {
-  const patients = useSelector((state) => state.reducer.patient.patients);
   const user = useSelector((state) => state.reducer.user.user);
+  const patients = useSelector((state) => state.reducer.patient.patients);
+  const visits = useSelector((state) => state.reducer.visit.visits);
+
   const patientCount = patients.length;
+  const visitCount = visits.length;
   const [greeting, setGreeting] = useState("");
   const [isGraphCollapsed, setIsGraphCollapsed] = useState(false);
+
+  const filterPatientsByMonth = (data, monthOffset = 0) => {
+    const now = new Date();
+    const targetMonth = new Date(
+      now.getFullYear(),
+      now.getMonth() + monthOffset,
+      1
+    );
+    const nextMonth = new Date(
+      targetMonth.getFullYear(),
+      targetMonth.getMonth() + 1,
+      1
+    );
+
+    return data.filter((item) => {
+      const itemDate = new Date(item.createdAt);
+      return itemDate >= targetMonth && itemDate < nextMonth;
+    });
+  };
+
+  const countPatients = (data) => {
+    return data.length;
+  };
+
+  const calculatePercentageChange = (currentValue, previousValue) => {
+    if (previousValue === 0) {
+      return currentValue > 0 ? "+∞%" : "0%";
+    }
+    const change = ((currentValue - previousValue) / previousValue) * 100;
+    return `${change > 0 ? "+" : ""}${change.toFixed(1)}%`;
+  };
+
+  const currentMonthPatients = filterPatientsByMonth(patients, 0);
+  const previousMonthPatients = filterPatientsByMonth(patients, -1);
+
+  const currentMonthPatientCount = countPatients(currentMonthPatients);
+  const previousMonthPatientCount = countPatients(previousMonthPatients);
+
+  const totalPatientChange = calculatePercentageChange(
+    patientCount,
+    previousMonthPatientCount
+  );
+
+  const filterVisitsByDate = (data, targetDate) => {
+    const startOfDay = new Date(
+      targetDate.toISOString().split("T")[0] // Get YYYY-MM-DD in UTC
+    ).getTime(); // Start of day UTC
+
+    const endOfDay = startOfDay + 24 * 60 * 60 * 1000 - 1; // End of day UTC
+
+    return data.filter((item) => {
+      const itemDate = new Date(item.date).getTime(); // Parse visit date
+      return itemDate >= startOfDay && itemDate <= endOfDay;
+    });
+  };
+
+  const getYesterdayDate = () => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    return yesterday;
+  };
+
+  const today = new Date();
+  const yesterday = getYesterdayDate();
+
+  const todayVisits = filterVisitsByDate(visits, today);
+  const yesterdayVisits = filterVisitsByDate(visits, yesterday);
+
+  const todayVisitCount = todayVisits.length;
+  const yesterdayVisitCount = yesterdayVisits.length;
+  console.log(todayVisitCount);
+
+  console.log(yesterdayVisitCount);
 
   const dummyData = [
     {
       title: "Number of Visit Today",
-      value: "8",
-      percentageChange: "+4.3%",
+      value: todayVisitCount || "0",
+      percentageChange: calculatePercentageChange(
+        todayVisitCount,
+        yesterdayVisitCount
+      ),
     },
     {
       title: "Total Patients this Month",
-      value: "22",
-      percentageChange: "+4.3%",
+      value: currentMonthPatientCount,
+      percentageChange: calculatePercentageChange(
+        currentMonthPatientCount,
+        previousMonthPatientCount
+      ),
     },
-    { title: "Total Patients", value: patientCount, percentageChange: "+4.3%" },
+    {
+      title: "Total Patients",
+      value: patientCount,
+      percentageChange: totalPatientChange,
+    },
   ];
 
   const cardColor = ["bg-[#FDF5E4]", "bg-[#E5FDE4]", "bg-[#E4ECFD]"];

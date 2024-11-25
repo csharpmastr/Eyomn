@@ -95,7 +95,11 @@ const ViewSchedule = ({ onClose, appointments }) => {
                       borderColors[index % borderColors.length]
                     } group flex flex-col`}
                   >
-                    {(role === "0" || role === "2") && <h1>{branchesName}</h1>}
+                    {role === "0" ||
+                    (role === "2" && user.branches?.length > 1) ? (
+                      <h1>{branchesName}</h1>
+                    ) : null}
+
                     <div className="flex justify-between w-full">
                       <div className="flex flex-col gap-3">
                         <p className="text-p-sm md:text-p-rg font-medium">

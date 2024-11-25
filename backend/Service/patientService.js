@@ -277,6 +277,7 @@ const getNotes = async (patientId, firebaseUid) => {
           const soapDetails = doc.data();
 
           const decryptedSoap = {
+            rawNoteId: soapDetails.rawNoteId,
             noteId: soapDetails.noteId,
             subjective: soapDetails.subjective
               ? soapDetails.subjective.map((item) => decryptData(item))
@@ -314,8 +315,11 @@ const getNotes = async (patientId, firebaseUid) => {
   }
 };
 
-const updatePatientDetails = async (patientId, patientData) => {
+const updatePatientDetails = async (patientId, patientData, firebaseUid) => {
   try {
+    console.log(patientData);
+
+    await verifyFirebaseUid(firebaseUid);
     const patientDocRef = patientCollection.doc(patientId);
 
     const encryptedPatientData = {};
@@ -539,8 +543,16 @@ const getPatientsWithAuthorizedDoctor = async (doctorId) => {
     throw error;
   }
 };
-const generateSoap = async (soapString, patientId, doctorId, firebaseUid) => {
+const generateSoap = async (
+  soapString,
+  patientId,
+  doctorId,
+  firebaseUid,
+  noteId
+) => {
   try {
+    console.log(noteId);
+
     const currentDate = new Date();
     await verifyFirebaseUid(firebaseUid);
     console.log({ soapString });
@@ -583,6 +595,7 @@ const generateSoap = async (soapString, patientId, doctorId, firebaseUid) => {
       plan: dictSoap.plan.map((item) => encryptData(item)),
       createdAt: currentDate.toISOString(),
       noteId: soapId,
+      rawNoteId: noteId,
     };
 
     await soapNoteRef.doc(soapId).set(encrypytedSoap);
@@ -611,6 +624,29 @@ const generateSoap = async (soapString, patientId, doctorId, firebaseUid) => {
     console.log(error);
   }
 };
+const getAllVisits = async (doctorId, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const visitsColRef = visitCollection;
+
+    const visitsSnapshot = await visitsColRef
+      .where("doctorId", "==", doctorId)
+      .get();
+
+    if (visitsSnapshot.empty) {
+      console.log("No visits found for this doctor.");
+      return [];
+    }
+
+    const visits = visitsSnapshot.docs.map((doc) => doc.data());
+
+    return visits;
+  } catch (error) {
+    console.error("Error fetching visits:", error);
+    throw new Error("Unable to fetch visits.");
+  }
+};
 
 module.exports = {
   addPatient,
@@ -629,4 +665,5 @@ module.exports = {
   getDoctorPatient,
   sharePatient,
   generateSoap,
+  getAllVisits,
 };

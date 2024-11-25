@@ -118,6 +118,7 @@ const PatientProfile = () => {
       )}
       {isModalOpen && (
         <AddEditPatient
+          patient={currentPatient}
           onClose={handleOpenModal}
           title={"Edit Patient Information"}
         />

@@ -29,6 +29,17 @@ const Notification = ({ data, setNotifOpen }) => {
         if (rawNotes[patientId]) {
           console.log("Using cached notes from Redux store");
           navigate(`/scribe/${patientId}`);
+          const responseNotif = await updateNotification(
+            user.staffId,
+            notificationId,
+            user.firebaseUid
+          );
+          console.log("hello?");
+
+          if (responseNotif) {
+            reduxDispatch(updateNotificationRead({ notificationId }));
+            console.log("Notificaton Updated");
+          }
         } else {
           try {
             const response = await getPatientNotes(
@@ -47,6 +58,8 @@ const Notification = ({ data, setNotifOpen }) => {
               notificationId,
               user.firebaseUid
             );
+            console.log("hello?");
+
             if (responseNotif) {
               reduxDispatch(updateNotificationRead({ notificationId }));
               console.log("Notificaton Updated");
