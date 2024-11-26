@@ -287,8 +287,9 @@ const MedForm = () => {
     },
 
     worths_FD: {
-      od: "",
-      os: "",
+      near: "",
+      far: "",
+      distance: "",
     },
 
     ishihara_test: {
@@ -2655,7 +2656,7 @@ const MedForm = () => {
                     <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
                       | Confrontation Test
                     </label>
-                    <div className="flex gap-5 mt-5 flex-col-reverse items-center md:flex-row">
+                    <div className="flex gap-5 mt-5 flex-col-reverse items-center lg:flex-row">
                       <div className="flex flex-col w-full">
                         <header className="bg-bg-sb border border-c-gray3 py-1 font-semibold text-p-sc md:text-p-sm text-f-gray rounded-t-md flex justify-center">
                           OD
@@ -3042,41 +3043,6 @@ const MedForm = () => {
                   </div>
                   <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
                     <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                      | Worth’s Four Dots
-                    </label>
-                    <section className="flex gap-3 mt-5">
-                      <div className="flex flex-col w-full">
-                        <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                          OD
-                        </p>
-                        <textarea
-                          type="text"
-                          name="wfd_od"
-                          value={medformData.worths_FD.od}
-                          onChange={(e) => handleChange(e, "worths_FD.od")}
-                          className="mt-4 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                          rows={3}
-                          placeholder=""
-                        />
-                      </div>
-                      <div className="flex flex-col w-full">
-                        <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                          OS
-                        </p>
-                        <textarea
-                          type="text"
-                          name="wfd_os"
-                          value={medformData.worths_FD.os}
-                          onChange={(e) => handleChange(e, "worths_FD.os")}
-                          className="mt-4 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                          rows={3}
-                          placeholder=""
-                        />
-                      </div>
-                    </section>
-                  </div>
-                  <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
-                    <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
                       | Diplopia
                     </label>
                     <section className="mt-5 flex gap-3 flex-col">
@@ -3139,8 +3105,6 @@ const MedForm = () => {
                       />
                     </section>
                   </div>
-                </div>
-                <div className="w-full flex flex-col md:flex-row gap-5">
                   <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
                     <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
                       | Motility Test
@@ -3179,6 +3143,71 @@ const MedForm = () => {
                         />
                       </section>
                     </section>
+                  </div>
+                </div>
+                <div className="w-full flex flex-col md:flex-row gap-5">
+                  <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
+                    <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
+                      | Worth’s Four Dots
+                    </label>
+                    <div className="w-full overflow-x-auto bg-white border border-f-gray rounded-md mt-5">
+                      <table className="min-w-[600px] md:md:w-full table-auto border-collapse">
+                        <thead>
+                          <tr className="bg-bg-sb text-c-gray3 font-medium text-p-sc md:text-p-sm">
+                            <th className="px-4 py-2 text-left border-r border-f-gray">
+                              NEAR
+                            </th>
+                            <th className="px-4 py-2 text-left border-r border-f-gray">
+                              FAR
+                            </th>
+                            <th className="px-4 py-2 text-left">DISTANCE</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td className="border-t border-r border-f-gray">
+                              <textarea
+                                type="text"
+                                name="wfd_near"
+                                value={medformData.worths_FD.near}
+                                onChange={(e) =>
+                                  handleChange(e, "worths_FD.near")
+                                }
+                                className="w-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                rows={2}
+                                placeholder=""
+                              />
+                            </td>
+                            <td className="border-t border-r border-f-gray">
+                              <textarea
+                                type="text"
+                                name="wfd_far"
+                                value={medformData.worths_FD.far}
+                                onChange={(e) =>
+                                  handleChange(e, "worths_FD.far")
+                                }
+                                className="w-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                rows={2}
+                                placeholder=""
+                              />
+                            </td>
+                            <td className="border-t border-f-gray">
+                              <textarea
+                                type="text"
+                                name="wfd_distance"
+                                value={medformData.worths_FD.distance}
+                                onChange={(e) =>
+                                  handleChange(e, "worths_FD.distance")
+                                }
+                                className="w-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                rows={2}
+                                placeholder=""
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                   <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
                     <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
@@ -3556,7 +3585,7 @@ const MedForm = () => {
                           }
                           className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
-                        <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
+                        <p className="text-p-sm md:text-p-rg font-medium text-c-secondary text-nowrap text-center w-1/3">
                           Cup/Disc Ratio
                         </p>
                         <input
@@ -3584,7 +3613,7 @@ const MedForm = () => {
                           }
                           className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
-                        <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
+                        <p className="text-p-sm md:text-p-rg font-medium text-c-secondary text-nowrap text-center w-1/3">
                           A/V Ratio
                         </p>
                         <input
@@ -3607,7 +3636,7 @@ const MedForm = () => {
                           }
                           className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
-                        <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
+                        <p className="text-p-sm md:text-p-rg font-medium text-c-secondary text-nowrap text-center w-1/3">
                           Macula
                         </p>
                         <input
@@ -3630,7 +3659,7 @@ const MedForm = () => {
                           }
                           className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
-                        <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
+                        <p className="text-p-sm md:text-p-rg font-medium text-c-secondary text-nowrap text-center w-1/3">
                           Vitreous
                         </p>
                         <input
@@ -3653,7 +3682,7 @@ const MedForm = () => {
                           }
                           className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
-                        <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
+                        <p className="text-p-sm md:text-p-rg font-medium text-c-secondary text-nowrap text-center w-1/3">
                           Vessel
                         </p>
                         <input
@@ -3681,7 +3710,7 @@ const MedForm = () => {
                           }
                           className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
-                        <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
+                        <p className="text-p-sm md:text-p-rg font-medium text-c-secondary text-nowrap text-center w-1/3">
                           Venous Pulse
                         </p>
                         <input
@@ -3714,7 +3743,7 @@ const MedForm = () => {
                           }
                           className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
-                        <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
+                        <p className="text-p-sm md:text-p-rg font-medium text-c-secondary text-nowrap text-center w-1/3">
                           Foveal Reflex
                         </p>
                         <input
@@ -3742,7 +3771,7 @@ const MedForm = () => {
                           }
                           className="mt-2 w-full md:w-2/3 p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
-                        <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
+                        <p className="text-p-sm md:text-p-rg font-medium text-c-secondary text-nowrap text-center w-1/3">
                           Periphery
                         </p>
                         <input
@@ -3924,7 +3953,7 @@ const MedForm = () => {
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </div>
-                      <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
+                      <p className="text-p-sm md:text-p-rg font-medium text-c-secondary text-nowrap text-center w-1/3">
                         Eyebrows
                       </p>
                       <div className="border border-f-gray rounded-md bg-white p-5 w-full md:w-2/3">
@@ -4143,7 +4172,7 @@ const MedForm = () => {
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </div>
-                      <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
+                      <p className="text-p-sm md:text-p-rg font-medium text-c-secondary text-nowrap text-center w-1/3">
                         Eyelashes
                       </p>
                       <div className="border border-f-gray rounded-md bg-white p-5 w-full md:w-2/3">
@@ -4362,7 +4391,7 @@ const MedForm = () => {
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </div>
-                      <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
+                      <p className="text-p-sm md:text-p-rg font-medium text-c-secondary text-nowrap text-center w-1/3">
                         Eye Lids
                       </p>
                       <div className="border border-f-gray rounded-md bg-white p-5 w-full md:w-2/3">
@@ -4581,7 +4610,7 @@ const MedForm = () => {
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </div>
-                      <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
+                      <p className="text-p-sm md:text-p-rg font-medium text-c-secondary text-nowrap text-center w-1/3">
                         Cornea
                       </p>
                       <div className="border border-f-gray rounded-md bg-white p-5 w-full md:w-2/3">
@@ -4800,7 +4829,7 @@ const MedForm = () => {
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </div>
-                      <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
+                      <p className="text-p-sm md:text-p-rg font-medium text-c-secondary text-nowrap text-center w-1/3">
                         Limbus
                       </p>
                       <div className="border border-f-gray rounded-md bg-white p-5 w-full md:w-2/3">
@@ -5019,7 +5048,7 @@ const MedForm = () => {
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </div>
-                      <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
+                      <p className="text-p-sm md:text-p-rg font-medium text-c-secondary text-nowrap text-center w-1/3">
                         Pupil
                       </p>
                       <div className="border border-f-gray rounded-md bg-white p-5 w-full md:w-2/3">
@@ -5238,7 +5267,7 @@ const MedForm = () => {
                           className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                         />
                       </div>
-                      <p className="text-p-sc md:text-p-sm font-medium text-c-secondary text-nowrap text-center w-1/3">
+                      <p className="text-p-sm md:text-p-rg font-medium text-c-secondary text-nowrap text-center w-1/3">
                         Iris
                       </p>
                       <div className="border border-f-gray rounded-md bg-white p-5 w-full md:w-2/3">
@@ -5430,175 +5459,153 @@ const MedForm = () => {
                   <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
                     | New Prescription
                   </label>
-                  <div className="w-full flex flex-col lg:flex-row gap-5 mt-5">
-                    <div className="w-full lg:w-1/3">
-                      <header className="flex justify-center py-2 rounded-t-md w-full border border-f-gray text-c-secondary text-p-sm md:text-p-rg font-semibold bg-bg-sb">
-                        <h1>OD</h1>
-                      </header>
-                      <section className="w-fullflex flex-col gap-1 p-5 border rounded-b-md bg-white border-f-gray">
-                        <section className="w-full h-fit">
-                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
-                            ADD
-                          </p>
-                          <textarea
-                            type="text"
-                            name="new_prescription_od_add"
-                            value={medformData.new_prescription_od.np_ADD}
-                            onChange={(e) =>
-                              handleChange(e, "new_prescription_od.np_ADD")
-                            }
-                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                            rows={2}
-                            placeholder="Input prescription"
-                          />
-                        </section>
-                        <section className="w-full h-fit">
-                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
-                            NEAR
-                          </p>
-                          <textarea
-                            type="text"
-                            name="new_prescription_od_near"
-                            value={medformData.new_prescription_od.np_NEAR}
-                            onChange={(e) =>
-                              handleChange(e, "new_prescription_od.np_NEAR")
-                            }
-                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                            rows={2}
-                            placeholder="Input prescription"
-                          />
-                        </section>
-                        <section className="w-full h-fit">
-                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
-                            FAR
-                          </p>
-                          <textarea
-                            type="text"
-                            name="new_prescription_od_far"
-                            value={medformData.new_prescription_od.np_FAR}
-                            onChange={(e) =>
-                              handleChange(e, "new_prescription_od.np_FAR")
-                            }
-                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                            rows={2}
-                            placeholder="Input prescription"
-                          />
-                        </section>
-                      </section>
-                    </div>
-                    <div className="w-full lg:w-1/3">
-                      <header className="flex justify-center py-2 rounded-t-md w-full border border-f-gray text-c-secondary text-p-sm md:text-p-rg font-semibold bg-bg-sb">
-                        <h1>OS</h1>
-                      </header>
-                      <section className="w-fullflex flex-col gap-1 p-5 border rounded-b-md  bg-white border-f-gray">
-                        <section className="w-full h-fit">
-                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
-                            ADD
-                          </p>
-                          <textarea
-                            type="text"
-                            name="new_prescription_os_add"
-                            value={medformData.new_prescription_os.np_ADD}
-                            onChange={(e) =>
-                              handleChange(e, "new_prescription_os.np_ADD")
-                            }
-                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                            rows={2}
-                            placeholder="Input prescription"
-                          />
-                        </section>
-                        <section className="w-full h-fit">
-                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
-                            NEAR
-                          </p>
-                          <textarea
-                            type="text"
-                            name="new_prescription_os_near"
-                            value={medformData.new_prescription_os.np_NEAR}
-                            onChange={(e) =>
-                              handleChange(e, "new_prescription_os.np_NEAR")
-                            }
-                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                            rows={2}
-                            placeholder="Input prescription"
-                          />
-                        </section>
-                        <section className="w-full h-fit">
-                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
-                            FAR
-                          </p>
-                          <textarea
-                            type="text"
-                            name="new_prescription_os_far"
-                            value={medformData.new_prescription_os.np_FAR}
-                            onChange={(e) =>
-                              handleChange(e, "new_prescription_os.np_FAR")
-                            }
-                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                            rows={2}
-                            placeholder="Input prescription"
-                          />
-                        </section>
-                      </section>
-                    </div>
-                    <div className="w-full lg:w-1/3">
-                      <header className="flex justify-center py-2 rounded-t-md w-full border border-f-gray text-c-secondary text-p-sm md:text-p-rg font-semibold bg-bg-sb">
-                        <h1>OU</h1>
-                      </header>
-                      <section className="w-fullflex flex-col gap-1 p-5 border rounded-b-md  bg-white border-f-gray">
-                        <section className="w-full h-fit">
-                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
-                            ADD
-                          </p>
-                          <textarea
-                            type="text"
-                            name="new_prescription_ou_add"
-                            value={medformData.new_prescription_ou.np_ADD}
-                            onChange={(e) =>
-                              handleChange(e, "new_prescription_ou.np_ADD")
-                            }
-                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                            rows={2}
-                            placeholder="Input prescription"
-                          />
-                        </section>
-                        <section className="w-full h-fit">
-                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
-                            NEAR
-                          </p>
-                          <textarea
-                            type="text"
-                            name="new_prescription_ou_near"
-                            value={medformData.new_prescription_ou.np_NEAR}
-                            onChange={(e) =>
-                              handleChange(e, "new_prescription_ou.np_NEAR")
-                            }
-                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                            rows={2}
-                            placeholder="Input prescription"
-                          />
-                        </section>
-                        <section className="w-full h-fit">
-                          <p className="text-f-gray font-medium text-p-sc md:text-p-sm text-nowrap mb-2">
-                            FAR
-                          </p>
-                          <textarea
-                            type="text"
-                            name="new_prescription_ou_far"
-                            value={medformData.new_prescription_ou.np_FAR}
-                            onChange={(e) =>
-                              handleChange(e, "new_prescription_ou.np_FAR")
-                            }
-                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                            rows={2}
-                            placeholder="Input prescription"
-                          />
-                        </section>
-                      </section>
-                    </div>
+                  <div className="w-full overflow-x-auto bg-white border border-f-gray rounded-md mt-5">
+                    <table className="min-w-[600px] md:md:w-full table-auto border-collapse">
+                      <thead>
+                        <tr className="bg-bg-sb text-c-gray3 font-medium text-p-sc md:text-p-sm">
+                          <th className="p-4"></th>
+                          <th className="p-4">ADD</th>
+                          <th className="p-4">NEAR</th>
+                          <th className="p-4">FAR</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td className="px-4 py-2 border-t border-r border-f-gray font-medium text-p-sc md:text-p-sm text-c-secondary">
+                            OD
+                          </td>
+                          <td className="border-t border-r border-f-gray">
+                            <textarea
+                              type="text"
+                              name="new_prescription_od_add"
+                              value={medformData.new_prescription_od.np_ADD}
+                              onChange={(e) =>
+                                handleChange(e, "new_prescription_od.np_ADD")
+                              }
+                              className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                              rows={2}
+                              placeholder="Input prescription"
+                            />
+                          </td>
+                          <td className="border-t border-r border-f-gray">
+                            <textarea
+                              type="text"
+                              name="new_prescription_od_near"
+                              value={medformData.new_prescription_od.np_NEAR}
+                              onChange={(e) =>
+                                handleChange(e, "new_prescription_od.np_NEAR")
+                              }
+                              className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                              rows={2}
+                              placeholder="Input prescription"
+                            />
+                          </td>
+                          <td className="border-t border-f-gray">
+                            <textarea
+                              type="text"
+                              name="new_prescription_od_far"
+                              value={medformData.new_prescription_od.np_FAR}
+                              onChange={(e) =>
+                                handleChange(e, "new_prescription_od.np_FAR")
+                              }
+                              className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                              rows={2}
+                              placeholder="Input prescription"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="px-4 py-2 border-t border-r border-f-gray font-medium text-p-sc md:text-p-sm text-c-secondary">
+                            OS
+                          </td>
+                          <td className="border-t border-r border-f-gray">
+                            <textarea
+                              type="text"
+                              name="new_prescription_os_add"
+                              value={medformData.new_prescription_os.np_ADD}
+                              onChange={(e) =>
+                                handleChange(e, "new_prescription_os.np_ADD")
+                              }
+                              className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                              rows={2}
+                              placeholder="Input prescription"
+                            />
+                          </td>
+                          <td className="border-t border-r border-f-gray">
+                            <textarea
+                              type="text"
+                              name="new_prescription_os_near"
+                              value={medformData.new_prescription_os.np_NEAR}
+                              onChange={(e) =>
+                                handleChange(e, "new_prescription_os.np_NEAR")
+                              }
+                              className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                              rows={2}
+                              placeholder="Input prescription"
+                            />
+                          </td>
+                          <td className="border-t border-f-gray">
+                            <textarea
+                              type="text"
+                              name="new_prescription_os_far"
+                              value={medformData.new_prescription_os.np_FAR}
+                              onChange={(e) =>
+                                handleChange(e, "new_prescription_os.np_FAR")
+                              }
+                              className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                              rows={2}
+                              placeholder="Input prescription"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="px-4 py-2 border-t border-r border-f-gray font-medium text-p-sc md:text-p-sm text-c-secondary">
+                            OU
+                          </td>
+                          <td className="border-t border-r border-f-gray">
+                            <textarea
+                              type="text"
+                              name="new_prescription_ou_add"
+                              value={medformData.new_prescription_ou.np_ADD}
+                              onChange={(e) =>
+                                handleChange(e, "new_prescription_ou.np_ADD")
+                              }
+                              className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                              rows={2}
+                              placeholder="Input prescription"
+                            />
+                          </td>
+                          <td className="border-t border-r border-f-gray">
+                            <textarea
+                              type="text"
+                              name="new_prescription_ou_near"
+                              value={medformData.new_prescription_ou.np_NEAR}
+                              onChange={(e) =>
+                                handleChange(e, "new_prescription_ou.np_NEAR")
+                              }
+                              className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                              rows={2}
+                              placeholder="Input prescription"
+                            />
+                          </td>
+                          <td className="border-t border-f-gray">
+                            <textarea
+                              type="text"
+                              name="new_prescription_ou_far"
+                              value={medformData.new_prescription_ou.np_FAR}
+                              onChange={(e) =>
+                                handleChange(e, "new_prescription_ou.np_FAR")
+                              }
+                              className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                              rows={2}
+                              placeholder="Input prescription"
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
-                <div className="flex gap-5 flex-col md:flex-row"></div>
                 <div className="flex gap-5 flex-col md:flex-row">
                   <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full md:w-1/2">
                     <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
