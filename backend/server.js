@@ -14,6 +14,7 @@ const organizationRoute = require("./Route/organizationRoute");
 const appointmentRoute = require("./Route/appointmentRoute");
 const inventoryRoute = require("./Route/inventoryRoute");
 const notificationRoute = require("./Route/notificationRoute");
+const { startSSEServer } = require("./SSE/DoctorEvent");
 //Middleware
 app.use(express.json());
 
@@ -42,4 +43,5 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+startSSEServer(app);
 startWebSocketServer();
