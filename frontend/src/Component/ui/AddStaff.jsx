@@ -608,33 +608,36 @@ const AddStaff = ({ onClose, staffData }) => {
                         <option value="Staff">Staff</option>
                       </select>
                     </section>
-                    <section>
-                      <label
-                        htmlFor="branch_ass"
-                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                      >
-                        Branch Assignment{" "}
-                        <span className="text-red-400">
-                          {errors.branch_ass && errors.branch_ass}
-                        </span>
-                      </label>
-                      <select
-                        name="branch_ass"
-                        value={branchAssignment}
-                        onChange={handleBranchAssignemnt}
-                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                          errors.branch_ass
-                            ? "border-red-400 focus:outline-red-400"
-                            : "border-c-gray3 focus:outline-c-primary"
-                        }`}
-                      >
-                        <option value="" disabled className="text-c-gray3">
-                          Select branch assignment
-                        </option>
-                        <option value="stationary">Stationary</option>
-                        <option value="rotational">Rotational</option>
-                      </select>
-                    </section>
+                    {(formData.position === "Ophthalmologist" ||
+                      formData.position === "Optometrist") && (
+                      <section>
+                        <label
+                          htmlFor="branch_ass"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                        >
+                          Branch Assignment{" "}
+                          <span className="text-red-400">
+                            {errors.branch_ass && errors.branch_ass}
+                          </span>
+                        </label>
+                        <select
+                          name="branch_ass"
+                          value={branchAssignment}
+                          onChange={handleBranchAssignemnt}
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                            errors.branch_ass
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-c-gray3 focus:outline-c-primary"
+                          }`}
+                        >
+                          <option value="" disabled className="text-c-gray3">
+                            Select branch assignment
+                          </option>
+                          <option value="stationary">Stationary</option>
+                          <option value="rotational">Rotational</option>
+                        </select>
+                      </section>
+                    )}
                   </div>
                   <div>
                     <header className="flex justify-between ">

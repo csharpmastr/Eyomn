@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useSelector } from "react-redux";
 
-const PATIENT_API_BASE_URL = "https://api.eyomn.com/api/v1/patient";
+const PATIENT_API_BASE_URL = "http://localhost:3000/api/v1/patient";
 
 export const addPatientService = async (
   patientData,

@@ -21,6 +21,13 @@ const VisitReasonModal = ({ onClose }) => {
   });
 
   const { patientId } = useParams();
+  const currentPatient = useSelector((state) =>
+    state.reducer.patient.patients?.find(
+      (patient) => patient.patientId === patientId
+    )
+  );
+
+  const patientDoc = currentPatient.flatMap;
   const user = useSelector((state) => state.reducer.user.user);
   const firebaseUid = user.firebaseUid;
   let branchId =
@@ -113,11 +120,19 @@ const VisitReasonModal = ({ onClose }) => {
                   <option value="" disabled>
                     Select Doctor
                   </option>
-                  {doctors.map((doctor, key) => (
-                    <option key={key} value={doctor.staffId}>
-                      {doctor.first_name} {doctor.last_name} ({doctor.position})
-                    </option>
-                  ))}
+                  {doctors
+                    .filter(
+                      (doctor) =>
+                        currentPatient?.authorizedDoctor?.includes(
+                          doctor.staffId
+                        ) || currentPatient?.doctorId === doctor.staffId
+                    )
+                    .map((doctor, key) => (
+                      <option key={key} value={doctor.staffId}>
+                        {doctor.first_name} {doctor.last_name} (
+                        {doctor.position})
+                      </option>
+                    ))}
                 </select>
               </div>
             </div>

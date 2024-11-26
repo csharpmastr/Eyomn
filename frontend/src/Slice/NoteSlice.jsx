@@ -15,9 +15,20 @@ const noteSlice = createSlice({
       const patientId = Object.keys(newNotes)[0];
 
       const existingNotes = state.rawNotes[patientId] || [];
-      state.rawNotes[patientId] = [
-        ...new Set([...existingNotes, ...newNotes[patientId]]),
+
+      const newNotesArray = newNotes[patientId] || [];
+
+      const updatedNotes = [
+        ...existingNotes,
+        ...newNotesArray.filter(
+          (newNote) =>
+            !existingNotes.some(
+              (existingNote) => existingNote.noteId === newNote.noteId
+            )
+        ),
       ];
+
+      state.rawNotes[patientId] = updatedNotes;
     },
 
     clearRawNotes: (state) => {

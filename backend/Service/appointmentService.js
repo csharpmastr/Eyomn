@@ -34,11 +34,7 @@ const addSchedule = async (branchId, scheduleDetails, firebaseUid) => {
     const thirtyMinuteGap = 30 * 60 * 1000;
 
     const newStartTime = new Date(scheduleDetails.scheduledTime).getTime();
-    const newEndTime =
-      newStartTime +
-      (scheduleDetails.duration
-        ? scheduleDetails.duration * 60 * 1000
-        : thirtyMinuteGap);
+    const newEndTime = newStartTime + thirtyMinuteGap;
 
     const schedulesSnapshot = await schedRef.get();
     schedulesSnapshot.forEach((doc) => {

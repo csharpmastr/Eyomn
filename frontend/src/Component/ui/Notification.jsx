@@ -16,63 +16,32 @@ const Notification = ({ data, setNotifOpen }) => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.reducer.user.user);
   const rawNotes = useSelector((state) => state.reducer.note.rawNotes);
-
+  const medicalScribeNotes = useSelector(
+    (state) => state.reducer.note.medicalScribeNotes
+  );
   const handleClickNotification = async (patientId, notificationId) => {
     try {
       setNotifOpen(false);
-      sessionStorage.setItem("currentPatient", patientId);
+
+      // Set session storage values
       sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
+      sessionStorage.setItem("currentPatientId", patientId);
       sessionStorage.setItem("selectedTab", "scribe");
+
       navigate(`/scribe/${patientId}`);
 
-      try {
-        if (rawNotes[patientId]) {
-          console.log("Using cached notes from Redux store");
-          navigate(`/scribe/${patientId}`);
-          const responseNotif = await updateNotification(
-            user.staffId,
-            notificationId,
-            user.firebaseUid
-          );
-          console.log("hello?");
+      const responseNotif = await updateNotification(
+        user.staffId,
+        notificationId,
+        user.firebaseUid
+      );
 
-          if (responseNotif) {
-            reduxDispatch(updateNotificationRead({ notificationId }));
-            console.log("Notificaton Updated");
-          }
-        } else {
-          try {
-            const response = await getPatientNotes(
-              patientId,
-              user.firebaseUid,
-              accessToken,
-              refreshToken
-            );
-            if (response) {
-              const { rawNotes, soapNotes } = notesResponse;
-              reduxDispatch(setRawNotes({ [patientId]: rawNotes }));
-              reduxDispatch(setMedicalScribeNotes({ [patientId]: soapNotes }));
-            }
-            const responseNotif = await updateNotification(
-              user.staffId,
-              notificationId,
-              user.firebaseUid
-            );
-            console.log("hello?");
-
-            if (responseNotif) {
-              reduxDispatch(updateNotificationRead({ notificationId }));
-              console.log("Notificaton Updated");
-            }
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      } catch (error) {
-        console.log(error);
+      if (responseNotif) {
+        reduxDispatch(updateNotificationRead({ notificationId }));
+        console.log("Notification Updated");
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error handling notification:", error);
     }
   };
 

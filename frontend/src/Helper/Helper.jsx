@@ -1329,3 +1329,18 @@ export const extractSoapData = (inputText) => {
     plan,
   };
 };
+const isAllEmptyOrFalse = (data) => {
+  if (typeof data === "object" && data !== null) {
+    return Object.values(data).every((value) => isAllEmptyOrFalse(value));
+  }
+
+  if (typeof data === "boolean") {
+    return data === false;
+  }
+
+  if (typeof data === "string") {
+    return data === "";
+  }
+
+  return !data;
+};

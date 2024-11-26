@@ -39,7 +39,6 @@ const ScribeRecord = () => {
     (state) => state.reducer.note.images[patientId] || []
   );
   const patient = patients.find((patient) => patient.patientId === patientId);
-  console.log(patient);
 
   const cookies = new Cookies();
   const accessToken = cookies.get("accessToken", { path: "/" });
@@ -144,7 +143,6 @@ const ScribeRecord = () => {
           !scribeNotes ||
           scribeNotes.length === 0
         ) {
-          console.log("fetching notes");
           const notesResponse = await getPatientNotes(
             patientId,
             user.firebaseUid,
@@ -152,10 +150,7 @@ const ScribeRecord = () => {
             refreshToken
           );
           if (notesResponse) {
-            console.log(notesResponse);
-
             const { rawNotes, soapNotes } = notesResponse;
-            console.log(soapNotes);
 
             reduxDispatch(setRawNotes({ [patientId]: rawNotes }));
             reduxDispatch(setMedicalScribeNotes({ [patientId]: soapNotes }));
@@ -167,8 +162,6 @@ const ScribeRecord = () => {
         }
 
         if (!imagesUrl || imagesUrl.length === 0) {
-          console.log("fetching image");
-
           const imagesResponse = await getPatientImageArchive(
             patientId,
             user.firebaseUid,
