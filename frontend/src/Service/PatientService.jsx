@@ -5,8 +5,6 @@ const PATIENT_API_BASE_URL = "http://localhost:3000/api/v1/patient";
 
 export const addPatientService = async (
   patientData,
-  accessToken,
-  refreshToken,
   organizationID,
   branchId,
   doctorId,
@@ -17,10 +15,7 @@ export const addPatientService = async (
       `${PATIENT_API_BASE_URL}/add-patient/${organizationID}/${branchId}/${doctorId}`,
       patientData,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
         params: {
           firebaseUid,
         },
@@ -39,9 +34,7 @@ export const addPatientService = async (
 export const updatePatientData = async (
   patientData,
   patientId,
-  firebaseUid,
-  accessToken,
-  refreshToken
+  firebaseUid
 ) => {
   try {
     const response = await axios.patch(
@@ -51,10 +44,7 @@ export const updatePatientData = async (
         params: {
           firebaseUid,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response;
@@ -67,9 +57,7 @@ export const updatePatientData = async (
 export const getPatientsByDoctor = async (
   organizationId,
   staffId,
-  firebaseUid,
-  accessToken,
-  refreshToken
+  firebaseUid
 ) => {
   try {
     const response = await axios.get(
@@ -80,10 +68,7 @@ export const getPatientsByDoctor = async (
           staffId,
           firebaseUid,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response.data;
@@ -97,8 +82,6 @@ export const getPatients = async (
   organizationId,
   branchId = null,
   doctorId = null,
-  accessToken,
-  refreshToken,
   role,
   firebaseUid
 ) => {
@@ -111,10 +94,7 @@ export const getPatients = async (
         role,
         firebaseUid,
       },
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "x-refresh-token": refreshToken,
-      },
+      withCredentials: true,
     });
 
     return response.data;
@@ -124,22 +104,13 @@ export const getPatients = async (
   }
 };
 
-export const addPatientNote = async (
-  note,
-  patientId,
-  firebaseUid,
-  accessToken,
-  refreshToken
-) => {
+export const addPatientNote = async (note, patientId, firebaseUid) => {
   try {
     const response = await axios.post(
       `${PATIENT_API_BASE_URL}/add-note/${patientId}`,
       note,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
         params: {
           firebaseUid,
         },
@@ -152,22 +123,14 @@ export const addPatientNote = async (
   }
 };
 
-export const getPatientVisit = async (
-  patientId,
-  accessToken,
-  refreshToken,
-  firebaseUid
-) => {
+export const getPatientVisit = async (patientId, firebaseUid) => {
   try {
     const response = await axios.get(`${PATIENT_API_BASE_URL}/get-visits`, {
       params: {
         patientId,
         firebaseUid,
       },
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "x-refresh-token": refreshToken,
-      },
+      withCredentials: true,
     });
     return response.data;
   } catch (error) {
@@ -181,9 +144,7 @@ export const addVisitService = async (
   patientId,
   doctorId,
   branchId,
-  firebaseUid,
-  accessToken,
-  refreshToken
+  firebaseUid
 ) => {
   try {
     const response = await axios.post(
@@ -193,10 +154,7 @@ export const addVisitService = async (
         params: {
           firebaseUid,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response;
@@ -206,22 +164,14 @@ export const addVisitService = async (
   }
 };
 
-export const getPatientNotes = async (
-  patientId,
-  firebaseUid,
-  accessToken,
-  refreshToken
-) => {
+export const getPatientNotes = async (patientId, firebaseUid) => {
   try {
     const response = await axios.get(`${PATIENT_API_BASE_URL}/get-notes`, {
       params: {
         firebaseUid,
         patientId,
       },
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "x-refresh-token": refreshToken,
-      },
+      withCredentials: true,
     });
     return response.data;
   } catch (error) {
@@ -230,13 +180,7 @@ export const getPatientNotes = async (
   }
 };
 
-export const uploadImageArchive = async (
-  patientId,
-  image,
-  firebaseUid,
-  accessToken,
-  refreshToken
-) => {
+export const uploadImageArchive = async (patientId, image, firebaseUid) => {
   try {
     const formData = new FormData();
     formData.append("image", image);
@@ -249,10 +193,9 @@ export const uploadImageArchive = async (
           firebaseUid,
         },
         headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true,
       }
     );
 
@@ -268,22 +211,14 @@ export const uploadImageArchive = async (
   }
 };
 
-export const getPatientImageArchive = async (
-  patientId,
-  firebaseUid,
-  accessToken,
-  refreshToken
-) => {
+export const getPatientImageArchive = async (patientId, firebaseUid) => {
   try {
     const response = await axios.get(`${PATIENT_API_BASE_URL}/image-archive`, {
       params: {
         patientId,
         firebaseUid,
       },
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "x-refresh-token": refreshToken,
-      },
+      withCredentials: true,
     });
     return response.data;
   } catch (error) {
@@ -295,9 +230,7 @@ export const sharePatient = async (
   doctorId,
   authorizedDoctor,
   patientId,
-  firebaseUid,
-  accessToken,
-  refreshToken
+  firebaseUid
 ) => {
   try {
     const response = await axios.patch(
@@ -308,10 +241,7 @@ export const sharePatient = async (
           firebaseUid,
           doctorId,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response;
@@ -360,6 +290,7 @@ export const storeGeneratedSoap = (
           doctorId,
           noteId,
         },
+        withCredentials: true,
       }
     );
   } catch (error) {
@@ -367,22 +298,14 @@ export const storeGeneratedSoap = (
   }
 };
 
-export const getAllVisits = async (
-  staffId,
-  firebaseUid,
-  accessToken,
-  refreshToken
-) => {
+export const getAllVisits = async (staffId, firebaseUid) => {
   try {
     const response = await axios.get(`${PATIENT_API_BASE_URL}/get-all-visits`, {
       params: {
         firebaseUid,
         staffId,
       },
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "x-refresh-token": refreshToken,
-      },
+      withCredentials: true,
     });
     return response.data;
   } catch (error) {
