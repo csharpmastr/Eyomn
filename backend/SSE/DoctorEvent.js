@@ -20,7 +20,7 @@ const sseConnections = {};
 let cachedPatients = {};
 let cachedNotifications = {};
 
-const startSSEServer = (app) => {
+const startDoctorSSEServer = (app) => {
   app.get("/sse/:role/:id", (req, res) => {
     const { role, id } = req.params;
 
@@ -153,4 +153,4 @@ const startSSEServer = (app) => {
   });
 };
 
-module.exports = { startSSEServer };
+module.exports = { startDoctorSSEServer };
