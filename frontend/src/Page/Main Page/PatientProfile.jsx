@@ -14,8 +14,7 @@ import { FiEdit } from "react-icons/fi";
 const PatientProfile = () => {
   const cookies = new Cookies();
   const [visits, setVisits] = useState([]);
-  const accessToken = cookies.get("accessToken", { path: "/" });
-  const refreshToken = cookies.get("refreshToken", { path: "/" });
+
   const role = useSelector((state) => state.reducer.user.user.role);
   const patients = useSelector((state) => state.reducer.patient.patients);
   const visitsStore = useSelector((state) => state.reducer.visit.visits);
@@ -54,8 +53,6 @@ const PatientProfile = () => {
         } else {
           const visitsRes = await getPatientVisit(
             currentPatient.patientId,
-            accessToken,
-            refreshToken,
             user.firebaseUid
           );
 
@@ -74,10 +71,10 @@ const PatientProfile = () => {
       }
     };
 
-    if (currentPatient?.patientId && accessToken && refreshToken) {
+    if (currentPatient?.patientId) {
       fetchPatientVisit();
     }
-  }, [currentPatient, accessToken, refreshToken, reduxDispatch, visitsStore]);
+  }, [currentPatient, reduxDispatch, visitsStore]);
 
   return (
     <div className="w-full h-full p-4 md:p-6 2xl:p-8">
