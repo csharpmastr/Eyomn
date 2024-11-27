@@ -8,8 +8,6 @@ export const useAddPurchase = () => {
   const cookies = new Cookies();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const accessToken = cookies.get("accessToken", { path: "/" });
-  const refreshToken = cookies.get("refreshToken", { path: "/" });
   const user = useSelector((state) => state.reducer.user.user);
   const reduxDispatch = useDispatch();
 
@@ -21,9 +19,7 @@ export const useAddPurchase = () => {
         purchaseDetails,
         branchId,
         user.userId,
-        user.firebaseUid,
-        accessToken,
-        refreshToken
+        user.firebaseUid
       );
 
       if (response) {

@@ -39,10 +39,6 @@ const ScribeRecord = () => {
     (state) => state.reducer.note.images[patientId] || []
   );
   const patient = patients.find((patient) => patient.patientId === patientId);
-
-  const cookies = new Cookies();
-  const accessToken = cookies.get("accessToken", { path: "/" });
-  const refreshToken = cookies.get("refreshToken", { path: "/" });
   const [selectImgOpen, setSelectImgOpen] = useState(null);
   const images = Array.from({ length: 13 }).map(() => SampleImage);
   const [currentPatient, setCurrentPatient] = useState(null);
@@ -110,9 +106,7 @@ const ScribeRecord = () => {
       const response = await uploadImageArchive(
         patientId,
         imageFile,
-        user.firebaseUid,
-        accessToken,
-        refreshToken
+        user.firebaseUid
       );
       if (response) {
         setPatientImages((prevData) => [...patientImages, response.url]);
@@ -145,9 +139,7 @@ const ScribeRecord = () => {
         ) {
           const notesResponse = await getPatientNotes(
             patientId,
-            user.firebaseUid,
-            accessToken,
-            refreshToken
+            user.firebaseUid
           );
           if (notesResponse) {
             const { rawNotes, soapNotes } = notesResponse;
@@ -164,9 +156,7 @@ const ScribeRecord = () => {
         if (!imagesUrl || imagesUrl.length === 0) {
           const imagesResponse = await getPatientImageArchive(
             patientId,
-            user.firebaseUid,
-            accessToken,
-            refreshToken
+            user.firebaseUid
           );
           if (
             imagesResponse &&

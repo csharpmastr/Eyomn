@@ -87,18 +87,24 @@ const addStaff = async (organizationId, staffData, firebaseUid) => {
     }
     await sendEmail({
       to: staffData.email,
-      subject: "Your New Account Credentials",
-      text: `Hello ${staffData.first_name},
-
-      Your account has been successfully created. Here are your login credentials:
-      
-      Email: ${staffData.email}
-      Password: ${password}
-      
-      Please log in and change your password after your first login.
-      
-      Best regards,
-      ${orgName}`,
+      subject: `Welcome to ${orgName} - Your Account Credentials`,
+      text: `Dear ${staffData.first_name},
+    
+    We are delighted to welcome you to ${orgName}. Your account has been successfully created, and you can now access our platform.
+    
+    Below are your initial login credentials:
+    
+    Email: ${staffData.email}  
+    Password: ${password}  
+    
+    For your security, we kindly request that you log in and update your password at your earliest convenience.
+    
+    If you have any questions or need assistance, please do not hesitate to contact our support team .
+    
+    Welcome aboard, and we look forward to working with you!
+    
+    Best regards,  
+    ${orgName}`,
     });
 
     const userRef = userCollection.doc(staffId);
@@ -173,14 +179,20 @@ const addBranch = async (organizationId, branchData, firebaseUid) => {
     await sendEmail({
       to: branchData.email,
       subject: "Your New Account Credentials",
-      text: `Hello ${branchData.name},
+      text: `Dear ${branchData.name},
 
-      Your account has been successfully created. Here are your login credentials:
-      
-      Email: ${branchData.email}
-      Password: ${password}
-      
-      Please log in and change your password after your first login.
+    We are delighted to welcome you to ${orgName}. Your account has been successfully created, and you can now access our platform.
+    
+    Below are your initial login credentials:
+    
+    Email: ${branchData.email}  
+    Password: ${password}  
+    
+    For your security, we kindly request that you log in and update your password at your earliest convenience.
+    
+    If you have any questions or need assistance, please do not hesitate to contact our support team .
+    
+    Welcome aboard, and we look forward to working with you!
       
       Best regards,
       ${orgName}`,

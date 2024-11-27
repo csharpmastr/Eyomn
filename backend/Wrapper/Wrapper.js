@@ -2,8 +2,9 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const validateToken = (req, res, next) => {
-  const accessToken = req.headers["authorization"]?.split(" ")[1];
-  const refreshToken = req.headers["x-refresh-token"];
+  console.log("Cookies:", req.cookies);
+  const accessToken = req.cookies.accessToken;
+  const refreshToken = req.cookies.refreshToken;
 
   if (!accessToken || !refreshToken) {
     return res.status(401).json({ message: "No tokens provided" });
@@ -24,14 +25,17 @@ const validateToken = (req, res, next) => {
                   .status(401)
                   .json({ message: "Both tokens expired, please login again" });
               }
-
               const newAccessToken = jwt.sign(
                 { userId: decodedRefresh.userId },
                 process.env.JWT_ACCESS_SECRET,
                 { expiresIn: "5h" }
               );
-
-              res.setHeader("x-access-token", newAccessToken);
+              res.cookie("accessToken", newAccessToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "Strict",
+                maxAge: 5 * 60 * 60 * 1000,
+              });
 
               req.accessToken = newAccessToken;
               next();

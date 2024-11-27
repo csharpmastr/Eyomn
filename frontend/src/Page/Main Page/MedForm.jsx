@@ -4,7 +4,8 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 import EyeSketch from "../../Component/ui/EyeSketch";
 import OD from "../../assets/Image/OD.png";
 import OS from "../../assets/Image/OS.png";
-import CROSS from "../../assets/Image/CROSS.png";
+import CROSS_OD from "../../assets/Image/CROSS_OD.png";
+import CROSS_OS from "../../assets/Image/CROSS_OS.png";
 import BLANK_OD from "../../assets/Image/BLANKOD.png";
 import BLANK_OS from "../../assets/Image/BLANKOS.png";
 import FRONT_OD from "../../assets/Image/FRONTOD.png";
@@ -60,7 +61,8 @@ const MedForm = () => {
   const [canvasImages, setCanvasImages] = useState({
     OD: "",
     OS: "",
-    CROSS: "",
+    CROSS_OD: "",
+    CROSS_OS: "",
     BLANK_OD: "",
     BLANK_OS: "",
     FRONT_OD: "",
@@ -581,7 +583,6 @@ const MedForm = () => {
     e.preventDefault();
     const transformedData = cleanData(medformData);
     const formattedSoap = formatPatientNotes(transformedData);
-    console.log(transformedData);
 
     console.log(formattedSoap);
 
@@ -627,37 +628,39 @@ const MedForm = () => {
 
     const transformedData = cleanData(medformData);
     const formattedData = formatPatientNotes(transformedData);
+
     console.log(formattedData);
 
     if (currentPage < pageTitles.length - 1) {
       if (currentPage === 1) {
-        if (!noteId) {
-          if (!soap) {
-            setInitLoad(true);
-            try {
-              const response = await summarizeInitialPatientCase(formattedData);
-              if (response) {
-                console.log(response);
-                setSoap(extractSoapData(response));
-                setCurrentPage((prevPage) => prevPage + 1);
-              } else {
-                console.error("No response received");
-              }
-            } catch (error) {
-              console.error("Error during API call:", error);
-            } finally {
-              setInitLoad(false);
-            }
-          } else {
-            console.log("running");
+        // if (!noteId) {
+        //   if (!soap) {
+        //     setInitLoad(true);
+        //     try {
+        //       const response = await summarizeInitialPatientCase(formattedData);
+        //       if (response) {
+        //         console.log(response);
+        //         setSoap(extractSoapData(response));
+        //         setCurrentPage((prevPage) => prevPage + 1);
+        //       } else {
+        //         console.error("No response received");
+        //       }
+        //     } catch (error) {
+        //       console.error("Error during API call:", error);
+        //     } finally {
+        //       setInitLoad(false);
+        //     }
+        //   } else {
+        //     console.log("running");
 
-            setCurrentPage((prevPage) => prevPage + 1);
-          }
-        } else {
-          console.log("log");
+        //     setCurrentPage((prevPage) => prevPage + 1);
+        //   }
+        // } else {
+        //   console.log("log");
 
-          setCurrentPage((prevPage) => prevPage + 1);
-        }
+        //   setCurrentPage((prevPage) => prevPage + 1);
+        // }
+        setCurrentPage((prevPage) => prevPage + 1);
       } else {
         console.log("why");
         setCurrentPage((prevPage) => prevPage + 1);
@@ -681,12 +684,69 @@ const MedForm = () => {
     }));
 
     switch (selectedBG) {
-      case "CROSS":
+      case "CROSS_OD":
         setMedformData((prevData) => ({
           ...prevData,
           confrontation_test: {
             ...prevData.confrontation_test,
-            image: image,
+            od_image: image,
+          },
+        }));
+        break;
+      case "CROSS_OS":
+        setMedformData((prevData) => ({
+          ...prevData,
+          confrontation_test: {
+            ...prevData.confrontation_test,
+            os_image: image,
+          },
+        }));
+        break;
+      case "OD":
+        setMedformData((prevData) => ({
+          ...prevData,
+          internal_examination: {
+            ...prevData.internal_examination,
+            image: {
+              ...prevData.internal_examination.image,
+              od: image,
+            },
+          },
+        }));
+        break;
+      case "OS":
+        setMedformData((prevData) => ({
+          ...prevData,
+          internal_examination: {
+            ...prevData.internal_examination,
+            image: {
+              ...prevData.internal_examination.image,
+              os: image,
+            },
+          },
+        }));
+        break;
+      case "FRONT_OD":
+        setMedformData((prevData) => ({
+          ...prevData,
+          external_examination: {
+            ...prevData.external_examination,
+            image: {
+              ...prevData.external_examination.image,
+              od: image,
+            },
+          },
+        }));
+        break;
+      case "FRONT_OS":
+        setMedformData((prevData) => ({
+          ...prevData,
+          external_examination: {
+            ...prevData.external_examination,
+            image: {
+              ...prevData.external_examination.image,
+              os: image,
+            },
           },
         }));
         break;
@@ -746,6 +806,16 @@ const MedForm = () => {
     );
   };
   const handleBack = () => {
+    if (hasUnsavedChanges) {
+      const confirmation = window.confirm(
+        "You have unsaved changes. Are you sure you want to leave?"
+      );
+      if (!confirmation) {
+        return;
+      }
+    }
+
+    // Proceed with navigation
     navigate(`/scribe/${patientId}`);
     sessionStorage.removeItem("medformData");
     sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
@@ -789,7 +859,7 @@ const MedForm = () => {
           description={
             isLoading
               ? "Saving Patient Note, please wait..."
-              : "Summarizing Initial Patient Case, please wait..."
+              : "Summarizing Initial Patient Note, please wait..."
           }
         />
       )}
@@ -1426,7 +1496,7 @@ const MedForm = () => {
                         className="mt-2 w-full  px-3 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
                       />
                       <span className="px-4 py-1 bg-zinc-200 border rounded-md absolute top-4 right-2 text-p-sc md:text-p-sm text-f-gray2">
-                        C/F
+                        °C
                       </span>
                     </section>
                   </div>
@@ -1886,7 +1956,7 @@ const MedForm = () => {
                 <div className="w-full">
                   <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
                     <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
-                      | Contact Lens Prescrition
+                      | Contact Lens Prescription
                     </label>
                     <section className="text-p-sc md:text-p-sm font-semibold mt-5 flex gap-3">
                       <label className="w-1/3">
@@ -2844,12 +2914,12 @@ const MedForm = () => {
                             <img
                               src={
                                 medformData.confrontation_test.od_image ||
-                                canvasImages.CROSS ||
-                                CROSS
+                                canvasImages.CROSS_OD ||
+                                CROSS_OD
                               }
                               alt="CROSS IMG"
                               className="w-full aspect-square"
-                              onClick={() => handleImageClick("CROSS")}
+                              onClick={() => handleImageClick("CROSS_OD")}
                             />
                           </div>
                           <textarea
@@ -2874,12 +2944,12 @@ const MedForm = () => {
                             <img
                               src={
                                 medformData.confrontation_test.os_image ||
-                                canvasImages.CROSS ||
-                                CROSS
+                                canvasImages.CROSS_OS ||
+                                CROSS_OS
                               }
                               alt="CROSS IMG"
                               className="w-full aspect-square"
-                              onClick={() => handleImageClick("CROSS")}
+                              onClick={() => handleImageClick("CROSS_OS")}
                             />
                           </div>
                           <textarea

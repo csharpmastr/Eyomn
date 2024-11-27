@@ -18,9 +18,6 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [doesExists, setDoesExists] = useState(false);
   const reduxDispatch = useDispatch();
-  const cookies = new Cookies();
-  const accessToken = cookies.get("accessToken");
-  const refreshToken = cookies.get("refreshToken");
   const [errors, setErrors] = useState({});
   const [modalTitle, setModalTitle] = useState("");
   const [modalDescription, setModalDescription] = useState("");
@@ -254,8 +251,6 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
         const response = await addProductService(
           branchId,
           cleanedData,
-          accessToken,
-          refreshToken,
           user.firebaseUid
         );
 
@@ -286,9 +281,7 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
         const response = await updateProductService(
           branchId,
           productId,
-          cleanedData,
-          accessToken,
-          refreshToken
+          cleanedData
         );
 
         if (response) {

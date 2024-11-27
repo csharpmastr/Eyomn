@@ -12,9 +12,6 @@ import SuccessModal from "./SuccessModal";
 import Loader from "./Loader";
 
 const ProfileSettingSection = ({ selected }) => {
-  const cookies = new Cookies();
-  const accessToken = cookies.get("accessToken");
-  const refreshToken = cookies.get("refreshToken");
   const [image, setImage] = useState(null);
   const [selectedProvince, setSelectedProvince] = useState(null);
   const user = useSelector((state) => state.reducer.user.user);
@@ -193,9 +190,7 @@ const ProfileSettingSection = ({ selected }) => {
         user.role,
         user.firebaseUid,
         passwordForm.password,
-        passwordForm.newpassword,
-        accessToken,
-        refreshToken
+        passwordForm.newpassword
       );
       if (reponse) {
         setIsSuccess(true);

@@ -4,7 +4,8 @@ import ReactDOM from "react-dom";
 import { FaUndo, FaRedo } from "react-icons/fa";
 import OD from "../../assets/Image/OD.png";
 import OS from "../../assets/Image/OS.png";
-import CROSS from "../../assets/Image/CROSS.png";
+import CROSS_OD from "../../assets/Image/CROSS_OD.png";
+import CROSS_OS from "../../assets/Image/CROSS_OS.png";
 import BLANK_OD from "../../assets/Image/BLANKOD.png";
 import BLANK_OS from "../../assets/Image/BLANKOS.png";
 import FRONT_OD from "../../assets/Image/FRONTOD.png";
@@ -22,8 +23,10 @@ const EyeSketch = ({ onClose, onSave, backgroundImage }) => {
         return OD;
       case "OS":
         return OS;
-      case "CROSS":
-        return CROSS;
+      case "CROSS_OD":
+        return CROSS_OD;
+      case "CROSS_OS":
+        return CROSS_OS;
       case "BLANK_OD":
         return BLANK_OD;
       case "BLANK_OS":

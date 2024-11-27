@@ -24,8 +24,6 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
 
   const [time, setTime] = useState("");
   const cookies = new Cookies();
-  const accessToken = cookies.get("accessToken");
-  const refreshToken = cookies.get("refreshToken");
   const user = useSelector((state) => state.reducer.user.user);
   const doctors = useSelector((state) => state.reducer.doctor.doctor);
   const branches = useSelector((state) => state.reducer.branch.branch);
@@ -231,6 +229,7 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
       });
     });
   };
+  console.log(appointmentToEdit);
 
   const timeOptions = date ? generateTimeOptions(date) : [];
 
@@ -255,8 +254,6 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
             const response = await addAppointmentService(
               branchId,
               appointmentData,
-              accessToken,
-              refreshToken,
               user.firebaseUid
             );
 
@@ -275,8 +272,6 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
             const response = await addAppointmentService(
               selectedBranch,
               appointmentData,
-              accessToken,
-              refreshToken,
               user.firebaseUid
             );
             if (response) {
@@ -306,11 +301,9 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
 
             const response = await updateAppointment(
               branchId,
-              appointmentToEdit.id,
+              appointmentToEdit.scheduleId,
               appointmentData,
-              user.firebaseUid,
-              accessToken,
-              refreshToken
+              user.firebaseUid
             );
             if (response) {
               setIsSuccess(true);
@@ -320,11 +313,9 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
 
             const response = await updateAppointment(
               selectedBranch,
-              appointmentToEdit.id,
+              appointmentToEdit.scheduleId,
               appointmentData,
-              user.firebaseUid,
-              accessToken,
-              refreshToken
+              user.firebaseUid
             );
 
             if (response) {
@@ -419,8 +410,11 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
 
   useEffect(() => {
     if (date && time) {
-      setAvailableDoctors(filterAvailableDoctors(date, time));
-      setAvailableBranch(filterAvailableBranchesForDoctor(date, time));
+      if (user.role !== "2") {
+        setAvailableDoctors(filterAvailableDoctors(date, time));
+      } else {
+        setAvailableBranch(filterAvailableBranchesForDoctor(date, time));
+      }
     }
   }, [date, time, appointments, doctors]);
 

@@ -9,9 +9,6 @@ import { addPurchase, addServices } from "../../Slice/InventorySlice";
 import SuccessModal from "./SuccessModal";
 
 const PaymentBreakdown = () => {
-  const cookies = new Cookies();
-  const accessToken = cookies.get("accessToken");
-  const refreshToken = cookies.get("refreshToken");
   const [isSuccess, setIsSuccess] = useState(false);
   const reduxDispatch = useDispatch();
   const user = useSelector((state) => state.reducer.user.user);
@@ -122,9 +119,7 @@ const PaymentBreakdown = () => {
           patient.doctorId,
           patientId,
           submittedData,
-          user.firebaseUid,
-          accessToken,
-          refreshToken
+          user.firebaseUid
         );
         if (response) {
           reduxDispatch(
@@ -144,9 +139,7 @@ const PaymentBreakdown = () => {
           submittedData,
           branchId,
           user.userId,
-          user.firebaseUid,
-          accessToken,
-          refreshToken
+          user.firebaseUid
         );
         if (response) {
           const purchaseId = response.purchaseId;

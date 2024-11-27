@@ -15,9 +15,6 @@ const AddBranchModal = ({ onClose, branchToEdit }) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const reduxDispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const cookies = new Cookies();
-  const accessToken = cookies.get("accessToken");
-  const refreshToken = cookies.get("refreshToken");
   const user = useSelector((state) => state.reducer.user.user);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
@@ -158,8 +155,6 @@ const AddBranchModal = ({ onClose, branchToEdit }) => {
       const response = await addBranchService(
         formData,
         user.userId,
-        accessToken,
-        refreshToken,
         user.firebaseUid
       );
 

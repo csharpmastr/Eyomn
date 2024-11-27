@@ -21,9 +21,6 @@ const DocViewPatientProfile = ({ patient, visits }) => {
   const user = useSelector((state) => state.reducer.user.user);
   const rNotes = useSelector((state) => state.reducer.note.rawNotes[patientId]);
 
-  const cookies = new Cookies();
-  const accessToken = cookies.get("accessToken");
-  const refreshToken = cookies.get("refreshToken");
   const [isLoading, setIsLoading] = useState(false);
   const reduxDispatch = useDispatch();
   const [raw, setRaw] = useState([]);
@@ -43,9 +40,7 @@ const DocViewPatientProfile = ({ patient, visits }) => {
       try {
         const notesResponse = await getPatientNotes(
           patientId,
-          user.firebaseUid,
-          accessToken,
-          refreshToken
+          user.firebaseUid
         );
 
         if (notesResponse) {

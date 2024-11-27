@@ -11,14 +11,27 @@ const {
   getBranchInventoryHandler,
   getPatientProductServicesAvailHandler,
 } = require("../Controller/inventoryController");
+const { validateToken } = require("../Wrapper/Wrapper");
 
-router.post("/add/:branchId", addProductHandler);
-router.patch("/delete", deleteProductHandler);
-router.put("/update/:branchId/:productId", updateProductHandler);
-router.post("/add-purchase/:branchId/:staffId", addPurchaseHandler);
-router.get("/get-branch-inventory", getBranchInventoryHandler);
+router.post("/add/:branchId", validateToken, addProductHandler);
+router.patch("/delete", validateToken, deleteProductHandler);
+router.put("/update/:branchId/:productId", validateToken, updateProductHandler);
+router.post(
+  "/add-purchase/:branchId/:staffId",
+  validateToken,
+  addPurchaseHandler
+);
+router.get("/get-branch-inventory", validateToken, getBranchInventoryHandler);
 router.get("/get-inventory", getOrgProductSalesHandler);
-router.patch("/retrieve-product/:branchId", retrieveProductHandler);
-router.post("/add-service/:branchId", addServiceFeeHandler);
-router.get("/get-patient-avail", getPatientProductServicesAvailHandler);
+router.patch(
+  "/retrieve-product/:branchId",
+  validateToken,
+  retrieveProductHandler
+);
+router.post("/add-service/:branchId", validateToken, addServiceFeeHandler);
+router.get(
+  "/get-patient-avail",
+  validateToken,
+  getPatientProductServicesAvailHandler
+);
 module.exports = router;

@@ -183,7 +183,7 @@ export const formatPatientNotes = (data) => {
     data.bg ? `- BG: ${data.bg} mg/dL` : null,
     data.hr ? `- HR: ${data.hr} Bpm` : null,
     data.o2_saturation ? `- O2 Saturation: ${data.o2_saturation} %` : null,
-    data.temperature ? `- Temperature: ${data.temperature} C/F` : null,
+    data.temperature ? `- Temperature: ${data.temperature} °C` : null,
   ];
 
   const filteredVitalSigns = vitalSigns.filter(Boolean);
@@ -242,6 +242,23 @@ export const formatPatientNotes = (data) => {
 
     if (visualAcuity.trim()) {
       notes.push(`Visual Acuity:\n${visualAcuity.trim()}`);
+    }
+  }
+  if (data.contact_lens_prescription) {
+    let contacts = "";
+
+    if (data.contact_lens_prescription?.od) {
+      contacts += `OD ${data.contact_lens_prescription?.od}, `;
+    }
+    if (data.contact_lens_prescription?.os) {
+      contacts += `OS ${data.contact_lens_prescription?.os}`;
+    }
+    if (data.contact_lens_prescription?.date_prescribed) {
+      contacts += `, Date Prescribed: ${data.contact_lens_prescription?.date_prescribed}`;
+    }
+
+    if (contacts.trim()) {
+      notes.push(`Contact Lens Prescription : ${contacts.trim()}`);
     }
   }
 
@@ -508,24 +525,11 @@ export const formatPatientNotes = (data) => {
   if (data.motility_test) {
     let motilityTest = "";
 
-    if (data.motility_test?.od) {
-      if (data.motility_test.od?.normal) {
-        motilityTest += "OD Normal, ";
-      } else if (data.motility_test.od?.abnormal) {
-        motilityTest += "OD Abnormal, ";
-      }
+    if (data.motility_test?.od_note) {
+      motilityTest += `OD ${data.motility_test?.od_note}, `;
     }
-
-    if (data.motility_test?.os) {
-      if (data.motility_test.os?.normal) {
-        motilityTest += "OS Normal, ";
-      } else if (data.motility_test.os?.abnormal) {
-        motilityTest += "OS Abnormal, ";
-      }
-    }
-
-    if (data.motility_test?.additional_note) {
-      motilityTest += `Note: ${data.motility_test?.additional_note}`;
+    if (data.motility_test?.os_note) {
+      motilityTest += `OS ${data.motility_test?.os_note}`;
     }
 
     if (motilityTest) {
@@ -578,11 +582,14 @@ export const formatPatientNotes = (data) => {
 
   if (data.worths_FD) {
     let worths = "";
-    if (data.worths_FD?.od) {
-      worths += `OD ${data.worths_FD?.od}, `;
+    if (data.worths_FD?.near) {
+      worths += `Near: ${data.worths_FD?.near}, `;
     }
-    if (data.worths_FD?.os) {
-      worths += `OD ${data.worths_FD?.os}`;
+    if (data.worths_FD?.far) {
+      worths += `Far: ${data.worths_FD?.far}, `;
+    }
+    if (data.worths_FD?.distance) {
+      worths += `Distance: ${data.worths_FD?.distance}`;
     }
 
     if (worths) {
@@ -615,18 +622,6 @@ export const formatPatientNotes = (data) => {
 
     if (schirmer) {
       additionalTests += `- Schirmer Test : ${schirmer}\n`;
-    }
-  }
-  if (data.ophthalmoscopy) {
-    let ophthal = "";
-    if (data.ophthalmoscopy?.additional_note_od) {
-      ophthal += `OD ${data.ophthalmoscopy?.additional_note_od}`;
-    }
-    if (data.ophthalmoscopy?.additional_note_os) {
-      ophthal += `OS ${data.ophthalmoscopy?.additional_note_os}`;
-    }
-    if (ophthal) {
-      additionalTests += `- Ophthalmosopy ${ophthal}`;
     }
   }
 
@@ -1220,9 +1215,6 @@ export const formatPatientNotes = (data) => {
   }
   if (data.diagnosis) {
     notes.push(`Diagnosis: ${data.diagnosis}`);
-  }
-  if (data.refractive_error) {
-    notes.push(`Refractive Error: ${data.refractive_error}`);
   }
 
   if (data.new_prescription_od) {

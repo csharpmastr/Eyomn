@@ -12,12 +12,8 @@ const SharePatientModal = ({
   currentDoctor,
   patientName,
 }) => {
-  const cookies = new Cookies();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-
-  const accessToken = cookies.get("accessToken");
-  const refreshToken = cookies.get("refreshToken");
   const user = useSelector((state) => state.reducer.user.user);
   const doctors = useSelector((state) => state.reducer.doctor.doctor);
   const patients = useSelector((state) => state.reducer.patient.patients);
@@ -61,9 +57,7 @@ const SharePatientModal = ({
         currentDoctor,
         authorizedDoctor,
         patientId,
-        user.firebaseUid,
-        accessToken,
-        refreshToken
+        user.firebaseUid
       );
       if (response) {
         console.log("Success:", response);

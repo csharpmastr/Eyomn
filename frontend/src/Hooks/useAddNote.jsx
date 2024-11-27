@@ -9,20 +9,12 @@ export const useAddNote = () => {
   const [error, setError] = useState(null);
   const cookies = new Cookies();
   const user = useSelector((state) => state.reducer.user.user);
-  const accessToken = cookies.get("accessToken", { path: "/" });
-  const refreshToken = cookies.get("refreshToken", { path: "/" });
 
   const addNote = async (note, patientId) => {
     setError(null);
     try {
       setIsLoading(true);
-      const response = await addPatientNote(
-        note,
-        patientId,
-        user.firebaseUid,
-        accessToken,
-        refreshToken
-      );
+      const response = await addPatientNote(note, patientId, user.firebaseUid);
       if (response) {
         return response;
       }

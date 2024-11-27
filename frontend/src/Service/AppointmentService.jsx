@@ -5,8 +5,6 @@ const APPOINTMENT_API_BASE_URL = "http://localhost:3000/api/v1/appointment";
 export const addAppointmentService = async (
   branchId,
   appointmentDetails,
-  accessToken,
-  refreshToken,
   firebaseUid
 ) => {
   try {
@@ -14,13 +12,10 @@ export const addAppointmentService = async (
       `${APPOINTMENT_API_BASE_URL}/add/${branchId}`,
       appointmentDetails,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
         params: {
           firebaseUid,
         },
+        withCredentials: true, // Include cookies for authentication
       }
     );
     return response;
@@ -36,12 +31,7 @@ export const addAppointmentService = async (
   }
 };
 
-export const getAppointments = async (
-  branchId,
-  accessToken,
-  refreshToken,
-  firebaseUid
-) => {
+export const getAppointments = async (branchId, firebaseUid) => {
   try {
     const response = await axios.get(
       `${APPOINTMENT_API_BASE_URL}/get-appointments`,
@@ -50,10 +40,7 @@ export const getAppointments = async (
           branchId,
           firebaseUid,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response.data;
@@ -69,12 +56,7 @@ export const getAppointments = async (
   }
 };
 
-export const getDoctorAppointments = async (
-  doctorId,
-  accessToken,
-  refreshToken,
-  firebaseUid
-) => {
+export const getDoctorAppointments = async (doctorId, firebaseUid) => {
   try {
     const response = await axios.get(
       `${APPOINTMENT_API_BASE_URL}/get-doctor-appointments`,
@@ -83,10 +65,7 @@ export const getDoctorAppointments = async (
           doctorId,
           firebaseUid,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response.data;
@@ -106,9 +85,7 @@ export const updateAppointment = async (
   branchId,
   appointmentId,
   appointmentDetails,
-  firebaseUid,
-  accessToken,
-  refreshToken
+  firebaseUid
 ) => {
   try {
     const response = await axios.patch(
@@ -120,10 +97,7 @@ export const updateAppointment = async (
           branchId,
           appointmentId,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response;
@@ -153,10 +127,7 @@ export const deleteAppointment = async (
         appointmentId,
         firebaseUid,
       },
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "x-refresh-token": refreshToken,
-      },
+      withCredentials: true,
     });
     return response;
   } catch (error) {

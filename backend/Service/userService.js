@@ -327,8 +327,17 @@ const sendOTP = async (email) => {
 
     await sendEmail({
       to: email,
-      subject: "Your OTP Code",
-      text: `Your OTP code is: ${otp}`,
+      subject: "Your One-Time Password (OTP)",
+      text: `Dear User,
+
+We received a request to verify your identity. Please use the following One-Time Password (OTP) to complete the process:
+
+OTP: ${otp}
+
+This code is valid for the next 5 minutes and can only be used once. If you did not request this, please disregard this message or contact our support team immediately.
+
+Best regards,  
+Team Eyomn`,
     });
   } catch (error) {
     console.error("Failed to send OTP:", error);
