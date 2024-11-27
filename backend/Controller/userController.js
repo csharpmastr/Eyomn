@@ -11,6 +11,7 @@ const jwt = require("jsonwebtoken");
 const generateToken = (id, secret, duration) => {
   return jwt.sign({ id }, secret, { expiresIn: duration });
 };
+const blacklistedTokens = new Set();
 
 const addUserHandler = async (req, res) => {
   try {
@@ -64,11 +65,7 @@ const loginUserHandler = async (req, res) => {
       doctors,
       appointments,
       firebaseUid,
-    } = await loginUser({
-      email,
-      password,
-    });
-    console.log("hello");
+    } = await loginUser({ email, password });
 
     const accessToken = generateToken(
       userId,
@@ -81,52 +78,50 @@ const loginUserHandler = async (req, res) => {
       "1d"
     );
 
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Strict",
+      maxAge: 5 * 60 * 60 * 1000,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    const responsePayload = {
+      userId,
+      role,
+      message: "Login successful",
+      firebaseUid,
+    };
+
     if (role === "0") {
-      res.status(200).json({
-        userId: userId,
-        role: role,
-        message: "Login successful",
-        organization: organization,
-        tokens: {
-          accessToken,
-          refreshToken,
-        },
-        branch: branches,
-        firebaseUid: firebaseUid,
-      });
+      responsePayload.organization = organization;
+      responsePayload.branch = branches;
     } else if (role === "1") {
-      res.status(200).json({
-        userId: userId,
-        role: role,
-        message: "Login successful",
+      Object.assign(responsePayload, {
         organizationId,
         organization,
-        tokens: {
-          accessToken,
-          refreshToken,
-        },
         branchData,
         patients,
         staffs,
         appointments,
-        firebaseUid,
       });
     } else {
-      res.status(200).json({
-        userId: userId,
-        role: role,
-        message: "Login successful",
+      Object.assign(responsePayload, {
         organizationId,
         organization,
-        tokens: {
-          accessToken,
-          refreshToken,
-        },
         staffData,
         patients,
         doctors,
       });
     }
+
+    res.status(200).json(responsePayload);
   } catch (error) {
     res.status(401).json({
       success: false,
@@ -137,10 +132,10 @@ const loginUserHandler = async (req, res) => {
 
 const getNewAccessToken = (req, res) => {
   try {
-    const refreshToken = req.body.refreshToken;
+    const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
-      return res.status(403).json({ message: "Refresh token not valid" });
+      return res.status(403).json({ message: "Refresh token not found" });
     }
 
     jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
@@ -161,6 +156,7 @@ const getNewAccessToken = (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 const changeUserPasswordHandler = async (req, res) => {
   const { organizationId, branchId, staffId, role, password, newPassword } =
     req.body;
@@ -250,6 +246,54 @@ const forgotChangePasswordHandler = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+const validateAndRefreshTokens = async (req, res) => {
+  const accessToken = req.cookies.accessToken;
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!accessToken || !refreshToken) {
+    return res.status(401).json({ message: "No tokens provided" });
+  }
+
+  try {
+    const decodedAccess = jwt.verify(
+      accessToken,
+      process.env.JWT_ACCESS_SECRET
+    );
+    console.log("nice refresh");
+
+    return res.status(200).json({ valid: true, user: decodedAccess });
+  } catch (err) {
+    if (err.name === "TokenExpiredError") {
+      try {
+        const decodedRefresh = jwt.verify(
+          refreshToken,
+          process.env.JWT_REFRESH_SECRET
+        );
+        const newAccessToken = jwt.sign(
+          { userId: decodedRefresh.userId },
+          process.env.JWT_ACCESS_SECRET,
+          { expiresIn: "5h" }
+        );
+
+        res.cookie("accessToken", newAccessToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Strict",
+          maxAge: 5 * 60 * 60 * 1000,
+        });
+
+        return res.status(200).json({ valid: true, user: decodedRefresh });
+      } catch (refreshErr) {
+        return res
+          .status(401)
+          .json({ message: "Session expired, please log in again" });
+      }
+    } else {
+      return res.status(401).json({ message: "Invalid access token" });
+    }
+  }
+};
+
 module.exports = {
   addUserHandler,
   loginUserHandler,
@@ -258,4 +302,5 @@ module.exports = {
   sendOTPHandler,
   verifyOTPHandler,
   forgotChangePasswordHandler,
+  validateAndRefreshTokens,
 };

@@ -11,6 +11,7 @@ export const userLogin = async (email, password) => {
         headers: {
           "Content-Type": "application/json",
         },
+        withCredentials: true,
       }
     );
 
@@ -33,11 +34,15 @@ export const userSignUp = async (userData) => {
   }
 };
 
-export const getNewAccess = async (refreshToken) => {
+export const getNewAccess = async () => {
   try {
-    const response = await axios.post(`${API_URL}/new-access`, {
-      refreshToken,
-    });
+    const response = await axios.post(
+      `${API_URL}/new-access`,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
 
     return response.data.accessToken;
   } catch (error) {
@@ -53,19 +58,14 @@ export const changeUserPassword = async (
   role,
   firebaseUid,
   password,
-  newPassword,
-  accessToken,
-  refreshToken
+  newPassword
 ) => {
   try {
     const response = await axios.post(
       `${API_URL}/change-password`,
       { organizationId, branchId, staffId, role, password, newPassword },
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
         params: {
           firebaseUid,
         },

@@ -10,9 +10,6 @@ import { addPurchase, addServices } from "../../Slice/InventorySlice";
 
 const PaymentHistory = ({ onClose }) => {
   const { patientId } = useParams();
-  const cookies = new Cookies();
-  const accessToken = cookies.get("accessToken");
-  const refreshToken = cookies.get("refreshToken");
   const user = useSelector((state) => state.reducer.user.user);
   const [history, setHistory] = useState([]);
   const [collapsedIndex, setCollapsedIndex] = useState(null);
@@ -51,9 +48,7 @@ const PaymentHistory = ({ onClose }) => {
           const response = await getPatientProductServiceAvail(
             patient.branchId,
             patient.patientId,
-            user.firebaseUid,
-            accessToken,
-            refreshToken
+            user.firebaseUid
           );
 
           if (response) {
@@ -82,16 +77,7 @@ const PaymentHistory = ({ onClose }) => {
     };
 
     fetchPatientData();
-  }, [
-    patientId,
-    user.role,
-    accessToken,
-    refreshToken,
-    patient,
-    purchases,
-    services,
-    reduxDispatch,
-  ]);
+  }, [patientId, user.role, patient, purchases, services, reduxDispatch]);
 
   const handleToggleCollapse = (index) => {
     setCollapsedIndex((prevIndex) => (prevIndex === index ? null : index));

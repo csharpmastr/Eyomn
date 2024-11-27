@@ -11,8 +11,6 @@ const refreshToken = cookies.get("refreshToken", { path: "/" });
 export const addProductService = async (
   branchId,
   productDetails,
-  accessToken,
-  refreshToken,
   firebaseUid
 ) => {
   try {
@@ -20,10 +18,7 @@ export const addProductService = async (
       `${INVENTORY_API_BASE_URL}/add/${branchId}`,
       productDetails,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
         params: {
           firebaseUid,
         },
@@ -42,12 +37,7 @@ export const addProductService = async (
   }
 };
 
-export const getBranchInventory = async (
-  branchId,
-  accessToken,
-  refreshToken,
-  firebaseUid
-) => {
+export const getBranchInventory = async (branchId, firebaseUid) => {
   try {
     const response = await axios.get(
       `${INVENTORY_API_BASE_URL}/get-branch-inventory`,
@@ -56,16 +46,13 @@ export const getBranchInventory = async (
           branchId,
           firebaseUid,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response.data;
   } catch (error) {
     console.error("Error getting products : ", error);
-    throw err;
+    throw error;
   }
 };
 
@@ -85,10 +72,7 @@ export const deleteProduct = async (
           productId,
           firebaseUid,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response;
@@ -101,19 +85,14 @@ export const deleteProduct = async (
 export const updateProductService = async (
   branchId,
   productId,
-  productDetails,
-  accessToken,
-  refreshToken
+  productDetails
 ) => {
   try {
     const response = await axios.put(
       `${INVENTORY_API_BASE_URL}/update/${branchId}/${productId}`,
       productDetails,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response;
@@ -127,9 +106,7 @@ export const addPurchaseService = async (
   purchaseDetails,
   branchId,
   staffId,
-  firebaseUid,
-  accessToken,
-  refreshToken
+  firebaseUid
 ) => {
   try {
     const response = await axios.post(
@@ -139,10 +116,7 @@ export const addPurchaseService = async (
         params: {
           firebaseUid,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response.data;
@@ -152,12 +126,7 @@ export const addPurchaseService = async (
   }
 };
 
-export const getPurchases = async (
-  branchId,
-  firebaseUid,
-  accessToken,
-  refreshToken
-) => {
+export const getPurchases = async (branchId, firebaseUid) => {
   try {
     const response = await axios.get(
       `${INVENTORY_API_BASE_URL}/get-purchases`,
@@ -166,10 +135,7 @@ export const getPurchases = async (
           branchId,
           firebaseUid,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response.data;
@@ -179,12 +145,7 @@ export const getPurchases = async (
   }
 };
 
-export const getInventory = async (
-  organizationId,
-  firebaseUid,
-  accessToken,
-  refreshToken
-) => {
+export const getInventory = async (organizationId, firebaseUid) => {
   try {
     const response = await axios.get(
       `${INVENTORY_API_BASE_URL}/get-inventory`,
@@ -193,10 +154,7 @@ export const getInventory = async (
           firebaseUid,
           organizationId,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response.data;
@@ -219,10 +177,7 @@ export const retrieveProductService = async (
         params: {
           firebaseUid,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response.data;
@@ -236,9 +191,7 @@ export const addService = async (
   doctorId,
   patientId,
   serviceDetails,
-  firebaseUid,
-  accessToken,
-  refreshToken
+  firebaseUid
 ) => {
   try {
     const response = await axios.post(
@@ -250,10 +203,7 @@ export const addService = async (
           patientId,
           doctorId,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response.data;
@@ -266,9 +216,7 @@ export const addService = async (
 export const getPatientProductServiceAvail = async (
   branchId,
   patientId,
-  firebaseUid,
-  accessToken,
-  refreshToken
+  firebaseUid
 ) => {
   try {
     const response = await axios.get(
@@ -279,10 +227,7 @@ export const getPatientProductServiceAvail = async (
           firebaseUid,
           patientId,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response.data;

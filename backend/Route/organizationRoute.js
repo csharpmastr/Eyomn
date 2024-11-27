@@ -12,10 +12,14 @@ const { validateToken } = require("../Wrapper/Wrapper");
 
 const router = express.Router();
 
-router.post("/add-staff/:organizationId", addStaffHandler);
-router.get("/get-staffs", getStaffsHandler);
-router.get("/get-doctors", getDoctorsListHandler);
-router.post("/add-branch/:organizationId", addBranchHandler);
-router.get("/get-branch-data/:organizationId", getBranchDataHandler);
-router.get("/get-branch-name", getBranchNameHandler);
+router.post("/add-staff/:organizationId", validateToken, addStaffHandler);
+router.get("/get-staffs", validateToken, getStaffsHandler);
+router.get("/get-doctors", validateToken, getDoctorsListHandler);
+router.post("/add-branch/:organizationId", validateToken, addBranchHandler);
+router.get(
+  "/get-branch-data/:organizationId",
+  validateToken,
+  getBranchDataHandler
+);
+router.get("/get-branch-name", validateToken, getBranchNameHandler);
 module.exports = router;

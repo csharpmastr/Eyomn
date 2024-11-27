@@ -2,26 +2,17 @@ import axios from "axios";
 
 const ORGANIZATION_API_BASE_URL = "http://localhost:3000/api/v1/organization";
 
-export const getStaffs = async (
-  organizationId,
-  branchId,
-  accessToken,
-  refreshToken,
-  firebaseUid
-) => {
+export const getStaffs = async (organizationId, branchId, firebaseUid) => {
   try {
     const response = await axios.get(
       `${ORGANIZATION_API_BASE_URL}/get-staffs`,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
         params: {
           firebaseUid,
           organizationId,
           branchId,
         },
+        withCredentials: true,
       }
     );
     return response.data;
@@ -34,8 +25,6 @@ export const getStaffs = async (
 export const addStaffService = async (
   staffData,
   organizationId,
-  accessToken,
-  refreshToken,
   firebaseUid
 ) => {
   try {
@@ -44,10 +33,7 @@ export const addStaffService = async (
 
       staffData,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
         params: {
           firebaseUid,
         },
@@ -59,13 +45,7 @@ export const addStaffService = async (
   }
 };
 
-export const getDoctorList = async (
-  organizationId,
-  branchId,
-  accessToken,
-  refreshToken,
-  firebaseUid
-) => {
+export const getDoctorList = async (organizationId, branchId, firebaseUid) => {
   try {
     const response = await axios.get(
       `${ORGANIZATION_API_BASE_URL}/get-doctors`,
@@ -75,10 +55,7 @@ export const getDoctorList = async (
           branchId,
           firebaseUid,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
 
@@ -92,8 +69,6 @@ export const getDoctorList = async (
 export const addBranchService = async (
   branchDetails,
   organizationId,
-  accessToken,
-  refreshToken,
   firebaseUid
 ) => {
   try {
@@ -101,10 +76,7 @@ export const addBranchService = async (
       `${ORGANIZATION_API_BASE_URL}/add-branch/${organizationId}`,
       branchDetails,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
         params: {
           firebaseUid,
         },
@@ -118,20 +90,12 @@ export const addBranchService = async (
   }
 };
 
-export const getBranchData = async (
-  organizationId,
-  accessToken,
-  refreshToken,
-  firebaseUid
-) => {
+export const getBranchData = async (organizationId, firebaseUid) => {
   try {
     const response = await axios.get(
       `${ORGANIZATION_API_BASE_URL}/get-branch-data/${organizationId}`,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "X-Refresh-Token": refreshToken,
-        },
+        withCredentials: true,
         params: {
           firebaseUid,
         },
@@ -150,12 +114,7 @@ export const getBranchData = async (
   }
 };
 
-export const getBranchName = async (
-  staffId,
-  firebaseUid,
-  accessToken,
-  refreshToken
-) => {
+export const getBranchName = async (staffId, firebaseUid) => {
   try {
     const response = await axios.get(
       `${ORGANIZATION_API_BASE_URL}/get-branch-name`,
@@ -164,10 +123,7 @@ export const getBranchName = async (
           firebaseUid,
           staffId,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "X-Refresh-Token": refreshToken,
-        },
+        withCredentials: true,
       }
     );
     return response.data;

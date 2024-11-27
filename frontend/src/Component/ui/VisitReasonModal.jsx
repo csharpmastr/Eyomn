@@ -8,9 +8,6 @@ import SuccessModal from "./SuccessModal";
 import { addVisit } from "../../Slice/VisitSlice";
 
 const VisitReasonModal = ({ onClose }) => {
-  const cookies = new Cookies();
-  const accessToken = cookies.get("accessToken");
-  const refreshToken = cookies.get("refreshToken");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const doctors = useSelector((state) => state.reducer.doctor.doctor);
@@ -53,9 +50,7 @@ const VisitReasonModal = ({ onClose }) => {
         patientId,
         selectedDoctor,
         branchId,
-        firebaseUid,
-        accessToken,
-        refreshToken
+        firebaseUid
       );
       if (response) {
         const data = response.data;

@@ -23,17 +23,22 @@ const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 router.post(
   "/add-patient/:organizationId/:branchId/:doctorId",
+  validateToken,
   addPatientHandler
 );
-router.get("/patients-doctor", getPatientsByDoctorHandler);
+router.get("/patients-doctor", validateToken, getPatientsByDoctorHandler);
 router.get("/get-patients", validateToken, getPatientsHandler);
-router.patch("/update/:patientId", updatePatientHandler);
-router.put("/delete/:patientId", deletePatientHandler);
-router.put("/retrieve/:patientId", retrievePatientHandler);
-router.post("/add-note/:patientId", addNoteHandler);
-router.get("/get-notes", getPatientNoteHandler);
-router.get("/get-visits", getPatientVisitsHandler);
-router.post("/add-visit/:patientId/:doctorId/:branchId", addVisitHandler);
+router.patch("/update/:patientId", validateToken, updatePatientHandler);
+router.put("/delete/:patientId", validateToken, deletePatientHandler);
+router.put("/retrieve/:patientId", validateToken, retrievePatientHandler);
+router.post("/add-note/:patientId", validateToken, addNoteHandler);
+router.get("/get-notes", validateToken, getPatientNoteHandler);
+router.get("/get-visits", validateToken, getPatientVisitsHandler);
+router.post(
+  "/add-visit/:patientId/:doctorId/:branchId",
+  validateToken,
+  addVisitHandler
+);
 router.post(
   "/upload-image/:patientId",
   upload.single("image"),

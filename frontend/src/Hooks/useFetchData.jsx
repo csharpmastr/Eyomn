@@ -62,48 +62,25 @@ export const useFetchData = () => {
                 organizationId,
                 branchId,
                 null,
-                accessToken,
-                refreshToken,
                 user.role,
                 firebaseUid
               ),
             type: "patients",
           },
           {
-            call: () =>
-              getDoctorList(
-                organizationId,
-                branchId,
-                accessToken,
-                refreshToken,
-                firebaseUid
-              ),
+            call: () => getDoctorList(organizationId, branchId, firebaseUid),
             type: "doctors",
           },
           {
-            call: () =>
-              getBranchInventory(
-                branchId,
-                accessToken,
-                refreshToken,
-                firebaseUid
-              ),
+            call: () => getBranchInventory(branchId, firebaseUid),
             type: "inventory",
           },
           {
-            call: () =>
-              getAppointments(branchId, accessToken, refreshToken, firebaseUid),
+            call: () => getAppointments(branchId, firebaseUid),
             type: "appointments",
           },
           {
-            call: () =>
-              getStaffs(
-                organizationId,
-                branchId,
-                accessToken,
-                refreshToken,
-                firebaseUid
-              ),
+            call: () => getStaffs(organizationId, branchId, firebaseUid),
             type: "staffs",
           },
         ];
@@ -111,95 +88,43 @@ export const useFetchData = () => {
         return [
           {
             call: () =>
-              getPatients(
-                user.userId,
-                null,
-                null,
-                accessToken,
-                refreshToken,
-                user.role,
-                firebaseUid
-              ),
+              getPatients(user.userId, null, null, user.role, firebaseUid),
             type: "patients",
           },
           {
-            call: () =>
-              getBranchData(
-                user.userId,
-                accessToken,
-                refreshToken,
-                firebaseUid
-              ),
+            call: () => getBranchData(user.userId, firebaseUid),
             type: "branches",
           },
           {
-            call: () =>
-              getInventory(
-                organizationId,
-                firebaseUid,
-                accessToken,
-                refreshToken
-              ),
+            call: () => getInventory(organizationId, firebaseUid),
             type: "inventory",
           },
         ];
       case "2":
         return [
           {
-            call: () =>
-              getDoctorAppointments(
-                user.userId,
-                accessToken,
-                refreshToken,
-                firebaseUid
-              ),
+            call: () => getDoctorAppointments(user.userId, firebaseUid),
             type: "appointments",
           },
           {
-            call: () =>
-              getDoctorList(
-                organizationId,
-                branchId,
-                accessToken,
-                refreshToken,
-                firebaseUid
-              ),
+            call: () => getDoctorList(organizationId, branchId, firebaseUid),
             type: "doctors",
           },
           {
             call: () =>
-              getPatientsByDoctor(
-                organizationId,
-                staffId,
-                firebaseUid,
-                accessToken,
-                refreshToken
-              ),
+              getPatientsByDoctor(organizationId, staffId, firebaseUid),
             type: "patients",
           },
           {
-            call: () =>
-              getBranchName(
-                user.userId,
-                firebaseUid,
-                accessToken,
-                refreshToken
-              ),
+            call: () => getBranchName(user.userId, firebaseUid),
             type: "branch",
           },
           {
-            call: () =>
-              getUserNotification(
-                user.userId,
-                firebaseUid,
-                accessToken,
-                refreshToken
-              ),
+            call: () => getUserNotification(user.userId, firebaseUid),
             type: "notifications",
           },
           {
-            call: () =>
-              getAllVisits(user.userId, firebaseUid, accessToken, refreshToken),
+            call: () => getAllVisits(user.userId, firebaseUid),
             type: "visits",
           },
         ];
@@ -238,7 +163,7 @@ export const useFetchData = () => {
                 break;
               case "visits":
                 reduxDispatch(setVisits(result));
-                breaks;
+                break;
               case "products":
                 reduxDispatch(setProducts(result));
                 break;

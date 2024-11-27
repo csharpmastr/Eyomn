@@ -10,9 +10,6 @@ import Cookies from "universal-cookie";
 import { removeAppointment } from "../../Slice/AppointmentSlice";
 
 const ViewSchedule = ({ onClose, appointments }) => {
-  const cookies = new Cookies();
-  const accessToken = cookies.get("accessToken");
-  const refreshToken = cookies.get("refreshToken");
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [isSetAppoinmentOpen, setSetAppoimentOpen] = useState(false);
   const [appointmentToEdit, setAppointmentToEdit] = useState(null);
@@ -54,9 +51,7 @@ const ViewSchedule = ({ onClose, appointments }) => {
       const response = await deleteAppointment(
         branchId,
         appointmentToDelete,
-        user.firebaseUid,
-        accessToken,
-        refreshToken
+        user.firebaseUid
       );
       if (response) {
         setIsSuccess(true);

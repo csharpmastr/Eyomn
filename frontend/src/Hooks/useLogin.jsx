@@ -10,7 +10,6 @@ import { setPatients } from "../Slice/PatientSlice";
 import { setBranch } from "../Slice/BranchSlice";
 
 export const useLogin = () => {
-  const cookies = new Cookies();
   const { dispatch } = useAuthContext();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -21,23 +20,18 @@ export const useLogin = () => {
     setError(null);
     try {
       const response = await userLogin(email, password);
-      console.log(response);
 
       const {
         userId,
         role,
-        tokens,
         organizationId,
         organization,
         staffData,
         branchData,
         firebaseUid,
       } = response;
-      const { accessToken, refreshToken } = tokens;
 
       dispatch({ type: "LOGIN", payload: userId });
-      cookies.set("accessToken", accessToken, { path: "/" });
-      cookies.set("refreshToken", refreshToken, { path: "/" });
 
       if (role === "0") {
         reduxDispatch(setUser({ userId, organization, role, firebaseUid }));

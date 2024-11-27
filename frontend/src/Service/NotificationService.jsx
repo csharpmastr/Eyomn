@@ -13,6 +13,7 @@ export const updateNotification = async (
       { read: true },
       {
         params: { staffId, firebaseUid },
+        withCredentials: true,
       }
     );
 
@@ -23,20 +24,12 @@ export const updateNotification = async (
   }
 };
 
-export const getUserNotification = async (
-  staffId,
-  firebaseUid,
-  accessToken,
-  refreshToken
-) => {
+export const getUserNotification = async (staffId, firebaseUid) => {
   try {
     const response = await axios.get(
       `${NOTIFICATION_API_BASE_URL}/get-notifications`,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        },
+        withCredentials: true,
         params: {
           staffId,
           firebaseUid,

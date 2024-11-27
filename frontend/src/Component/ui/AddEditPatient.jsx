@@ -26,9 +26,6 @@ const calculateAge = (birthdate) => {
 };
 
 const AddEditPatient = ({ onClose, title, patient }) => {
-  const cookies = new Cookies();
-  const accessToken = cookies.get("accessToken");
-  const refreshToken = cookies.get("refreshToken");
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedMunicipality, setSelectedMunicipality] = useState(null);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -252,9 +249,7 @@ const AddEditPatient = ({ onClose, title, patient }) => {
         const response = await updatePatientData(
           sanitizedData,
           patient.patientId,
-          user.firebaseUid,
-          accessToken,
-          refreshToken
+          user.firebaseUid
         );
         if (response) {
           reduxDispatch(
