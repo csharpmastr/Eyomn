@@ -3,6 +3,7 @@ import { FiUser } from "react-icons/fi";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import Select from "react-select";
+import { MdOutlineLock } from "react-icons/md";
 import PhList from "../../assets/Data/location_list.json";
 import { useSelector } from "react-redux";
 import ArchiveTable from "./ArchiveTable";
@@ -12,6 +13,9 @@ import SuccessModal from "./SuccessModal";
 import Loader from "./Loader";
 
 const ProfileSettingSection = ({ selected }) => {
+  const cookies = new Cookies();
+  const accessToken = cookies.get("accessToken");
+  const refreshToken = cookies.get("refreshToken");
   const [image, setImage] = useState(null);
   const [selectedProvince, setSelectedProvince] = useState(null);
   const user = useSelector((state) => state.reducer.user.user);
@@ -158,7 +162,7 @@ const ProfileSettingSection = ({ selected }) => {
         newErrors.email = "(Valid email is required)";
     } else if (selected === "Account") {
       if (!passwordForm.password)
-        newErrors.password = "(Password doens't recognized)";
+        newErrors.password = "Password doens't recognized";
       if (
         !passwordForm.newpassword ||
         !/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$/.test(
@@ -166,10 +170,10 @@ const ProfileSettingSection = ({ selected }) => {
         )
       )
         newErrors.newpassword =
-          "(Invalid password. Ensure it has at least 8 characters, including uppercase, lowercase, numbers, and special characters)";
+          "Invalid password. Ensure it has at least 8 characters, including uppercase, lowercase, numbers, and special characters";
 
-      if (passwordForm.newpassword !== repeatPass)
-        newErrors.newpassword = "(Passwords do not match)";
+      if (passwordForm.confirmpassword !== repeatPass)
+        newErrors.confirmpassword = "Passwords do not match";
     }
 
     setErrors(newErrors);
@@ -190,7 +194,9 @@ const ProfileSettingSection = ({ selected }) => {
         user.role,
         user.firebaseUid,
         passwordForm.password,
-        passwordForm.newpassword
+        passwordForm.newpassword,
+        accessToken,
+        refreshToken
       );
       if (reponse) {
         setIsSuccess(true);
@@ -203,6 +209,7 @@ const ProfileSettingSection = ({ selected }) => {
       setIsLoading(false);
     }
   };
+
   const handleClearPasswordForm = () => {
     setPasswordForm({
       password: "",
@@ -217,7 +224,7 @@ const ProfileSettingSection = ({ selected }) => {
       )}
       {selected === "My Profile" && (
         <form className="flex flex-col w-full h-full gap-4 md:gap-8 font-Poppins">
-          <div className="w-full border border-f-gray bg-white rounded-lg p-6 md:p-10 h-full flex flex-col-reverse md:flex-row justify-between items-center">
+          <div className="w-full border shadow-sm shadow-zinc-200 bg-white rounded-xl p-8 h-full flex flex-col-reverse md:flex-row justify-between items-center">
             <label className="flex items-center gap-4 mt-6 md:mt-0">
               {image ? (
                 <img
@@ -277,13 +284,13 @@ const ProfileSettingSection = ({ selected }) => {
             {isEditable && (
               <div
                 className="h-fit flex justify-center items-center w-40 py-3 bg-c-secondary text-f-light text-p-sm md:text-p-rg font-semibold rounded-md"
-                onClick={() => setIsEditable(!isEditable)} // Add Save function
+                onClick={() => setIsEditable(!isEditable)}
               >
                 <h1>Save</h1>
               </div>
             )}
           </div>
-          <div className="w-full border border-f-gray bg-white rounded-lg p-10 h-full flex flex-col justify-between">
+          <div className="w-full border shadow-sm shadow-zinc-200 bg-white rounded-xl p-8 h-full flex flex-col justify-between">
             <label className="text-p-rg md:text-p-lg font-semibold text-c-secondary">
               | Personal Information
             </label>
@@ -337,7 +344,7 @@ const ProfileSettingSection = ({ selected }) => {
               />
             </div>
           </div>
-          <div className="w-full border border-f-gray bg-white rounded-lg p-10 h-full flex flex-col justify-between">
+          <div className="w-full border shadow-sm shadow-zinc-200 bg-white rounded-xl p-8 h-full flex flex-col justify-between">
             <label className="text-p-rg md:text-p-lg font-semibold text-c-secondary">
               | Contact Information
             </label>
@@ -416,7 +423,7 @@ const ProfileSettingSection = ({ selected }) => {
           {user.role === "0" || user.role === "1" ? (
             ""
           ) : (
-            <div className="w-full border border-f-gray bg-white rounded-lg p-10 h-full flex flex-col justify-between">
+            <div className="w-full border shadow-sm shadow-zinc-200 bg-white rounded-xl p-8 h-full flex flex-col justify-between">
               <label className="text-p-rg md:text-p-lg font-semibold text-c-secondary">
                 | Job Information
               </label>
@@ -476,127 +483,153 @@ const ProfileSettingSection = ({ selected }) => {
       )}
       {selected === "Account" && (
         <div className="flex flex-col w-full h-full gap-4 md:gap-8 font-Poppins">
-          <div className="w-full border border-f-gray bg-white rounded-lg p-10 h-fit flex flex-col justify-between">
-            <label className="text-p-rg md:text-p-lg font-semibold text-c-secondary">
-              | Change Password
-            </label>
-            <div className="mt-3 text-c-gray3 flex flex-col items-end">
+          <div className="w-full border shadow-sm shadow-zinc-200 bg-white rounded-xl p-8 h-fit flex flex-col justify-between">
+            <header className="flex items-center gap-3">
+              <div className="border border-c-gray3 rounded-full h-fit w-fit p-4">
+                <MdOutlineLock className="w-8 h-8 text-c-gray3" />
+              </div>
+              <label>
+                <h1 className="text-p-rg md:text-p-lg font-medium text-f-dark">
+                  Change Password
+                </h1>
+                <p className="text-p-sc md:text-p-sm font-normal text-c-gray3">
+                  Update password for enhanced account security.
+                </p>
+              </label>
+            </header>
+            <hr className="my-5 border-f-gray" />
+            <div className="text-c-gray3 flex flex-col items-end">
               <div className="w-full">
                 <label
                   htmlFor="password"
                   className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                 >
                   Current Password{" "}
-                  <span className="text-red-400">
-                    {(passwordForm.password === "" || errors.password) &&
-                      errors.password}
+                  <span className="text-p-sm md:text-p-rg text-blue-500">
+                    *
                   </span>
                 </label>
-                <div className="relative">
-                  <input
-                    type={currentpassVisible ? "text" : "password"}
-                    name="password"
-                    value={passwordForm.password}
-                    onChange={handlePasswordChange}
-                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                    placeholder="Enter current password"
-                  />
-                  <button
-                    type="button"
-                    className="absolute top-4 right-2 text-f-gray2"
-                    onClick={() => setCurrentPassVisible(!currentpassVisible)}
-                  >
-                    {currentpassVisible ? (
-                      <MdOutlineRemoveRedEye className="w-6 h-6" />
-                    ) : (
-                      <FaRegEyeSlash className="w-6 h-6" />
-                    )}
-                  </button>
-                </div>
+                <section className="">
+                  <div className="relative">
+                    <input
+                      type={currentpassVisible ? "text" : "password"}
+                      name="password"
+                      value={passwordForm.password}
+                      onChange={handlePasswordChange}
+                      className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                        errors.password
+                          ? "border-red-400 focus:outline-red-400"
+                          : "border-f-gray focus:outline-c-primary"
+                      }`}
+                      placeholder="Enter current password"
+                    />
+                    <button
+                      type="button"
+                      className="absolute top-4 right-2 text-f-gray2"
+                      onClick={() => setCurrentPassVisible(!currentpassVisible)}
+                    >
+                      {currentpassVisible ? (
+                        <MdOutlineRemoveRedEye className="w-6 h-6" />
+                      ) : (
+                        <FaRegEyeSlash className="w-6 h-6" />
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-red-400 text-p-sc md:text-p-sm mb-4">
+                    {(passwordForm.password === "" || errors.password) &&
+                      errors.password}
+                  </p>
+                </section>
                 <label
                   htmlFor="newpassword"
                   className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                 >
                   New Password{" "}
-                  <span className="text-red-400">
-                    {(passwordForm.newpassword === "" || errors.newpassword) &&
-                      errors.newpassword}
+                  <span className="text-p-sm md:text-p-rg text-blue-500">
+                    *
                   </span>
                 </label>
-                <div className="relative">
-                  <input
-                    type={npVisible ? "text" : "password"}
-                    name="newpassword"
-                    value={passwordForm.newpassword}
-                    onChange={handlePasswordChange}
-                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                    placeholder="Enter new password"
-                  />
-                  <button
-                    type="button"
-                    className="absolute top-4 right-2 text-f-gray2"
-                    onClick={() => setNpVisible(!npVisible)}
-                  >
-                    {npVisible ? (
-                      <MdOutlineRemoveRedEye className="w-6 h-6" />
-                    ) : (
-                      <FaRegEyeSlash className="w-6 h-6" />
-                    )}
-                  </button>
-                </div>
+                <section>
+                  <div className="relative">
+                    <input
+                      type={npVisible ? "text" : "password"}
+                      name="newpassword"
+                      value={passwordForm.newpassword}
+                      onChange={handlePasswordChange}
+                      className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                        errors.confirmpassword
+                          ? "border-red-400 focus:outline-red-400"
+                          : "border-f-gray focus:outline-c-primary"
+                      }`}
+                      placeholder="Enter new password"
+                    />
+                    <button
+                      type="button"
+                      className="absolute top-4 right-2 text-f-gray2"
+                      onClick={() => setNpVisible(!npVisible)}
+                    >
+                      {npVisible ? (
+                        <MdOutlineRemoveRedEye className="w-6 h-6" />
+                      ) : (
+                        <FaRegEyeSlash className="w-6 h-6" />
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-red-400 text-p-sc md:text-p-sm mb-4">
+                    {(passwordForm.newpassword === "" || errors.newpassword) &&
+                      errors.newpassword}
+                  </p>
+                </section>
                 <label
                   htmlFor="confirmpassword"
                   className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                 >
                   Confirm Password{" "}
-                  <span className="text-red-400">
+                  <span className="text-p-sm md:text-p-rg text-blue-500">
+                    *
+                  </span>
+                </label>
+                <section>
+                  <div className="relative">
+                    <input
+                      type={cpVisible ? "text" : "password"}
+                      name="confirmpassword"
+                      value={passwordForm.confirmpassword}
+                      onChange={handlePasswordChange}
+                      className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                        errors.confirmpassword
+                          ? "border-red-400 focus:outline-red-400"
+                          : "border-f-gray focus:outline-c-primary"
+                      }`}
+                      placeholder="Confirm password"
+                    />
+                    <button
+                      type="button"
+                      className="absolute top-4 right-2 text-f-gray2"
+                      onClick={() => setCpVisible(!cpVisible)}
+                    >
+                      {cpVisible ? (
+                        <MdOutlineRemoveRedEye className="w-6 h-6" />
+                      ) : (
+                        <FaRegEyeSlash className="w-6 h-6" />
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-red-400 text-p-sc md:text-p-sm mb-4">
                     {(passwordForm.confirmpassword === "" ||
                       errors.confirmpassword) &&
                       errors.confirmpassword}
-                  </span>
-                </label>
-                <div className="relative">
-                  <input
-                    type={cpVisible ? "text" : "password"}
-                    name="confirmpassword"
-                    value={passwordForm.confirmpassword}
-                    onChange={handlePasswordChange}
-                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                    placeholder="Confirm password"
-                  />
-                  <button
-                    type="button"
-                    className="absolute top-4 right-2 text-f-gray2"
-                    onClick={() => setCpVisible(!cpVisible)}
-                  >
-                    {cpVisible ? (
-                      <MdOutlineRemoveRedEye className="w-6 h-6" />
-                    ) : (
-                      <FaRegEyeSlash className="w-6 h-6" />
-                    )}
-                  </button>
-                </div>
+                  </p>
+                </section>
               </div>
               <button
-                className="px-5 py-3 mt-5 bg-c-secondary text-f-light text-p-sm md:text-p-rg font-semibold rounded-md"
+                className="px-4 lg:px-12 py-3 bg-bg-con text-f-light text-p-sm md:text-p-rg font-medium rounded-md hover:bg-opacity-75"
                 onClick={handleChangePassword}
               >
                 Save Password
               </button>
             </div>
           </div>
-          {/* <div className="w-full border border-red-400 bg-white rounded-lg p-10 h-fit flex flex-col justify-between">
-            <label className="text-p-rg md:text-p-lg font-semibold text-c-secondary">
-              | Delete Account
-            </label>
-            <p className="text-p-sm md:text-p-rg font-medium text-c-secondary">
-              Once you delete your account, there is no going back. Please be
-              certain.
-            </p>
-            <button className="px-5 w-fit py-3 mt-8 bg-red-50 border-2 border-red-400 text-red-400 text-p-sm md:text-p-rg font-semibold rounded-md">
-              Delete Account
-            </button>
-          </div> */}
         </div>
       )}
       {selected === "Product Archive" && <ArchiveTable />}

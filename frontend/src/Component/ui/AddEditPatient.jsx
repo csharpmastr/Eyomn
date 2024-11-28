@@ -170,44 +170,48 @@ const AddEditPatient = ({ onClose, title, patient }) => {
     let newErrors = {};
 
     if (currentCardIndex === 0) {
-      if (!selectedBranchId) newErrors.branch = "Please select a branch";
+      if (!selectedBranchId)
+        newErrors.branch = "Please select a branch to continue.";
+
       if (
         !formData.first_name ||
         !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.first_name)
       )
-        newErrors.first_name = "(First name is required)";
+        newErrors.first_name =
+          "Enter a valid first name (at least 2 characters).";
 
       if (
         !formData.last_name ||
         !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.last_name)
       )
-        newErrors.last_name = "(Last name is required)";
+        newErrors.last_name =
+          "Enter a valid last name (at least 2 characters).";
 
-      if (!formData.sex) newErrors.sex = "(Sex is required)";
+      if (!formData.sex) newErrors.sex = "Please select your gender.";
 
       if (!formData.birthdate)
-        newErrors.birthdate = "(Date of birth is required)";
-
-      //call validateForm before saving
+        newErrors.birthdate = "Enter your date of birth.";
     } else if (currentCardIndex === 1) {
       if (!formData.civil_status)
-        newErrors.civil_status = "(Civil status is required)";
+        newErrors.civil_status = "Please select your civil status.";
 
       if (
         !formData.contact_number ||
         !/^09\d{9}$/.test(formData.contact_number)
       )
         newErrors.contact_number =
-          "(A valid 11-digit contact number is required)";
+          "Enter a valid contact number (11 digits starting with 09).";
 
       if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-        newErrors.email = "(Valid email is required)";
+        newErrors.email =
+          "Enter a valid email address (e.g., example@mail.com).";
     }
 
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
   };
+
   const sanitizeFormData = (formData) => {
     const {
       patientId,
@@ -272,218 +276,244 @@ const AddEditPatient = ({ onClose, title, patient }) => {
       {isLoading || isUpdateLoading ? (
         <Loader description={"Saving Patient Information, please wait..."} />
       ) : (
-        <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-          <div className="w-[380px] md:w-[600px]">
-            <header className="p-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-              <h1 className="text-p-rg md:text-p-lg text-c-secondary font-medium">
-                {title}
-              </h1>
-              <button onClick={onClose}>&times;</button>
-            </header>
-            <form className="bg-white h-[500px] md:h-[600px] overflow-y-scroll">
-              {currentCardIndex == 0 ? (
-                <div className="p-3 md:p-6 ">
-                  <header className="flex justify-between">
-                    <h1
-                      className={`text-p-sm md:text-p-rg font-medium text-c-secondary flex justify-center items-center ${
-                        user.role === "2" ? "" : "mb-5"
-                      }`}
-                    >
-                      | Personal Information
+        <div className="fixed top-0 left-0 flex items-center justify-end p-5 h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
+          <div className="w-[380px] md:w-[600px] h-full flex flex-col justify-between bg-white rounded-lg">
+            <div className="h-full overflow-y-scroll">
+              <header className="px-4 py-6 border-b flex justify-between items-center">
+                <h1 className="text-p-rg md:text-p-lg text-f-dark font-medium">
+                  {title}
+                </h1>
+                <button
+                  onClick={onClose}
+                  className="w-10 h-10 rounded-md border hover:bg-zinc-50"
+                >
+                  &times;
+                </button>
+              </header>
+              <form>
+                <header className="flex justify-center gap-10 my-6">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="border border-f-gray w-10 h-10 rounded-lg"></div>
+                    <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary flex justify-center items-center">
+                      Personal Information
                     </h1>
+                  </div>
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="border border-f-gray w-10 h-10 rounded-lg"></div>
+                    <h1 className="text-p-sm md:text-p-rg font-medium text-c-gray3 flex justify-center items-center text-center">
+                      Status & Contact <br /> Information
+                    </h1>
+                  </div>
+                </header>
+                {currentCardIndex == 0 ? (
+                  <div className="px-3 md:px-6 ">
                     {user.role === "2" && (
-                      <div className="flex flex-col items-end">
-                        <span className="text-red-400 text-right">
-                          {(selectedBranchId === "" || errors.branch) &&
-                            errors.branch}
-                        </span>
-                        <select
-                          name="branchId"
-                          value={selectedBranchId}
-                          onChange={handleChangeBranch}
-                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                            errors.branch
-                              ? "border-red-400 focus:outline-red-400"
-                              : "border-c-gray3 focus:outline-c-primary"
-                          }`}
+                      <section className="mb-4">
+                        <label
+                          htmlFor="first_name"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
-                          <option value="" disabled className="text-c-gray3">
-                            Select Branch
-                          </option>
-                          {branches.map((branch, key) => (
-                            <option key={key} value={branch.branchId}>
-                              {branch.branchName}
+                          Branch patient{" "}
+                          <span className="text-blue-500">*</span>
+                        </label>
+                        <div>
+                          <select
+                            name="branchId"
+                            value={selectedBranchId}
+                            onChange={handleChangeBranch}
+                            className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                              errors.branch
+                                ? "border-red-400 focus:outline-red-400"
+                                : "border-f-gray focus:outline-c-primary"
+                            }`}
+                          >
+                            <option value="" disabled className="text-c-gray3">
+                              Select Branch
                             </option>
-                          ))}
-                        </select>
-                      </div>
+                            {branches.map((branch, key) => (
+                              <option key={key} value={branch.branchId}>
+                                {branch.branchName}
+                              </option>
+                            ))}
+                          </select>
+                          <p className="text-red-400 text-p-sm mt-1">
+                            {(selectedBranchId === "" || errors.branch) &&
+                              errors.branch}
+                          </p>
+                        </div>
+                      </section>
                     )}
-                  </header>
-                  <section>
-                    <label
-                      htmlFor="first_name"
-                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                    >
-                      First Name{" "}
-                      <span className="text-red-400">
-                        {(formData.first_name === "" || errors.first_name) &&
-                          errors.first_name}
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="first_name"
-                      value={formData.first_name}
-                      onChange={handleChange}
-                      className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                        errors.first_name
-                          ? "border-red-400 focus:outline-red-400"
-                          : "border-c-gray3 focus:outline-c-primary"
-                      }`}
-                      placeholder="Enter first Name"
-                    />
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="last_name"
-                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                    >
-                      Last Name{" "}
-                      <span className="text-red-400">
-                        {(formData.last_name === "" || errors.last_name) &&
-                          errors.last_name}
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="last_name"
-                      value={formData.last_name}
-                      onChange={handleChange}
-                      className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                        errors.last_name
-                          ? "border-red-400 focus:outline-red-400"
-                          : "border-c-gray3 focus:outline-c-primary"
-                      }`}
-                      placeholder="Enter last Name"
-                    />
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="middle_name"
-                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                    >
-                      Middle Name (Optional)
-                    </label>
-                    <input
-                      type="text"
-                      name="middle_name"
-                      value={formData.middle_name}
-                      onChange={handleChange}
-                      className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                      placeholder="Enter middle name"
-                    />
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="birthdate"
-                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                    >
-                      Date of Birth{" "}
-                      <span className="text-red-400">
-                        {(formData.birthdate === "" || errors.birthdate) &&
-                          errors.birthdate}
-                      </span>
-                    </label>
-                    <input
-                      type="date"
-                      name="birthdate"
-                      value={formData.birthdate}
-                      onChange={handleChange}
-                      max={
-                        new Date(
-                          new Date().setFullYear(new Date().getFullYear() - 2)
-                        )
-                          .toISOString()
-                          .split("T")[0]
-                      }
-                      min={
-                        new Date(
-                          new Date().setFullYear(new Date().getFullYear() - 120)
-                        )
-                          .toISOString()
-                          .split("T")[0]
-                      }
-                      className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                        errors.birthdate
-                          ? "border-red-400 focus:outline-red-400"
-                          : "border-c-gray3 focus:outline-c-primary"
-                      }`}
-                    />
-                  </section>
-                  <div className="flex gap-4">
-                    <div className="w-1/2">
+                    <section className="mb-4">
                       <label
-                        htmlFor="age"
+                        htmlFor="first_name"
                         className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
-                        Age
+                        First Name <span className="text-blue-500">*</span>
+                      </label>
+                      <div>
+                        <input
+                          type="text"
+                          name="first_name"
+                          value={formData.first_name}
+                          onChange={handleChange}
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                            errors.first_name
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-f-gray focus:outline-c-primary"
+                          }`}
+                          placeholder="Enter first Name"
+                        />
+                        <p className="text-red-400 text-p-sm mt-1">
+                          {(formData.first_name === "" || errors.first_name) &&
+                            errors.first_name}
+                        </p>
+                      </div>
+                    </section>
+                    <section className="mb-4">
+                      <label
+                        htmlFor="last_name"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                      >
+                        Last Name <span className="text-blue-500">*</span>
+                      </label>
+                      <div>
+                        <input
+                          type="text"
+                          name="last_name"
+                          value={formData.last_name}
+                          onChange={handleChange}
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                            errors.last_name
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-f-gray focus:outline-c-primary"
+                          }`}
+                          placeholder="Enter last Name"
+                        />
+                        <p className="text-red-400 text-p-sm mt-1">
+                          {(formData.last_name === "" || errors.last_name) &&
+                            errors.last_name}
+                        </p>
+                      </div>
+                    </section>
+                    <section>
+                      <label
+                        htmlFor="middle_name"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                      >
+                        Middle Name (Optional)
                       </label>
                       <input
-                        type="number"
-                        name="age"
-                        min={0}
-                        value={formData.age}
+                        type="text"
+                        name="middle_name"
+                        value={formData.middle_name}
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
-                        disabled
-                        placeholder="Enter age"
+                        className="mt-1 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                        placeholder="Enter middle name"
                       />
+                    </section>
+                    <div className="flex gap-4 mb-4">
+                      <section className="w-3/4">
+                        <label
+                          htmlFor="birthdate"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                        >
+                          Date of Birth <span className="text-blue-500">*</span>
+                        </label>
+                        <div>
+                          <input
+                            type="date"
+                            name="birthdate"
+                            value={formData.birthdate}
+                            onChange={handleChange}
+                            max={
+                              new Date(
+                                new Date().setFullYear(
+                                  new Date().getFullYear() - 2
+                                )
+                              )
+                                .toISOString()
+                                .split("T")[0]
+                            }
+                            min={
+                              new Date(
+                                new Date().setFullYear(
+                                  new Date().getFullYear() - 120
+                                )
+                              )
+                                .toISOString()
+                                .split("T")[0]
+                            }
+                            className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                              errors.birthdate
+                                ? "border-red-400 focus:outline-red-400"
+                                : "border-f-gray focus:outline-c-primary"
+                            }`}
+                          />
+                          <p className="text-red-400 text-p-sm mt-1">
+                            {(formData.birthdate === "" || errors.birthdate) &&
+                              errors.birthdate}
+                          </p>
+                        </div>
+                      </section>
+                      <div className="w-1/4">
+                        <label
+                          htmlFor="age"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                        >
+                          Age
+                        </label>
+                        <input
+                          type="number"
+                          name="age"
+                          min={0}
+                          value={formData.age}
+                          onChange={handleChange}
+                          className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark border-f-gray focus:outline-c-primary"
+                          disabled
+                          placeholder="Patient age"
+                        />
+                      </div>
                     </div>
-                    <div className="w-1/2">
+                    <section>
                       <label
                         htmlFor="sex"
                         className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
-                        Sex{" "}
-                        <span className="text-red-400">
-                          {(formData.sex === "" || errors.sex) && errors.sex}
-                        </span>
+                        Sex <span className="text-blue-500">*</span>
                       </label>
-                      <select
-                        name="sex"
-                        value={formData.sex}
-                        onChange={handleChange}
-                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
-                          errors.sex
-                            ? "border-red-400 focus:outline-red-400"
-                            : "border-c-gray3 focus:outline-c-primary"
-                        }`}
-                      >
-                        <option value="" disabled className="text-c-gray3">
-                          Select Sex
-                        </option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="None">Prefer not to say</option>
-                      </select>
-                    </div>
+                      <div>
+                        <select
+                          name="sex"
+                          value={formData.sex}
+                          onChange={handleChange}
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                            errors.sex
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-f-gray focus:outline-c-primary"
+                          }`}
+                        >
+                          <option value="" disabled className="text-c-gray3">
+                            Select Sex
+                          </option>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="None">Prefer not to say</option>
+                        </select>
+                        <p className="text-red-400 text-p-sm mt-1">
+                          {(formData.sex === "" || errors.sex) && errors.sex}
+                        </p>
+                      </div>
+                    </section>
                   </div>
-                </div>
-              ) : (
-                <div className="p-3 md:p-6">
-                  <div className="mb-4">
-                    <header>
-                      <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-4">
-                        | Status Information
-                      </h1>
-                    </header>
+                ) : (
+                  <div className="p-3 md:p-6">
                     <section>
                       <label
                         htmlFor="civil_status"
                         className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
-                        Civil Status{" "}
-                        <span className="text-red-400">
+                        Civil Status <span className="text-blue-500">*</span>
+                        <span className="text-red-400 text-p-sm mt-1">
                           {(formData.civil_status === "" ||
                             errors.civil_status) &&
                             errors.civil_status}
@@ -496,7 +526,7 @@ const AddEditPatient = ({ onClose, title, patient }) => {
                         className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
                           errors.civil_status
                             ? "border-red-400 focus:outline-red-400"
-                            : "border-c-gray3 focus:outline-c-primary"
+                            : "border-f-gray focus:outline-c-primary"
                         }`}
                       >
                         <option value="" disabled className="text-c-gray3">
@@ -518,10 +548,10 @@ const AddEditPatient = ({ onClose, title, patient }) => {
                         name="occupation"
                         value={formData.occupation}
                         onChange={handleChange}
-                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
                           errors.occupation
                             ? "border-red-400 focus:outline-red-400"
-                            : "border-c-gray3 focus:outline-c-primary"
+                            : "border-f-gray focus:outline-c-primary"
                         }`}
                       >
                         <option value="" disabled className="text-c-gray3">
@@ -531,20 +561,14 @@ const AddEditPatient = ({ onClose, title, patient }) => {
                         <option value="Unemployed">Unemployed</option>
                       </select>
                     </section>
-                  </div>
-                  <div>
-                    <header>
-                      <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-4">
-                        | Contact Information
-                      </h1>
-                    </header>
+                    <hr className="border-f-gray mb-8 mt-10" />
                     <div className="flex gap-4 mb-4">
                       <div className="w-1/2">
                         <label
                           htmlFor="province"
                           className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
-                          Province
+                          Province <span className="text-blue-500">*</span>
                         </label>
                         <Select
                           id="province"
@@ -559,7 +583,7 @@ const AddEditPatient = ({ onClose, title, patient }) => {
                           htmlFor="municipality"
                           className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
-                          Municipality
+                          Municipality <span className="text-blue-500">*</span>
                         </label>
                         <Select
                           id="municipality"
@@ -577,8 +601,8 @@ const AddEditPatient = ({ onClose, title, patient }) => {
                         htmlFor="contact_number"
                         className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
-                        Contact Number{" "}
-                        <span className="text-red-400">
+                        Contact Number <span className="text-blue-500">*</span>
+                        <span className="text-red-400 text-p-sm mt-1">
                           {(formData.contact_number === "" ||
                             errors.contact_number) &&
                             errors.contact_number}
@@ -592,7 +616,7 @@ const AddEditPatient = ({ onClose, title, patient }) => {
                         className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
                           errors.contact_number
                             ? "border-red-400 focus:outline-red-400"
-                            : "border-c-gray3 focus:outline-c-primary"
+                            : "border-f-gray focus:outline-c-primary"
                         }`}
                         placeholder="Enter contact number"
                       />
@@ -602,8 +626,8 @@ const AddEditPatient = ({ onClose, title, patient }) => {
                         htmlFor="email"
                         className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
-                        Email Address{" "}
-                        <span className="text-red-400">
+                        Email Address <span className="text-blue-500">*</span>
+                        <span className="text-red-400 text-p-sm mt-1">
                           {(formData.email === "" || errors.email) &&
                             errors.email}
                         </span>
@@ -616,16 +640,16 @@ const AddEditPatient = ({ onClose, title, patient }) => {
                         className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
                           errors.email
                             ? "border-red-400 focus:outline-red-400"
-                            : "border-c-gray3 focus:outline-c-primary"
+                            : "border-f-gray focus:outline-c-primary"
                         }`}
                         placeholder="Enter email address"
                       />
                     </section>
                   </div>
-                </div>
-              )}
-            </form>
-            <footer className="flex justify-end px-4 py-3 gap-4 bg-white border border-t-f-gray rounded-b-lg">
+                )}
+              </form>
+            </div>
+            <footer className="flex justify-end p-6 gap-4">
               {currentCardIndex == 0 ? (
                 <button
                   className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
@@ -644,7 +668,7 @@ const AddEditPatient = ({ onClose, title, patient }) => {
               )}
               {currentCardIndex == 0 ? (
                 <button
-                  className="px-4 lg:px-12 py-2 bg-bg-con  text-f-light text-p-sm md:text-p-rg font-medium rounded-md  hover:bg-opacity-75"
+                  className="px-4 lg:px-12 py-2 bg-bg-con  text-f-light text-p-sm md:text-p-rg font-medium rounded-md shadow-sm hover:bg-opacity-75"
                   onClick={handleNext}
                   disabled={currentCardIndex === 1}
                 >
