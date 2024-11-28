@@ -1,4 +1,5 @@
 import React from "react";
+import { FiUser } from "react-icons/fi";
 
 const StaffCard = ({ staffData, showImage = true, onClick }) => {
   return (
@@ -20,7 +21,9 @@ const StaffCard = ({ staffData, showImage = true, onClick }) => {
           showImage ? "items-center space-x-4" : "flex-col items-center"
         }`}
       >
-        {showImage && (
+        {showImage ? (
+          <FiUser className="text-white w-16 h-16 bg-gray-300 rounded-xl p-2" />
+        ) : (
           <img
             className="w-16 h-16 rounded-xl object-cover bg-gray-100"
             src="profile-pic.jpg"

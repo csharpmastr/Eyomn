@@ -276,8 +276,8 @@ const AddEditPatient = ({ onClose, title, patient }) => {
       {isLoading || isUpdateLoading ? (
         <Loader description={"Saving Patient Information, please wait..."} />
       ) : (
-        <div className="fixed top-0 left-0 flex items-center justify-end p-5 h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-          <div className="w-[380px] md:w-[600px] h-full flex flex-col justify-between bg-white rounded-lg">
+        <div className="fixed top-0 left-0 flex items-center justify-center md:justify-end p-5 md:p-3 h-screen w-screen bg-zinc-800 bg-opacity-50 z-50 font-Poppins">
+          <div className="w-full md:w-[600px] h-fit md:h-full flex flex-col justify-between bg-white rounded-lg">
             <div className="h-full overflow-y-scroll">
               <header className="px-4 py-6 border-b flex justify-between items-center">
                 <h1 className="text-p-rg md:text-p-lg text-f-dark font-medium">
@@ -291,22 +291,34 @@ const AddEditPatient = ({ onClose, title, patient }) => {
                 </button>
               </header>
               <form>
-                <header className="flex justify-center gap-10 my-6">
+                <section className="flex justify-center gap-10 my-6">
                   <div className="flex flex-col items-center gap-3">
                     <div className="border border-f-gray w-10 h-10 rounded-lg"></div>
-                    <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary flex justify-center items-center">
+                    <h1
+                      className={`font-medium flex justify-center items-center ${
+                        currentCardIndex === 0
+                          ? "text-c-secondary text-p-sm md:text-p-rg transition-all duration-200 ease-in-out"
+                          : "text-c-gray3 text-p-sc md:text-p-sm"
+                      }`}
+                    >
                       Personal Information
                     </h1>
                   </div>
                   <div className="flex flex-col items-center gap-3">
                     <div className="border border-f-gray w-10 h-10 rounded-lg"></div>
-                    <h1 className="text-p-sm md:text-p-rg font-medium text-c-gray3 flex justify-center items-center text-center">
+                    <h1
+                      className={`font-medium flex justify-center items-center text-center ${
+                        currentCardIndex === 1
+                          ? "text-c-secondary text-p-sm md:text-p-rg transition-all duration-200 ease-in-out"
+                          : "text-c-gray3 text-p-sc md:text-p-sm"
+                      }`}
+                    >
                       Status & Contact <br /> Information
                     </h1>
                   </div>
-                </header>
-                {currentCardIndex == 0 ? (
-                  <div className="px-3 md:px-6 ">
+                </section>
+                {currentCardIndex === 0 ? (
+                  <div className="px-3 md:px-6 transition-all duration-200 ease-in-out">
                     {user.role === "2" && (
                       <section className="mb-4">
                         <label
@@ -470,7 +482,7 @@ const AddEditPatient = ({ onClose, title, patient }) => {
                           onChange={handleChange}
                           className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark border-f-gray focus:outline-c-primary"
                           disabled
-                          placeholder="Patient age"
+                          placeholder="Age"
                         />
                       </div>
                     </div>
@@ -506,36 +518,38 @@ const AddEditPatient = ({ onClose, title, patient }) => {
                     </section>
                   </div>
                 ) : (
-                  <div className="p-3 md:p-6">
-                    <section>
+                  <div className="p-3 md:p-6 transition-all duration-200 ease-in-out">
+                    <section className="mb-4">
                       <label
                         htmlFor="civil_status"
                         className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Civil Status <span className="text-blue-500">*</span>
-                        <span className="text-red-400 text-p-sm mt-1">
+                      </label>
+                      <div>
+                        <select
+                          name="civil_status"
+                          value={formData.civil_status}
+                          onChange={handleChange}
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                            errors.civil_status
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-f-gray focus:outline-c-primary"
+                          }`}
+                        >
+                          <option value="" disabled className="text-c-gray3">
+                            Select Status
+                          </option>
+                          <option value="Single">Single</option>
+                          <option value="Married">Married</option>
+                          <option value="Widowed">Widowed</option>
+                        </select>
+                        <p className="text-red-400 text-p-sm mt-1">
                           {(formData.civil_status === "" ||
                             errors.civil_status) &&
                             errors.civil_status}
-                        </span>
-                      </label>
-                      <select
-                        name="civil_status"
-                        value={formData.civil_status}
-                        onChange={handleChange}
-                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                          errors.civil_status
-                            ? "border-red-400 focus:outline-red-400"
-                            : "border-f-gray focus:outline-c-primary"
-                        }`}
-                      >
-                        <option value="" disabled className="text-c-gray3">
-                          Select Status
-                        </option>
-                        <option value="Single">Single</option>
-                        <option value="Married">Married</option>
-                        <option value="Widowed">Widowed</option>
-                      </select>
+                        </p>
+                      </div>
                     </section>
                     <section>
                       <label
@@ -596,30 +610,32 @@ const AddEditPatient = ({ onClose, title, patient }) => {
                         />
                       </div>
                     </div>
-                    <section>
+                    <section className="mb-4">
                       <label
                         htmlFor="contact_number"
                         className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Contact Number <span className="text-blue-500">*</span>
-                        <span className="text-red-400 text-p-sm mt-1">
+                      </label>
+                      <div>
+                        <input
+                          type="text"
+                          name="contact_number"
+                          value={formData.contact_number}
+                          onChange={handleChange}
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                            errors.contact_number
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-f-gray focus:outline-c-primary"
+                          }`}
+                          placeholder="Enter contact number"
+                        />
+                        <p className="text-red-400 text-p-sm mt-1">
                           {(formData.contact_number === "" ||
                             errors.contact_number) &&
                             errors.contact_number}
-                        </span>
-                      </label>
-                      <input
-                        type="text"
-                        name="contact_number"
-                        value={formData.contact_number}
-                        onChange={handleChange}
-                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                          errors.contact_number
-                            ? "border-red-400 focus:outline-red-400"
-                            : "border-f-gray focus:outline-c-primary"
-                        }`}
-                        placeholder="Enter contact number"
-                      />
+                        </p>
+                      </div>
                     </section>
                     <section>
                       <label
@@ -627,30 +643,32 @@ const AddEditPatient = ({ onClose, title, patient }) => {
                         className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
                         Email Address <span className="text-blue-500">*</span>
-                        <span className="text-red-400 text-p-sm mt-1">
+                      </label>
+                      <div>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                            errors.email
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-f-gray focus:outline-c-primary"
+                          }`}
+                          placeholder="Enter email address"
+                        />
+                        <p className="text-red-400 text-p-sm mt-1">
                           {(formData.email === "" || errors.email) &&
                             errors.email}
-                        </span>
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
-                          errors.email
-                            ? "border-red-400 focus:outline-red-400"
-                            : "border-f-gray focus:outline-c-primary"
-                        }`}
-                        placeholder="Enter email address"
-                      />
+                        </p>
+                      </div>
                     </section>
                   </div>
                 )}
               </form>
             </div>
             <footer className="flex justify-end p-6 gap-4">
-              {currentCardIndex == 0 ? (
+              {currentCardIndex === 0 ? (
                 <button
                   className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
                   onClick={onClose}
@@ -668,7 +686,7 @@ const AddEditPatient = ({ onClose, title, patient }) => {
               )}
               {currentCardIndex == 0 ? (
                 <button
-                  className="px-4 lg:px-12 py-2 bg-bg-con  text-f-light text-p-sm md:text-p-rg font-medium rounded-md shadow-sm hover:bg-opacity-75"
+                  className="px-4 lg:px-12 py-2 bg-bg-con  text-f-light text-p-sm md:text-p-rg font-medium rounded-md shadow-sm hover:bg-opacity-75 active:bg-pressed-branch"
                   onClick={handleNext}
                   disabled={currentCardIndex === 1}
                 >
@@ -678,9 +696,8 @@ const AddEditPatient = ({ onClose, title, patient }) => {
                 <>
                   {patient ? (
                     <>
-                      {" "}
                       <button
-                        className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-medium rounded-md  hover:bg-opacity-75"
+                        className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-medium rounded-md  hover:bg-opacity-75 active:bg-pressed-branch"
                         onClick={handleSubmit}
                         disabled={currentCardIndex !== 1}
                       >

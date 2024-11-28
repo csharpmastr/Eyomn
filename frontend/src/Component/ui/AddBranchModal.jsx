@@ -132,11 +132,15 @@ const AddBranchModal = ({ onClose, branchToEdit }) => {
   const validateForm = () => {
     let newErrors = {};
 
-    if (!formData.name || !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.name))
-      newErrors.name = "(Branch name is required)";
+    if (!formData.name || !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.name)) {
+      newErrors.name =
+        "Branch name must be at least 2 characters and better if it's the location";
+    }
 
-    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-      newErrors.email = "(Valid email is required)";
+    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email =
+        "Please enter a valid email address (e.g., name@example.com).";
+    }
 
     setErrors(newErrors);
 
@@ -174,88 +178,103 @@ const AddBranchModal = ({ onClose, branchToEdit }) => {
       {isLoading ? (
         <Loader description={"Saving branch Information, please wait..."} />
       ) : (
-        <div className="fixed top-0 left-0 flex items-center p-4 justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-          <div className="w-[600px]">
-            <header className="px-4 py-3 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-              <h1 className="text-p-rg md:text-p-lg text-c-secondary font-medium">
-                {branchToEdit ? "Edit Branch" : "Add Branch"}
-              </h1>
-              <button onClick={handleCloseModal}> &times; </button>
-            </header>
-            <div className="py-6 px-6 h-[400px] md:h-fit bg-white overflow-y-scroll">
-              <div>
-                <section>
-                  <label
-                    htmlFor="name"
-                    className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                  >
-                    Branch Name:{" "}
-                    <span className="text-red-400">
+        <div className="fixed top-0 left-0 flex items-center justify-center md:justify-end p-5 md:p-3 h-screen w-screen bg-zinc-800 bg-opacity-50 z-50 font-Poppins">
+          <div className="w-full md:w-[600px] h-fit md:h-full flex flex-col justify-between bg-white rounded-lg">
+            <div>
+              <header className="px-4 py-6 border-b flex justify-between items-center">
+                <h1 className="text-p-rg md:text-p-lg text-f-dark font-medium">
+                  {branchToEdit ? "Edit Branch" : "Add Branch"}
+                </h1>
+                <button
+                  onClick={onClose}
+                  className="w-10 h-10 rounded-md border hover:bg-zinc-50"
+                >
+                  &times;
+                </button>
+              </header>
+              <div className="p-6">
+                <div>
+                  <section className="mb-6">
+                    <label
+                      htmlFor="name"
+                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                    >
+                      Branch Name: <span className="text-blue-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                        errors.name
+                          ? "border-red-400 focus:outline-red-400"
+                          : "border-f-gray focus:outline-c-primary"
+                      }`}
+                      placeholder="Enter branch name"
+                    />
+                    <p className="text-red-400 text-p-sm mt-1">
                       {(formData.name === "" || errors.name) && errors.name}
-                    </span>
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="mt-1 mb-6 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                    placeholder="Enter branch name"
-                  />
-                </section>
-                <div className="flex gap-4 mb-6">
-                  <div className="w-1/2">
+                    </p>
+                  </section>
+                  <div className="flex gap-4 mb-6">
+                    <div className="w-1/2">
+                      <label
+                        htmlFor="province"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                      >
+                        Province <span className="text-blue-500">*</span>
+                      </label>
+                      <Select
+                        id="province"
+                        value={selectedProvince}
+                        onChange={handleProvinceChange}
+                        options={provinceOptions}
+                        placeholder="Select Province"
+                      />
+                    </div>
+                    <div className="w-1/2">
+                      <label
+                        htmlFor="municipality"
+                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                      >
+                        Municipality <span className="text-blue-500">*</span>
+                      </label>
+                      <Select
+                        id="municipality"
+                        name="municipality"
+                        options={municipalities}
+                        value={selectedMunicipality}
+                        onChange={handleMunicipalityChange}
+                        placeholder="Select Municipality"
+                        isDisabled={!selectedProvince}
+                      />
+                    </div>
+                  </div>
+                  <section>
                     <label
-                      htmlFor="province"
+                      htmlFor="email"
                       className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                     >
-                      Province
+                      Email Address: <span className="text-blue-500">*</span>
                     </label>
-                    <Select
-                      id="province"
-                      value={selectedProvince}
-                      onChange={handleProvinceChange}
-                      options={provinceOptions}
-                      placeholder="Select Province"
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                        errors.email
+                          ? "border-red-400 focus:outline-red-400"
+                          : "border-f-gray focus:outline-c-primary"
+                      }`}
+                      placeholder="Enter email"
                     />
-                  </div>
-                  <div className="w-1/2">
-                    <label
-                      htmlFor="municipality"
-                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                    >
-                      Municipality
-                    </label>
-                    <Select
-                      id="municipality"
-                      name="municipality"
-                      options={municipalities}
-                      value={selectedMunicipality}
-                      onChange={handleMunicipalityChange}
-                      placeholder="Select Municipality"
-                      isDisabled={!selectedProvince}
-                    />
-                  </div>
-                </div>
-                <section>
-                  <label
-                    htmlFor="email"
-                    className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                  >
-                    Email Address:{" "}
-                    <span className="text-red-400">
+                    <p className="text-red-400 text-p-sm mt-1">
                       {(formData.email === "" || errors.email) && errors.email}
-                    </span>
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                    placeholder="Enter email"
-                  />
-                </section>
+                    </p>
+                  </section>
+                </div>
               </div>
             </div>
             <footer className="border border-t-f-gray bg-white rounded-b-lg flex gap-4 justify-end py-3 px-4">
