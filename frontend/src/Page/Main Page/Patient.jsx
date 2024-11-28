@@ -184,10 +184,7 @@ const Patient = () => {
         </>
       )}
       {isAddPatientModalOpen && (
-        <AddEditPatient
-          onClose={closeAddPatient}
-          title={"Patient Information"}
-        />
+        <AddEditPatient onClose={closeAddPatient} title={"Add New Patient"} />
       )}
       {openSharePatient && (
         <SharePatientModal

@@ -135,6 +135,9 @@ const MedForm = () => {
         custom_od: "",
         custom_os: "",
         custom_ou: "",
+        sphere: "",
+        cylinder: "",
+        axis: "",
       },
       unaided_va: {
         od: "",
@@ -153,17 +156,29 @@ const MedForm = () => {
     },
 
     retinoscopy: {
-      with_drop: {
-        od: "",
-        os: "",
-        custom_od: "",
-        custom_os: "",
-      },
       without_drop: {
-        od: "",
-        os: "",
-        custom_od: "",
-        custom_os: "",
+        od: {
+          sphere: "",
+          cylinder: "",
+          axis: "",
+        },
+        os: {
+          sphere: "",
+          cylinder: "",
+          axis: "",
+        },
+      },
+      with_drop: {
+        od: {
+          sphere: "",
+          cylinder: "",
+          axis: "",
+        },
+        os: {
+          sphere: "",
+          cylinder: "",
+          axis: "",
+        },
       },
     },
 
@@ -251,16 +266,7 @@ const MedForm = () => {
     },
 
     corneal_reflex_test: {
-      od: {
-        present: false,
-        absent: false,
-        additional_note_od: "",
-      },
-      os: {
-        present: false,
-        absent: false,
-        additional_note_os: "",
-      },
+      near: "",
     },
 
     motility_test: {
@@ -1638,12 +1644,84 @@ const MedForm = () => {
                           )}
                         </div>
                       </section>
+                      <div className="w-full overflow-x-auto bg-white border border-f-gray rounded-md mt-5">
+                        <table className="min-w-full md:md:w-full table-auto border-collapse">
+                          <thead>
+                            <tr className="bg-bg-sb text-c-gray3 font-medium text-p-sc md:text-p-sm">
+                              <th className="px-4 py-2">Sphere</th>
+                              <th className="px-4 py-2">Cylinder</th>
+                              <th className="px-4 py-2">Axis</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td className="border-t border-r border-f-gray">
+                                <input
+                                  type="text"
+                                  name="habitual_sphere"
+                                  value={
+                                    medformData.visual_acuity.habitual_va
+                                      .sphere || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "visual_acuity.habitual_va.sphere"
+                                    )
+                                  }
+                                  className="w-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                  rows={1}
+                                  placeholder=""
+                                />
+                              </td>
+                              <td className="border-t border-r border-f-gray">
+                                <input
+                                  type="text"
+                                  name="habitual_cylinder"
+                                  value={
+                                    medformData.visual_acuity.habitual_va
+                                      .cylinder || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "visual_acuity.habitual_va.cylinder"
+                                    )
+                                  }
+                                  className="w-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                  rows={1}
+                                  placeholder=""
+                                />
+                              </td>
+                              <td className="border-t border-r border-f-gray">
+                                <input
+                                  type="text"
+                                  name="habitual_axis"
+                                  value={
+                                    medformData.visual_acuity.habitual_va
+                                      .axis || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "visual_acuity.habitual_va.axis"
+                                    )
+                                  }
+                                  className="w-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                  rows={1}
+                                  placeholder=""
+                                />
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                     <div className="border border-f-gray bg-bg-mc w-full md:w-1/2 rounded-bl-md p-5">
                       <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
                         | Unaided VA
                       </label>
-                      <section className=" mt-5 flex gap-3 w-full">
+                      <section className="mt-5 flex gap-3 w-full flex-col md:flex-row">
                         <div className="flex flex-col w-full">
                           <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
                             OD
@@ -1782,7 +1860,7 @@ const MedForm = () => {
                       <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
                         | Pinhole VA
                       </label>
-                      <section className=" mt-5 flex gap-3 w-full">
+                      <section className="mt-5 flex gap-3 w-full flex-col md:flex-row">
                         <div className="flex flex-col w-full">
                           <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
                             OD
@@ -1946,187 +2024,287 @@ const MedForm = () => {
                       <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
                         | Without Drops
                       </label>
-                      <section className="mt-5 flex gap-3 w-full">
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OD
-                          </p>
-                          <select
-                            name="retinoscopy_wo_od"
-                            value={medformData.retinoscopy.without_drop.od}
-                            onChange={(e) => {
-                              handleChange(e, "retinoscopy.without_drop.od");
-                              if (e.target.value !== "") {
-                                handleChange(
-                                  { target: { value: "" } },
-                                  "retinoscopy.without_drop.custom_od"
-                                );
-                              }
-                            }}
-                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                          >
-                            <option value="">Choose options</option>
-                            <option value="Plano">Plano</option>
-                            <option value="-">-</option>
-                            <option value="+">+</option>
-                            <option value=" ">Other</option>
-                          </select>
-                          {medformData.retinoscopy.without_drop.od === " " && (
-                            <input
-                              type="text"
-                              name="retinoscopy_wo_od_custom"
-                              value={
-                                medformData.retinoscopy.without_drop
-                                  .custom_od || ""
-                              }
-                              onChange={(e) =>
-                                handleChange(
-                                  e,
-                                  "retinoscopy.without_drop.custom_od"
-                                )
-                              }
-                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                              placeholder="Enter custom value"
-                            />
-                          )}
-                        </div>
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OS
-                          </p>
-                          <select
-                            name="retinoscopy_wo_os"
-                            value={medformData.retinoscopy.without_drop.os}
-                            onChange={(e) => {
-                              handleChange(e, "retinoscopy.without_drop.os");
-                              if (e.target.value !== "") {
-                                handleChange(
-                                  { target: { value: "" } },
-                                  "retinoscopy.without_drop.custom_os"
-                                );
-                              }
-                            }}
-                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                          >
-                            <option value="">Choose options</option>
-                            <option value="Plano">Plano</option>
-                            <option value="-">-</option>
-                            <option value="+">+</option>
-                            <option value=" ">Other</option>
-                          </select>
-                          {medformData.retinoscopy.without_drop.os === " " && (
-                            <input
-                              type="text"
-                              name="retinoscopy_wo_os_custom"
-                              value={
-                                medformData.retinoscopy.without_drop
-                                  .custom_os || ""
-                              }
-                              onChange={(e) =>
-                                handleChange(
-                                  e,
-                                  "retinoscopy.without_drop.custom_os"
-                                )
-                              }
-                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                              placeholder="Enter custom value"
-                            />
-                          )}
-                        </div>
-                      </section>
+                      <div className="w-full overflow-x-auto bg-white border border-f-gray rounded-md mt-5">
+                        <table className="min-w-[600px] md:md:w-full table-auto border-collapse">
+                          <thead>
+                            <tr className="bg-bg-sb text-c-gray3 font-medium text-p-sc md:text-p-sm">
+                              <th className="p-4"></th>
+                              <th className="p-4">Sphere</th>
+                              <th className="p-4">Cylinder</th>
+                              <th className="p-4">Axis</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td className="px-4 py-2 border-t border-r border-f-gray font-medium text-p-sc md:text-p-sm text-c-secondary">
+                                OD
+                              </td>
+                              <td className="border-t border-r border-f-gray">
+                                <input
+                                  type="text"
+                                  name="retinoscopy_wo_od_sphere"
+                                  value={
+                                    medformData.retinoscopy.without_drop.od
+                                      .sphere || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "retinoscopy.without_drop.od.sphere"
+                                    )
+                                  }
+                                  className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                  rows={1}
+                                  placeholder=""
+                                />
+                              </td>
+                              <td className="border-t border-r border-f-gray">
+                                <input
+                                  type="text"
+                                  name="retinoscopy_wo_od_cylinder"
+                                  value={
+                                    medformData.retinoscopy.without_drop.od
+                                      .cylinder || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "retinoscopy.without_drop.od.cylinder"
+                                    )
+                                  }
+                                  className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                  rows={1}
+                                  placeholder=""
+                                />
+                              </td>
+                              <td className="border-t border-r border-f-gray">
+                                <input
+                                  type="text"
+                                  name="retinoscopy_wo_od_axis"
+                                  value={
+                                    medformData.retinoscopy.without_drop.od
+                                      .axis || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "retinoscopy.without_drop.od.axis"
+                                    )
+                                  }
+                                  className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                  rows={1}
+                                  placeholder=""
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-2 border-t border-r border-f-gray font-medium text-p-sc md:text-p-sm text-c-secondary">
+                                OS
+                              </td>
+                              <td className="border-t border-r border-f-gray">
+                                <input
+                                  type="text"
+                                  name="retinoscopy_wo_os_sphere"
+                                  value={
+                                    medformData.retinoscopy.without_drop.os
+                                      .sphere || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "retinoscopy.without_drop.os.sphere"
+                                    )
+                                  }
+                                  className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                  rows={1}
+                                  placeholder=""
+                                />
+                              </td>
+                              <td className="border-t border-r border-f-gray">
+                                <input
+                                  type="text"
+                                  name="retinoscopy_wo_os_cylinder"
+                                  value={
+                                    medformData.retinoscopy.without_drop.os
+                                      .cylinder || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "retinoscopy.without_drop.os.cylinder"
+                                    )
+                                  }
+                                  className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                  rows={1}
+                                  placeholder=""
+                                />
+                              </td>
+                              <td className="border-t border-r border-f-gray">
+                                <input
+                                  type="text"
+                                  name="retinoscopy_wo_os_axis"
+                                  value={
+                                    medformData.retinoscopy.without_drop.os
+                                      .axis || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "retinoscopy.without_drop.os.axis"
+                                    )
+                                  }
+                                  className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                  rows={1}
+                                  placeholder=""
+                                />
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                     <div className="border border-f-gray bg-bg-mc w-full md:w-1/2 rounded-br-md p-5">
                       <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
                         | With Drops
                       </label>
-                      <section className="mt-5 flex gap-3 w-full">
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OD
-                          </p>
-                          <select
-                            name="retinoscopy_w_od"
-                            value={medformData.retinoscopy.with_drop.od}
-                            onChange={(e) => {
-                              handleChange(e, "retinoscopy.with_drop.od");
-                              if (e.target.value !== "") {
-                                handleChange(
-                                  { target: { value: "" } },
-                                  "retinoscopy.with_drop.custom_od"
-                                );
-                              }
-                            }}
-                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                          >
-                            <option value="">Choose options</option>
-                            <option value="Plano">Plano</option>
-                            <option value="-">-</option>
-                            <option value="+">+</option>
-                            <option value=" ">Other</option>
-                          </select>
-                          {medformData.retinoscopy.with_drop.od === " " && (
-                            <input
-                              type="text"
-                              name="retinoscopy_w_od_custom"
-                              value={
-                                medformData.retinoscopy.with_drop.custom_od ||
-                                ""
-                              }
-                              onChange={(e) =>
-                                handleChange(
-                                  e,
-                                  "retinoscopy.with_drop.custom_od"
-                                )
-                              }
-                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                              placeholder="Enter custom value"
-                            />
-                          )}
-                        </div>
-                        <div className="flex flex-col w-full">
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray">
-                            OS
-                          </p>
-                          <select
-                            name="retinoscopy_w_os"
-                            value={medformData.retinoscopy.with_drop.os}
-                            onChange={(e) => {
-                              handleChange(e, "retinoscopy.with_drop.os");
-                              if (e.target.value !== "") {
-                                handleChange(
-                                  { target: { value: "" } },
-                                  "retinoscopy.with_drop.custom_os"
-                                );
-                              }
-                            }}
-                            className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                          >
-                            <option value="">Choose options</option>
-                            <option value="Plano">Plano</option>
-                            <option value="-">-</option>
-                            <option value="+">+</option>
-                            <option value=" ">Other</option>
-                          </select>
-                          {medformData.retinoscopy.with_drop.os === " " && (
-                            <input
-                              type="text"
-                              name="retinoscopy_w_os_custom"
-                              value={
-                                medformData.retinoscopy.with_drop.custom_os ||
-                                ""
-                              }
-                              onChange={(e) =>
-                                handleChange(
-                                  e,
-                                  "retinoscopy.with_drop.custom_os"
-                                )
-                              }
-                              className="mt-3 w-full p-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                              placeholder="Enter custom value"
-                            />
-                          )}
-                        </div>
-                      </section>
+                      <div className="w-full overflow-x-auto bg-white border border-f-gray rounded-md mt-5">
+                        <table className="min-w-[600px] md:md:w-full table-auto border-collapse">
+                          <thead>
+                            <tr className="bg-bg-sb text-c-gray3 font-medium text-p-sc md:text-p-sm">
+                              <th className="p-4"></th>
+                              <th className="p-4">Sphere</th>
+                              <th className="p-4">Cylinder</th>
+                              <th className="p-4">Axis</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td className="px-4 py-2 border-t border-r border-f-gray font-medium text-p-sc md:text-p-sm text-c-secondary">
+                                OD
+                              </td>
+                              <td className="border-t border-r border-f-gray">
+                                <input
+                                  type="text"
+                                  name="retinoscopy_w_od_sphere"
+                                  value={
+                                    medformData.retinoscopy.with_drop.od
+                                      .sphere || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "retinoscopy.with_drop.od.sphere"
+                                    )
+                                  }
+                                  className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                  rows={1}
+                                  placeholder=""
+                                />
+                              </td>
+                              <td className="border-t border-r border-f-gray">
+                                <input
+                                  type="text"
+                                  name="retinoscopy_w_od_cylinder"
+                                  value={
+                                    medformData.retinoscopy.with_drop.od
+                                      .cylinder || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "retinoscopy.with_drop.od.cylinder"
+                                    )
+                                  }
+                                  className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                  rows={1}
+                                  placeholder=""
+                                />
+                              </td>
+                              <td className="border-t border-r border-f-gray">
+                                <input
+                                  type="text"
+                                  name="retinoscopy_w_od_axis"
+                                  value={
+                                    medformData.retinoscopy.with_drop.od.axis ||
+                                    ""
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "retinoscopy.with_drop.od.axis"
+                                    )
+                                  }
+                                  className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                  rows={1}
+                                  placeholder=""
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-2 border-t border-r border-f-gray font-medium text-p-sc md:text-p-sm text-c-secondary">
+                                OS
+                              </td>
+                              <td className="border-t border-r border-f-gray">
+                                <input
+                                  type="text"
+                                  name="retinoscopy_wo_os_sphere"
+                                  value={
+                                    medformData.retinoscopy.with_drop.os
+                                      .sphere || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "retinoscopy.with_drop.os.sphere"
+                                    )
+                                  }
+                                  className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                  rows={1}
+                                  placeholder=""
+                                />
+                              </td>
+                              <td className="border-t border-r border-f-gray">
+                                <input
+                                  type="text"
+                                  name="retinoscopy_wo_os_cylinder"
+                                  value={
+                                    medformData.retinoscopy.with_drop.os
+                                      .cylinder || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "retinoscopy.with_drop.os.cylinder"
+                                    )
+                                  }
+                                  className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                  rows={1}
+                                  placeholder=""
+                                />
+                              </td>
+                              <td className="border-t border-r border-f-gray">
+                                <input
+                                  type="text"
+                                  name="retinoscopy_wo_os_axis"
+                                  value={
+                                    medformData.retinoscopy.with_drop.os.axis ||
+                                    ""
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      e,
+                                      "retinoscopy.with_drop.os.axis"
+                                    )
+                                  }
+                                  className="w-full h-full px-2 py-1 md:px-4 md:py-3 text-p-sm md:text-p-rg text-f-dark focus:outline-none resize-none"
+                                  rows={1}
+                                  placeholder=""
+                                />
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -2964,152 +3142,22 @@ const MedForm = () => {
                     <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
                       | Corneal Reflex Test
                     </label>
-                    <div className="flex gap-5 md:gap-5 flex-col md:flex-row mt-5">
-                      <section className="flex flex-col w-full md:w-1/2">
-                        <div>
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray text-nowrap mb-3">
-                            OD
-                          </p>
-                          <div className="flex flex-row gap-3 md:gap-0 lg:gap-8">
-                            <div className="flex items-center">
-                              <input
-                                type="radio"
-                                name="corneal_od_present"
-                                value="present"
-                                checked={
-                                  medformData.corneal_reflex_test.od.present
-                                }
-                                onChange={() =>
-                                  setMedformData((prevData) => ({
-                                    ...prevData,
-                                    corneal_reflex_test: {
-                                      ...prevData.corneal_reflex_test,
-                                      od: { present: true, absent: false },
-                                    },
-                                  }))
-                                }
-                                className="mr-3 w-6 h-6"
-                              />
-                              <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                                Present
-                              </span>
-                            </div>
-                            <div className="flex items-center">
-                              <input
-                                type="radio"
-                                name="corneal_od_absent"
-                                value="absent"
-                                checked={
-                                  medformData.corneal_reflex_test.od.absent
-                                }
-                                onChange={() =>
-                                  setMedformData((prevData) => ({
-                                    ...prevData,
-                                    corneal_reflex_test: {
-                                      ...prevData.corneal_reflex_test,
-                                      od: { present: false, absent: true },
-                                    },
-                                  }))
-                                }
-                                className="mr-3 w-6 h-6"
-                              />
-                              <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                                Absent
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <textarea
-                          type="text"
-                          name="corneal_additional_note_od"
-                          value={
-                            medformData.corneal_reflex_test.od
-                              .additional_note_od
-                          }
-                          onChange={(e) =>
-                            handleChange(
-                              e,
-                              "corneal_reflex_test.od.additional_note_od"
-                            )
-                          }
-                          className="mt-4 w-full px-4 py-2 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                          rows={2}
-                          placeholder="option are not applicable"
-                        />
-                      </section>
-                      <section className="flex flex-col w-full md:w-1/2">
-                        <div>
-                          <p className="text-p-sc md:text-p-sm font-medium text-f-gray text-nowrap mb-3">
-                            OS
-                          </p>
-                          <div className="flex flex-row gap-3 md:gap-0 lg:gap-8">
-                            <div className="flex items-center">
-                              <input
-                                type="radio"
-                                name="corneal_os_present"
-                                value="present"
-                                checked={
-                                  medformData.corneal_reflex_test.os.present
-                                }
-                                onChange={() =>
-                                  setMedformData((prevData) => ({
-                                    ...prevData,
-                                    corneal_reflex_test: {
-                                      ...prevData.corneal_reflex_test,
-                                      os: { present: true, absent: false },
-                                    },
-                                  }))
-                                }
-                                className="mr-3 w-6 h-6"
-                              />
-                              <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                                Present
-                              </span>
-                            </div>
-                            <div className="flex items-center">
-                              <input
-                                type="radio"
-                                name="corneal_os_absent"
-                                value="absent"
-                                checked={
-                                  medformData.corneal_reflex_test.os.absent
-                                }
-                                onChange={() =>
-                                  setMedformData((prevData) => ({
-                                    ...prevData,
-                                    corneal_reflex_test: {
-                                      ...prevData.corneal_reflex_test,
-                                      os: { present: false, absent: true },
-                                    },
-                                  }))
-                                }
-                                className="mr-3 w-6 h-6"
-                              />
-                              <span className="text-f-gray font-semibold text-p-sc md:text-p-sm">
-                                Absent
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <textarea
-                          type="text"
-                          name="corneal_additional_note_os"
-                          value={
-                            medformData.corneal_reflex_test.os
-                              .additional_note_os
-                          }
-                          onChange={(e) =>
-                            handleChange(
-                              e,
-                              "corneal_reflex_test.os.additional_note_os"
-                            )
-                          }
-                          className="mt-4 w-full px-4 py-2 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                          rows={2}
-                          placeholder="option are not applicable"
-                        />
-                      </section>
-                    </div>
+                    <section className="flex flex-col w-full mt-5">
+                      <p className="text-p-sc md:text-p-sm font-medium text-f-gray text-nowrap">
+                        Near
+                      </p>
+                      <textarea
+                        type="text"
+                        name="corneal_near"
+                        value={medformData.corneal_reflex_test.near}
+                        onChange={(e) =>
+                          handleChange(e, "corneal_reflex_test.near")
+                        }
+                        className="mt-3 w-full px-4 py-2 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                        rows={3}
+                        placeholder=""
+                      />
+                    </section>
                   </div>
                   <div className="border border-f-gray bg-bg-mc w-full rounded-md p-5">
                     <label className="text-p-sm md:text-p-rg font-semibold text-c-secondary">
@@ -5687,7 +5735,7 @@ const MedForm = () => {
                       value={medformData.management}
                       onChange={(e) => handleChange(e, "management")}
                       className="mt-5 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                      rows={4}
+                      rows={8}
                       placeholder="Input data"
                     />
                   </div>
@@ -5701,7 +5749,7 @@ const MedForm = () => {
                       value={medformData.followup_care}
                       onChange={(e) => handleChange(e, "followup_care")}
                       className="mt-5 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                      rows={4}
+                      rows={8}
                       placeholder="Input data"
                     />
                   </div>
