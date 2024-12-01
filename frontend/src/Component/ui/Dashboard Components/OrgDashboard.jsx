@@ -71,6 +71,7 @@ const OrgDashboard = () => {
     );
 
     return data.filter((item) => {
+      if (!item || !item.createdAt) return false;
       const itemDate = new Date(item.createdAt);
       return itemDate >= targetMonth && itemDate < nextMonth;
     });
@@ -81,14 +82,17 @@ const OrgDashboard = () => {
 
   const getTotalSales = (data) => {
     return data.reduce((total, item) => {
-      if (item.purchaseDetails) {
+      if (!item) return total;
+
+      if (item.purchaseDetails && Array.isArray(item.purchaseDetails)) {
         const itemTotal = item.purchaseDetails.reduce((sum, detail) => {
-          return sum + detail.totalAmount;
+          return sum + (detail.totalAmount || 0);
         }, 0);
         return total + itemTotal;
       } else if (item.service_price) {
-        return total + parseFloat(item.service_price);
+        return total + parseFloat(item.service_price || 0);
       }
+
       return total;
     }, 0);
   };
