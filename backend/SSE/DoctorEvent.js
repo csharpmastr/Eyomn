@@ -21,7 +21,7 @@ let cachedPatients = {};
 let cachedNotifications = {};
 
 const startDoctorSSEServer = (app) => {
-  app.get("/sse/:role/:id", (req, res) => {
+  app.get("/sse-doctor/:role/:id", (req, res) => {
     const { role, id } = req.params;
 
     res.setHeader("Content-Type", "text/event-stream");

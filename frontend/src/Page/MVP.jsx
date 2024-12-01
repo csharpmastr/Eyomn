@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFetchData } from "../Hooks/useFetchData";
 import Cookies from "universal-cookie";
 import DoctorSSEComponent from "../SSE/DoctorSSE";
+import OrganizationSSEComponent from "../SSE/OrganizationSSE";
 
 const MVP = () => {
   const user = useSelector((state) => state.reducer.user.user);
@@ -118,6 +119,7 @@ const MVP = () => {
   return (
     <WebSocketProvider>
       {user.role === "2" && <DoctorSSEComponent />}
+      {user.role === "0" && <OrganizationSSEComponent />}
       <div className="flex xl:flex-row flex-col h-screen overflow-hidden">
         <SideBar />
         <div className="flex-1 flex flex-col overflow-hidden">
