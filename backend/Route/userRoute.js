@@ -9,6 +9,7 @@ const {
   verifyOTPHandler,
   forgotChangePasswordHandler,
   validateAndRefreshTokens,
+  userLogout,
 } = require("../Controller/userController");
 
 router.post("/add", addUserHandler);
@@ -19,4 +20,5 @@ router.post("/send-otp", sendOTPHandler);
 router.post("/verify-otp", verifyOTPHandler);
 router.post("/forgot-password-change", forgotChangePasswordHandler);
 router.get("/validate-and-refresh-tokens", validateAndRefreshTokens);
+router.post("/logout", userLogout);
 module.exports = router;

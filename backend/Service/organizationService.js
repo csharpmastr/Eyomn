@@ -38,9 +38,7 @@ const addStaff = async (organizationId, staffData, firebaseUid) => {
       throw { status: 400, message: "Email already exists." };
     }
     const password = generatePassword();
-    console.log(password);
     const hashedPassword = await hashPassword(password);
-    console.log(hashedPassword);
     const orgName = await getOrganizationName(organizationId);
 
     const newUser = await admin.auth().createUser({
@@ -294,7 +292,6 @@ const getBranchData = async (organizationId, firebaseUid) => {
 
     const orgData = orgRef.data();
     const orgBranches = orgData.branch;
-    console.log(orgData);
 
     const branches = [];
 

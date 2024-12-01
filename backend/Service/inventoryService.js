@@ -59,7 +59,7 @@ const addProduct = async (branchId, productDetails, firebaseUid) => {
     const productSKU = generateSKU();
     const productRef = productsCollectionRef.doc(productId);
     productDetails = removeNullValues(productDetails);
-    console.log(productDetails);
+
     productDetails.isDeleted = false;
     const encryptedProduct = encryptDocument(productDetails, [
       "quantity",
@@ -146,7 +146,6 @@ const updateProduct = async (branchId, productId, productDetails) => {
     ]);
 
     await productRef.update(encryptedProductDetails);
-    console.log("Product updated successfully");
   } catch (error) {
     console.error("Error updating product: ", error);
     throw error;
@@ -155,8 +154,6 @@ const updateProduct = async (branchId, productId, productDetails) => {
 
 const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
   try {
-    console.log(purchaseDetails);
-
     await verifyFirebaseUid(firebaseUid);
 
     const currentDate = new Date();
@@ -186,7 +183,6 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
           }
 
           const productData = productDoc.data();
-          console.log(productData);
 
           const decryptedProductData = decryptDocument(productData, [
             "quantity",
@@ -197,7 +193,6 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
             "isDeleted",
             "retail_price",
           ]);
-          console.log("1");
 
           if (decryptedProductData.quantity < product.quantity) {
             throw {
@@ -205,7 +200,7 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
               message: `Insufficient stock for product: ${product.productId}`,
             };
           }
-          console.log("2");
+
           return {
             productRef,
             decryptedProductData,
@@ -216,7 +211,7 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
 
       // proceed with the writes
       // create purchase record
-      console.log("3");
+
       transaction.set(purchaseRef, {
         staffId,
         purchaseDetails,
@@ -246,7 +241,7 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
         }
       );
     });
-    console.log("5");
+
     return { purchaseId, createdAt };
   } catch (error) {
     console.error("Error during purchase:", error);
@@ -345,38 +340,42 @@ const getOrgProductSalesWithServices = async (organizationId, firebaseUid) => {
     const orgData = orgDoc.data();
     const inventoryData = {};
 
-    for (const branchId of orgData.branch) {
-      const salesSnapshot = await inventoryCollection
-        .doc(branchId)
-        .collection("purchases")
-        .get();
-      const sales = salesSnapshot.docs.map((doc) => doc.data());
-
-      const productsSnapshot = await inventoryCollection
-        .doc(branchId)
-        .collection("products")
-        .get();
-      const products = productsSnapshot.docs.map((doc) => {
-        const productData = doc.data();
-        return decryptDocument(productData, [
-          "expirationDate",
-          "price",
-          "quantity",
-          "productId",
-          "productSKU",
-          "isDeleted",
-          "retail_price",
+    const branchPromises = orgData.branch.map(async (branchId) => {
+      try {
+        const [salesSnapshot, productsSnapshot, services] = await Promise.all([
+          inventoryCollection.doc(branchId).collection("purchases").get(),
+          inventoryCollection.doc(branchId).collection("products").get(),
+          getServiceFees(branchId, firebaseUid),
         ]);
-      });
 
-      const services = await getServiceFees(branchId, firebaseUid);
+        const sales = salesSnapshot.docs.map((doc) => doc.data());
+        const products = productsSnapshot.docs.map((doc) => {
+          const productData = doc.data();
+          return decryptDocument(productData, [
+            "expirationDate",
+            "price",
+            "quantity",
+            "productId",
+            "productSKU",
+            "isDeleted",
+            "retail_price",
+          ]);
+        });
 
-      inventoryData[branchId] = {
-        purchases: sales,
-        products: products,
-        services: services,
-      };
-    }
+        inventoryData[branchId] = {
+          purchases: sales,
+          products: products,
+          services: services,
+        };
+      } catch (branchError) {
+        console.error(
+          `Error fetching data for branch ${branchId}:`,
+          branchError
+        );
+      }
+    });
+
+    await Promise.all(branchPromises);
 
     return inventoryData;
   } catch (error) {
@@ -403,7 +402,6 @@ const retrieveProduct = async (branchId, products, firebaseUid) => {
         await productDocRef.update({ isDeleted: false });
       })
     );
-    console.log("Products marked as deleted successfully.");
   } catch (error) {
     console.error("Error retrieving product:", error);
     throw new Error("Error retrieving product: " + error.message);
@@ -445,7 +443,6 @@ const addServiceFee = async (
     await servicesColRef.doc(serviceId).set(encryptedServiceData);
 
     return serviceId;
-    console.log("Service fee added successfully.");
   } catch (error) {
     console.error("Error adding service fee:", error);
   }
@@ -482,7 +479,6 @@ const getServiceFees = async (branchId, firebaseUid) => {
       };
     });
 
-    console.log("Service fees retrieved:", services);
     return services;
   } catch (error) {
     console.error("Error retrieving service fees:", error);

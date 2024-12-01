@@ -142,10 +142,8 @@ const loginUser = async (userData) => {
       const org = decryptData(organization.organization);
       const orgBranches = organization.branch;
       const orgFirebaseUid = organization.firebaseUid;
-      console.log("Branch IDs in organization:", orgBranches);
 
       const branches = [];
-      console.log(organization);
 
       data = {
         userId: user.id,
@@ -296,8 +294,6 @@ const changeUserPassword = async (
 
     const userDoc = querySnapshot.docs[0];
     const userDocData = userDoc.data();
-
-    console.log(userDocData);
 
     const isPasswordValid = await comparePassword(
       password,

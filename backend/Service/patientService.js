@@ -317,8 +317,6 @@ const getNotes = async (patientId, firebaseUid) => {
 
 const updatePatientDetails = async (patientId, patientData, firebaseUid) => {
   try {
-    console.log(patientData);
-
     await verifyFirebaseUid(firebaseUid);
     const patientDocRef = patientCollection.doc(patientId);
 
@@ -551,11 +549,8 @@ const generateSoap = async (
   noteId
 ) => {
   try {
-    console.log(noteId);
-
     const currentDate = new Date();
     await verifyFirebaseUid(firebaseUid);
-    console.log({ soapString });
 
     const soapNoteRef = noteCollection.doc(patientId).collection("soapNotes");
     const patientProfile = await patientCollection.doc(patientId).get();
@@ -587,7 +582,7 @@ const generateSoap = async (
     const response = await axios.post(soapGenerator, data);
 
     const dictSoap = extractSoapData(response.data);
-    console.log(response.data);
+
     const encrypytedSoap = {
       subjective: dictSoap.subjective.map((item) => encryptData(item)),
       objective: dictSoap.objective.map((item) => encryptData(item)),

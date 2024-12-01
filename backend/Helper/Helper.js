@@ -429,7 +429,7 @@ const extractSoapData = (inputText) => {
         .filter(
           (sentence) =>
             !sentence.match(
-              /^(Hallucination Score|\*\*Hallucination Score\*\*|\d+\.|Management|diagnosis|refractive error)/i // Exclude diagnosis and refractive error
+              /^(Hallucination Score|\*\*Hallucination Score\*\*|\d+\.|Management|diagnosis|refractive error)/i
             )
         );
     }

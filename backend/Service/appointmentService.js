@@ -166,7 +166,6 @@ const getDoctorAppointments = async (doctorId, firebaseUid) => {
     }
 
     const docData = doctorDoc.data();
-    console.log(docData);
 
     if (!docData.branches || !Array.isArray(docData.branches)) {
       throw { status: 404, message: "No branches found for the doctor." };
@@ -210,10 +209,7 @@ const updateAppointment = async (
   firebaseUid
 ) => {
   try {
-    console.log(updatedDetails);
-
     await verifyFirebaseUid(firebaseUid);
-    console.log();
 
     const schedRef = appointmentCollection
       .doc(branchId)
