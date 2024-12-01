@@ -196,8 +196,18 @@ export const formatPatientNotes = (data) => {
     let visualAcuity = "";
 
     const formatSection = (label, values) => {
-      const { od, os, ou, custom_od, custom_os, custom_ou, additional_note } =
-        values || {};
+      const {
+        od,
+        os,
+        ou,
+        custom_od,
+        custom_os,
+        custom_ou,
+        sphere,
+        cylinder,
+        axis,
+        additional_note,
+      } = values || {};
       let section = [];
 
       if (od && od.trim()) {
@@ -217,7 +227,15 @@ export const formatPatientNotes = (data) => {
       } else if (custom_ou && custom_ou.trim()) {
         section.push(`OU ${custom_ou.trim()}`);
       }
-
+      if (sphere && sphere.trim()) {
+        section.push(`Sphere ${sphere.trim()}`);
+      }
+      if (cylinder && cylinder.trim()) {
+        section.push(`Cylinder ${cylinder.trim()}`);
+      }
+      if (axis && axis.trim()) {
+        section.push(`Axis ${axis.trim()}`);
+      }
       if (additional_note) section.push(`Note: ${additional_note}`);
 
       return section.length ? `${label}: ${section.join(", ")}` : "";
@@ -263,41 +281,49 @@ export const formatPatientNotes = (data) => {
   }
 
   if (data.retinoscopy) {
-    let retinoscopy = "";
+    let without_drop = "";
+    let with_drop = "";
 
-    const formatSection = (label, values) => {
-      const { od, os, custom_od, custom_os, additional_note } = values || {};
-      let section = [];
-
-      if (od && od.trim()) {
-        section.push(`OD ${od.trim()}`);
-      } else if (custom_od && custom_od.trim()) {
-        section.push(`OD ${custom_od.trim()}`);
+    // Handle without_drop
+    if (data.retinoscopy.without_drop?.od) {
+      const od = data.retinoscopy.without_drop.od;
+      if (od?.sphere) {
+        without_drop += `Sphere: ${od.sphere}, `;
       }
-
-      if (os && os.trim()) {
-        section.push(`OS ${os.trim()}`);
-      } else if (custom_os && custom_os.trim()) {
-        section.push(`OS ${custom_os.trim()}`);
+      if (od?.cylinder) {
+        without_drop += `Cylinder: ${od.cylinder}, `;
       }
+      if (od?.axis) {
+        without_drop += `Axis: ${od.axis}`;
+      }
+    }
 
-      if (additional_note) section.push(`Note: ${additional_note}`);
+    // Handle with_drop
+    if (data.retinoscopy.with_drop?.os) {
+      const os = data.retinoscopy.with_drop.os;
+      if (os?.sphere) {
+        with_drop += `Sphere: ${os.sphere}, `;
+      }
+      if (os?.cylinder) {
+        with_drop += `Cylinder: ${os.cylinder}, `;
+      }
+      if (os?.axis) {
+        with_drop += `Axis: ${os.axis}`;
+      }
+    }
 
-      return section.length ? `${label}: ${section.join(", ")}` : "";
-    };
+    // Consolidate and add to notes
+    let retinoscopyNote = "Retinoscopy:\n";
 
-    const withDrops = formatSection("With Drops", data.retinoscopy.with_drop);
-    const withoutDrops = formatSection(
-      "Without Drops",
-      data.retinoscopy.without_drop
-    );
+    if (without_drop.trim()) {
+      retinoscopyNote += `Without Drop: ${without_drop.trim()}\n`;
+    }
+    if (with_drop.trim()) {
+      retinoscopyNote += `With Drop: ${with_drop.trim()}`;
+    }
 
-    [withDrops, withoutDrops].forEach((section) => {
-      if (section) retinoscopy += `- ${section}\n`;
-    });
-
-    if (retinoscopy.trim()) {
-      notes.push(`Retinoscopy:\n${retinoscopy.trim()}`);
+    if (retinoscopyNote.trim() !== "Retinoscopy:") {
+      notes.push(retinoscopyNote.trim());
     }
   }
 
