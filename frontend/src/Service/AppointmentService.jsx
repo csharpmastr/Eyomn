@@ -116,9 +116,7 @@ export const updateAppointment = async (
 export const deleteAppointment = async (
   branchId,
   appointmentId,
-  firebaseUid,
-  accessToken,
-  refreshToken
+  firebaseUid
 ) => {
   try {
     const response = await axios.delete(`${APPOINTMENT_API_BASE_URL}/delete`, {

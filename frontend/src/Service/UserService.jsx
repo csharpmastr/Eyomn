@@ -131,3 +131,17 @@ export const sendQuestion = async (question, memory) => {
     throw error;
   }
 };
+
+export const userLogout = async () => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/logout`,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+  } catch (error) {
+    console.error("Logout API error:", error);
+  }
+};

@@ -22,6 +22,7 @@ import {
   clearMedicalScribeNotes,
   clearRawNotes,
 } from "../Slice/NoteSlice";
+import { userLogout } from "../Service/UserService";
 
 export const useLogout = () => {
   const { dispatch } = useAuthContext();
@@ -34,12 +35,12 @@ export const useLogout = () => {
     setIsLoading(true);
     setError(null);
     try {
-      dispatch({ type: "LOGOUT" });
+      await userLogout();
       sessionStorage.removeItem("selectedTab");
       localStorage.removeItem("hasFetched");
       cookies.remove("accessToken", { path: "/" });
       cookies.remove("refreshToken", { path: "/" });
-
+      dispatch({ type: "LOGOUT" });
       reduxDispatch(clearDoctor());
       reduxDispatch(clearPatients());
       reduxDispatch(clearStaffs());

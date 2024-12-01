@@ -9,9 +9,6 @@ import { getPatientNotes } from "../../Service/PatientService";
 import Cookies from "universal-cookie";
 
 const Notification = ({ data, setNotifOpen }) => {
-  const cookies = new Cookies();
-  const accessToken = cookies.get("accessToken");
-  const refreshToken = cookies.get("refreshToken");
   const reduxDispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.reducer.user.user);

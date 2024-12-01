@@ -31,9 +31,6 @@ const groupPatientsByInitial = (patients) => {
 };
 
 const Scribe = () => {
-  const cookies = new Cookies();
-  const accessToken = cookies.get("accessToken");
-  const refreshToken = cookies.get("refreshToken");
   const [hasSelected, setHasSelected] = useState(false);
   const user = useSelector((state) => state.reducer.user.user);
   const patients = useSelector((state) => state.reducer.patient.patients);

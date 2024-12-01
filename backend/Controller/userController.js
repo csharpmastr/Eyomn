@@ -293,6 +293,11 @@ const validateAndRefreshTokens = async (req, res) => {
     }
   }
 };
+const userLogout = (req, res) => {
+  res.clearCookie("accessToken", { httpOnly: true, path: "/" });
+  res.clearCookie("refreshToken", { httpOnly: true, path: "/" });
+  res.send("Logged out");
+};
 
 module.exports = {
   addUserHandler,
@@ -303,4 +308,5 @@ module.exports = {
   verifyOTPHandler,
   forgotChangePasswordHandler,
   validateAndRefreshTokens,
+  userLogout,
 };
