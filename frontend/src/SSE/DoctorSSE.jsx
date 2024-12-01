@@ -18,7 +18,7 @@ const DoctorSSEComponent = () => {
 
   function startDoctorSSE(role, doctorId) {
     const doctorSSE = new EventSource(
-      `http://localhost:3000/sse/${role}/${doctorId}`
+      `http://localhost:3000/sse-doctor/${role}/${doctorId}`
     );
 
     doctorSSE.onmessage = (event) => {
