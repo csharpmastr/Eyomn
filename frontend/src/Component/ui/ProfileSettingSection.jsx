@@ -11,6 +11,7 @@ import { changeUserPassword } from "../../Service/UserService";
 import Cookies from "universal-cookie";
 import SuccessModal from "./SuccessModal";
 import Loader from "./Loader";
+import Swal from "sweetalert2";
 
 const ProfileSettingSection = ({ selected }) => {
   const cookies = new Cookies();
@@ -181,32 +182,46 @@ const ProfileSettingSection = ({ selected }) => {
     return Object.keys(newErrors).length === 0;
   };
   const handleChangePassword = async () => {
-    setIsLoading(true);
+    const { isConfirmed } = await Swal.fire({
+      title: "Confirm Password Change",
+      text: "Your new password will be saved once you confirm the change.",
+      showCancelButton: true,
+      cancelButtonText: "Cancel",
+      confirmButtonText: "Change Password",
+      reverseButtons: true,
+      confirmButtonColor: "#4A90E2",
+    });
+
     if (repeatPass !== passwordForm.newpassword) {
       console.error("Passwords do not match!");
       return;
-    }
-    try {
-      const reponse = await changeUserPassword(
-        null,
-        null,
-        user.userId,
-        user.role,
-        user.firebaseUid,
-        passwordForm.password,
-        passwordForm.newpassword,
-        accessToken,
-        refreshToken
-      );
-      if (reponse) {
-        setIsSuccess(true);
-        handleClearPasswordForm();
-        console.log("nice");
+    } else {
+      if (isConfirmed) {
+        setIsLoading(true);
+        try {
+          const reponse = await changeUserPassword(
+            null,
+            null,
+            user.userId,
+            user.role,
+            user.firebaseUid,
+            passwordForm.password,
+            passwordForm.newpassword,
+            accessToken,
+            refreshToken
+          );
+          if (reponse) {
+            setIsSuccess(true);
+            handleClearPasswordForm();
+          }
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        console.log("ayaw");
       }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
     }
   };
 

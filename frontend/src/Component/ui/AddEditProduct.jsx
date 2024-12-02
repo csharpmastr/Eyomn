@@ -11,6 +11,8 @@ import SuccessModal from "./SuccessModal";
 import { addProduct, updateProduct } from "../../Slice/InventorySlice";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import Modal from "./Modal";
+import Swal from "sweetalert2";
+
 const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const user = useSelector((state) => state.reducer.user.user);
@@ -246,11 +248,12 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
       return;
     }
 
-    setIsLoading(true);
     try {
       const cleanedData = cleanFormData(formData);
 
       if (!productDetails) {
+        setIsLoading(true);
+
         const response = await addProductService(
           branchId,
           cleanedData,
@@ -279,6 +282,22 @@ const AddEditProduct = ({ onClose, productDetails, title, productId }) => {
           );
         }
       } else {
+        const { isConfirmed } = await Swal.fire({
+          title: "Confirm Product Update",
+          text: "Are you sure you want to update this product?",
+          showCancelButton: true,
+          cancelButtonText: "Cancel",
+          confirmButtonText: "Yes, Update!",
+          reverseButtons: true,
+          confirmButtonColor: "#4A90E2",
+        });
+
+        setIsLoading(true);
+
+        if (!isConfirmed) {
+          return;
+        }
+
         console.log(cleanedData);
 
         const response = await updateProductService(

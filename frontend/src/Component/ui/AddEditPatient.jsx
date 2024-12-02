@@ -8,6 +8,7 @@ import SuccessModal from "./SuccessModal";
 import Cookies from "universal-cookie";
 import { updatePatientData } from "../../Service/PatientService";
 import { updatePatient } from "../../Slice/PatientSlice";
+import Swal from "sweetalert2";
 
 const calculateAge = (birthdate) => {
   const today = new Date();
@@ -229,6 +230,22 @@ const AddEditPatient = ({ onClose, title, patient }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (patient) {
+      const { isConfirmed } = await Swal.fire({
+        title: "Update Information",
+        text: "Updated data will be save once confirm",
+        showCancelButton: true,
+        cancelButtonText: "Cancel",
+        confirmButtonText: "Confirm ",
+        reverseButtons: true,
+        confirmButtonColor: "#4A90E2",
+      });
+
+      if (!isConfirmed) {
+        return;
+      }
+    }
+
     if (!validateForm()) {
       return;
     }
@@ -257,10 +274,7 @@ const AddEditPatient = ({ onClose, title, patient }) => {
         );
         if (response) {
           reduxDispatch(
-            updatePatient({
-              patientId: patient.patientId,
-              data: sanitizedData,
-            })
+            updatePatient({ patientId: patient.patientId, data: sanitizedData })
           );
           setIsSuccess(true);
         }
@@ -271,6 +285,7 @@ const AddEditPatient = ({ onClose, title, patient }) => {
       setIsUpdateLoading(false);
     }
   };
+
   return (
     <>
       {isLoading || isUpdateLoading ? (

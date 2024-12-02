@@ -13,6 +13,7 @@ import {
   addAppointment,
   updatedAppointment,
 } from "../../Slice/AppointmentSlice";
+import Swal from "sweetalert2";
 
 const SetAppointment = ({ onClose, appointmentToEdit }) => {
   const [errors, setErrors] = useState({});
@@ -241,16 +242,14 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
     if (!validateForm()) {
       return;
     }
-    setIsLoading(true);
 
     try {
       if (!appointmentToEdit) {
+        setIsLoading(true);
+
         try {
           if (user.role !== "2") {
-            const appointmentData = {
-              ...formData,
-              scheduledTime,
-            };
+            const appointmentData = { ...formData, scheduledTime };
             const response = await addAppointmentService(
               branchId,
               appointmentData,
@@ -265,15 +264,13 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
               reduxDispatch(addAppointment({ ...appointmentData, scheduleId }));
             }
           } else {
-            const appointmentData = {
-              ...docFormData,
-              scheduledTime,
-            };
+            const appointmentData = { ...docFormData, scheduledTime };
             const response = await addAppointmentService(
               selectedBranch,
               appointmentData,
               user.firebaseUid
             );
+
             if (response) {
               setIsSuccess(true);
               handleClear();
@@ -295,22 +292,37 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
           setIsLoading(false);
         }
       } else {
+        const { isConfirmed } = await Swal.fire({
+          title: "Confirm Appointment Update",
+          text: "Are you sure you want to update this appointment?",
+          showCancelButton: true,
+          cancelButtonText: "Cancel",
+          confirmButtonText: "Yes, Update!",
+          reverseButtons: true,
+          confirmButtonColor: "#4A90E2",
+        });
+
+        if (!isConfirmed) {
+          return;
+        }
+
+        setIsLoading(true);
+
         try {
           if (user.role !== "2") {
             const appointmentData = { ...formData, scheduledTime };
-
             const response = await updateAppointment(
               branchId,
               appointmentToEdit.scheduleId,
               appointmentData,
               user.firebaseUid
             );
+
             if (response) {
               setIsSuccess(true);
             }
           } else {
             const appointmentData = { ...docFormData, scheduledTime };
-
             const response = await updateAppointment(
               selectedBranch,
               appointmentToEdit.scheduleId,
