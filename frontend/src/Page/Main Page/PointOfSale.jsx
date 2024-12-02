@@ -42,7 +42,10 @@ const PointOfSale = () => {
 
       setSelectedProducts(updatedProducts);
     } else {
-      setSelectedProducts([...selectedProducts, { ...product, quantity: 1 }]);
+      setSelectedProducts([
+        ...selectedProducts,
+        { ...product, quantity: 1, maxQuantity: product.quantity },
+      ]);
     }
   };
   const handlePurchase = async () => {
@@ -79,7 +82,7 @@ const PointOfSale = () => {
           if (product.productId === productId) {
             const newQuantity =
               action === "increase"
-                ? product.quantity + 1
+                ? Math.min(product.quantity + 1, product.maxQuantity)
                 : Math.max(product.quantity - 1, 0);
             return { ...product, quantity: newQuantity };
           }
