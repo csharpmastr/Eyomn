@@ -40,27 +40,8 @@ const startDoctorSSEServer = (app) => {
 
     let unsubscribePatients, unsubscribeNotifications;
 
-    if (cachedPatients[id]) {
-      console.log("cached");
-      res.write(
-        `data: ${JSON.stringify({
-          type: "patient",
-          data: cachedPatients[id],
-        })}\n\n`
-      );
-    }
-    if (cachedNotifications[id]) {
-      console.log("cached");
-
-      res.write(
-        `data: ${JSON.stringify({
-          type: "notification",
-          data: cachedNotifications[id],
-        })}\n\n`
-      );
-    }
-
     try {
+      // Firestore patient listener
       if (role === "2") {
         const patientQuery = query(
           patientCol,
@@ -92,6 +73,8 @@ const startDoctorSSEServer = (app) => {
 
           if (patients.length > 0) {
             cachedPatients[id] = patients;
+
+            // Send updates only, skip sending cached data immediately
             res.write(
               `data: ${JSON.stringify({ type: "patient", data: patients })}\n\n`
             );
@@ -99,6 +82,7 @@ const startDoctorSSEServer = (app) => {
         });
       }
 
+      // Firestore notifications listener
       const notificationRef = collection(dbClient, "notification");
       const staffRef = doc(notificationRef, id);
       const notifsRef = collection(staffRef, "notifs");
@@ -124,6 +108,8 @@ const startDoctorSSEServer = (app) => {
 
         if (notifications.length > 0) {
           cachedNotifications[id] = notifications;
+
+          // Send updates only, skip sending cached data immediately
           res.write(
             `data: ${JSON.stringify({
               type: "notification",

@@ -1,10 +1,4 @@
-const {
-  query,
-  where,
-  onSnapshot,
-  collection,
-  getDocs,
-} = require("firebase/firestore");
+const { query, where, onSnapshot, collection } = require("firebase/firestore");
 const {
   inventoryCol,
   organizationCol,
@@ -15,7 +9,6 @@ const sseConnections = {};
 const firstConnectionMap = {};
 let unsubscribeListeners = [];
 
-// Cache to store the data for each organization ID
 let cachedData = {};
 
 const startOrganizationSSEServer = (app) => {
@@ -26,7 +19,6 @@ const startOrganizationSSEServer = (app) => {
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
 
-    // Initialize connections for the given role and id
     if (!sseConnections[role]) sseConnections[role] = {};
     if (!sseConnections[role][id]) sseConnections[role][id] = [];
     sseConnections[role][id].push(res);
@@ -37,12 +29,10 @@ const startOrganizationSSEServer = (app) => {
 
     const firstConnection = !firstConnectionMap[id];
     if (firstConnection) {
-      firstConnectionMap[id] = true; // Mark first connection for this ID
+      firstConnectionMap[id] = true;
     }
 
-    // Check if the data is already cached
-    if (cachedData[id]) {
-      // If data is cached, send the cached data directly
+    if (cachedData[id] && !firstConnection) {
       res.write(`data: ${JSON.stringify(cachedData[id])}\n\n`);
     }
 
@@ -76,40 +66,47 @@ const startOrganizationSSEServer = (app) => {
 
                   let responseData;
 
-                  // Decrypt and format data based on subcollection type
                   if (subcollection === "services") {
                     responseData = {
                       type: subcollection,
-                      data: decryptDocument(docData, [
-                        "service_price",
-                        "date",
-                        "createdAt",
-                        "doctorId",
-                        "patientId",
-                      ]),
+                      data: {
+                        ...decryptDocument(docData, [
+                          "service_price",
+                          "date",
+                          "createdAt",
+                          "doctorId",
+                          "patientId",
+                        ]),
+                        branchId, // Include branchId inside the data
+                      },
                     };
                   } else if (subcollection === "products") {
                     responseData = {
                       type: subcollection,
-                      data: decryptDocument(docData, [
-                        "expirationDate",
-                        "price",
-                        "quantity",
-                        "productId",
-                        "productSKU",
-                        "isDeleted",
-                        "retail_price",
-                      ]),
+                      data: {
+                        ...decryptDocument(docData, [
+                          "expirationDate",
+                          "price",
+                          "quantity",
+                          "productId",
+                          "productSKU",
+                          "isDeleted",
+                          "retail_price",
+                        ]),
+                        branchId, // Include branchId inside the data
+                      },
                     };
                   } else {
                     responseData = {
                       type: subcollection,
-                      data: docData,
+                      data: {
+                        ...docData,
+                        branchId, // Include branchId inside the data
+                      },
                     };
                   }
-                  console.log(responseData);
 
-                  // Send the updated data to connected clients (except the first one)
+                  // send the updated data to connected client
                   if (sseConnections[role] && sseConnections[role][id]) {
                     sseConnections[role][id].forEach((client) => {
                       if (client.writable) {
@@ -121,7 +118,8 @@ const startOrganizationSSEServer = (app) => {
                       }
                     });
                   }
-                  // Cache the response data for this branch and subcollection
+
+                  // cache the response data
                   if (!cachedData[id]) cachedData[id] = {};
                   if (!cachedData[id][branchId]) cachedData[id][branchId] = {};
                   cachedData[id][branchId][subcollection] = responseData;
