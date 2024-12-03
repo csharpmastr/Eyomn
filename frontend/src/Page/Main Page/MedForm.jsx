@@ -20,6 +20,8 @@ import { TiUpload } from "react-icons/ti";
 import Modal from "../../Component/ui/Modal";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { addNewRawNote } from "../../Slice/NoteSlice";
+import Swal from "sweetalert2";
+
 import {
   cleanData,
   extractSoapData,
@@ -626,45 +628,61 @@ const MedForm = () => {
   const handleNext = async (e) => {
     e.preventDefault();
 
-    const transformedData = cleanData(medformData);
-    const formattedData = formatPatientNotes(transformedData);
+    //Add nalang din pag walang input user di na mag tatanong
+    const { isConfirmed } = await Swal.fire({
+      title: "Done examining patient?",
+      text: "Summarizing notes will start once this submitted.",
+      showCancelButton: true,
+      cancelButtonText: "Cancel",
+      confirmButtonText: "Yes, I am done!",
+      reverseButtons: true,
+      confirmButtonColor: "#4A90E2",
+    });
 
-    console.log(formattedData);
+    if (isConfirmed) {
+      const transformedData = cleanData(medformData);
+      const formattedData = formatPatientNotes(transformedData);
 
-    if (currentPage < pageTitles.length - 1) {
-      if (currentPage === 1) {
-        // if (!noteId) {
-        //   if (!soap) {
-        //     setInitLoad(true);
-        //     try {
-        //       const response = await summarizeInitialPatientCase(formattedData);
-        //       if (response) {
-        //         console.log(response);
-        //         setSoap(extractSoapData(response));
-        //         setCurrentPage((prevPage) => prevPage + 1);
-        //       } else {
-        //         console.error("No response received");
-        //       }
-        //     } catch (error) {
-        //       console.error("Error during API call:", error);
-        //     } finally {
-        //       setInitLoad(false);
-        //     }
-        //   } else {
-        //     console.log("running");
+      console.log(formattedData);
 
-        //     setCurrentPage((prevPage) => prevPage + 1);
-        //   }
-        // } else {
-        //   console.log("log");
+      if (currentPage < pageTitles.length - 1) {
+        if (currentPage === 1) {
+          if (!noteId) {
+            if (!soap) {
+              setInitLoad(true);
+              try {
+                const response = await summarizeInitialPatientCase(
+                  formattedData
+                );
+                if (response) {
+                  console.log(response);
+                  setSoap(extractSoapData(response));
+                  setCurrentPage((prevPage) => prevPage + 1);
+                } else {
+                  console.error("No response received");
+                }
+              } catch (error) {
+                console.error("Error during API call:", error);
+              } finally {
+                setInitLoad(false);
+              }
+            } else {
+              console.log("running");
 
-        //   setCurrentPage((prevPage) => prevPage + 1);
-        // }
-        setCurrentPage((prevPage) => prevPage + 1);
-      } else {
-        console.log("why");
-        setCurrentPage((prevPage) => prevPage + 1);
+              setCurrentPage((prevPage) => prevPage + 1);
+            }
+          } else {
+            console.log("log");
+
+            setCurrentPage((prevPage) => prevPage + 1);
+          }
+        } else {
+          console.log("why");
+          setCurrentPage((prevPage) => prevPage + 1);
+        }
       }
+    } else {
+      console.log("hahahaha");
     }
   };
 
@@ -1072,7 +1090,7 @@ const MedForm = () => {
                         handleChange(e, "initial_observation.additional_note")
                       }
                       className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                      placeholder="If option not available"
+                      placeholder="If options are not available"
                     />
                   </div>
                   <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full md:w-1/2">
@@ -1182,7 +1200,7 @@ const MedForm = () => {
                         handleChange(e, "general_health_hx.additional_note")
                       }
                       className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                      placeholder="If option not available"
+                      placeholder="If options are not available"
                     />
                   </div>
                 </div>
@@ -1281,7 +1299,7 @@ const MedForm = () => {
                         handleChange(e, "ocular_history.additional_note")
                       }
                       className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                      placeholder="If option not available"
+                      placeholder="If options are not available"
                     />
                   </div>
                   <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full md:w-1/2">
@@ -1371,7 +1389,7 @@ const MedForm = () => {
                         handleChange(e, "fam_ocular_history.additional_note")
                       }
                       className="mt-3 h-24 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                      placeholder="If option not available"
+                      placeholder="If options are not available"
                     />
                   </div>
                 </div>
@@ -1386,7 +1404,7 @@ const MedForm = () => {
                       value={medformData.current_medication}
                       onChange={(e) => handleChange(e, "current_medication")}
                       className="mt-5 h-52 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                      placeholder="If option not available"
+                      placeholder="If options are not available"
                     />
                   </div>
                   <div className="border border-f-gray p-5 bg-bg-mc rounded-md w-full md:w-1/2">
@@ -1399,7 +1417,7 @@ const MedForm = () => {
                       value={medformData.lifestyle}
                       onChange={(e) => handleChange(e, "lifestyle")}
                       className="mt-5 h-52 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
-                      placeholder="If option not available"
+                      placeholder="If options are not available"
                     />
                   </div>
                 </div>

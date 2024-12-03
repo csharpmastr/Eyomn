@@ -6,6 +6,7 @@ import { FiBell } from "react-icons/fi";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { IoMdNotifications } from "react-icons/io";
 import { useSelector } from "react-redux";
+import { FiUser } from "react-icons/fi";
 
 const TopbarButton = () => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -87,11 +88,9 @@ const TopbarButton = () => {
           </section>
           <div className="flex justify-between w-full gap-4">
             <section className="flex items-center gap-4 xl:ml-4 text-f-dark">
-              <img
-                //src={image}
-                alt="Profile"
-                className="rounded-lg w-11 h-11 object-cover hover:cursor-pointer bg-gray-400"
-              />
+              <div className="rounded-lg w-11 h-11 object-cover hover:cursor-pointer bg-gray-300 p-1">
+                <FiUser className="text-white w-full h-full" />
+              </div>
               <div className="flex flex-col">
                 {role === "2" || role === "3" ? (
                   <>

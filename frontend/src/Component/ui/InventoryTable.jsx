@@ -142,6 +142,7 @@ const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
       setIsLoading(false);
     }
   };
+
   return (
     <>
       {filteredProducts.length > 0 ? (
@@ -200,10 +201,14 @@ const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
                             handleCollapseToggle(productDetail.productId)
                           }
                         />
-                        <FaEllipsisV
-                          className="h-4 w-2 cursor-pointer"
-                          onClick={() => toggleOpen(productDetail.productId)}
-                        />
+                        {user.role === "0" ? (
+                          ""
+                        ) : (
+                          <FaEllipsisV
+                            className="h-4 w-2 cursor-pointer"
+                            onClick={() => toggleOpen(productDetail.productId)}
+                          />
+                        )}
                         {isMenuOpen[productDetail.productId] && (
                           <div className="menu-dropdown absolute right-0 w-fit rounded-md shadow-lg bg-white ring-1 ring-f-gray z-50 origin-top-right mr-4">
                             <div

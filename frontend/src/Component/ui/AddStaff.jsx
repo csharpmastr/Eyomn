@@ -292,30 +292,40 @@ const AddStaff = ({ onClose, staffData }) => {
       if (
         !formData.first_name ||
         !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.first_name)
-      )
-        newErrors.first_name = "(First name is required)";
+      ) {
+        ("Enter a valid first name (at least 2 characters).");
+      }
+
       if (
         !formData.last_name ||
         !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(formData.last_name)
-      )
-        newErrors.last_name = "(Last name is required)";
+      ) {
+        ("Enter a valid first name (at least 2 characters).");
+      }
 
-      if (!formData.birthdate)
-        newErrors.birthdate = "(Date of birth is required)";
-
+      if (!formData.birthdate) {
+        newErrors.birthdate = "Please enter your date of birth.";
+      }
+    } else if (currentCardIndex === 1) {
+      if (!formData.position) {
+        newErrors.position = "Please select a position.";
+      }
+    } else if (currentCardIndex === 2) {
       if (
         !formData.contact_number ||
         !/^09\d{9}$/.test(formData.contact_number)
-      )
+      ) {
         newErrors.contact_number =
-          "(A valid 11-digit contact number is required)";
-    } else if (currentCardIndex === 1) {
-      if (!formData.position) newErrors.position = "(Please select a position)";
+          "Enter a valid contact number (11 digits starting with 09).";
+      }
 
-      //call validateForm before saving
-    } else if (currentCardIndex === 2) {
-      if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-        newErrors.email = "(Valid email is required)";
+      if (
+        !formData.email ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+      ) {
+        newErrors.email =
+          "Please enter a valid email address (e.g., name@example.com).";
+      }
     }
 
     setErrors(newErrors);
@@ -349,173 +359,786 @@ const AddStaff = ({ onClose, staffData }) => {
       {isLoading ? (
         <Loader description={"Saving Staff Information, please wait..."} />
       ) : (
-        <div className="fixed p-4 top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-          <div className="w-[500px] md:w-[600px] md:mr-8">
-            <header className="px-3 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-              <h1 className="text-p-rg md:text-p-lg text-c-secondary font-semibold">
-                {currentCardIndex === 0 && "Personal Information & Contact"}
-                {currentCardIndex === 1 && "Job Role & Working Hours"}
-                {currentCardIndex === 2 && "Login Credentials"}
-              </h1>
-              <button onClick={onClose}>&times;</button>
-            </header>
-            <form onSubmit={handleSubmitStaff}>
-              {currentCardIndex === 0 && (
-                <div className="p-6 bg-white h-[500px] md:h-[600px] overflow-y-scroll">
-                  <label className="flex items-center mb-8 gap-4">
-                    {image ? (
-                      <img
-                        src={image}
-                        alt="Staff"
-                        className="h-24 w-24 rounded-2xl object-cover hover:cursor-pointer"
+        <div className="fixed top-0 left-0 flex items-center justify-center md:justify-end p-5 md:p-3 h-screen w-screen bg-zinc-800 bg-opacity-50 z-50 font-Poppins">
+          <div className="w-full md:w-[600px] h-fit md:h-full flex flex-col justify-between bg-white rounded-lg">
+            <div className="h-full overflow-y-scroll">
+              <header className="px-4 py-6 border-b flex justify-between items-center">
+                <h1 className="text-p-rg md:text-p-lg text-f-dark font-medium">
+                  Add Staff
+                </h1>
+                <button
+                  onClick={onClose}
+                  className="w-10 h-10 rounded-md border hover:bg-zinc-50"
+                >
+                  &times;
+                </button>
+              </header>
+              <form onSubmit={handleSubmitStaff}>
+                <section className="flex justify-center gap-8 my-6">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="border border-f-gray w-10 h-10 rounded-lg"></div>
+                    <h1
+                      className={`font-medium flex justify-center items-center text-center ${
+                        currentCardIndex === 0
+                          ? "text-c-secondary text-p-sm md:text-p-rg transition-all duration-200 ease-in-out"
+                          : "text-c-gray3 text-p-sc md:text-p-sm"
+                      }`}
+                    >
+                      Personal Information
+                    </h1>
+                  </div>
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="border border-f-gray w-10 h-10 rounded-lg"></div>
+                    <h1
+                      className={`font-medium flex justify-center items-center text-center ${
+                        currentCardIndex === 1
+                          ? "text-c-secondary text-p-sm md:text-p-rg transition-all duration-200 ease-in-out"
+                          : "text-c-gray3 text-p-sc md:text-p-sm"
+                      }`}
+                    >
+                      Job Role & Working <br />
+                      Hour
+                    </h1>
+                  </div>
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="border border-f-gray w-10 h-10 rounded-lg"></div>
+                    <h1
+                      className={`font-medium flex justify-center items-center text-center ${
+                        currentCardIndex === 2
+                          ? "text-c-secondary text-p-sm md:text-p-rg transition-all duration-200 ease-in-out"
+                          : "text-c-gray3 text-p-sc md:text-p-sm"
+                      }`}
+                    >
+                      Contact Information
+                    </h1>
+                  </div>
+                </section>
+                {currentCardIndex === 0 && (
+                  <div className="p-6">
+                    <label className="flex items-center mb-8 gap-4">
+                      {image ? (
+                        <img
+                          src={image}
+                          alt="Staff"
+                          className="h-24 w-24 rounded-2xl object-cover hover:cursor-pointer"
+                        />
+                      ) : (
+                        <div className="h-24 w-24 rounded-2xl bg-zinc-100 border flex justify-center items-center text-gray-500">
+                          <FiUser className="w-12 h-12" />
+                        </div>
+                      )}
+
+                      <input
+                        id="imageUpload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
                       />
-                    ) : (
-                      <div className="h-24 w-24 rounded-2xl bg-blue-200 flex justify-center items-center text-gray-500">
-                        <FiUser className="w-12 h-12" />
+                      <div>
+                        <div className="flex gap-2 items-center mb-1">
+                          <button
+                            type="button"
+                            className="text-blue-400 text-lg font-medium"
+                            onClick={() =>
+                              document.getElementById("imageUpload").click()
+                            }
+                          >
+                            Upload
+                          </button>
+                          <span className="text-gray-400">|</span>
+                          <button
+                            type="button"
+                            className="text-red-400 text-lg font-medium"
+                            onClick={handleRemoveImage}
+                            disabled={!image}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <p className="text-gray-500 text-sm">
+                          An image of the staff
+                        </p>
                       </div>
-                    )}
-
-                    <input
-                      id="imageUpload"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="hidden"
-                    />
-
-                    <div>
-                      <div className="flex gap-2 items-center mb-1">
-                        <button
-                          type="button"
-                          className="text-blue-400 text-lg font-medium"
-                          onClick={() =>
-                            document.getElementById("imageUpload").click()
-                          }
-                        >
-                          Upload
-                        </button>
-                        <span className="text-gray-400">|</span>
-                        <button
-                          type="button"
-                          className="text-red-400 text-lg font-medium"
-                          onClick={handleRemoveImage}
-                          disabled={!image}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                      <p className="text-gray-500 text-sm">
-                        An image of the staff
-                      </p>
-                    </div>
-                  </label>
-                  <div className="mb-5">
-                    <header>
-                      <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-5">
-                        | Personal Information
-                      </h1>
-                    </header>
-                    <section>
+                    </label>
+                    <section className="mb-4">
                       <label
                         htmlFor="first_name"
                         className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
-                        First Name:{" "}
-                        <span className="text-red-400">
-                          {(formData.first_name === "" || errors.first_name) &&
-                            errors.first_name}
-                        </span>
+                        First Name <span className="text-blue-500">*</span>
                       </label>
                       <input
                         type="text"
                         name="first_name"
                         value={formData.first_name}
                         onChange={handleChange}
-                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
                           errors.first_name
                             ? "border-red-400 focus:outline-red-400"
-                            : "border-c-gray3 focus:outline-c-primary"
+                            : "border-f-gray focus:outline-c-primary"
                         }`}
                         placeholder="Enter first name of staff"
                       />
+                      <p className="text-red-400 text-p-sm mt-1">
+                        {(formData.first_name === "" || errors.first_name) &&
+                          errors.first_name}
+                      </p>
                     </section>
-                    <section>
+                    <section className="mb-4">
                       <label
                         htmlFor="last_name"
                         className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
-                        Last Name:{" "}
-                        <span className="text-red-400">
-                          {(formData.last_name === "" || errors.last_name) &&
-                            errors.last_name}
-                        </span>
+                        Last Name <span className="text-blue-500">*</span>
                       </label>
                       <input
                         type="text"
                         name="last_name"
                         value={formData.last_name}
                         onChange={handleChange}
-                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
                           errors.last_name
                             ? "border-red-400 focus:outline-red-400"
-                            : "border-c-gray3 focus:outline-c-primary"
+                            : "border-f-gray focus:outline-c-primary"
                         }`}
                         placeholder="Enter last name of staff"
                       />
+                      <p className="text-red-400 text-p-sm mt-1">
+                        {(formData.last_name === "" || errors.last_name) &&
+                          errors.last_name}
+                      </p>
                     </section>
                     <section>
                       <label
                         htmlFor="middle_name"
                         className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
-                        Middle Name (Optional)
+                        Middle Name
                       </label>
                       <input
                         type="text"
                         name="middle_name"
                         value={formData.middle_name}
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                        className="mt-1 w-full px-4 py-3 border border-f-gray rounded-md text-f-dark mb-4 focus:outline-c-primary"
                         placeholder="Enter middle name of staff"
                       />
                     </section>
-                    <section>
+                    <section className="mb-4">
                       <label
                         htmlFor="birthdate"
                         className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
-                        Date of Birth:{" "}
-                        <span className="text-red-400">
-                          {(formData.birthdate === "" || errors.birthdate) &&
-                            errors.birthdate}
-                        </span>
+                        Date of Birth <span className="text-blue-500">*</span>
                       </label>
                       <input
                         type="date"
                         name="birthdate"
                         value={formData.birthdate}
                         onChange={handleChange}
-                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
                           errors.birthdate
                             ? "border-red-400 focus:outline-red-400"
-                            : "border-c-gray3 focus:outline-c-primary"
+                            : "border-f-gray focus:outline-c-primary"
                         }`}
                       />
+                      <p className="text-red-400 text-p-sm mt-1">
+                        {(formData.birthdate === "" || errors.birthdate) &&
+                          errors.birthdate}
+                      </p>
                     </section>
                   </div>
-                  <div>
-                    <header>
-                      <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-4">
-                        | Contact Information
+                )}
+                {currentCardIndex === 1 && (
+                  <div className="p-6">
+                    <div>
+                      <section className="mb-4">
+                        <label
+                          htmlFor="role"
+                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                        >
+                          Role <span className="text-blue-500">*</span>
+                        </label>
+                        <select
+                          name="position"
+                          value={formData.position}
+                          onChange={handleChange}
+                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                            errors.position
+                              ? "border-red-400 focus:outline-red-400"
+                              : "border-f-gray focus:outline-c-primary"
+                          }`}
+                        >
+                          <option value="" disabled className="text-c-gray3">
+                            Select Role
+                          </option>
+                          <option value="Ophthalmologist">
+                            Ophthalmologist
+                          </option>
+                          <option value="Optometrist">Optometrist</option>
+                          <option value="Staff">Staff</option>
+                        </select>
+                        <p className="text-red-400 text-p-sm mt-1">
+                          {(formData.position === "" || errors.position) &&
+                            errors.position}
+                        </p>
+                      </section>
+                      {(formData.position === "Ophthalmologist" ||
+                        formData.position === "Optometrist") && (
+                        <section>
+                          <label
+                            htmlFor="branch_ass"
+                            className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                          >
+                            Branch Assignment{" "}
+                            <span className="text-blue-500">*</span>
+                          </label>
+                          <select
+                            name="branch_ass"
+                            value={branchAssignment}
+                            onChange={handleBranchAssignemnt}
+                            className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                              errors.branch_ass
+                                ? "border-red-400 focus:outline-red-400"
+                                : "border-f-gray focus:outline-c-primary"
+                            }`}
+                          >
+                            <option value="" disabled className="text-c-gray3">
+                              Select branch assignment
+                            </option>
+                            <option value="stationary">Stationary</option>
+                            <option value="rotational">Rotational</option>
+                          </select>
+                          <p className="text-red-400 text-p-sm mt-1">
+                            {errors.branch_ass && errors.branch_ass}
+                          </p>
+                        </section>
+                      )}
+                    </div>
+                    <hr className="border-f-gray my-8" />
+                    <div>
+                      <header className="flex justify-between mb-6 text-p-sm md:text-p-rg font-medium text-f-dark">
+                        <div>
+                          <h1>Working Hours</h1>
+                        </div>
+                        <div className="flex mr-10 gap-10">
+                          <p className="mr-10">Time in</p>
+                          <p className="-mr-3">Time out</p>
+                        </div>
+                      </header>
+                      <div className="flex justify-between mb-4">
+                        <div className="flex gap-4">
+                          <div
+                            className={`w-12 h-6 flex items-center bg-${
+                              isMonOn ? "blue-500" : "gray-300"
+                            } rounded-full p-1 cursor-pointer`}
+                            onClick={() => setIsMonOn(!isMonOn)}
+                          >
+                            <div
+                              className={`bg-white w-5 h-5 rounded-full shadow-md transform ${
+                                isMonOn ? "translate-x-6" : "translate-x-0"
+                              } transition-transform`}
+                            ></div>
+                          </div>
+                          <label
+                            htmlFor="mon"
+                            className="text-p-sc md:text-p-sm text-f-dark font-medium"
+                          >
+                            Monday
+                          </label>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          {isMonOn ? (
+                            <>
+                              {branchAssignment === "rotational" && (
+                                <select
+                                  name="branch_select"
+                                  onChange={handleChange}
+                                  className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-f-gray focus:outline-c-primary"
+                                >
+                                  <option value="" className="text-c-gray3">
+                                    Select branch
+                                  </option>
+                                  {branches.map((branch) => (
+                                    <option
+                                      key={branch.branchId}
+                                      value={branch.branchId}
+                                    >
+                                      {branch.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              )}
+                              <div className="flex gap-2">
+                                <input
+                                  type="time"
+                                  step="1800"
+                                  name="monday_in"
+                                  onChange={handleChange}
+                                  className="w-full px-2 py-1 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                                  min="00:00"
+                                  max="11:59"
+                                />
+                                <input
+                                  type="time"
+                                  name="monday_out"
+                                  onChange={handleChange}
+                                  className="w-full px-2 py-1 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                                  step="1800"
+                                  min="12:00"
+                                  max="23:59"
+                                />
+                              </div>
+                            </>
+                          ) : (
+                            <span className="text-p-sc md:text-p-sm text-c-gray3">
+                              Not working this day
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex justify-between mb-4">
+                        <div className="flex gap-4">
+                          <div
+                            className={`w-12 h-6 flex items-center bg-${
+                              isTueOn ? "blue-500" : "gray-300"
+                            } rounded-full p-1 cursor-pointer`}
+                            onClick={() => setIsTueOn(!isTueOn)}
+                          >
+                            <div
+                              className={`bg-white w-5 h-5 rounded-full shadow-md transform ${
+                                isTueOn ? "translate-x-6" : "translate-x-0"
+                              } transition-transform`}
+                            ></div>
+                          </div>
+                          <label
+                            htmlFor="tues"
+                            className="text-p-sc md:text-p-sm text-f-dark font-medium"
+                          >
+                            Tuesday
+                          </label>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          {isTueOn ? (
+                            <>
+                              {branchAssignment === "rotational" && (
+                                <select
+                                  name="branch_select"
+                                  onChange={handleChange}
+                                  className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-f-gray focus:outline-c-primary"
+                                >
+                                  <option value="" className="text-c-gray3">
+                                    Select branch
+                                  </option>
+                                  {branches.map((branch, key) => (
+                                    <option key={key} value={branch.branchId}>
+                                      {branch.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              )}
+                              <div className="flex gap-2">
+                                <input
+                                  type="time"
+                                  step="1800"
+                                  name="tuesday_in"
+                                  onChange={handleChange}
+                                  className="w-full px-2 py-1 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                                  min="00:00"
+                                  max="11:59"
+                                />
+                                <input
+                                  type="time"
+                                  name="tuesday_out"
+                                  onChange={handleChange}
+                                  className="w-full px-2 py-1 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                                  step="1800"
+                                  min="12:00"
+                                  max="23:59"
+                                />
+                              </div>
+                            </>
+                          ) : (
+                            <span className="text-p-sc md:text-p-sm text-c-gray3">
+                              Not working this day
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex justify-between mb-4">
+                        <div className="flex gap-4">
+                          <div
+                            className={`w-12 h-6 flex items-center bg-${
+                              isWedOn ? "blue-500" : "gray-300"
+                            } rounded-full p-1 cursor-pointer`}
+                            onClick={() => setIsWedOn(!isWedOn)}
+                          >
+                            <div
+                              className={`bg-white w-5 h-5 rounded-full shadow-md transform ${
+                                isWedOn ? "translate-x-6" : "translate-x-0"
+                              } transition-transform`}
+                            ></div>
+                          </div>
+                          <label
+                            htmlFor="wed"
+                            className="text-p-sc md:text-p-sm text-f-dark font-medium"
+                          >
+                            Wednesday
+                          </label>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          {isWedOn ? (
+                            <>
+                              {branchAssignment === "rotational" && (
+                                <select
+                                  name="branch_select"
+                                  onChange={handleChange}
+                                  className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-f-gray focus:outline-c-primary"
+                                >
+                                  <option value="" className="text-c-gray3">
+                                    Select branch
+                                  </option>
+                                  {branches.map((branch) => (
+                                    <option
+                                      key={branch.branchId}
+                                      value={branch.branchId}
+                                    >
+                                      {branch.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              )}
+                              <div className="flex gap-2">
+                                <input
+                                  type="time"
+                                  step="1800"
+                                  name="wednesday_in"
+                                  onChange={handleChange}
+                                  className="w-full px-2 py-1 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                                  min="00:00"
+                                  max="11:59"
+                                />
+                                <input
+                                  type="time"
+                                  name="wednesday_out"
+                                  onChange={handleChange}
+                                  className="w-full px-2 py-1 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                                  step="1800"
+                                  min="12:00"
+                                  max="23:59"
+                                />
+                              </div>
+                            </>
+                          ) : (
+                            <span className="text-p-sc md:text-p-sm text-c-gray3">
+                              Not working this day
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex justify-between mb-4">
+                        <div className="flex gap-4">
+                          <div
+                            className={`w-12 h-6 flex items-center bg-${
+                              isThuOn ? "blue-500" : "gray-300"
+                            } rounded-full p-1 cursor-pointer`}
+                            onClick={() => setIsThuOn(!isThuOn)}
+                          >
+                            <div
+                              className={`bg-white w-5 h-5 rounded-full shadow-md transform ${
+                                isThuOn ? "translate-x-6" : "translate-x-0"
+                              } transition-transform`}
+                            ></div>
+                          </div>
+                          <label
+                            htmlFor="thu"
+                            className="text-p-sc md:text-p-sm text-f-dark font-medium"
+                          >
+                            Thursday
+                          </label>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          {isThuOn ? (
+                            <>
+                              {branchAssignment === "rotational" && (
+                                <select
+                                  name="branch_select"
+                                  onChange={handleChange}
+                                  className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-f-gray focus:outline-c-primary"
+                                >
+                                  <option value="" className="text-c-gray3">
+                                    Select branch
+                                  </option>
+                                  {branches.map((branch) => (
+                                    <option
+                                      key={branch.branchId}
+                                      value={branch.branchId}
+                                    >
+                                      {branch.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              )}
+                              <div className="flex gap-2">
+                                <input
+                                  type="time"
+                                  step="1800"
+                                  name="thursday_in"
+                                  onChange={handleChange}
+                                  className="w-full px-2 py-1 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                                  min="00:00"
+                                  max="11:59"
+                                />
+                                <input
+                                  type="time"
+                                  name="thursday_out"
+                                  onChange={handleChange}
+                                  className="w-full px-2 py-1 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                                  step="1800"
+                                  min="12:00"
+                                  max="23:59"
+                                />
+                              </div>
+                            </>
+                          ) : (
+                            <span className="text-p-sc md:text-p-sm text-c-gray3">
+                              Not working this day
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex justify-between mb-4">
+                        <div className="flex gap-4">
+                          <div
+                            className={`w-12 h-6 flex items-center bg-${
+                              isFriOn ? "blue-500" : "gray-300"
+                            } rounded-full p-1 cursor-pointer`}
+                            onClick={() => setIsFriOn(!isFriOn)}
+                          >
+                            <div
+                              className={`bg-white w-5 h-5 rounded-full shadow-md transform ${
+                                isFriOn ? "translate-x-6" : "translate-x-0"
+                              } transition-transform`}
+                            ></div>
+                          </div>
+                          <label
+                            htmlFor="fri"
+                            className="text-p-sc md:text-p-sm text-f-dark font-medium"
+                          >
+                            Friday
+                          </label>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          {isFriOn ? (
+                            <>
+                              {branchAssignment === "rotational" && (
+                                <select
+                                  name="branch_select"
+                                  onChange={handleChange}
+                                  className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-f-gray focus:outline-c-primary"
+                                >
+                                  <option value="" className="text-c-gray3">
+                                    Select branch
+                                  </option>
+                                  {branches.map((branch) => (
+                                    <option
+                                      key={branch.branchId}
+                                      value={branch.branchId}
+                                    >
+                                      {branch.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              )}
+                              <div className="flex gap-2">
+                                <input
+                                  type="time"
+                                  step="1800"
+                                  name="friday_in"
+                                  onChange={handleChange}
+                                  className="w-full px-2 py-1 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                                  min="00:00"
+                                  max="11:59"
+                                />
+                                <input
+                                  type="time"
+                                  name="friday_out"
+                                  onChange={handleChange}
+                                  className="w-full px-2 py-1 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                                  step="1800"
+                                  min="12:00"
+                                  max="23:59"
+                                />
+                              </div>
+                            </>
+                          ) : (
+                            <span className="text-p-sc md:text-p-sm text-c-gray3">
+                              Not working this day
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex justify-between mb-4">
+                        <div className="flex gap-4">
+                          <div
+                            className={`w-12 h-6 flex items-center bg-${
+                              isSatOn ? "blue-500" : "gray-300"
+                            } rounded-full p-1 cursor-pointer`}
+                            onClick={() => setIsSatOn(!isSatOn)}
+                          >
+                            <div
+                              className={`bg-white w-5 h-5 rounded-full shadow-md transform ${
+                                isSatOn ? "translate-x-6" : "translate-x-0"
+                              } transition-transform`}
+                            ></div>
+                          </div>
+                          <label
+                            htmlFor="sat"
+                            className="text-p-sc md:text-p-sm text-f-dark font-medium"
+                          >
+                            Saturday
+                          </label>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          {isSatOn ? (
+                            <>
+                              {branchAssignment === "rotational" && (
+                                <select
+                                  name="branch_select"
+                                  onChange={handleChange}
+                                  className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-f-gray focus:outline-c-primary"
+                                >
+                                  <option value="" className="text-c-gray3">
+                                    Select branch
+                                  </option>
+                                  {branches.map((branch) => (
+                                    <option
+                                      key={branch.branchId}
+                                      value={branch.branchId}
+                                    >
+                                      {branch.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              )}
+                              <div className="flex gap-2">
+                                <input
+                                  type="time"
+                                  step="1800"
+                                  name="saturday_in"
+                                  onChange={handleChange}
+                                  className="w-full px-2 py-1 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                                  min="00:00"
+                                  max="11:59"
+                                />
+                                <input
+                                  type="time"
+                                  name="saturday_out"
+                                  onChange={handleChange}
+                                  className="w-full px-2 py-1 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                                  step="1800"
+                                  min="12:00"
+                                  max="23:59"
+                                />
+                              </div>
+                            </>
+                          ) : (
+                            <span className="text-p-sc md:text-p-sm text-c-gray3">
+                              Not working this day
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex gap-4">
+                          <div
+                            className={`w-12 h-6 flex items-center ${
+                              isSunOn ? "bg-blue-500" : "bg-gray-300"
+                            } rounded-full p-1 cursor-pointer`}
+                            onClick={() => setIsSunOn(!isSunOn)}
+                          >
+                            <div
+                              className={`bg-white w-5 h-5 rounded-full shadow-md transform ${
+                                isSunOn ? "translate-x-6" : "translate-x-0"
+                              } transition-transform`}
+                            ></div>
+                          </div>
+                          <label
+                            htmlFor="sun"
+                            className="text-p-sc md:text-p-sm text-f-dark font-medium"
+                          >
+                            Sunday
+                          </label>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          {isSunOn ? (
+                            <>
+                              {branchAssignment === "rotational" && (
+                                <select
+                                  name="branch_select"
+                                  onChange={handleChange}
+                                  className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-f-gray focus:outline-c-primary"
+                                >
+                                  <option value="" className="text-c-gray3">
+                                    Select branch
+                                  </option>
+                                  {branches.map((branch) => (
+                                    <option
+                                      key={branch.branchId}
+                                      value={branch.branchId}
+                                    >
+                                      {branch.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              )}
+                              <div className="flex gap-2">
+                                <input
+                                  type="time"
+                                  step="1800"
+                                  name="sunday_in"
+                                  onChange={handleChange}
+                                  className="w-full px-2 py-1 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                                  min="00:00"
+                                  max="11:59"
+                                />
+                                <input
+                                  type="time"
+                                  name="sunday_out"
+                                  onChange={handleChange}
+                                  className="w-full px-2 py-1 border border-f-gray rounded-md text-f-dark focus:outline-c-primary"
+                                  step="1800"
+                                  min="12:00"
+                                  max="23:59"
+                                />
+                              </div>
+                            </>
+                          ) : (
+                            <span className="text-p-sc md:text-p-sm text-c-gray3">
+                              Not working this day
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {currentCardIndex === 2 && (
+                  <div className="p-6">
+                    <section className="text-center text-p-rg mb-8 text-f-dark p-3 border-2 rounded-md border-blue-200 bg-[#F1F7FF]">
+                      <h1>
+                        Note: Please enter a valid email address, as your login
+                        credentials will be sent there.
                       </h1>
-                    </header>
+                    </section>
                     <div className="flex gap-4 mb-4">
                       <div className="w-1/2">
                         <label
                           htmlFor="province"
                           className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
-                          Province
+                          Province <span className="text-blue-500">*</span>
                         </label>
                         <Select
                           id="province"
@@ -530,7 +1153,7 @@ const AddStaff = ({ onClose, staffData }) => {
                           htmlFor="municipality"
                           className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                         >
-                          Municipality
+                          Municipality <span className="text-blue-500">*</span>
                         </label>
                         <Select
                           id="municipality"
@@ -543,610 +1166,60 @@ const AddStaff = ({ onClose, staffData }) => {
                         />
                       </div>
                     </div>
-                    <section>
+                    <section className="mb-4">
                       <label
                         htmlFor="contact"
                         className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
-                        Contact Number:{" "}
-                        <span className="text-red-400">
-                          {(formData.contact_number === "" ||
-                            errors.contact_number) &&
-                            errors.contact_number}
-                        </span>
+                        Contact Number <span className="text-blue-500">*</span>
                       </label>
                       <input
                         type="text"
                         name="contact_number"
                         value={formData.contact_number}
                         onChange={handleChange}
-                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
                           errors.contact_number
                             ? "border-red-400 focus:outline-red-400"
-                            : "border-c-gray3 focus:outline-c-primary"
+                            : "border-f-gray focus:outline-c-primary"
                         }`}
                         placeholder="Enter contact number"
                       />
+                      <p className="text-red-400 text-p-sm mt-1">
+                        {(formData.contact_number === "" ||
+                          errors.contact_number) &&
+                          errors.contact_number}
+                      </p>
                     </section>
-                  </div>
-                </div>
-              )}
-              {currentCardIndex === 1 && (
-                <div className="p-6 bg-white h-[500px] md:h-[600px] overflow-y-scroll">
-                  <div className="mb-5">
-                    <header>
-                      <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-4">
-                        | Position Information
-                      </h1>
-                    </header>
-                    <section>
-                      <label
-                        htmlFor="role"
-                        className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                      >
-                        Role:{" "}
-                        <span className="text-red-400">
-                          {(formData.position === "" || errors.position) &&
-                            errors.position}
-                        </span>
-                      </label>
-                      <select
-                        name="position"
-                        value={formData.position}
-                        onChange={handleChange}
-                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                          errors.position
-                            ? "border-red-400 focus:outline-red-400"
-                            : "border-c-gray3 focus:outline-c-primary"
-                        }`}
-                      >
-                        <option value="" disabled className="text-c-gray3">
-                          Select Role
-                        </option>
-                        <option value="Ophthalmologist">Ophthalmologist</option>
-                        <option value="Optometrist">Optometrist</option>
-                        <option value="Staff">Staff</option>
-                      </select>
-                    </section>
-                    {(formData.position === "Ophthalmologist" ||
-                      formData.position === "Optometrist") && (
-                      <section>
-                        <label
-                          htmlFor="branch_ass"
-                          className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                        >
-                          Branch Assignment{" "}
-                          <span className="text-red-400">
-                            {errors.branch_ass && errors.branch_ass}
-                          </span>
-                        </label>
-                        <select
-                          name="branch_ass"
-                          value={branchAssignment}
-                          onChange={handleBranchAssignemnt}
-                          className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
-                            errors.branch_ass
-                              ? "border-red-400 focus:outline-red-400"
-                              : "border-c-gray3 focus:outline-c-primary"
-                          }`}
-                        >
-                          <option value="" disabled className="text-c-gray3">
-                            Select branch assignment
-                          </option>
-                          <option value="stationary">Stationary</option>
-                          <option value="rotational">Rotational</option>
-                        </select>
-                      </section>
-                    )}
-                  </div>
-                  <div>
-                    <header className="flex justify-between ">
-                      <div>
-                        <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-4">
-                          | Working Hours
-                        </h1>
-                      </div>
-                      <div className="flex mr-10 gap-10">
-                        <p className="mr-10">Time in</p>
-                        <p className="-mr-3">Time out</p>
-                      </div>
-                    </header>
-                    <div className="flex justify-between mb-4">
-                      <div className="flex gap-4">
-                        <div
-                          className={`w-12 h-6 flex items-center bg-${
-                            isMonOn ? "blue-500" : "gray-300"
-                          } rounded-full p-1 cursor-pointer`}
-                          onClick={() => setIsMonOn(!isMonOn)}
-                        >
-                          <div
-                            className={`bg-white w-5 h-5 rounded-full shadow-md transform ${
-                              isMonOn ? "translate-x-6" : "translate-x-0"
-                            } transition-transform`}
-                          ></div>
-                        </div>
-                        <label
-                          htmlFor="mon"
-                          className="text-p-sm md:text-p-rg text-c-secondary font-medium"
-                        >
-                          Monday
-                        </label>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        {isMonOn ? (
-                          <>
-                            {branchAssignment === "rotational" && (
-                              <select
-                                name="branch_select"
-                                onChange={handleChange}
-                                className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
-                              >
-                                <option value="" className="text-c-gray3">
-                                  Select branch
-                                </option>
-                                {branches.map((branch) => (
-                                  <option
-                                    key={branch.branchId}
-                                    value={branch.branchId}
-                                  >
-                                    {branch.name}
-                                  </option>
-                                ))}
-                              </select>
-                            )}
-                            <div className="flex gap-2">
-                              <input
-                                type="time"
-                                step="1800"
-                                name="monday_in"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                              <input
-                                type="time"
-                                step="1800"
-                                name="monday_out"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                            </div>
-                          </>
-                        ) : (
-                          <span className="text-p-sm md:text-p-rg text-c-gray3">
-                            Not working this day
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex justify-between mb-4">
-                      <div className="flex gap-4">
-                        <div
-                          className={`w-12 h-6 flex items-center bg-${
-                            isTueOn ? "blue-500" : "gray-300"
-                          } rounded-full p-1 cursor-pointer`}
-                          onClick={() => setIsTueOn(!isTueOn)}
-                        >
-                          <div
-                            className={`bg-white w-5 h-5 rounded-full shadow-md transform ${
-                              isTueOn ? "translate-x-6" : "translate-x-0"
-                            } transition-transform`}
-                          ></div>
-                        </div>
-                        <label
-                          htmlFor="tues"
-                          className="text-p-sm md:text-p-rg text-c-secondary font-medium"
-                        >
-                          Tuesday
-                        </label>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        {isTueOn ? (
-                          <>
-                            {branchAssignment === "rotational" && (
-                              <select
-                                name="branch_select"
-                                onChange={handleChange}
-                                className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
-                              >
-                                <option value="" className="text-c-gray3">
-                                  Select branch
-                                </option>
-                                {branches.map((branch, key) => (
-                                  <option key={key} value={branch.branchId}>
-                                    {branch.name}
-                                  </option>
-                                ))}
-                              </select>
-                            )}
-                            <div className="flex gap-2">
-                              <input
-                                type="time"
-                                step="1800"
-                                name="tuesday_in"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                              <input
-                                type="time"
-                                step="1800"
-                                name="tuesday_out"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                            </div>
-                          </>
-                        ) : (
-                          <span className="text-p-sm md:text-p-rg text-c-gray3">
-                            Not working this day
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex justify-between mb-4">
-                      <div className="flex gap-4">
-                        <div
-                          className={`w-12 h-6 flex items-center bg-${
-                            isWedOn ? "blue-500" : "gray-300"
-                          } rounded-full p-1 cursor-pointer`}
-                          onClick={() => setIsWedOn(!isWedOn)}
-                        >
-                          <div
-                            className={`bg-white w-5 h-5 rounded-full shadow-md transform ${
-                              isWedOn ? "translate-x-6" : "translate-x-0"
-                            } transition-transform`}
-                          ></div>
-                        </div>
-                        <label
-                          htmlFor="wed"
-                          className="text-p-sm md:text-p-rg text-c-secondary font-medium"
-                        >
-                          Wednesday
-                        </label>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        {isWedOn ? (
-                          <>
-                            {branchAssignment === "rotational" && (
-                              <select
-                                name="branch_select"
-                                onChange={handleChange}
-                                className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
-                              >
-                                <option value="" className="text-c-gray3">
-                                  Select branch
-                                </option>
-                                {branches.map((branch) => (
-                                  <option
-                                    key={branch.branchId}
-                                    value={branch.branchId}
-                                  >
-                                    {branch.name}
-                                  </option>
-                                ))}
-                              </select>
-                            )}
-                            <div className="flex gap-2">
-                              <input
-                                type="time"
-                                name="wednesday_in"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                              <input
-                                type="time"
-                                name="wednesday_out"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                            </div>
-                          </>
-                        ) : (
-                          <span className="text-p-sm md:text-p-rg text-c-gray3">
-                            Not working this day
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex justify-between mb-4">
-                      <div className="flex gap-4">
-                        <div
-                          className={`w-12 h-6 flex items-center bg-${
-                            isThuOn ? "blue-500" : "gray-300"
-                          } rounded-full p-1 cursor-pointer`}
-                          onClick={() => setIsThuOn(!isThuOn)}
-                        >
-                          <div
-                            className={`bg-white w-5 h-5 rounded-full shadow-md transform ${
-                              isThuOn ? "translate-x-6" : "translate-x-0"
-                            } transition-transform`}
-                          ></div>
-                        </div>
-                        <label
-                          htmlFor="thu"
-                          className="text-p-sm md:text-p-rg text-c-secondary font-medium"
-                        >
-                          Thursday
-                        </label>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        {isThuOn ? (
-                          <>
-                            {branchAssignment === "rotational" && (
-                              <select
-                                name="branch_select"
-                                onChange={handleChange}
-                                className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
-                              >
-                                <option value="" className="text-c-gray3">
-                                  Select branch
-                                </option>
-                                {branches.map((branch) => (
-                                  <option
-                                    key={branch.branchId}
-                                    value={branch.branchId}
-                                  >
-                                    {branch.name}
-                                  </option>
-                                ))}
-                              </select>
-                            )}
-                            <div className="flex gap-2">
-                              <input
-                                type="time"
-                                name="thursday_in"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                              <input
-                                type="time"
-                                name="thursday_out"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                            </div>
-                          </>
-                        ) : (
-                          <span className="text-p-sm md:text-p-rg text-c-gray3">
-                            Not working this day
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex justify-between mb-4">
-                      <div className="flex gap-4">
-                        <div
-                          className={`w-12 h-6 flex items-center bg-${
-                            isFriOn ? "blue-500" : "gray-300"
-                          } rounded-full p-1 cursor-pointer`}
-                          onClick={() => setIsFriOn(!isFriOn)}
-                        >
-                          <div
-                            className={`bg-white w-5 h-5 rounded-full shadow-md transform ${
-                              isFriOn ? "translate-x-6" : "translate-x-0"
-                            } transition-transform`}
-                          ></div>
-                        </div>
-                        <label
-                          htmlFor="fri"
-                          className="text-p-sm md:text-p-rg text-c-secondary font-medium"
-                        >
-                          Friday
-                        </label>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        {isFriOn ? (
-                          <>
-                            {branchAssignment === "rotational" && (
-                              <select
-                                name="branch_select"
-                                onChange={handleChange}
-                                className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
-                              >
-                                <option value="" className="text-c-gray3">
-                                  Select branch
-                                </option>
-                                {branches.map((branch) => (
-                                  <option
-                                    key={branch.branchId}
-                                    value={branch.branchId}
-                                  >
-                                    {branch.name}
-                                  </option>
-                                ))}
-                              </select>
-                            )}
-                            <div className="flex gap-2">
-                              <input
-                                type="time"
-                                name="friday_in"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                              <input
-                                type="time"
-                                name="friday_out"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                            </div>
-                          </>
-                        ) : (
-                          <span className="text-p-sm md:text-p-rg text-c-gray3">
-                            Not working this day
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex justify-between mb-4">
-                      <div className="flex gap-4">
-                        <div
-                          className={`w-12 h-6 flex items-center bg-${
-                            isSatOn ? "blue-500" : "gray-300"
-                          } rounded-full p-1 cursor-pointer`}
-                          onClick={() => setIsSatOn(!isSatOn)}
-                        >
-                          <div
-                            className={`bg-white w-5 h-5 rounded-full shadow-md transform ${
-                              isSatOn ? "translate-x-6" : "translate-x-0"
-                            } transition-transform`}
-                          ></div>
-                        </div>
-                        <label
-                          htmlFor="sat"
-                          className="text-p-sm md:text-p-rg text-c-secondary font-medium"
-                        >
-                          Saturday
-                        </label>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        {isSatOn ? (
-                          <>
-                            {branchAssignment === "rotational" && (
-                              <select
-                                name="branch_select"
-                                onChange={handleChange}
-                                className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
-                              >
-                                <option value="" className="text-c-gray3">
-                                  Select branch
-                                </option>
-                                {branches.map((branch) => (
-                                  <option
-                                    key={branch.branchId}
-                                    value={branch.branchId}
-                                  >
-                                    {branch.name}
-                                  </option>
-                                ))}
-                              </select>
-                            )}
-                            <div className="flex gap-2">
-                              <input
-                                type="time"
-                                name="saturday_in"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                              <input
-                                type="time"
-                                name="saturday_out"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                            </div>
-                          </>
-                        ) : (
-                          <span className="text-p-sm md:text-p-rg text-c-gray3">
-                            Not working this day
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex gap-4">
-                        <div
-                          className={`w-12 h-6 flex items-center ${
-                            isSunOn ? "bg-blue-500" : "bg-gray-300"
-                          } rounded-full p-1 cursor-pointer`}
-                          onClick={() => setIsSunOn(!isSunOn)}
-                        >
-                          <div
-                            className={`bg-white w-5 h-5 rounded-full shadow-md transform ${
-                              isSunOn ? "translate-x-6" : "translate-x-0"
-                            } transition-transform`}
-                          ></div>
-                        </div>
-                        <label
-                          htmlFor="sun"
-                          className="text-p-sm md:text-p-rg text-c-secondary font-medium"
-                        >
-                          Sunday
-                        </label>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        {isSunOn ? (
-                          <>
-                            {branchAssignment === "rotational" && (
-                              <select
-                                name="branch_select"
-                                onChange={handleChange}
-                                className="mt-1 w-full px-4 py-2 border rounded-md text-f-dark border-c-gray3 focus:outline-c-primary"
-                              >
-                                <option value="" className="text-c-gray3">
-                                  Select branch
-                                </option>
-                                {branches.map((branch) => (
-                                  <option
-                                    key={branch.branchId}
-                                    value={branch.branchId}
-                                  >
-                                    {branch.name}
-                                  </option>
-                                ))}
-                              </select>
-                            )}
-                            <div className="flex gap-2">
-                              <input
-                                type="time"
-                                name="sunday_in"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                              <input
-                                type="time"
-                                name="sunday_out"
-                                onChange={handleChange}
-                                className="w-full px-2 py-1 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                              />
-                            </div>
-                          </>
-                        ) : (
-                          <span className="text-p-sm md:text-p-rg text-c-gray3">
-                            Not working this day
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {currentCardIndex === 2 && (
-                <div className="p-6 bg-white h-[500px] md:h-[600px] overflow-y-scroll">
-                  <div className="mb-5">
-                    <header>
-                      <h1 className="text-p-sm md:text-p-rg font-medium text-c-secondary mb-4">
-                        | Email & Password
-                      </h1>
-                    </header>
                     <section>
                       <label
                         htmlFor="email"
                         className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                       >
-                        Email Address:{" "}
-                        <span className="text-red-400">
-                          {(formData.email === "" || errors.email) &&
-                            errors.email}
-                        </span>
+                        Email Address <span className="text-blue-500">*</span>
                       </label>
                       <input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 ${
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
                           errors.email
                             ? "border-red-400 focus:outline-red-400"
-                            : "border-c-gray3 focus:outline-c-primary"
+                            : "border-f-gray focus:outline-c-primary"
                         }`}
                         placeholder="Enter email"
                       />
+                      <p className="text-red-400 text-p-sm mt-1">
+                        {(formData.email === "" || errors.email) &&
+                          errors.email}
+                      </p>
                     </section>
                   </div>
-                </div>
-              )}
-            </form>
-            <footer className="flex justify-end px-4 py-3 gap-4 bg-white border-2 border-t-f-gray rounded-b-lg">
+                )}
+              </form>
+            </div>
+            <footer className="flex justify-end p-6 gap-4">
               {currentCardIndex === 0 ? (
                 <div className="w-full flex justify-between">
                   {staffData ? (

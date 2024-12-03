@@ -17,29 +17,22 @@ const Modal = ({
 
   return ReactDOM.createPortal(
     <div
-      className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${overlayClassName}`}
+      className={`fixed inset-0 bg-zinc-800 bg-opacity-50 flex items-center justify-center z-50 ${overlayClassName} font-Poppins`}
     >
       <div
-        className={`bg-white p-6 rounded-lg shadow-lg relative w-full max-w-md mx-4 ${className}`}
+        className={`bg-f-light rounded-lg shadow-lg w-full max-w-md ${className}`}
       >
-        <div className="w-full flex justify-end">
-          <button
-            className="sticky left-96 top-0 text-gray-600 hover:text-gray-900 text-3xl p-2 rounded-full"
-            onClick={onClose}
-          >
+        <header className="flex items-center justify-between">
+          {title && <h2 className="text-lg font-semibold">{title}</h2>}
+          <button className="text-f-dark text-3xl" onClick={onClose}>
             &times;
           </button>
-        </div>
-        {title && (
-          <div className=" -mt-10 border-b pb-2 mb-4">
-            <h2 className="text-lg font-bold font-Poppins">{title}</h2>
-          </div>
-        )}
-        <div className=" flex flex-col items-center justify-center">
+        </header>
+        <div className=" flex flex-col items-center justify-center p-4">
           {icon}
           {description && (
             <p
-              className={`text-gray-600 mb-4 p-2 font-Poppins ${overlayDescriptionClassName}`}
+              className={`text-c-gray3 text-p-rg ${overlayDescriptionClassName}`}
             >
               {description}
             </p>

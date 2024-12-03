@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FiUserCheck } from "react-icons/fi";
-import { FiUser } from "react-icons/fi";
-import { FiBox } from "react-icons/fi";
+import { FiUserCheck, FiUser, FiBox } from "react-icons/fi";
 import ProfileSettingSection from "../../Component/ui/ProfileSettingSection";
 import RoleColor from "../../assets/Util/RoleColor";
 

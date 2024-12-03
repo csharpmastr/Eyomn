@@ -13,6 +13,7 @@ import {
   addAppointment,
   updatedAppointment,
 } from "../../Slice/AppointmentSlice";
+import Swal from "sweetalert2";
 
 const SetAppointment = ({ onClose, appointmentToEdit }) => {
   const [errors, setErrors] = useState({});
@@ -163,19 +164,19 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
       !dataToValidate.patient_name ||
       !/^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(dataToValidate.patient_name)
     ) {
-      newErrors.patient_name = "(Patient name is required)";
+      newErrors.patient_name = "Patient name is required";
     }
     if (!date) {
-      newErrors.date = "(Select appointment date)";
+      newErrors.date = "Select appointment date";
     }
     if (!time) {
-      newErrors.time = "(Select appointment time)";
+      newErrors.time = "Select appointment time";
     }
     if (!dataToValidate.reason) {
-      newErrors.reason = "(Select reason for visit)";
+      newErrors.reason = "Select reason for visit";
     }
     if (user.role !== "2" && !dataToValidate.doctor) {
-      newErrors.doctor = "(Select doctor to assign)";
+      newErrors.doctor = "Select doctor to assign";
     }
 
     setErrors(newErrors);
@@ -241,16 +242,14 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
     if (!validateForm()) {
       return;
     }
-    setIsLoading(true);
 
     try {
       if (!appointmentToEdit) {
+        setIsLoading(true);
+
         try {
           if (user.role !== "2") {
-            const appointmentData = {
-              ...formData,
-              scheduledTime,
-            };
+            const appointmentData = { ...formData, scheduledTime };
             const response = await addAppointmentService(
               branchId,
               appointmentData,
@@ -265,15 +264,13 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
               reduxDispatch(addAppointment({ ...appointmentData, scheduleId }));
             }
           } else {
-            const appointmentData = {
-              ...docFormData,
-              scheduledTime,
-            };
+            const appointmentData = { ...docFormData, scheduledTime };
             const response = await addAppointmentService(
               selectedBranch,
               appointmentData,
               user.firebaseUid
             );
+
             if (response) {
               setIsSuccess(true);
               handleClear();
@@ -295,22 +292,37 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
           setIsLoading(false);
         }
       } else {
+        const { isConfirmed } = await Swal.fire({
+          title: "Confirm Appointment Update",
+          text: "Are you sure you want to update this appointment?",
+          showCancelButton: true,
+          cancelButtonText: "Cancel",
+          confirmButtonText: "Yes, Update!",
+          reverseButtons: true,
+          confirmButtonColor: "#4A90E2",
+        });
+
+        if (!isConfirmed) {
+          return;
+        }
+
+        setIsLoading(true);
+
         try {
           if (user.role !== "2") {
             const appointmentData = { ...formData, scheduledTime };
-
             const response = await updateAppointment(
               branchId,
               appointmentToEdit.scheduleId,
               appointmentData,
               user.firebaseUid
             );
+
             if (response) {
               setIsSuccess(true);
             }
           } else {
             const appointmentData = { ...docFormData, scheduledTime };
-
             const response = await updateAppointment(
               selectedBranch,
               appointmentToEdit.scheduleId,
@@ -429,188 +441,228 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
           }`}
         />
       ) : (
-        <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-          <div className="w-[380px] md:w-1/2 xl:w-[500px] h-auto ">
-            <header className="p-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-              <h1 className="text-p-rg md:text-p-lg text-c-secondary font-medium">
-                {appointmentToEdit ? "Edit Appointment" : "Set Appointment"}
-              </h1>
-              <button onClick={onClose}> &times; </button>
-            </header>
-            <form className="p-6 bg-white" onSubmit={handleSubmitAppointment}>
-              <section>
-                <label
-                  htmlFor="patient_name"
-                  className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+        <div className="fixed top-0 left-0 flex items-center justify-center md:justify-end p-5 md:p-3 h-screen w-screen bg-zinc-800 bg-opacity-50 z-50 font-Poppins">
+          <div className="w-full md:w-[600px] h-fit md:h-full flex flex-col justify-between bg-white rounded-lg">
+            <div>
+              <header className="px-4 py-6 border-b flex justify-between items-center">
+                <h1 className="text-p-rg md:text-p-lg text-f-dark font-medium">
+                  {appointmentToEdit ? "Edit Appointment" : "Set Appointment"}
+                </h1>
+                <button
+                  onClick={onClose}
+                  className="w-10 h-10 rounded-md border hover:bg-zinc-50"
                 >
-                  Patient Name{" "}
-                  <span className="text-red-400">
-                    {(formData.patient_name === "" ||
-                      docFormData.patient_name === "" ||
-                      errors.patient_name) &&
-                      errors.patient_name}
-                  </span>
-                </label>
-                <input
-                  type="text"
-                  name="patient_name"
-                  value={formData.patient_name || docFormData.patient_name}
-                  onChange={handleChange}
-                  className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                  placeholder="Enter patient name"
-                />
-              </section>
-              <div className="flex gap-4">
-                <div className="w-1/2">
+                  &times;
+                </button>
+              </header>
+              <form className="p-6 bg-white" onSubmit={handleSubmitAppointment}>
+                <section className="mb-4">
                   <label
-                    htmlFor="date"
+                    htmlFor="patient_name"
                     className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
                   >
-                    Date{" "}
-                    <span className="text-red-400">
-                      {(date === "" || errors.date) && errors.date}
-                    </span>
+                    Patient Name <span className="text-blue-500">*</span>
                   </label>
-                  <input
-                    type="date"
-                    name="date"
-                    min={
-                      new Date(
-                        new Date().getTime() -
-                          new Date().getTimezoneOffset() * 60000
-                      )
-                        .toISOString()
-                        .split("T")[0]
-                    }
-                    max={
-                      new Date(
-                        new Date().setFullYear(new Date().getFullYear() + 1)
-                      )
-                        .toISOString()
-                        .split("T")[0]
-                    }
-                    value={date}
-                    onChange={handleChange}
-                    className="mt-1 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                  />
-                </div>
-                <div className="w-1/2">
-                  <label
-                    htmlFor="time"
-                    className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                  >
-                    Time{" "}
-                    <span className="text-red-400">
-                      {(time === "" || errors.time) && errors.time}
-                    </span>
-                  </label>
-                  <select
-                    name="time"
-                    value={time}
-                    onChange={handleChange}
-                    className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
-                  >
-                    <option value="" disabled className="text-c-gray3">
-                      Select Time
-                    </option>
-                    {timeOptions.map((timeOption, index) => (
-                      <option key={index} value={timeOption}>
-                        {timeOption}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <section>
-                <label
-                  htmlFor="reason"
-                  className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                >
-                  Reason{" "}
-                  <span className="text-red-400">
-                    {(formData.reason === "" ||
-                      docFormData === "" ||
-                      errors.reason) &&
-                      errors.reason}
-                  </span>
-                </label>
-                <select
-                  name="reason"
-                  value={formData.reason || docFormData.reason}
-                  onChange={handleChange}
-                  className="mt-2 w-full  px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-5 focus:outline-c-primary"
-                >
-                  <option value="" disabled className="text-c-gray3">
-                    Select Reason
-                  </option>
-                  <option value="check up">Check Up</option>
-                  <option value="consultation">Consultation</option>
-                </select>
-              </section>
-              {user.role !== "2" ? (
-                <section>
-                  <label
-                    htmlFor="doctor"
-                    className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                  >
-                    Appoint a Doctor{" "}
-                    <span className="text-red-400">
-                      {(formData.doctor === "" || errors.doctor) &&
-                        errors.doctor}
-                    </span>
-                  </label>
-                  <select
-                    name="doctor"
-                    value={formData.doctorId || ""}
-                    onChange={handleChange}
-                    className="mt-2 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                  >
-                    <option value="" disabled className="text-c-gray3">
-                      Available Doctor
-                    </option>
-                    {availableDoctors.map((doctor, key) => (
-                      <option key={key} value={doctor.staffId}>
-                        {doctor.first_name + " " + doctor.last_name}
-                      </option>
-                    ))}
-                  </select>
+                  <div>
+                    <input
+                      type="text"
+                      name="patient_name"
+                      value={formData.patient_name || docFormData.patient_name}
+                      onChange={handleChange}
+                      className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                        errors.patient_name
+                          ? "border-red-400 focus:outline-red-400"
+                          : "border-f-gray focus:outline-c-primary"
+                      }`}
+                      placeholder="Enter patient name"
+                    />
+                    <p className="text-red-400 text-p-sm mt-1">
+                      {(formData.patient_name === "" ||
+                        docFormData.patient_name === "" ||
+                        errors.patient_name) &&
+                        errors.patient_name}
+                    </p>
+                  </div>
                 </section>
-              ) : (
-                <section>
-                  <label
-                    htmlFor="branch"
-                    className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
-                  >
-                    Select a Branch{" "}
-                    <span className="text-red-400">
-                      {/* {(formData.doctor === "" || errors.doctor) && errors.doctor} */}
-                    </span>
-                  </label>
-                  <select
-                    name="branch"
-                    value={selectedBranch || ""}
-                    onChange={handleChange}
-                    className="mt-2 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
-                  >
-                    <option value="" disabled className="text-c-gray3">
-                      Available Branches
-                    </option>
-                    {availableBranch.length > 0 ? (
-                      branches.map((branch, key) => (
-                        <option key={key} value={branch.branchId}>
-                          {`${branch.branchName}`}
+                <div className="flex gap-4 mb-4">
+                  <div className="w-1/2">
+                    <label
+                      htmlFor="date"
+                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                    >
+                      Date <span className="text-blue-500">*</span>
+                    </label>
+                    <div>
+                      <input
+                        type="date"
+                        name="date"
+                        min={
+                          new Date(
+                            new Date().getTime() -
+                              new Date().getTimezoneOffset() * 60000
+                          )
+                            .toISOString()
+                            .split("T")[0]
+                        }
+                        max={
+                          new Date(
+                            new Date().setFullYear(new Date().getFullYear() + 1)
+                          )
+                            .toISOString()
+                            .split("T")[0]
+                        }
+                        value={date}
+                        onChange={handleChange}
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                          errors.date
+                            ? "border-red-400 focus:outline-red-400"
+                            : "border-f-gray focus:outline-c-primary"
+                        }`}
+                      />
+                      <p className="text-red-400 text-p-sm mt-1">
+                        {(date === "" || errors.date) && errors.date}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      htmlFor="time"
+                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                    >
+                      Time <span className="text-blue-500">*</span>
+                    </label>
+                    <div>
+                      <select
+                        name="time"
+                        value={time}
+                        onChange={handleChange}
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                          errors.time
+                            ? "border-red-400 focus:outline-red-400"
+                            : "border-f-gray focus:outline-c-primary"
+                        }`}
+                      >
+                        <option value="" disabled className="text-c-gray3">
+                          Select Time
                         </option>
-                      ))
-                    ) : (
-                      <option value="" disabled>
-                        No branches available
+                        {timeOptions.map((timeOption, index) => (
+                          <option key={index} value={timeOption}>
+                            {timeOption}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="text-red-400 text-p-sm mt-1">
+                        {(time === "" || errors.time) && errors.time}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <section className="mb-4">
+                  <label
+                    htmlFor="reason"
+                    className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                  >
+                    Reason <span className="text-blue-500">*</span>
+                  </label>
+                  <div>
+                    <select
+                      name="reason"
+                      value={formData.reason || docFormData.reason}
+                      onChange={handleChange}
+                      className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                        errors.reason
+                          ? "border-red-400 focus:outline-red-400"
+                          : "border-f-gray focus:outline-c-primary"
+                      }`}
+                    >
+                      <option value="" disabled className="text-c-gray3">
+                        Select Reason
                       </option>
-                    )}
-                  </select>
+                      <option value="check up">Check Up</option>
+                      <option value="consultation">Consultation</option>
+                    </select>
+                    <p className="text-red-400 text-p-sm mt-1">
+                      {(formData.reason === "" ||
+                        docFormData === "" ||
+                        errors.reason) &&
+                        errors.reason}
+                    </p>
+                  </div>
                 </section>
-              )}
-            </form>
-            <div className="border border-t-f-gray bg-white rounded-b-lg flex gap-4 justify-end px-4 py-3">
+                {user.role !== "2" ? (
+                  <section>
+                    <label
+                      htmlFor="doctor"
+                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                    >
+                      Appoint a Doctor <span className="text-blue-500">*</span>
+                    </label>
+                    <div>
+                      <select
+                        name="doctor"
+                        value={formData.doctorId || ""}
+                        onChange={handleChange}
+                        className={`mt-1 w-full px-4 py-3 border rounded-md text-f-dark ${
+                          errors.doctor
+                            ? "border-red-400 focus:outline-red-400"
+                            : "border-f-gray focus:outline-c-primary"
+                        }`}
+                      >
+                        <option value="" disabled className="text-c-gray3">
+                          Available Doctor
+                        </option>
+                        {availableDoctors.map((doctor, key) => (
+                          <option key={key} value={doctor.staffId}>
+                            {doctor.first_name + " " + doctor.last_name}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="text-red-400 text-p-sm mt-1">
+                        {(formData.doctor === "" || errors.doctor) &&
+                          errors.doctor}
+                      </p>
+                    </div>
+                  </section>
+                ) : (
+                  <section>
+                    <label
+                      htmlFor="branch"
+                      className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                    >
+                      Select a Branch <span className="text-blue-500">*</span>
+                    </label>
+                    <div>
+                      <select
+                        name="branch"
+                        value={selectedBranch || ""}
+                        onChange={handleChange}
+                        className="mt-2 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark focus:outline-c-primary"
+                      >
+                        <option value="" disabled className="text-c-gray3">
+                          Available Branches
+                        </option>
+                        {availableBranch.length > 0 ? (
+                          branches.map((branch, key) => (
+                            <option key={key} value={branch.branchId}>
+                              {`${branch.branchName}`}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="" disabled>
+                            No branches available
+                          </option>
+                        )}
+                      </select>
+                      <p className="text-red-400 text-p-sm mt-1">
+                        {(formData.doctor === "" || errors.doctor) &&
+                          errors.doctor}
+                      </p>
+                    </div>
+                  </section>
+                )}
+              </form>
+            </div>
+            <footer className="flex justify-end p-6 gap-4">
               <button
                 type="button"
                 className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium border shadow-sm rounded-md hover:bg-sb-org"
@@ -621,11 +673,11 @@ const SetAppointment = ({ onClose, appointmentToEdit }) => {
               <button
                 onClick={handleSubmitAppointment}
                 type="submit"
-                className="px-4 lg:px-12 py-2 bg-bg-con rounded-md text-f-light text-p-sm md:text-p-rg font-medium hover:bg-opacity-75"
+                className="px-4 lg:px-12 py-2 bg-bg-con rounded-md text-f-light text-p-sm md:text-p-rg font-medium hover:bg-opacity-75 active:bg-pressed-branch"
               >
                 Schedule
               </button>
-            </div>
+            </footer>
           </div>
         </div>
       )}
