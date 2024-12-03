@@ -55,51 +55,69 @@ const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
       {filteredProducts.length > 0 ? (
         <>
           <div className="w-fit md:w-full text-f-dark overflow-x-auto font-Poppins text-p-sm md:text-p-rg">
-            <header className="w-full py-5 rounded-md flex border-b bg-white text-f-gray2">
-              <div className="w-1/5 pl-4">Code</div>
-              <div className="w-1/5 pl-4">Product Name</div>
-              <div className="w-1/5 pl-4">Category</div>
-              <div className="w-1/5 pl-4">Price</div>
-              <div className="w-1/5 pl-4">Quantity</div>
-            </header>
-            <div>
-              {paginatedProducts.map((productDetail, index) => {
-                const isOutOfStock = productDetail.quantity === 0;
-                return (
-                  <section
-                    className={`py-5 cursor-pointer flex w-full rounded-md ${
-                      index % 2 === 0
-                        ? "bg-none border-none"
-                        : `bg-white border-b`
-                    } ${isOutOfStock ? "opacity-50 cursor-not-allowed" : ""}`}
-                    key={productDetail.productId}
-                    onClick={() =>
-                      !isOutOfStock && onProductSelect(productDetail)
-                    }
-                  >
-                    <div className="w-1/5 pl-4">{productDetail.productSKU}</div>
-                    <div className="w-1/5 pl-4">
-                      {productDetail.product_name}
-                    </div>
-                    <div className="w-1/5 pl-4">{productDetail.category}</div>
-                    <div className="w-1/5 pl-4">
-                      Php {productDetail.price || 0}
-                    </div>
-                    <div className="w-1/5 pl-4">
-                      {isOutOfStock ? "Out of stock" : productDetail.quantity}
-                    </div>
-                  </section>
-                );
-              })}
-            </div>
+            <table className="min-w-full table-auto border-collapse text-f-dark overflow-x-auto font-Poppins text-p-sm md:text-p-rg">
+              <thead>
+                <tr className="bg-zinc-200 text-f-dark opacity-40 h-16">
+                  <th className="pl-4 w-1/5 text-start ffont-semibold">Code</th>
+                  <th className="pl-4 w-1/5 text-start font-semibold">
+                    Product Name
+                  </th>
+                  <th className="pl-4 w-1/5 text-start font-semibold">
+                    Category
+                  </th>
+                  <th className="pl-4 w-1/5 text-start font-semibold">Price</th>
+                  <th className="pl-4 w-1/5 text-start font-semibold">
+                    Quantity
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedProducts.map((productDetail, index) => {
+                  const isOutOfStock = productDetail.quantity === 0;
+                  return (
+                    <tr
+                      key={productDetail.productId}
+                      className={`h-16 cursor-pointer ${
+                        index % 2 === 0 ? "bg-none" : "bg-white"
+                      } ${isOutOfStock ? "text-f-gray" : "text-f-dark"}`}
+                      onClick={() =>
+                        !isOutOfStock && onProductSelect(productDetail)
+                      }
+                    >
+                      <td className="pl-4 w-1/5">{productDetail.productSKU}</td>
+                      <td className="pl-4 w-1/5">
+                        {productDetail.product_name}
+                      </td>
+                      <td className="pl-4 w-1/5">{productDetail.category}</td>
+                      <td className="pl-4 w-1/5">
+                        Php {productDetail.price || 0}
+                      </td>
+                      <td className="pl-4 w-1/5">
+                        <span
+                          className={`${
+                            isOutOfStock
+                              ? "bg-red-400 text-white rounded-full px-2 py-1"
+                              : ""
+                          }`}
+                        >
+                          {isOutOfStock
+                            ? "Out of stock"
+                            : productDetail.quantity}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
             <div className="flex justify-end mt-6 mb-4">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
                 className={`px-4 py-2 mx-1 rounded ${
                   currentPage === 1
-                    ? "bg-gray-400 text-f-light"
-                    : "bg-gray-200 text-f-gray2"
+                    ? "bg-zinc-200 text-f-gray2"
+                    : "bg-zinc-200 text-f-gray2"
                 }`}
               >
                 &lt;
@@ -111,7 +129,7 @@ const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
                   className={`px-4 py-2 mx-1 rounded ${
                     currentPage === startPage + index
                       ? `${btnContentColor} text-f-light`
-                      : "bg-gray-200 text-f-gray2"
+                      : "bg-zinc-200 text-f-gray2"
                   }`}
                 >
                   {startPage + index}
@@ -122,8 +140,8 @@ const PosTable = ({ onProductSelect, searchTerm, sortOption }) => {
                 disabled={currentPage === totalPages}
                 className={`px-4 py-2 mx-1 rounded ${
                   currentPage === totalPages
-                    ? "bg-gray-400 text-f-light"
-                    : "bg-gray-200 text-f-gray2"
+                    ? "bg-zinc-200 text-f-gray2"
+                    : "bg-zinc-200 text-f-gray2"
                 }`}
               >
                 &gt;

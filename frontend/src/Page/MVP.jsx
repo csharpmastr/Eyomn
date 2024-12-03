@@ -56,10 +56,6 @@ const MVP = () => {
       main: "Reports",
       sub: "Generate and view reports on patient flow, finances, and more.",
     },
-    "/stock_checkout": {
-      main: "Stock Checkout",
-      sub: "Process payments, issue receipts, and track sales history.",
-    },
     "/help": {
       main: "Help Center",
       sub: "Access guides, FAQs, and support for your questions.",
