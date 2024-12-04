@@ -65,6 +65,7 @@ const loginUserHandler = async (req, res) => {
       doctors,
       appointments,
       firebaseUid,
+      isNew,
     } = await loginUser({ email, password });
 
     const accessToken = generateToken(
@@ -94,6 +95,7 @@ const loginUserHandler = async (req, res) => {
 
     const responsePayload = {
       userId,
+      isNew,
       role,
       message: "Login successful",
       firebaseUid,

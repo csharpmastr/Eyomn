@@ -29,12 +29,15 @@ export const useLogin = () => {
         staffData,
         branchData,
         firebaseUid,
+        isNew,
       } = response;
 
       dispatch({ type: "LOGIN", payload: userId });
 
       if (role === "0") {
-        reduxDispatch(setUser({ userId, organization, role, firebaseUid }));
+        reduxDispatch(
+          setUser({ userId, organization, role, firebaseUid, isNew })
+        );
       } else if (role === "1") {
         const name = branchData.name;
         const email = branchData.email;
@@ -52,6 +55,7 @@ export const useLogin = () => {
             province,
             organizationId,
             firebaseUid,
+            isNew,
           })
         );
       } else {
@@ -62,6 +66,7 @@ export const useLogin = () => {
             ...restOfStaffData,
             userId,
             organization,
+            isNew,
           })
         );
       }

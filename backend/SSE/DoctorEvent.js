@@ -1,6 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const jwt = require("jsonwebtoken");
 const { decryptDocument } = require("../Helper/Helper");
 const {
   query,
@@ -74,7 +73,7 @@ const startDoctorSSEServer = (app) => {
           if (patients.length > 0) {
             cachedPatients[id] = patients;
 
-            // Send updates only, skip sending cached data immediately
+            // Send updates only, no cached data at connection establishment
             res.write(
               `data: ${JSON.stringify({ type: "patient", data: patients })}\n\n`
             );
@@ -109,7 +108,7 @@ const startDoctorSSEServer = (app) => {
         if (notifications.length > 0) {
           cachedNotifications[id] = notifications;
 
-          // Send updates only, skip sending cached data immediately
+          // Send updates only, no cached data at connection establishment
           res.write(
             `data: ${JSON.stringify({
               type: "notification",

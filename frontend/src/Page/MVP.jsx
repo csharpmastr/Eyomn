@@ -10,7 +10,7 @@ import { useFetchData } from "../Hooks/useFetchData";
 import Cookies from "universal-cookie";
 import DoctorSSEComponent from "../SSE/DoctorSSE";
 import OrganizationSSEComponent from "../SSE/OrganizationSSE";
-
+import InfoPassModal from "../Component/ui/InfoPassModal";
 const MVP = () => {
   const user = useSelector((state) => state.reducer.user.user);
   const { fetchData } = useFetchData();
@@ -18,6 +18,13 @@ const MVP = () => {
   const currentPath = location.pathname;
   const hasFetched = localStorage.getItem("hasFetched");
   const [isFetched, setIsFetched] = useState(hasFetched === "true");
+  const [isModalOpen, setIsModalOpen] = useState(true);
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+
+    localStorage.setItem("hasClickedModal", "true");
+  };
 
   const tabMapping = {
     "/dashboard": {
@@ -112,12 +119,19 @@ const MVP = () => {
     } else {
       console.log("No fetching required");
     }
+    const hasClickedModal = localStorage.getItem("hasClickedModal");
+    if (hasClickedModal) {
+      setIsModalOpen(false); // Prevent the modal from opening
+    }
   }, []);
 
   const currentTab = getCurrentTab();
 
   return (
     <WebSocketProvider>
+      {user.isNew === true && isModalOpen && (
+        <InfoPassModal onClose={closeModal} />
+      )}
       {user.role === "2" && <DoctorSSEComponent />}
       {user.role === "0" && <OrganizationSSEComponent />}
       <div className="flex xl:flex-row flex-col h-screen overflow-hidden">

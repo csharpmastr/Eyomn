@@ -87,6 +87,7 @@ const addUser = async (orgData) => {
       password: hashedPassword,
       id: userId,
       role: "0",
+      isNew: true,
     });
 
     return { userId, organization: orgData.organization, role: "0" };
@@ -150,6 +151,7 @@ const loginUser = async (userData) => {
         role: user.role,
         organization: org,
         firebaseUid: orgFirebaseUid,
+        isNew: user.isNew,
       };
     } else if (user.role === "1") {
       const branchQuery = branchCollection.where(
@@ -180,6 +182,7 @@ const loginUser = async (userData) => {
         branchData,
         organization,
         firebaseUid: user.firebaseUid,
+        isNew: user.isNew,
       };
       console.log("branch firebase Uid: ", user.firebaseUid);
     } else if (user.role === "2") {
@@ -215,6 +218,7 @@ const loginUser = async (userData) => {
         organizationId: user.organizationId,
         organization,
         staffData,
+        isNew: user.isNew,
       };
     } else {
       const staffQuery = staffCollection.where("staffId", "==", user.staffId);
@@ -238,6 +242,7 @@ const loginUser = async (userData) => {
       const organization = await getOrganizationName(user.organizationId);
 
       data = {
+        isNew: user.isNew,
         role: user.role,
         userId: user.staffId,
         branchId: user.branchId,

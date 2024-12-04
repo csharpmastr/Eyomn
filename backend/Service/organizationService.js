@@ -61,6 +61,7 @@ const addStaff = async (organizationId, staffData, firebaseUid) => {
       organizationId,
       firebaseUid: newUser.uid,
       password: hashedPassword,
+      isNew: true,
     };
 
     for (const [key, value] of Object.entries(staffData)) {
@@ -151,6 +152,7 @@ const addBranch = async (organizationId, branchData, firebaseUid) => {
       role: "1",
       branchId: branchId,
       password: hashedPassword,
+      isNew: true,
     };
 
     const branchQuerySnapshot = await branchCollection
