@@ -44,11 +44,10 @@ const Inventory = () => {
           </section>
           {user.role === "3" && (
             <button
-              className="text-p-sm border flex gap-2 items-center p-3 rounded-md text-blue-300 shadow-sm font-medium"
+              className="text-p-sm border flex gap-2 items-center p-3 rounded-md text-blue-500 shadow-sm font-medium"
               onClick={posToggle}
             >
-              <FiShoppingCart className="w-4 h-4" />
-              Checkout
+              Walk In
             </button>
           )}
         </div>

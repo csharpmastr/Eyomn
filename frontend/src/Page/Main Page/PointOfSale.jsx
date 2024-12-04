@@ -103,11 +103,17 @@ const PointOfSale = ({ onClose }) => {
     );
   };
 
-  const calculateTotalPrice = () => {
+  const calculateProductSubtotal = () => {
     return selectedProducts
-      .reduce((total, product) => {
-        return total + product.price * product.quantity;
-      }, 0)
+      .filter((product) => product.type !== "service")
+      .reduce((total, product) => total + product.price * product.quantity, 0)
+      .toFixed(2);
+  };
+
+  const calculateServiceSubtotal = () => {
+    return selectedProducts
+      .filter((product) => product.type === "service")
+      .reduce((total, service) => total + (service.price || 0), 0)
       .toFixed(2);
   };
 
@@ -143,7 +149,47 @@ const PointOfSale = ({ onClose }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "service_price" ? parseFloat(value) : value,
+    }));
+  };
+
+  const handleServiceAvail = () => {
+    if (!formData.service_type) return;
+
+    if (formData.service_type === "Custom") {
+      if (!formData.service_other.trim()) {
+        alert("Please specify the custom service name.");
+        return;
+      }
+
+      if (formData.service_price <= 0) {
+        alert("Please specify a valid price for the custom service.");
+        return;
+      }
+    }
+
+    const serviceName =
+      formData.service_type === "Custom"
+        ? formData.service_other
+        : formData.service_type;
+
+    const isServiceAlreadySelected = selectedProducts.some(
+      (item) => item.product_name === serviceName
+    );
+
+    if (!isServiceAlreadySelected) {
+      setSelectedProducts((prevProducts) => [
+        ...prevProducts,
+        {
+          product_name: serviceName,
+          price: formData.service_price,
+          quantity: 1,
+          type: "service",
+        },
+      ]);
+    }
   };
 
   return (
@@ -281,7 +327,10 @@ const PointOfSale = ({ onClose }) => {
                       />
                     </section>
                     <div className="w-full flex justify-end">
-                      <button className="w-fit rounded-full bg-c-primary hover:opacity-75 px-12 py-3 h-fit text-f-light">
+                      <button
+                        className="w-fit rounded-full bg-c-primary hover:opacity-75 px-12 py-3 h-fit text-f-light"
+                        onClick={handleServiceAvail}
+                      >
                         Service Avail
                       </button>
                     </div>
@@ -307,13 +356,13 @@ const PointOfSale = ({ onClose }) => {
               </button>
             </header>
             <div className="h-full overflow-auto">
-              {selectedProducts.map((product) => (
+              {selectedProducts.map((item) => (
                 <div
                   className="px-6 py-6 border-f-gray border-b flex gap-8"
-                  key={product.productId}
+                  key={item.productId}
                 >
                   <button
-                    onClick={() => handleDeleteProduct(product.productId)}
+                    onClick={() => handleDeleteProduct(item.productId)}
                     className="text-2xl hover:text-red-500"
                   >
                     &times;
@@ -321,56 +370,66 @@ const PointOfSale = ({ onClose }) => {
                   <div className="w-full flex justify-between items-start">
                     <section>
                       <h1 className="text-p-sm md:text-p-rg font-medium mb-1">
-                        {product.product_name}
+                        {item.product_name}
                       </h1>
-                      <p className="text-f-gray2">Php {product.price}</p>
+                      <p className="text-f-gray2">
+                        {item.type === "service" ? "Service Fee" : "Php"}{" "}
+                        {item.price}
+                      </p>
                     </section>
-                    <div className="flex items-center">
-                      <button
-                        type="button"
-                        className="w-8 h-8 border bg-white rounded-md text-f-dark flex items-center justify-center focus:outline-none"
-                        onClick={() =>
-                          handleQuantityChange("decrease", product.productId)
-                        }
-                      >
-                        -
-                      </button>
+                    {item.type !== "service" && (
+                      <div className="flex items-center">
+                        <button
+                          type="button"
+                          className="w-8 h-8 border bg-white rounded-md text-f-dark flex items-center justify-center focus:outline-none"
+                          onClick={() =>
+                            handleQuantityChange("decrease", item.productId)
+                          }
+                        >
+                          -
+                        </button>
 
-                      <input
-                        type="text"
-                        value={product.quantity}
-                        className="w-10 h-8 text-center text-p-lg font-semibold bg-white text-f-dark focus:outline-c-primary"
-                      />
+                        <input
+                          type="text"
+                          value={item.quantity}
+                          className="w-10 h-8 text-center text-p-lg font-semibold bg-white text-f-dark focus:outline-c-primary"
+                        />
 
-                      <button
-                        type="button"
-                        className="w-8 h-8 border bg-c-primary rounded-md text-f-light flex items-center justify-center focus:outline-none"
-                        onClick={() =>
-                          handleQuantityChange("increase", product.productId)
-                        }
-                      >
-                        +
-                      </button>
-                    </div>
+                        <button
+                          type="button"
+                          className="w-8 h-8 border bg-c-primary rounded-md text-f-light flex items-center justify-center focus:outline-none"
+                          onClick={() =>
+                            handleQuantityChange("increase", item.productId)
+                          }
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
+
             <div className="mt-auto">
               <div className="mx-6 py-4 mb-4 border-t border-f-gray">
                 <div className="flex flex-col gap-2">
                   <section className="text-p-sm text-f-gray2 font-normal w-full flex justify-between">
                     <p>Subtotal (Items):</p>
-                    <p>Php. 0.00</p>
+                    <p>Php. {calculateProductSubtotal()}</p>
                   </section>
                   <section className="text-p-sm text-f-gray2 font-normal w-full flex justify-between">
                     <p>Subtotal (Service):</p>
-                    <p>Php. 0.00</p>
+                    <p>Php. {calculateServiceSubtotal()}</p>
                   </section>
                   <section className="text-p-rg text-f-dark font-medium w-full flex justify-between">
                     <p>Total:</p>
                     <p className="font-semibold text-c-primary">
-                      Php. {calculateTotalPrice()}
+                      Php.{" "}
+                      {(
+                        parseFloat(calculateProductSubtotal()) +
+                        parseFloat(calculateServiceSubtotal())
+                      ).toFixed(2)}
                     </p>
                   </section>
                 </div>
