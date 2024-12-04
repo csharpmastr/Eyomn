@@ -6,12 +6,13 @@ import AddEditProduct from "../../Component/ui/AddEditProduct";
 import { useSelector } from "react-redux";
 import RoleColor from "../../assets/Util/RoleColor";
 import { FiShoppingCart } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import PointOfSale from "./PointOfSale";
 
 const Inventory = () => {
   const user = useSelector((state) => state.reducer.user.user);
   const products = useSelector((state) => state.reducer.inventory.products);
   const [selected, setSelected] = useState("All");
+  const [openPOS, setOpenPOS] = useState(false);
   const productCount = products.filter(
     (product) => product.isDeleted === false
   ).length;
@@ -22,12 +23,13 @@ const Inventory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("");
   const toggleModal = () => setIsModalOpen(!isModalOpen);
-  const navigate = useNavigate();
   const { btnContentColor } = RoleColor();
 
   const handleSelected = (section) => {
     setSelected(section);
   };
+
+  const posToggle = () => setOpenPOS(!openPOS);
 
   return (
     <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppins">
@@ -42,11 +44,10 @@ const Inventory = () => {
           </section>
           {user.role === "3" && (
             <button
-              className="text-p-sm border flex gap-2 items-center p-3 rounded-md text-blue-300 shadow-sm font-medium"
-              onClick={() => navigate("/stock_checkout")}
+              className="text-p-sm border flex gap-2 items-center p-3 rounded-md text-blue-500 shadow-sm font-medium"
+              onClick={posToggle}
             >
-              <FiShoppingCart className="w-4 h-4" />
-              Checkout
+              Walk In
             </button>
           )}
         </div>
@@ -114,6 +115,7 @@ const Inventory = () => {
       {isModalOpen && (
         <AddEditProduct onClose={toggleModal} title={"Add Product"} />
       )}
+      {openPOS && <PointOfSale onClose={posToggle} />}
     </div>
   );
 };

@@ -145,14 +145,6 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="stock_checkout"
-          element={
-            <ProtectedRoute restrictedRole={"2"}>
-              <PointOfSale />
-            </ProtectedRoute>
-          }
-        />
         <Route path="manage-profile/:section" element={<ProfileSetting />} />
         <Route path="profile" element={<UserProfile />} />
         <Route path="help" element={<HelpCenter />}>

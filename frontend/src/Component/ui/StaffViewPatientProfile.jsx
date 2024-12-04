@@ -4,6 +4,7 @@ import ReasonVisitCard from "./ReasonVisitCard";
 import { useDispatch } from "react-redux";
 import VisitReasonModal from "./VisitReasonModal";
 import { useSelector } from "react-redux";
+import PaymentHistory from "./PaymentHistory";
 import PaymentBreakdown from "./PaymentBreakdown";
 
 const formatDate = (dateString) => {
@@ -178,8 +179,8 @@ const StaffViewPatientProfile = ({ patient, visits }) => {
           </div>
         </div>
         {role !== "0" && (
-          <div className="w-full h-1/2 shadow-sm border bg-white rounded-lg font-poppins p-4 overflow-y-scroll">
-            <PaymentBreakdown patient={patient} />
+          <div className="w-full h-1/2 shadow-sm border bg-white rounded-lg font-poppins p-4 overflow-auto">
+            <PaymentHistory />
           </div>
         )}
       </div>
