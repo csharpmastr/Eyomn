@@ -32,11 +32,11 @@ const ReasonVisitCard = ({ reasonData }) => {
           </div>
           <section className="flex flex-col gap-2">
             <div className="flex items-center gap-1">
-              <FiCalendar className="h-6 w-6 md:mr-2 text-c-gray3" />
+              <FiCalendar className="h-4 w-4 text-c-gray3" />
               <p className="text-p-sc md:text-p-sm text-f-dark">{date}</p>
             </div>
             <div className="flex items-center gap-1">
-              <FiClock className="h-6 w-6 md:mr-2 text-c-gray3" />
+              <FiClock className="h-4 w-4 text-c-gray3" />
               <p className="text-p-sc md:text-p-sm text-f-dark">{time}</p>
             </div>
           </section>

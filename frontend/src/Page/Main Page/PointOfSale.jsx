@@ -111,6 +111,41 @@ const PointOfSale = ({ onClose }) => {
       .toFixed(2);
   };
 
+  const services = [
+    "Basic Eye Exam",
+    "Pediatric Eye Exam",
+    "Cataract & Glaucoma Assessment",
+    "Low Vision & Strabismus",
+    "Custom",
+  ];
+
+  const servicePrices = {
+    "Basic Eye Exam": 350,
+    "Pediatric Eye Exam": 500,
+    "Cataract & Glaucoma Assessment": 1000,
+    "Low Vision & Strabismus": 1200,
+  };
+
+  const [formData, setFormData] = useState({
+    service_type: services[0],
+    service_price: servicePrices[services[0]],
+    service_other: "",
+  });
+
+  const handleServiceSelection = (service) => {
+    setFormData((prev) => ({
+      ...prev,
+      service_type: service,
+      service_price: service === "Custom" ? 0 : servicePrices[service],
+      service_other: service === "Custom" ? "" : prev.service_other,
+    }));
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   return (
     <>
       {isLoading && (
@@ -182,7 +217,76 @@ const PointOfSale = ({ onClose }) => {
                   sortOption={sortOption}
                 />
               ) : (
-                <div></div>
+                <div className="w-full">
+                  <section className="w-full grid grid-cols-3 2xl:grid-cols-5 gap-3 text-f-dark font-medium">
+                    {services.map((service) => (
+                      <button
+                        key={service}
+                        className={`flex-1 py-5 rounded-md text-p-sc md:text-p-sm ${
+                          formData.service_type === service
+                            ? "bg-c-branch text-f-light"
+                            : "bg-zinc-200 text-f-gray2 hover:bg-hover-branch hover:text-c-gray3"
+                        }`}
+                        onClick={() => handleServiceSelection(service)}
+                      >
+                        {service}
+                      </button>
+                    ))}
+                  </section>
+                  <div className="mt-6 border-2 border-dashed border-f-gray rounded-md p-6">
+                    <section>
+                      <p className="text-c-gray3 font-medium text-p-sm">
+                        Service Type:
+                      </p>
+                      {formData.service_type === "Custom" ? (
+                        <input
+                          type="text"
+                          name="service_other"
+                          value={formData.service_other}
+                          onChange={handleInputChange}
+                          className="mt-1 w-2/6 px-4 py-3 border rounded-lg text-f-dark focus:outline-c-primary"
+                          placeholder="Enter service type"
+                        />
+                      ) : (
+                        <h6 className="text-c-primary font-medium text-p-lg">
+                          {formData.service_type}
+                        </h6>
+                      )}
+                    </section>
+                    <hr className="border-f-gray my-4" />
+                    <section className="w-2/6 mb-4">
+                      <label className="text-p-sc md:text-p-sm text-c-gray3 font-medium">
+                        Service Price
+                      </label>
+                      <input
+                        type="number"
+                        name="service_price"
+                        value={formData.service_price}
+                        onChange={handleInputChange}
+                        className="mt-1 w-full px-4 py-3 border rounded-lg text-f-dark focus:outline-c-primary"
+                        placeholder="Enter amount"
+                        min={0}
+                        disabled={!formData.service_type}
+                      />
+                    </section>
+                    <section className="w-full mb-4">
+                      <label className="text-p-sc md:text-p-sm text-c-gray3 font-medium">
+                        Additional Info (Optional)
+                      </label>
+                      <textarea
+                        name="additional_info"
+                        className="mt-1 w-full px-4 py-3 border rounded-lg text-f-dark focus:outline-c-primary resize-none"
+                        placeholder="Leave blank if not applicable"
+                        rows={3}
+                      />
+                    </section>
+                    <div className="w-full flex justify-end">
+                      <button className="w-fit rounded-full bg-c-primary hover:opacity-75 px-12 py-3 h-fit text-f-light">
+                        Service Avail
+                      </button>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           </div>

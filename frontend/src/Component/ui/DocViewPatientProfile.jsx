@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import PaymentBreakdown from "./PaymentBreakdown";
+import PaymentHistory from "./PaymentHistory";
 import ReasonVisitCard from "./ReasonVisitCard";
 import VisitReasonModal from "./VisitReasonModal";
 import { getPatientNotes } from "../../Service/PatientService";
@@ -413,7 +413,7 @@ const DocViewPatientProfile = ({ patient, visits }) => {
           </section>
         </div>
         <div className="w-full md:w-1/3 h-[450px] shadow-sm border bg-white rounded-lg font-poppins p-4 overflow-y-scroll">
-          <PaymentBreakdown />
+          <PaymentHistory />
         </div>
       </div>
       {isVisitOpen && <VisitReasonModal onClose={toggleModal} />}
