@@ -110,7 +110,7 @@ const Scribe = () => {
               <span className="text-f-gray2 font-medium">Total patient</span>
             </p>
             <div className="mt-2 md:mt-0 flex flex-row gap-3">
-              <div className="h-auto flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-f-light text-c-gray3 font-normal hover:cursor-pointer">
+              <div className="flex justify-center items-center rounded-lg px-4 border font-normal hover:cursor-pointer bg-white h-12 text-f-dark">
                 <select
                   value={sortOrder}
                   onChange={handleSortChange}
@@ -123,14 +123,14 @@ const Scribe = () => {
                   <option value="descending">Descending</option>
                 </select>
               </div>
-              <div className="w-full flex flex-row gap-2 border border-f-gray  px-4 rounded-md justify-center items-center md:w-fit">
-                <IoMdSearch className="h-6 w-6 text-c-secondary" />
+              <div className="flex flex-row border px-4 rounded-lg justify-center items-center w-full gap-2 bg-white h-12">
+                <IoMdSearch className="h-6 w-6 text-f-dark" />
                 <input
                   type="text"
                   placeholder="Search patient name"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full text-f-dark focus:outline-none placeholder-c-gray3 bg-bg-mc"
+                  className="w-full text-f-dark focus:outline-none placeholder-c-gray3 bg-white"
                 />
               </div>
             </div>
