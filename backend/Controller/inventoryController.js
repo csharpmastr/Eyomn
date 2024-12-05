@@ -91,23 +91,25 @@ const updateProductHandler = async (req, res) => {
 };
 const addPurchaseHandler = async (req, res) => {
   try {
-    const branchId = req.params.branchId;
-    const staffId = req.params.staffId;
-    const { firebaseUid } = req.query;
-    const purchaseDetails = req.body;
+    const patientId = req.params.patientId;
+    const { firebaseUid, doctorId, staffId, branchId } = req.query;
+    const { purchaseDetails, service } = req.body;
     console.log(branchId, staffId);
 
     if (!branchId || !staffId) {
       return res.status(400).json({ message: "No Branch/Staff ID provided." });
     }
 
-    const { purchaseId, createdAt } = await addPurchase(
+    const { purchaseId, serviceId, createdAt } = await addPurchase(
       purchaseDetails,
+      service,
       branchId,
       staffId,
-      firebaseUid
+      firebaseUid,
+      doctorId,
+      patientId
     );
-    return res.status(201).json({ purchaseId, createdAt });
+    return res.status(201).json({ purchaseId, serviceId, createdAt });
   } catch (error) {
     res
       .status(500)

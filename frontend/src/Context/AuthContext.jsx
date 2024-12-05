@@ -26,13 +26,6 @@ export const AuthContextProvider = ({ children }) => {
   const cookies = new Cookies();
 
   useEffect(() => {
-    const storedUser = cookies.get("user");
-    if (storedUser) {
-      dispatch({ type: "LOGIN", payload: JSON.parse(storedUser) });
-    } else {
-      dispatch({ type: "LOGOUT" });
-    }
-
     const checkTokens = async () => {
       try {
         const response = await axios.get(

@@ -128,7 +128,9 @@ const PaymentHistory = ({ onClose }) => {
                         </span>
                       </p>
                       <p className="text-p-sm text-c-gray3">
-                        {data.date || "N/A"}
+                        {data.createdAt
+                          ? new Date(data.createdAt).toISOString().split("T")[0]
+                          : "N/A"}
                       </p>
                     </section>
                     {collapsedIndex === index && (
@@ -214,7 +216,7 @@ const PaymentHistory = ({ onClose }) => {
             </div>
           </>
         )}
-        {openPOS && <PointOfSale onClose={togglePOS} />}
+        {openPOS && <PointOfSale onClose={togglePOS} patient={patient} />}
       </div>
     </>
   );

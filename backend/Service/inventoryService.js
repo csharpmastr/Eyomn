@@ -152,11 +152,32 @@ const updateProduct = async (branchId, productId, productDetails) => {
   }
 };
 
-const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
+const addPurchase = async (
+  purchaseDetails,
+  serviceDetails,
+  branchId,
+  staffId,
+  firebaseUid,
+  doctorId,
+  patientId
+) => {
   try {
+    console.log(purchaseDetails, serviceDetails);
+
+    // Verify Firebase UID
     await verifyFirebaseUid(firebaseUid);
 
+    // Ensure at least one of the inputs is provided
+    if (!purchaseDetails?.length && !serviceDetails) {
+      throw {
+        status: 400,
+        message: "No purchase details or service details provided.",
+      };
+    }
+
     const currentDate = new Date();
+    const createdAt = currentDate.toISOString();
+
     const purchaseCollectionRef = inventoryCollection
       .doc(branchId)
       .collection("purchases");
@@ -167,66 +188,25 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
     const purchaseId = await generateUniqueId(purchaseCollectionRef);
     const purchaseRef = purchaseCollectionRef.doc(purchaseId);
 
-    const createdAt = currentDate.toISOString();
-    //batch read
+    let serviceId;
+    // Perform Firestore transaction
     await db.runTransaction(async (transaction) => {
-      const productDocs = await Promise.all(
-        purchaseDetails.map(async (product) => {
-          const productRef = productsCollectionRef.doc(product.productId);
-          const productDoc = await transaction.get(productRef);
+      // Handle products if `purchaseDetails` is provided
+      if (purchaseDetails?.length > 0) {
+        const productDocs = await Promise.all(
+          purchaseDetails.map(async (product) => {
+            const productRef = productsCollectionRef.doc(product.productId);
+            const productDoc = await transaction.get(productRef);
 
-          if (!productDoc.exists) {
-            throw {
-              status: 404,
-              message: `Product not found: ${product.productId}`,
-            };
-          }
+            if (!productDoc.exists) {
+              throw {
+                status: 404,
+                message: `Product not found: ${product.productId}`,
+              };
+            }
 
-          const productData = productDoc.data();
-
-          const decryptedProductData = decryptDocument(productData, [
-            "quantity",
-            "expirationDate",
-            "price",
-            "productSKU",
-            "productId",
-            "isDeleted",
-            "retail_price",
-          ]);
-
-          if (decryptedProductData.quantity < product.quantity) {
-            throw {
-              status: 400,
-              message: `Insufficient stock for product: ${product.productId}`,
-            };
-          }
-
-          return {
-            productRef,
-            decryptedProductData,
-            requestedQuantity: product.quantity,
-          };
-        })
-      );
-
-      // proceed with the writes
-      // create purchase record
-
-      transaction.set(purchaseRef, {
-        staffId,
-        purchaseDetails,
-        createdAt: createdAt,
-      });
-
-      // update product stock each product
-      productDocs.forEach(
-        ({ productRef, decryptedProductData, requestedQuantity }) => {
-          const updatedQuantity =
-            decryptedProductData.quantity - requestedQuantity;
-
-          const updatedProductData = encryptDocument(
-            { ...decryptedProductData, quantity: updatedQuantity },
-            [
+            const productData = productDoc.data();
+            const decryptedProductData = decryptDocument(productData, [
               "quantity",
               "expirationDate",
               "price",
@@ -234,15 +214,84 @@ const addPurchase = async (purchaseDetails, branchId, staffId, firebaseUid) => {
               "productId",
               "isDeleted",
               "retail_price",
-            ]
-          );
+            ]);
 
-          transaction.update(productRef, updatedProductData);
-        }
-      );
+            if (decryptedProductData.quantity < product.quantity) {
+              throw {
+                status: 400,
+                message: `Insufficient stock for product: ${product.productId}`,
+              };
+            }
+
+            return {
+              productRef,
+              decryptedProductData,
+              requestedQuantity: product.quantity,
+            };
+          })
+        );
+
+        // Update stock for each product
+        productDocs.forEach(
+          ({ productRef, decryptedProductData, requestedQuantity }) => {
+            const updatedQuantity =
+              decryptedProductData.quantity - requestedQuantity;
+
+            const updatedProductData = encryptDocument(
+              { ...decryptedProductData, quantity: updatedQuantity },
+              [
+                "quantity",
+                "expirationDate",
+                "price",
+                "productSKU",
+                "productId",
+                "isDeleted",
+                "retail_price",
+              ]
+            );
+
+            transaction.update(productRef, updatedProductData);
+          }
+        );
+
+        // Create purchase record
+        transaction.set(purchaseRef, {
+          patientId: patientId,
+          staffId,
+          purchaseDetails,
+          createdAt,
+        });
+      }
+
+      // Handle service if `serviceDetails` is provided
+      if (serviceDetails && Object.keys(serviceDetails).length > 0) {
+        const servicesColRef = inventoryCollection
+          .doc(branchId)
+          .collection("services");
+
+        serviceId = await generateUniqueId(servicesColRef);
+
+        const serviceDataWithTimestamp = {
+          ...serviceDetails,
+          createdAt,
+          doctorId,
+          patientId,
+        };
+
+        const encryptedServiceData = encryptDocument(serviceDataWithTimestamp, [
+          "service_price",
+          "date",
+          "createdAt",
+          "doctorId",
+          "patientId",
+        ]);
+
+        transaction.set(servicesColRef.doc(serviceId), encryptedServiceData);
+      }
     });
+    console.log(purchaseId, serviceId);
 
-    return { purchaseId, createdAt };
+    return { purchaseId, serviceId, createdAt };
   } catch (error) {
     console.error("Error during purchase:", error);
     throw error;

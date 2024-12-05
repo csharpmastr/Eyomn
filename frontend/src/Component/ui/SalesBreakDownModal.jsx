@@ -42,7 +42,7 @@ const SalesBreakDownModal = ({ gross, onClose }) => {
     { ...totalAmountAndQuantityPerCategory }
   );
 
-  console.log(services);
+  console.log(updatedTotalAmountAndQuantityPerCategory);
 
   return (
     <div className="fixed top-0 left-0 flex items-center p-4 justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">

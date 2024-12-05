@@ -11,19 +11,27 @@ export const useAddPurchase = () => {
   const user = useSelector((state) => state.reducer.user.user);
   const reduxDispatch = useDispatch();
 
-  const addPurchaseHook = async (purchaseDetails, branchId) => {
+  const addPurchaseHook = async (
+    data,
+    doctorId,
+    staffId,
+    branchId,
+    patientId
+  ) => {
     setIsLoading(true);
     setError(null);
     try {
       const response = await addPurchaseService(
-        purchaseDetails,
+        data,
+        doctorId,
+        staffId,
         branchId,
-        user.userId,
-        user.firebaseUid
+        user.firebaseUid,
+        patientId
       );
 
       if (response) {
-        purchaseDetails.forEach((product) => {
+        data.purchaseDetails.forEach((product) => {
           reduxDispatch(
             purchaseProduct({
               productId: product.productId,

@@ -5,11 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useAddPurchase } from "../../Hooks/useAddPurchase";
 import Loader from "../../Component/ui/Loader";
 import SuccessModal from "../../Component/ui/SuccessModal";
-import { addPurchase } from "../../Slice/InventorySlice";
+import { addPurchase, addServices } from "../../Slice/InventorySlice";
 import ErrorModal from "../../Component/ui/ErrorModal";
 import { useNavigate } from "react-router-dom";
+import { addService } from "../../Service/InventoryService";
 
-const PointOfSale = ({ onClose }) => {
+const PointOfSale = ({ onClose, patient }) => {
   const [selectedProducts, setSelectedProducts] = React.useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("");
@@ -54,27 +55,79 @@ const PointOfSale = ({ onClose }) => {
       return;
     }
 
-    const purchaseDetails = selectedProducts.map(
-      ({ productId, productSKU, quantity, price }) => ({
-        productId,
-        productSKU,
-        quantity,
-        totalAmount: price * quantity,
-      })
+    const filteredPurchaseDetails = selectedProducts.filter(
+      (item) => item.type !== "service"
     );
+
+    if (filteredPurchaseDetails.length === 0 && !formData.service_type) {
+      setIsError(true);
+      alert("No valid products or services available for purchase.");
+      return;
+    }
+
+    const payload = {
+      purchaseDetails: selectedProducts
+        .filter((item) => item.type !== "service")
+        .map(({ productId, productSKU, quantity, price }) => ({
+          productId,
+          productSKU,
+          quantity,
+          totalAmount: price * quantity,
+        })),
+
+      service: formData.service_type ? formData : {},
+    };
+
+    payload.service = formData.service_type ? formData : {};
+
+    console.log(payload);
+
     try {
-      const response = await addPurchaseHook(purchaseDetails, branchId);
-      if (response) {
-        const purchaseId = response.purchaseId;
-        const createdAt = response.createdAt;
-        setIsSuccess(true);
-        setSelectedProducts([]);
-        reduxDispatch(addPurchase({ purchaseDetails, createdAt, purchaseId }));
+      if (patient) {
+        const response = await addPurchaseHook(
+          payload,
+          patient.doctorId,
+          user.userId,
+          branchId,
+          patient.patientId
+        );
+
+        if (response) {
+          setIsSuccess(true);
+          const { purchaseId, createdAt, serviceId } = response;
+
+          setSelectedProducts([]);
+
+          if (purchaseId) {
+            reduxDispatch(
+              addPurchase({
+                purchaseDetails: payload.purchaseDetails || [],
+                createdAt,
+                purchaseId,
+                patientId: patient.patientId,
+                doctorId: patient.doctorId,
+              })
+            );
+          }
+
+          if (serviceId) {
+            reduxDispatch(
+              addServices({
+                ...formData,
+                id: serviceId,
+                createdAt,
+                patientId: patient.patientId,
+                doctorId: patient.doctorId,
+              })
+            );
+          }
+        }
       }
     } catch (error) {
       setIsError(true);
     }
   };
+
   const handleQuantityChange = (action, productId) => {
     setSelectedProducts((prevProducts) => {
       return prevProducts
@@ -133,9 +186,9 @@ const PointOfSale = ({ onClose }) => {
   };
 
   const [formData, setFormData] = useState({
-    service_type: services[0],
-    service_price: servicePrices[services[0]],
-    service_other: "",
+    service_type: "",
+    service_price: 0,
+    service_additional: "",
   });
 
   const handleServiceSelection = (service) => {
@@ -143,7 +196,7 @@ const PointOfSale = ({ onClose }) => {
       ...prev,
       service_type: service,
       service_price: service === "Custom" ? 0 : servicePrices[service],
-      service_other: service === "Custom" ? "" : prev.service_other,
+      // service_other: service === "Custom" ? "" : prev.service_other,
     }));
   };
 
@@ -159,7 +212,7 @@ const PointOfSale = ({ onClose }) => {
     if (!formData.service_type) return;
 
     if (formData.service_type === "Custom") {
-      if (!formData.service_other.trim()) {
+      if (!formData.service_additional.trim()) {
         alert("Please specify the custom service name.");
         return;
       }
@@ -287,9 +340,6 @@ const PointOfSale = ({ onClose }) => {
                       {formData.service_type === "Custom" ? (
                         <input
                           type="text"
-                          name="service_other"
-                          value={formData.service_other}
-                          onChange={handleInputChange}
                           className="mt-1 w-2/6 px-4 py-3 border rounded-lg text-f-dark focus:outline-c-primary"
                           placeholder="Enter service type"
                         />
@@ -320,7 +370,9 @@ const PointOfSale = ({ onClose }) => {
                         Additional Info (Optional)
                       </label>
                       <textarea
-                        name="additional_info"
+                        name="service_additional"
+                        value={formData.service_additional}
+                        onChange={handleInputChange}
                         className="mt-1 w-full px-4 py-3 border rounded-lg text-f-dark focus:outline-c-primary resize-none"
                         placeholder="Leave blank if not applicable"
                         rows={3}

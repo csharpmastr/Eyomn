@@ -103,18 +103,23 @@ export const updateProductService = async (
 };
 
 export const addPurchaseService = async (
-  purchaseDetails,
-  branchId,
+  data,
+  doctorId,
   staffId,
-  firebaseUid
+  branchId,
+  firebaseUid,
+  patientId
 ) => {
   try {
     const response = await axios.post(
-      `${INVENTORY_API_BASE_URL}/add-purchase/${branchId}/${staffId}`,
-      purchaseDetails,
+      `${INVENTORY_API_BASE_URL}/add-purchase/${patientId}`,
+      data,
       {
         params: {
+          branchId,
           firebaseUid,
+          doctorId,
+          staffId,
         },
         withCredentials: true,
       }
