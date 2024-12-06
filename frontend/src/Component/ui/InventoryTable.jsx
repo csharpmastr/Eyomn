@@ -151,10 +151,8 @@ const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
             <header className="flex py-5 rounded-md border-b bg-white text-f-gray2">
               <div className="flex-1 pl-4">Product Name</div>
               <div className="flex-1 pl-4">Category</div>
-              <div className="flex-1 pl-4">Prescription/Type</div>
               <div className="flex-1 pl-4">Price</div>
-              <div className="flex-1 pl-4">Quantity</div>
-              <div className="flex-1 pl-4">Brand</div>
+              <div className="flex-1 pl-4">Status</div>
               <div className="w-20"></div>
             </header>
             <main>
@@ -179,18 +177,22 @@ const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
                         {productDetail.category || "Eyeglasses"}
                       </div>
                       <div className="flex-1 pl-4">
-                        {productDetail.eyeglass_category || ""}
-                      </div>
-                      <div className="flex-1 pl-4">
                         Php {productDetail.price || 0}
                       </div>
                       <div className="flex-1 pl-4">
-                        {productDetail.quantity === 0
-                          ? "Out of stock"
-                          : productDetail.quantity || 0}
-                      </div>
-                      <div className="flex-1 pl-4">
-                        {productDetail.brand || "Luxottica"}
+                        {productDetail.quantity === 0 ? (
+                          <span className="bg-red-200 text-red-500 font-medium rounded-full px-4 py-1">
+                            Out of stock
+                          </span>
+                        ) : productDetail.quantity < 10 ? (
+                          <span className="bg-orange-200 text-orange-500 font-medium rounded-full px-4 py-1">
+                            Low Stock
+                          </span>
+                        ) : (
+                          <span className="bg-green-100 text-green-500 font-medium rounded-full px-4 py-1">
+                            Active
+                          </span>
+                        )}
                       </div>
                       <div className="w-20 flex items-center gap-4">
                         <MdKeyboardArrowDown
@@ -241,21 +243,51 @@ const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
                       </div>
                     </div>
                     {!isCollapsed && (
-                      <div className={`py-5 flex border-b`}>
+                      <div className={`py-5 flex border-b text-c-gray3`}>
                         <div className="flex-1 pl-4">
                           <p className="text-p-sc md:text-p-sm">
-                            SKU: <span>{productDetail.productSKU}</span>
+                            SKU:{" "}
+                            <span className="text-f-dark">
+                              {productDetail.productSKU}
+                            </span>
                           </p>
                         </div>
                         <div className="flex-1 pl-4">
                           <p className="text-p-sc md:text-p-sm">
-                            Expiration Date:{" "}
-                            <span>{productDetail.expirationDate}</span>
+                            Quantity:{" "}
+                            <span className="text-f-dark">
+                              {productDetail.quantity}
+                            </span>
                           </p>
                         </div>
+                        {(productDetail.category === "Medication" ||
+                          productDetail.category === "Contact Lens") && (
+                          <div className="flex-1 pl-4">
+                            <p className="text-p-sc md:text-p-sm">
+                              Expiration Date:{" "}
+                              <span className="text-f-dark">
+                                {productDetail.expirationDate}
+                              </span>
+                            </p>
+                          </div>
+                        )}
+                        {(productDetail.category === "Eye Glass" ||
+                          productDetail.category === "Contact Lens") && (
+                          <div className="flex-1 pl-4">
+                            <p className="text-p-sc md:text-p-sm">
+                              Material:{" "}
+                              <span className="text-f-dark">
+                                {productDetail.ct_material}
+                              </span>
+                            </p>
+                          </div>
+                        )}
                         <div className="flex-1 pl-4">
                           <p className="text-p-sc md:text-p-sm">
-                            Material: <span>{productDetail.ct_material}</span>
+                            Brand:{" "}
+                            <span className="text-f-dark">
+                              {productDetail.brand}
+                            </span>
                           </p>
                         </div>
                       </div>

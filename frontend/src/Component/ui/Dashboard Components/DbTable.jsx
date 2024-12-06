@@ -10,7 +10,7 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString(undefined, options);
 };
 
-const DbTable = () => {
+const DbTable = ({ role }) => {
   const { loading } = useFetchData();
   const patients = useSelector((state) => state.reducer.patient.patients);
 
@@ -29,7 +29,11 @@ const DbTable = () => {
   };
 
   return (
-    <div className="text-p-sm md:text-p-rg h-[500px] rounded-lg bg-white p-4 overflow-clip shadow-sm text-f-dark">
+    <div
+      className={`text-p-sm md:text-p-rg rounded-lg bg-white p-4 overflow-clip shadow-sm text-f-dark ${
+        role === "2" ? "h-[500px]" : "h-[360px]"
+      }`}
+    >
       <header className="flex justify-between items-center text-c-secondary">
         <h1 className="font-medium text-nowrap text-c-secondary">
           | Recent Patients
@@ -42,10 +46,9 @@ const DbTable = () => {
         </button>
       </header>
       <div className="text-left flex py-4 bg-bg-mc rounded-md mt-6 mb-3 shadow-sm text-f-gray2">
-        <div className="pl-8 w-1/4">Patient Name</div>
-        <div className="w-1/4">Contact</div>
-        <div className="w-1/4">Email</div>
-        <div className="w-1/4 pl-2">Last Visit</div>
+        <div className="pl-8 w-1/3">Patient Name</div>
+        <div className="w-1/3">Contact</div>
+        <div className="w-1/3 pl-2">Last Visit</div>
       </div>
       <div className="h-full overflow-auto pb-32 flex flex-col gap-3">
         {currentData.map((patientData, index) => (
@@ -53,12 +56,11 @@ const DbTable = () => {
             key={index}
             className="py-4 cursor-pointer flex bg-f-light rounded-md shadow-sm"
           >
-            <div className="pl-8 w-1/4">
+            <div className="pl-8 w-1/3">
               {patientData.first_name + " " + patientData.last_name}
             </div>
-            <div className="w-1/4">{patientData.contact_number}</div>
-            <div className="w-1/4 truncate">{patientData.email}</div>
-            <div className="w-1/4 pl-2">
+            <div className="w-1/3">{patientData.contact_number}</div>
+            <div className="w-1/3 pl-2">
               {formatDate(patientData.createdAt)}
             </div>
           </div>

@@ -262,8 +262,8 @@ const OrgDashboard = () => {
       </div>
       <div className="flex flex-col md:flex-row w-full h-full gap-5 font-Poppins">
         <div className="w-full md:w-2/3">
-          <Suspense fallback={<div>Loading graph...</div>}>
-            <DbGraph patients={filteredPatients} sales={filteredSales} />
+          <Suspense fallback={<div>Loading table...</div>}>
+            <DbTable role={user.role} />
           </Suspense>
         </div>
         <div className="w-full md:w-1/3">
@@ -273,8 +273,8 @@ const OrgDashboard = () => {
         </div>
       </div>
       <div className="w-full">
-        <Suspense fallback={<div>Loading table...</div>}>
-          <DbTable />
+        <Suspense fallback={<div>Loading graph...</div>}>
+          <DbGraph sales={filteredSales} />
         </Suspense>
       </div>
     </>

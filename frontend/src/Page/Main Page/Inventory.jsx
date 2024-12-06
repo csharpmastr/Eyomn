@@ -5,20 +5,14 @@ import InventoryTable from "../../Component/ui/InventoryTable";
 import AddEditProduct from "../../Component/ui/AddEditProduct";
 import { useSelector } from "react-redux";
 import RoleColor from "../../assets/Util/RoleColor";
-import { FiShoppingCart } from "react-icons/fi";
 import PointOfSale from "./PointOfSale";
+import { HiExternalLink } from "react-icons/hi";
 
 const Inventory = () => {
   const user = useSelector((state) => state.reducer.user.user);
   const products = useSelector((state) => state.reducer.inventory.products);
   const [selected, setSelected] = useState("All");
   const [openPOS, setOpenPOS] = useState(false);
-  const productCount = products.filter(
-    (product) => product.isDeleted === false
-  ).length;
-  const lowStockCount = products
-    .filter((product) => product.isDeleted === false)
-    .filter((product) => product.quantity < 10).length;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("");
@@ -31,30 +25,45 @@ const Inventory = () => {
 
   const posToggle = () => setOpenPOS(!openPOS);
 
+  const productCounts = {
+    All: products.filter((product) => !product.isDeleted).length,
+    "Eye Glass": products.filter(
+      (product) => !product.isDeleted && product.category === "Eye Glass"
+    ).length,
+    "Contact Lens": products.filter(
+      (product) => !product.isDeleted && product.category === "Contact Lens"
+    ).length,
+    Medication: products.filter(
+      (product) => !product.isDeleted && product.category === "Medication"
+    ).length,
+    Other: products.filter(
+      (product) => !product.isDeleted && product.category === "Other"
+    ).length,
+  };
+
   return (
     <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppins">
       <nav className="flex flex-col gap-4 lg:gap-0 lg:flex-row justify-between mb-2">
         <div className="flex gap-3 items-center">
-          <section className="bg-white flex rounded-md h-fit w-fit p-3 border shadow-sm">
-            <p className="text-p-sc md:text-p-sm">
-              <span className="text-blue-500">{productCount}</span> Total
-              Products |{"  "}
-              <span className="text-red-500">{lowStockCount}</span> Low Stock
-            </p>
-          </section>
+          <p className="text-c-gray3 font-medium text-p-sm">
+            Dispense product:
+          </p>
           {user.role === "3" && (
             <button
-              className="text-p-sm border flex gap-2 items-center p-3 rounded-md text-blue-500 shadow-sm font-medium"
+              className="text-p-rg border flex gap-1 items-center px-4 py-1 rounded-full text-blue-500 shadow-sm font-medium hover:bg-white"
               onClick={posToggle}
             >
-              Walk In
+              <HiExternalLink />
+              Walk Ins
             </button>
           )}
         </div>
         <div className="flex gap-3">
-          <div className="flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-white text-c-gray3 font-normal hover:cursor-pointer">
+          <div className="flex justify-center items-center rounded-lg px-4 border font-normal hover:cursor-pointer bg-white h-12 text-f-dark">
             <select
-              className="hover:cursor-pointer focus:outline-none bg-white w-fit"
+              className={`hover:cursor-pointer focus:outline-none w-fit bg-white ${
+                sortOption === "" ? "text-f-gray2" : "text-f-dark"
+              }`}
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
             >
@@ -67,11 +76,11 @@ const Inventory = () => {
               <option value="quantity-h">High (Stock)</option>
             </select>
           </div>
-          <div className="flex flex-row gap-2 border border-gray-300  px-4 rounded-md justify-center items-center w-full">
-            <IoMdSearch className="h-6 w-6 text-c-secondary" />
+          <div className="flex flex-row border px-4 rounded-lg justify-center items-center w-full gap-2 bg-white h-12">
+            <IoMdSearch className="h-6 w-6 text-f-dark" />
             <input
               type="text"
-              className="w-full text-f-dark focus:outline-none placeholder-f-gray2 text-p-sm md:text-p-rg bg-bg-mc"
+              className="w-full text-f-dark focus:outline-none placeholder-f-gray2 text-p-sm md:text-p-rg bg-white"
               placeholder="Search product... "
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -79,7 +88,7 @@ const Inventory = () => {
           </div>
           {user.role !== "0" && (
             <div
-              className={`flex flex-row px-4 items-center rounded-md py-3 text-f-light font-md hover:cursor-pointer hover:bg-opacity-75 ${btnContentColor} `}
+              className={`flex flex-row px-4 items-center rounded-md  text-f-light font-md hover:cursor-pointer hover:bg-opacity-75 ${btnContentColor} `}
               onClick={toggleModal}
             >
               <FiPlus className="h-5 w-5 md:mr-2" />
@@ -95,12 +104,14 @@ const Inventory = () => {
               key={section}
               className={`h-auto flex items-center px-4 py-2 cursor-pointer text-nowrap border-b-2 ${
                 selected === section
-                  ? "text-f-dark border-c-primary font-medium"
+                  ? "text-c-primary border-c-primary font-medium"
                   : "text-f-gray2"
               }`}
               onClick={() => handleSelected(section)}
             >
-              <h1>{section}</h1>
+              <h1>
+                {section} ({productCounts[section]})
+              </h1>
             </div>
           )
         )}

@@ -118,9 +118,11 @@ const Patient = () => {
                 <span className="text-f-gray2 font-medium">Total patient</span>
               </p>
               <div className="mt-2 md:mt-0 flex flex-row gap-3">
-                <div className="flex justify-center items-center rounded-md px-4 py-3 border border-f-gray bg-white text-c-gray3 font-normal hover:cursor-pointer">
+                <div className="flex justify-center items-center rounded-lg px-4 border font-normal hover:cursor-pointer bg-white h-12 text-f-dark">
                   <select
-                    className="hover:cursor-pointer focus:outline-none bg-white w-fit"
+                    className={`hover:cursor-pointer focus:outline-none w-fit bg-white ${
+                      sortOption === "" ? "text-f-gray2" : "text-f-dark"
+                    }`}
                     value={sortOption}
                     onChange={handleSortChange}
                   >
@@ -134,14 +136,14 @@ const Patient = () => {
                   </select>
                 </div>
                 <div
-                  className={`flex flex-row gap-2 border border-gray-300 px-4 rounded-md justify-center items-center w-full ${
+                  className={`flex flex-row border px-4 rounded-lg justify-center items-center w-full gap-2 bg-white h-12 ${
                     role === "0" ? `` : `md:w-80`
                   }`}
                 >
-                  <IoMdSearch className="h-6 w-6 text-c-secondary" />
+                  <IoMdSearch className="h-6 w-6 text-f-dark" />
                   <input
                     type="text"
-                    className="w-full text-f-dark focus:outline-none placeholder-f-gray2 bg-bg-mc"
+                    className="w-full text-f-dark focus:outline-none placeholder-f-gray2 bg-white"
                     placeholder="Search patient name"
                     value={searchTerm}
                     onChange={handleSearchChange}

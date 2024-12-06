@@ -229,7 +229,7 @@ const DocDashboard = () => {
           }`}
         >
           <Suspense fallback={<div>Loading table...</div>}>
-            <DbTable />
+            <DbTable role={user.role} />
           </Suspense>
         </div>
       </div>
