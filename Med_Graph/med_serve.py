@@ -7,7 +7,7 @@ from helper_utils import get_model_config
 
 model_dir = "/eyomn_model_volume"
 model_name = "m42-health/Llama3-Med42-8B"
-num_gpu = 2
+num_gpu = 1
 hours = 60 * 60
 token = os.getenv('OPHTHAL_AGENT_TOKEN')
 
@@ -26,11 +26,12 @@ app = App(f"EYOMN-OPHTHAL-AGENT-VLLM-SERVING", secrets=[
 
 @app.function(
     image=vllm_image,
-    gpu=gpu.L4(count=num_gpu),
-    timeout=12 * hours,
-    allow_concurrent_inputs=50,
+    gpu=gpu.A10G(count=num_gpu),
+    timeout=200,
+    concurrency_limit=20,
+    allow_concurrent_inputs=20,
     volumes={model_dir: vllm_volume},
-    container_idle_timeout=40
+    container_idle_timeout=180
 )
 @modal.asgi_app()
 def serve_llm():
@@ -70,7 +71,7 @@ def serve_llm():
         from vllm.usage.usage_lib import UsageContext
             
         # ENSURE LATEST VERSION OF THE MODEL WEIGHTS
-        #vllm_volume.reload() 
+        vllm_volume.reload() 
             
         # DEFINE FASTAPI APP COMPATIBLE WITH OPENAI
         web_app = FastAPI(
@@ -127,6 +128,12 @@ def serve_llm():
         engine = AsyncLLMEngine.from_engine_args(
             engine_args, usage_context=UsageContext.OPENAI_API_SERVER
         )
+        
+        print("Engine successfully initialized.")
+        # START BACKGROUND LOOP
+        #engine.start_background_loop()
+        
+        print("Background Loop Started.")
         
         web_app.state.engine_client = engine
         

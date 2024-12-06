@@ -6,7 +6,7 @@ from med_graph_flow import GraphState
 from exception import CustomException
 
 # FUNCTION TO IMPLEMENT THE WEB-ENDPOINT
-@app.function(gpu="L4", concurrency_limit=15, container_idle_timeout=40)
+@app.function(gpu="T4", concurrency_limit=15, container_idle_timeout=180, timeout=200)
 @modal.web_endpoint(method="POST", docs=True)
 def web_endpoint(patient_data: GraphState):
     try:

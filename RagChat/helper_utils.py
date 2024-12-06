@@ -16,7 +16,7 @@ with rag_image.imports():
     from uuid import uuid4
     import sqlite3
     import _sqlite3
-    #from chromadb.utils.embedding_functions.huggingface_embedding_function import HuggingFaceEmbeddingFunction
+    
     import chromadb
     from langchain.text_splitter import RecursiveCharacterTextSplitter
     from langchain_huggingface.embeddings import HuggingFaceEmbeddings
@@ -24,6 +24,11 @@ with rag_image.imports():
     from langchain_community.document_loaders import PyMuPDFLoader
     from langchain_community.document_loaders.firecrawl import FireCrawlLoader
     from transformers import AutoTokenizer
+    
+    import firebase_admin
+    from firebase_admin import credentials
+    from firebase_admin import firestore
+    from google.cloud.firestore_v1.client import Client
 
 
 # GLOBAL VARIABLES TO HOLD THE PERSISTENT CLIENT AND COLLECTION OF CHROMADB
@@ -31,6 +36,20 @@ persistent_client = None
 collection_name = "rag-chroma"
 collection = None
 embedding_fn = None
+
+# FUNCTION TO INITIALIZE FIRESTORE CLIENT
+def init_firestore_client() -> Client:
+    """Initialize a Firestore client."""
+    # LOAD THE SERVICE ACCOUNT KEY JSON FILE
+    service_account_key_path = str(Path("/eyomn-2d9c7-firebase-adminsdk-zjlyg-4c6fd6c764.json"))
+    credentials = credentials.Certificate(service_account_key_path)
+    
+    # INITIALIZE THE FIRESTORE CLIENT
+    firebase_admin.initialize_app(credentials)
+    firestore_client = firestore.client()
+    
+    print("---FIRESTORE CLIENT ALREADY INITIALIZED: RETUNING...---")
+    return firestore_client
 
 # function to preprocess documents before passing to content
 def preprocess(text: str) -> str:
@@ -137,12 +156,6 @@ def retrieve_vector_store() -> Chroma:
             collection.add(documents=documents_to_add, 
                            ids=uids)
             
-            # # Add to vectorDB
-            # vectorstore = Chroma.from_documents(
-            #     documents=doc_splits,
-            #     collection_name="rag-chroma",
-            #     embedding=HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2"),
-            # )
             logging.info("Added the Document Splits from {url} to ChromaDB")
         print(f"Length of Documents: {len(docs)}")
     

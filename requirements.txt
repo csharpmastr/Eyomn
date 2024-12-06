@@ -2,6 +2,8 @@ langgraph
 langchain 
 langchain_groq
 langchain-openai
+langchain_google_firestore
+firebase-admin
 langchain-huggingface
 langchain_chroma
 langchain_community

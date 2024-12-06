@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-# URL of the LangGraph API
+# URL of EyomnAi API
 API_URL = "https://csharpmastr--eyomnai-rag-chat-web-endpoint.modal.run"
 
 # Set up Streamlit UI

@@ -9,16 +9,19 @@ from agents_chains import (
     build_ans_grader_chain
     
 )
-from helper_utils import retrieve_vector_store
+from helper_utils import retrieve_vector_store, init_firestore_client
 from modal_setup import rag_image
 
 # context manager for global imports
 with rag_image.imports():
     from langchain_core.documents import Document
+    from langchain_core.messages import AnyMessage, AIMessage, RemoveMessage
+    from langchain_google_firestore import FirestoreChatMessageHistory
+    from langgraph.graph.message import add_messages
     from langgraph.graph import END, StateGraph
     from langgraph.graph.state import CompiledStateGraph
     from typing_extensions import TypedDict
-    from typing import List, Dict
+    from typing import List, Dict, Annotated
 
 # define global object variable
 convo_summ_chain = None
@@ -30,6 +33,8 @@ ques_rewriter_chain = None
 hallu_checker_chain = None
 answer_grader_chain = None
 doc_grader = None
+firestore_client = None
+eyomn_memory_saver = None
 
 # define Graph State to track
 class GraphState(TypedDict):
@@ -37,70 +42,72 @@ class GraphState(TypedDict):
     Represents the state of the graph.
 
     Attributes:
-        question: question
+        messages: list of user messages
         generation: LLM generation
         web_search: whether to add search
         documents: list of documents 
-        memory: list of past conversation histories
+        userId: the current user's Id
         summarized_memory: summarized memory
     """
-    question : str
+    question : Annotated[list[AnyMessage], add_messages]
     generation : str
-    web_search : str
     documents : List[str]
-    memory: List[Dict[str, str]]
+    userId: str
     summarized_memory: str
 
 # Define nodes for the Graph
 
-# function to update the agent's memory
-def update_memory(state: GraphState):
-    """
-    Updates memory with the latest question and generation. Summarizes if
-    memory exceeds the set threshold.
-
-    Args:
-        state (GraphState): Current graph state containing memory.
-        question (str): The user's question.
-        generation (str): The generated response.
-    """
+# function to update and store the agent's memory
+def summarize_convo(state: GraphState):
     try:
+        # OBTAIN THE MESSAGES FROM THE STATE AND THE USER ID
+        messages = state["messages"]
+        userId = state["userId"]
         
-        # Update memory with the latest question and generation
-        question = state['question']
-        generation = state['generation']
+        # LOGIC TO SUMMARIZE THE MESSAGES IF LIST OF MESSAGES IS ">" 6
+        if len(messages) > 6:
+            # SUMMARIZE THE CONVERSATION USING THE "convo_summ_chain"
+            global convo_summ_chain, firestore_client, eyomn_memory_saver
+            # CHECK IF "convo_summ_chain" IS ALREADY INITIALIZED
+            if convo_summ_chain is None:
+                print("---Initializing Conversation Summarization Chain---")
+                convo_summ_chain = build_convo_summ_chain()
             
-        # Add the new Q&A to memory
-        print("---MEMORY UPDATED---")
-    
-        # log conversation 
-        logging.info(f"MEMORY UPDATED")
-
-        if "memory" in state:
-                 
-            # Check if memory length has reached the threshold for summarization
-            if len(state["memory"]) >= 6:  # Summarize after every 6 exchanges
-                print("---SUMMARIZING MEMORY---")
-                memory_text = " ".join([f"Question: {item['question']} Answer: {item['answer']}" for item in state["memory"]])
-                    
-                global convo_summ_chain
-                # check if convo summarization chain is already initialized
-                if convo_summ_chain is None:
-                    print("---Initializing Conversation Summarization Chain---")
-                    convo_summ_chain = build_convo_summ_chain()
-                    
-                # Summarize memory
-                summary = convo_summ_chain.invoke({"text": memory_text})
-                    
-                # Append summary to the summarized_memory state and re-initialize memory
-                print("---CONVERSATION SUMMARY UPDATED---")
-                return {"summarized_memory": summary.summarized_convo, "memory": []}
+            # CHECK IF "firestore_client" IS INITIALIZED
+            if firestore_client is None:
+                print("---INITIALIZING FIRESTORE CLIENT---")
+                firestore_client = init_firestore_client()
             
-            print(f"Memory: [Question: {question} Answer: {generation}")
-            return {"memory": [{"question": question, "answer": generation}]}
+            # INITIATE SUMMARIZATION OF MESSAGES
+            messages_summary = convo_summ_chain.invoke({"conversation": messages})
+            
+            # CHECK IF "eyomn_memory_saver" IS INITIALIZED
+            if eyomn_memory_saver is None:
+                print("---Initializing EYOMN MEMORY SAVER---")
+                # INITIALIZE "chat_history_saver"
+                eyomn_memory_saver = FirestoreChatMessageHistory(
+                    session_id=userId, 
+                    collection=f"user/{userId}/Memory",
+                    client=firestore_client
+                )
+            
+            # SAVE THE SUMMARIZED CONVERSATION TO FIRESTORE
+            eyomn_memory_saver.add_ai_message(messages_summary.summarized_convo)
+            
+            # DELETE CONVERSATION HISTORY BUT RETAIN THE LAST 2 MESSAGES
+            delete_messages = [RemoveMessage(id=m.id) for m in state["messages"][:-2]]
+            
+            # UPDATE THE STATE WITH THE UPDATED MESSAGES AND DELETE HISTORY
+            return {"summarized_memory": messages_summary.summarized_convo, 
+                    "messages": delete_messages, 
+                    "generation": state["generation"]}
         
+        # ELSE RETURN JUST THE MESSAGE AND GENERATION
+        return {"messages": messages, "generation": state["generation"]}
+            
     except CustomException as e:
         raise CustomException(e, sys)
+
 
 # function to retrieve relevant documents
 def retrieve(state: GraphState):
@@ -138,13 +145,13 @@ def generate(state: GraphState):
         state (dict): New key added to state, generation, that contains LLM generation
     """
     print("---GENERATE---")
-    question = state["question"]
+    messages = state["messages"]
+    messages_summary = state.get("summarized_memory")
     
-    # check if there is an existing memory
-    if "memory" in state and state["memory"]:
-        print("---Adding Existing Memory to Context---")
-        memory_text = " ".join([f"Question: {item['question']} Answer: {item['answer']}" for item in state["memory"]])
-        state['documents'].append(Document(page_content=memory_text))
+    # CHECK IF A SUMMARY OF CONVERSATION EXISTS
+    if messages_summary and 
+    
+    
     
     global rag_gen_chain
     # check if RAG Chain is already initialized
@@ -251,7 +258,9 @@ def route_question(state: GraphState):
     """
 
     print("---ROUTE QUESTION---")
-    question = state["question"]
+    # OBTAIN LAST MESSAGE FROM THE LIST
+    messages = state["messages"] 
+    last_message = messages[-1]
     
     global router_chain
     # check if router chain is already initialized
@@ -259,7 +268,7 @@ def route_question(state: GraphState):
         print("---Initializing Router Chain---")
         router_chain = build_router_chain()
     
-    source = router_chain.invoke({"question": question})  
+    source = router_chain.invoke({"question": last_message})  
     if source.context == 'acquired_knowledge':
         print("---ROUTE QUESTION TO USE ACQUIRED KNOWLEDGE---")
         return "acquired_knowledge"
@@ -382,11 +391,10 @@ def grade_generation(state: GraphState):
             hallucination_checker_counter += 1
             
             if hallucination_checker_counter == 4:
-                print("LLM's Response is not Fact-Checked: USE WITH CAUTION")
+                print("EyomnAI's Response is not Fact-Checked: USE WITH CAUTION")
                 return "useful"
                 
             return "not supported"
-    
     else:
         print("---DECISION: RESPONDING IN A FRIENDLY MANNER---")
         print("---GRADE GENERATION vs QUESTION---")

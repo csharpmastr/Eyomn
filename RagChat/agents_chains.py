@@ -101,14 +101,25 @@ def build_rag_generation_chain():
     """
     global sys_prompts
     try:
-        prompts = hub.pull("rlm/rag-prompt", api_key=os.environ['LANGCHAIN_API_KEY'])
+        #prompts = hub.pull("rlm/rag-prompt", api_key=os.environ['LANGCHAIN_API_KEY'])
     
         llm_generator = ChatGroq(model_name="llama-3.2-11b-text-preview", 
                                 max_retries=2, temperature=0.4, max_tokens=256,
                                 api_key=os.environ['GROQ_API_KEY'])
         
+        # check if sys prompts is already initialized
+        if sys_prompts is None:
+            sys_prompts = load_sys_prompts(file_path=sys_prompts_file_path)
+        
+        # Prompt for the Retrieval Grader Agent
+        rag_gen_prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", sys_prompts["rag_generation_sys_prompt"])
+            ]
+        )
+        
         # chain the llm and prompt
-        rag_generation_chain = prompts | llm_generator | StrOutputParser()
+        rag_generation_chain = rag_gen_prompt | llm_generator | StrOutputParser()
         
         # log the agent creation
         logging.info("RAG Generation Chain Created")

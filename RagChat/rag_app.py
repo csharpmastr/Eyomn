@@ -6,7 +6,7 @@ from graph_flow import GraphState
 from exception import CustomException
 
 # function to implement web endpoint
-@app.function(gpu="L4", concurrency_limit=15, container_idle_timeout=40)
+@app.function(concurrency_limit=15, container_idle_timeout=150)
 @modal.web_endpoint(method="POST", docs=True)
 def web_endpoint(state: GraphState):
     try:
