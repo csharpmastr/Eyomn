@@ -103,7 +103,7 @@ def build_rag_generation_chain():
     try:
         #prompts = hub.pull("rlm/rag-prompt", api_key=os.environ['LANGCHAIN_API_KEY'])
     
-        llm_generator = ChatGroq(model_name="llama-3.2-11b-text-preview", 
+        llm_generator = ChatGroq(model_name="llama-3.3-70b-versatile", 
                                 max_retries=2, temperature=0.4, max_tokens=256,
                                 api_key=os.environ['GROQ_API_KEY'])
         
@@ -155,7 +155,7 @@ def build_convo_summ_chain():
     """
     global sys_prompts
     try:
-        llm_summarizer = ChatGroq(model_name="llama-3.1-8b-instant", 
+        llm_summarizer = ChatGroq(model_name="llama-3.2-3b-preview", 
                              max_retries=2, temperature=0.2, max_tokens=256,
                              api_key=os.environ['GROQ_API_KEY'])
         
@@ -381,7 +381,7 @@ def build_ques_rewriter_chain():
     """
     global sys_prompts
     try:
-        llm_ques_rewriter = ChatGroq(model_name="llama-3.1-8b-instant", 
+        llm_ques_rewriter = ChatGroq(model_name="llama-3.2-3b-preview", 
                              max_retries=2, temperature=0.0, max_tokens=150,
                              api_key=os.environ['GROQ_API_KEY'])
         

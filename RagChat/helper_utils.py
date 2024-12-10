@@ -42,10 +42,10 @@ def init_firestore_client() -> Client:
     """Initialize a Firestore client."""
     # LOAD THE SERVICE ACCOUNT KEY JSON FILE
     service_account_key_path = str(Path("/eyomn-2d9c7-firebase-adminsdk-zjlyg-4c6fd6c764.json"))
-    credentials = credentials.Certificate(service_account_key_path)
+    service_account_credentials = credentials.Certificate(service_account_key_path)
     
     # INITIALIZE THE FIRESTORE CLIENT
-    firebase_admin.initialize_app(credentials)
+    firebase_admin.initialize_app(service_account_credentials)
     firestore_client = firestore.client()
     
     print("---FIRESTORE CLIENT ALREADY INITIALIZED: RETUNING...---")

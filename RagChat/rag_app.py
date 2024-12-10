@@ -4,16 +4,27 @@ from modal_setup import app
 import sys
 from graph_flow import GraphState
 from exception import CustomException
+from langchain_core.messages import HumanMessage
 
 # function to implement web endpoint
 @app.function(concurrency_limit=15, container_idle_timeout=150)
 @modal.web_endpoint(method="POST", docs=True)
-def web_endpoint(state: GraphState):
+def web_endpoint(state: dict):
     try:
+        # OBTAIN USERID OF THE CURRENT USER
+        userid = state["userId"]
+        messages = [HumanMessage(msg) for msg in state["messages"]]
+        
+        # SETUP CONFIG OF THE CURRENT USER'S SESSION
+        user_session_config = {"configurable": {"thread_id": userid}}
+        print(f"Current State: {state}")
+        print(f"Messages Type: {type(messages)}")
+        
+        # INVOKE THE RAG GRAPH TO ASK THE QUESTION
         rag_app = construct_rag_graph()
-        output = rag_app.invoke({"question": state["question"]})
-        #print(output)
-        return output["generation"]
+        output = rag_app.invoke({"messages": messages, "userId": userid}, config=user_session_config)
+        print(f"RagChat Output:{output}")
+        return output["generation"].content
     except Exception as e:
         raise CustomException(e, sys)
 

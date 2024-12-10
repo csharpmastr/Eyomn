@@ -23,6 +23,7 @@ rag_image = (
     .copy_local_file(local_path=Path("RagChat/Thesis_Documentation.pdf"))
     .copy_local_file(local_path=Path("RagChat/sys_prompts.yaml"))
     .copy_local_file(local_path=Path("RagChat/ophthal_opto_guide.pdf"))
+    .copy_local_file(local_path=Path("RagChat/eyomn-2d9c7-firebase-adminsdk-zjlyg-4c6fd6c764.json"))
 )
 
 app = modal.App(
