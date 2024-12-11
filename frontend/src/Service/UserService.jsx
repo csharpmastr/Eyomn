@@ -132,11 +132,11 @@ export const sendQuestion = async (question, memory) => {
   }
 };
 
-export const userLogout = async () => {
+export const userLogout = async (userId) => {
   try {
     const response = await axios.post(
       `${API_URL}/logout`,
-      {},
+      { userId },
       {
         withCredentials: true,
       }

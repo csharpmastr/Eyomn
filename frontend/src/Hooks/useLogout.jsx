@@ -5,7 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { clearPatients } from "../Slice/PatientSlice";
 import { clearDoctor } from "../Slice/doctorSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { clearStaffs } from "../Slice/StaffSlice";
 import { removeUser } from "../Slice/UserSlice";
 import { clearBranch } from "../Slice/BranchSlice";
@@ -26,6 +26,7 @@ import { userLogout } from "../Service/UserService";
 
 export const useLogout = () => {
   const { dispatch } = useAuthContext();
+  const user = useSelector((state) => state.reducer.user.user);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const cookies = new Cookies();
@@ -35,7 +36,7 @@ export const useLogout = () => {
     setIsLoading(true);
     setError(null);
     try {
-      await userLogout();
+      await userLogout(user.userId);
       sessionStorage.removeItem("selectedTab");
       localStorage.removeItem("hasFetched");
       cookies.remove("accessToken", { path: "/" });

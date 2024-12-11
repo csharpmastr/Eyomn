@@ -15,7 +15,14 @@ const notificationSlice = createSlice({
       state.notifications = [];
     },
     addNotification: (state, action) => {
-      state.notifications.push(action.payload);
+      const newNotification = action.payload;
+      const isDuplicate = state.notifications.some(
+        (notification) =>
+          notification.notificationId === newNotification.notificationId
+      );
+      if (!isDuplicate) {
+        state.notifications.push(newNotification);
+      }
     },
     updateNotificationRead: (state, action) => {
       const { notificationId } = action.payload; // Make sure you're getting notificationId from payload

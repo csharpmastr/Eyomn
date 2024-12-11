@@ -7,7 +7,7 @@ const {
   forgotChangePassword,
 } = require("../Service/userService");
 const jwt = require("jsonwebtoken");
-
+const { cachedNotifications, cachedPatients } = require("../SSE/DoctorEvent");
 const generateToken = (id, secret, duration) => {
   return jwt.sign({ id }, secret, { expiresIn: duration });
 };
@@ -296,8 +296,19 @@ const validateAndRefreshTokens = async (req, res) => {
   }
 };
 const userLogout = (req, res) => {
+  const { userId } = req.body;
+  console.log(userId);
+  console.log(cachedPatients[userId]);
+
   res.clearCookie("accessToken", { httpOnly: true, path: "/" });
   res.clearCookie("refreshToken", { httpOnly: true, path: "/" });
+  if (cachedPatients[userId]) {
+    delete cachedPatients[userId];
+  }
+  if (cachedNotifications[userId]) {
+    delete cachedNotifications[userId];
+  }
+
   res.send("Logged out");
 };
 

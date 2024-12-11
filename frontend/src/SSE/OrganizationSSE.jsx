@@ -23,6 +23,7 @@ const OrganizationSSEComponent = () => {
     const organiztionSSE = new EventSource(
       `http://localhost:3000/sse-org/${role}/${orgId}`
     );
+    console.log("connection established");
 
     organiztionSSE.onmessage = (event) => {
       try {

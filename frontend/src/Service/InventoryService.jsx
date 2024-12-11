@@ -104,29 +104,32 @@ export const updateProductService = async (
 
 export const addPurchaseService = async (
   data,
-  doctorId,
+  doctorId = null,
   staffId,
   branchId,
   firebaseUid,
-  patientId
+  patientId = null
 ) => {
   try {
-    const response = await axios.post(
-      `${INVENTORY_API_BASE_URL}/add-purchase/${patientId}`,
-      data,
-      {
-        params: {
-          branchId,
-          firebaseUid,
-          doctorId,
-          staffId,
-        },
-        withCredentials: true,
-      }
-    );
+    const url = patientId
+      ? `${INVENTORY_API_BASE_URL}/add-purchase/${patientId}`
+      : `${INVENTORY_API_BASE_URL}/add-purchase`;
+
+    const params = {
+      branchId,
+      firebaseUid,
+      staffId,
+      ...(doctorId && { doctorId }),
+    };
+
+    const response = await axios.post(url, data, {
+      params,
+      withCredentials: true,
+    });
+
     return response.data;
   } catch (error) {
-    console.error("Error adding purchase : ", error);
+    console.error("Error adding purchase:", error);
     throw error;
   }
 };

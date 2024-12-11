@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addPatient } from "../Slice/PatientSlice";
-import { addNotification } from "../Slice/NotificationSlice";
+import { addPatient, setPatients } from "../Slice/PatientSlice";
+import { addNotification, setNotifications } from "../Slice/NotificationSlice";
 
 const DoctorSSEComponent = () => {
   const user = useSelector((state) => state.reducer.user.user);
@@ -26,12 +26,16 @@ const DoctorSSEComponent = () => {
         const data = JSON.parse(event.data);
         console.log("Received doctor update:", data);
         if (data.type === "patient") {
-          const patientData = data.data[0];
-          reduxDispatch(addPatient(patientData));
+          const patientData = data.data;
+          patientData.forEach((patient) => {
+            reduxDispatch(addPatient(patient));
+          });
         }
         if (data.type === "notification") {
-          const notificationData = data.data[0];
-          reduxDispatch(addNotification(notificationData));
+          const notificationData = data.data;
+          notificationData.forEach((notification) => {
+            reduxDispatch(addNotification(notification));
+          });
         }
       } catch (error) {
         console.error("Error processing SSE message:", error);

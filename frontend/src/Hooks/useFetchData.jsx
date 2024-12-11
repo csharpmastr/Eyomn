@@ -110,19 +110,19 @@ export const useFetchData = () => {
             call: () => getDoctorList(organizationId, branchId, firebaseUid),
             type: "doctors",
           },
-          {
-            call: () =>
-              getPatientsByDoctor(organizationId, staffId, firebaseUid),
-            type: "patients",
-          },
+          // {
+          //   call: () =>
+          //     getPatientsByDoctor(organizationId, staffId, firebaseUid),
+          //   type: "patients",
+          // },
           {
             call: () => getBranchName(user.userId, firebaseUid),
             type: "branch",
           },
-          {
-            call: () => getUserNotification(user.userId, firebaseUid),
-            type: "notifications",
-          },
+          // {
+          //   call: () => getUserNotification(user.userId, firebaseUid),
+          //   type: "notifications",
+          // },
           {
             call: () => getAllVisits(user.userId, firebaseUid),
             type: "visits",

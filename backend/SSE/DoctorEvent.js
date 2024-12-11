@@ -40,6 +40,28 @@ const startDoctorSSEServer = (app) => {
     let unsubscribePatients, unsubscribeNotifications;
 
     try {
+      // Send cached patient data if available
+      if (cachedPatients[id]) {
+        console.log("cached");
+
+        res.write(
+          `data: ${JSON.stringify({
+            type: "patient",
+            data: cachedPatients[id],
+          })}\n\n`
+        );
+      }
+
+      // Send cached notification data if available
+      if (cachedNotifications[id]) {
+        res.write(
+          `data: ${JSON.stringify({
+            type: "notification",
+            data: cachedNotifications[id],
+          })}\n\n`
+        );
+      }
+
       // Firestore patient listener
       if (role === "2") {
         const patientQuery = query(
@@ -138,4 +160,4 @@ const startDoctorSSEServer = (app) => {
   });
 };
 
-module.exports = { startDoctorSSEServer };
+module.exports = { startDoctorSSEServer, cachedPatients, cachedNotifications };

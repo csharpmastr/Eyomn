@@ -22,7 +22,7 @@ const {
   extractSoapData,
 } = require("../Helper/Helper");
 const { pushNotification } = require("./notificationService");
-
+const doctorPatient = {};
 const addPatient = async (
   organizationId,
   branchId,
@@ -457,7 +457,7 @@ const getDoctorPatient = async (organizationId, doctorId, firebaseUid) => {
         allPatients.map((patient) => [patient.patientId, patient])
       ).values()
     );
-
+    doctorPatient[doctorId] = uniquePatients;
     return uniquePatients;
   } catch (error) {
     console.error(
