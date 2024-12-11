@@ -99,6 +99,7 @@ const addPurchaseHandler = async (req, res) => {
     if (!branchId || !staffId) {
       return res.status(400).json({ message: "No Branch/Staff ID provided." });
     }
+    console.log(doctorId, patientId);
 
     const { purchaseId, serviceId, createdAt } = await addPurchase(
       purchaseDetails,

@@ -16,7 +16,7 @@ const { validateToken } = require("../Wrapper/Wrapper");
 router.post("/add/:branchId", validateToken, addProductHandler);
 router.patch("/delete", validateToken, deleteProductHandler);
 router.put("/update/:branchId/:productId", validateToken, updateProductHandler);
-router.post("/add-purchase/:patientId", validateToken, addPurchaseHandler);
+router.post("/add-purchase/:patientId?", validateToken, addPurchaseHandler);
 router.get("/get-branch-inventory", validateToken, getBranchInventoryHandler);
 router.get("/get-inventory", getOrgProductSalesHandler);
 router.patch(

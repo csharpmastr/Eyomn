@@ -255,12 +255,15 @@ const addPurchase = async (
         );
 
         // Create purchase record
-        transaction.set(purchaseRef, {
-          patientId: patientId,
+        const purchaseData = {
           staffId,
           purchaseDetails,
           createdAt,
-        });
+        };
+
+        if (patientId) purchaseData.patientId = patientId;
+
+        transaction.set(purchaseRef, purchaseData);
       }
 
       // Handle service if `serviceDetails` is provided
@@ -274,9 +277,10 @@ const addPurchase = async (
         const serviceDataWithTimestamp = {
           ...serviceDetails,
           createdAt,
-          doctorId,
-          patientId,
         };
+
+        if (doctorId) serviceDataWithTimestamp.doctorId = doctorId;
+        if (patientId) serviceDataWithTimestamp.patientId = patientId;
 
         const encryptedServiceData = encryptDocument(serviceDataWithTimestamp, [
           "service_price",
@@ -289,6 +293,7 @@ const addPurchase = async (
         transaction.set(servicesColRef.doc(serviceId), encryptedServiceData);
       }
     });
+
     console.log(purchaseId, serviceId);
 
     return { purchaseId, serviceId, createdAt };

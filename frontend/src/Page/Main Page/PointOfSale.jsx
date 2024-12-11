@@ -95,7 +95,7 @@ const PointOfSale = ({ onClose, patient }) => {
         if (response) {
           setIsSuccess(true);
           const { purchaseId, createdAt, serviceId } = response;
-
+          setFormData([]);
           setSelectedProducts([]);
 
           if (purchaseId) {
@@ -117,6 +117,34 @@ const PointOfSale = ({ onClose, patient }) => {
                 id: serviceId,
                 createdAt,
                 patientId: patient.patientId,
+                doctorId: patient.doctorId,
+              })
+            );
+          }
+        }
+      } else {
+        console.log("here");
+
+        const response = await addPurchaseHook(
+          payload,
+          null,
+          user.userId,
+          branchId,
+          null
+        );
+
+        if (response) {
+          setIsSuccess(true);
+          const { purchaseId, createdAt, serviceId } = response;
+
+          setSelectedProducts([]);
+
+          if (purchaseId) {
+            reduxDispatch(
+              addPurchase({
+                purchaseDetails: payload.purchaseDetails || [],
+                createdAt,
+                purchaseId,
                 doctorId: patient.doctorId,
               })
             );
