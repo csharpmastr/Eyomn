@@ -12,7 +12,9 @@ const Loader = ({ description }) => {
           <div className="absolute opacity-20">
             <BounceLoader color="#CEF9F0" loading={true} size={280} />
           </div>
-          <h1 className="absolute text-wrap p-10">{description}</h1>
+          <h1 className="absolute text-wrap p-10">
+            {description || "Loading, please wait..."}
+          </h1>
         </div>
       </div>
     </div>,

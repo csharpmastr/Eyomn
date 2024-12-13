@@ -9,6 +9,7 @@ import RoleColor from "../../assets/Util/RoleColor";
 import Fuse from "fuse.js";
 import { deleteProduct } from "../../Service/InventoryService";
 import { removeProduct } from "../../Slice/InventorySlice";
+import RequestStock from "./RequestStock";
 
 const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
   const products = useSelector((state) => state.reducer.inventory.products);
@@ -23,6 +24,7 @@ const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const [isMenuOpen, setIsMenuOpen] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRequestOpen, setIsRequestOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [productId, setProductId] = useState("");
@@ -103,6 +105,8 @@ const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
     setProductId(productId);
     setIsConfirmationModalOpen(true);
   };
+
+  const handleRequestStock = () => setIsRequestOpen(!isRequestOpen);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -228,6 +232,15 @@ const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
                               >
                                 Edit
                               </a>
+                              {user.role === "1" && (
+                                <a
+                                  className="block px-4 py-2 text-p-sc md:text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
+                                  role="menuitem"
+                                  onClick={handleRequestStock}
+                                >
+                                  Request Stock
+                                </a>
+                              )}
                               <a
                                 className="block px-4 py-2 text-p-sc md:text-p-sm text-f-gray2 hover:bg-red-500 hover:text-f-light rounded-md cursor-pointer"
                                 role="menuitem"
@@ -320,6 +333,8 @@ const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
                 isSuccessModalOpen={isSuccess}
               />
             )}
+
+            {isRequestOpen && <RequestStock onClose={handleRequestStock} />}
           </div>
           <div className="flex justify-end mt-8">
             <button

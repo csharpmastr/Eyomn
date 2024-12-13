@@ -53,8 +53,8 @@ const Inventory = () => {
               className="text-p-rg border flex gap-1 items-center px-4 py-1 rounded-full text-blue-500 shadow-sm font-medium hover:bg-white"
               onClick={posToggle}
             >
+              Walk In
               <HiExternalLink />
-              Walk Ins
             </button>
           )}
         </div>
