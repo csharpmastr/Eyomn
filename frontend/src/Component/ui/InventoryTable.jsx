@@ -27,6 +27,7 @@ const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
   const [isRequestOpen, setIsRequestOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProdRequest, setSelectedProdRequest] = useState(null);
   const [productId, setProductId] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -64,18 +65,18 @@ const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
 
   filteredProducts = filteredProducts.filter((product) => !product.isDeleted);
 
-  if (!sortOption || sortOption === "default" || sortOption === "ascending") {
-    filteredProducts = filteredProducts.sort((a, b) =>
-      `${a.product_name}`.localeCompare(`${b.product_name}`)
+  if (sortOption === "default" || sortOption === "ascending") {
+    filteredProducts.sort((a, b) =>
+      a.product_name.localeCompare(b.product_name)
     );
   } else if (sortOption === "descending") {
-    filteredProducts = filteredProducts.sort((b, a) =>
-      `${a.product_name}`.localeCompare(`${b.product_name}`)
+    filteredProducts.sort((a, b) =>
+      b.product_name.localeCompare(a.product_name)
     );
   } else if (sortOption === "quantity-l") {
-    filteredProducts = filteredProducts.sort((a, b) => a.quantity - b.quantity);
+    filteredProducts.sort((a, b) => a.quantity - b.quantity);
   } else if (sortOption === "quantity-h") {
-    filteredProducts = filteredProducts.sort((a, b) => b.quantity - a.quantity);
+    filteredProducts.sort((a, b) => b.quantity - a.quantity);
   }
 
   const paginatedProducts = filteredProducts.slice(
@@ -101,12 +102,20 @@ const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
     toggleModal();
   };
 
+  const handleRequestStock = (productId) => {
+    const productRequest = products.find(
+      (product) => product.productId === productId
+    );
+
+    setSelectedProdRequest(productRequest);
+    setProductId(productId);
+    setIsRequestOpen(!isRequestOpen);
+  };
+
   const handleDeleteProduct = (productId) => {
     setProductId(productId);
     setIsConfirmationModalOpen(true);
   };
-
-  const handleRequestStock = () => setIsRequestOpen(!isRequestOpen);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -236,7 +245,9 @@ const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
                                 <a
                                   className="block px-4 py-2 text-p-sc md:text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
                                   role="menuitem"
-                                  onClick={handleRequestStock}
+                                  onClick={() =>
+                                    handleRequestStock(productDetail.productId)
+                                  }
                                 >
                                   Request Stock
                                 </a>
@@ -334,7 +345,13 @@ const InventoryTable = ({ searchTerm, sortOption, selectedCategory }) => {
               />
             )}
 
-            {isRequestOpen && <RequestStock onClose={handleRequestStock} />}
+            {isRequestOpen && (
+              <RequestStock
+                onClose={handleRequestStock}
+                productDetails={selectedProdRequest}
+                productId={productId}
+              />
+            )}
           </div>
           <div className="flex justify-end mt-8">
             <button
