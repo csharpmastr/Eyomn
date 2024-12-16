@@ -21,6 +21,7 @@ import {
   setMedicalScribeNotes,
   setRawNotes,
 } from "../../../Slice/NoteSlice";
+import File from "../../../assets/Svg/File.svg";
 
 const ScribeRecord = () => {
   const { patientId } = useParams();
@@ -229,11 +230,11 @@ const ScribeRecord = () => {
         </div>
 
         <div className="w-full text-f-dark">
-          <nav className="flex items-end h-14">
+          <nav className="flex items-end h-14 border-b border-f-gray">
             <button
               className={`w-44 flex items-center justify-center rounded-t-lg transition-all duration-300 ease-in-out font-medium ${
                 currentCardIndex === 0
-                  ? `h-12 bg-[#FFF8DF] text-p-sm md:text-p-rg`
+                  ? `h-12 bg-[#FFE9B2] text-p-sm md:text-p-rg`
                   : `h-8 bg-[#D2D2D2] text-p-sc md:text-p-sm opacity-70`
               }`}
               onClick={() => setCurrentCardIndex(0)}
@@ -243,7 +244,7 @@ const ScribeRecord = () => {
             <button
               className={`w-44 flex items-center justify-center rounded-t-lg transition-all duration-300 ease-in-out font-medium ${
                 currentCardIndex === 1
-                  ? `h-12 bg-[#FFF8DF] text-p-sm md:text-p-rg`
+                  ? `h-12 bg-[#FFE9B2] text-p-sm md:text-p-rg`
                   : `h-8 bg-[#D2D2D2] text-p-sc md:text-p-sm opacity-70`
               }`}
               onClick={() => setCurrentCardIndex(1)}
@@ -253,7 +254,7 @@ const ScribeRecord = () => {
             <button
               className={`w-44 flex items-center justify-center rounded-t-lg transition-all duration-300 ease-in-out font-medium ${
                 currentCardIndex === 2
-                  ? `h-12 bg-[#FFF8DF] text-p-sm md:text-p-rg`
+                  ? `h-12 bg-[#FFE9B2] text-p-sm md:text-p-rg`
                   : `h-8 bg-[#D2D2D2] text-p-sc md:text-p-sm opacity-70`
               }`}
               onClick={() => setCurrentCardIndex(2)}
@@ -264,23 +265,39 @@ const ScribeRecord = () => {
           {currentCardIndex === 0 && (
             <div className="w-full cursor-pointer">
               {scribeNotes.length > 0 ? (
-                <div className="w-full cursor-pointer">
+                <div className="w-full cursor-pointer grid grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-5 py-5">
                   {scribeNotes ? (
                     <>
                       {scribeNotes.map((note, index) => (
                         <div
                           key={note.noteId || index}
-                          className="px-6 py-4 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white hover:bg-bg-sub"
-                          onClick={() => handleClickSoap(note.noteId)}
+                          className="p-5 rounded-lg font-medium hover:bg-white border border-f-gray flex flex-col justify-center items-center gap-3 shadow-lg shadow-[#d4d4d43b]"
+                          onClick={() => handleClickRawNotes(note.noteId)}
                         >
-                          <div className="flex items-center gap-3">
-                            <p>{note.name || `Scribe Note ${index + 1}`}</p>
+                          <div className="w-20">
+                            <img
+                              src={File}
+                              alt="File IMG"
+                              className="w-full h-full object-cover"
+                            />
                           </div>
-                          <p>
-                            {note.createdAt
-                              ? note.createdAt.split("T")[0]
-                              : "Unknown Date"}
-                          </p>
+                          <article className="w-full">
+                            <p className="text-f-dark font-medium text-p-rg">
+                              {note.name || `Standardize Record (${index + 1})`}
+                            </p>
+                            <p className="text-c-gray3 text-p-sm">
+                              {note.createdAt
+                                ? new Date(note.createdAt).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      year: "numeric",
+                                      month: "long",
+                                      day: "numeric",
+                                    }
+                                  )
+                                : "Unknown Date"}
+                            </p>
+                          </article>
                         </div>
                       ))}
                     </>
@@ -298,23 +315,40 @@ const ScribeRecord = () => {
           {currentCardIndex === 1 && (
             <div>
               {rawNotes.length > 0 ? (
-                <div className="w-full cursor-pointer">
+                <div className="w-full cursor-pointer grid grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-5 py-5">
                   {rawNotes ? (
                     <>
                       {rawNotes.map((note, index) => (
                         <div
                           key={note.noteId || index}
-                          className="px-6 py-4 rounded-sm flex h-20 mb-2 items-center justify-between font-medium bg-white hover:bg-bg-sub"
+                          className="p-5 rounded-lg font-medium hover:bg-white border border-f-gray flex flex-col justify-center items-center gap-3 shadow-lg shadow-[#d4d4d43b]"
                           onClick={() => handleClickRawNotes(note.noteId)}
                         >
-                          <div className="flex items-center gap-3">
-                            <p>{note.name || `Raw Note ${index + 1}`}</p>
+                          <div className="w-20">
+                            <img
+                              src={File}
+                              alt="File IMG"
+                              className="w-full h-full object-cover"
+                            />
                           </div>
-                          <p>
-                            {note.createdAt
-                              ? note.createdAt.split("T")[0]
-                              : "Unknown Date"}
-                          </p>
+                          <article className="w-full">
+                            <p className="text-f-dark font-medium text-p-rg">
+                              {note.name ||
+                                `Patient Case Record (Raw ${index + 1})`}
+                            </p>
+                            <p className="text-c-gray3 text-p-sm">
+                              {note.createdAt
+                                ? new Date(note.createdAt).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      year: "numeric",
+                                      month: "long",
+                                      day: "numeric",
+                                    }
+                                  )
+                                : "Unknown Date"}
+                            </p>
+                          </article>
                         </div>
                       ))}
                     </>

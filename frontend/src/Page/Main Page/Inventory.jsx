@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { IoMdSearch } from "react-icons/io";
-import { FiPlus } from "react-icons/fi";
-import InventoryTable from "../../Component/ui/InventoryTable";
-import AddEditProduct from "../../Component/ui/AddEditProduct";
 import { useSelector } from "react-redux";
 import RoleColor from "../../assets/Util/RoleColor";
+import InventoryTable from "../../Component/ui/InventoryTable";
+import AddEditProduct from "../../Component/ui/AddEditProduct";
+import TransferStock from "../../Component/ui/TransferStock";
 import PointOfSale from "./PointOfSale";
 import { HiExternalLink } from "react-icons/hi";
+import { IoMdSearch } from "react-icons/io";
+import { FiPlus } from "react-icons/fi";
 
 const Inventory = () => {
   const user = useSelector((state) => state.reducer.user.user);
@@ -14,6 +15,7 @@ const Inventory = () => {
   const [selected, setSelected] = useState("All");
   const [openPOS, setOpenPOS] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTransferOpen, setIsTransferOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("");
   const toggleModal = () => setIsModalOpen(!isModalOpen);
@@ -24,6 +26,7 @@ const Inventory = () => {
   };
 
   const posToggle = () => setOpenPOS(!openPOS);
+  const transferToggle = () => setIsTransferOpen(!isTransferOpen);
 
   const productCounts = {
     All: products.filter((product) => !product.isDeleted).length,
@@ -45,17 +48,28 @@ const Inventory = () => {
     <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppins">
       <nav className="flex flex-col gap-4 lg:gap-0 lg:flex-row justify-between mb-2">
         <div className="flex gap-3 items-center">
-          <p className="text-c-gray3 font-medium text-p-sm">
-            Dispense product:
-          </p>
-          {user.role === "3" && (
-            <button
-              className="text-p-rg border flex gap-1 items-center px-4 py-1 rounded-full text-blue-500 shadow-sm font-medium hover:bg-white"
-              onClick={posToggle}
-            >
-              <HiExternalLink />
-              Walk Ins
-            </button>
+          {user.role === "3" ? (
+            <>
+              <p className="text-c-gray3 font-medium text-p-sm">
+                Dispense product:
+              </p>
+              <button
+                className="text-p-sm border flex gap-1 items-center px-4 py-1 rounded-full text-blue-500 shadow-sm font-medium hover:bg-white"
+                onClick={posToggle}
+              >
+                Walk In
+                <HiExternalLink />
+              </button>
+            </>
+          ) : (
+            <div>
+              <button
+                className="text-p-sm border flex gap-1 items-center px-4 py-1 rounded-full text-blue-500 shadow-sm font-medium hover:bg-white"
+                onClick={transferToggle}
+              >
+                Transfer Stock
+              </button>
+            </div>
           )}
         </div>
         <div className="flex gap-3">
@@ -127,6 +141,7 @@ const Inventory = () => {
         <AddEditProduct onClose={toggleModal} title={"Add Product"} />
       )}
       {openPOS && <PointOfSale onClose={posToggle} />}
+      {isTransferOpen && <TransferStock onClose={transferToggle} />}
     </div>
   );
 };
