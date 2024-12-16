@@ -30,7 +30,7 @@ const RequestStock = ({ onClose, productDetails, productId }) => {
     <div className="fixed px-5 top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins  text-f-dark">
       <div className="w-[500px] bg-white rounded-lg">
         <header className="p-4 border-b flex justify-between items-center">
-          <h1 className="text-p-rg md:text-p-lg font-medium">Reques Stock</h1>
+          <h1 className="text-p-rg md:text-p-lg font-medium">Request Stock</h1>
           <button
             onClick={onClose}
             className="w-10 h-10 rounded-md border hover:bg-zinc-50"
