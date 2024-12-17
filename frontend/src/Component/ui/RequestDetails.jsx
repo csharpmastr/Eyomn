@@ -41,30 +41,6 @@ const RequestDetails = ({ onClose }) => {
               </p>
             </div>
           </section>
-          <section className="text-p-sm text-c-gray3">
-            <p>Request To</p>
-            {/*Ano nalang siguro lalabas list ng branch tapos kung ilan pa yung stock nila sa prd na nireq hahaha*/}
-            <select
-              name="branches"
-              //value={}
-              //onChange={}
-              className="mt-1 w-full p-2 border rounded-md text-f-dark focus:outline-c-primary"
-            >
-              <option value="" disabled className="text-c-gray3">
-                Select Branch
-              </option>
-              <option>Santa Maria (67pcs)</option>
-              <option>Paete (257pcs)</option>
-            </select>
-          </section>
-          <footer className="flex gap-4 mt-12 font-medium text-f-light justify-end">
-            <button className="rounded-full border shadow-sm hover:bg-sb-org px-6 py-1 text-f-dark">
-              Reject
-            </button>
-            <button className="rounded-full bg-bg-con  hover:bg-opacity-75 active:bg-pressed-branch px-6 py-1">
-              Approve
-            </button>
-          </footer>
         </div>
       </div>
     </div>

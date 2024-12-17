@@ -4,10 +4,12 @@ import RoleColor from "../../assets/Util/RoleColor";
 import InventoryTable from "../../Component/ui/InventoryTable";
 import AddEditProduct from "../../Component/ui/AddEditProduct";
 import TransferStock from "../../Component/ui/TransferStock";
+import TransferStockBranch from "../../Component/ui/TransferStockBranch";
 import PointOfSale from "./PointOfSale";
 import { HiExternalLink } from "react-icons/hi";
 import { IoMdSearch } from "react-icons/io";
 import { FiPlus } from "react-icons/fi";
+import { FiArrowRight } from "react-icons/fi";
 
 const Inventory = () => {
   const user = useSelector((state) => state.reducer.user.user);
@@ -16,6 +18,7 @@ const Inventory = () => {
   const [openPOS, setOpenPOS] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTransferOpen, setIsTransferOpen] = useState(false);
+  const [isTransferBranchOpen, setIsTransferBranchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("");
   const toggleModal = () => setIsModalOpen(!isModalOpen);
@@ -27,6 +30,8 @@ const Inventory = () => {
 
   const posToggle = () => setOpenPOS(!openPOS);
   const transferToggle = () => setIsTransferOpen(!isTransferOpen);
+  const transferBranchToggle = () =>
+    setIsTransferBranchOpen(!isTransferBranchOpen);
 
   const productCounts = {
     All: products.filter((product) => !product.isDeleted).length,
@@ -64,10 +69,13 @@ const Inventory = () => {
           ) : (
             <div>
               <button
-                className="text-p-sm border flex gap-1 items-center px-4 py-1 rounded-full text-blue-500 shadow-sm font-medium hover:bg-white"
-                onClick={transferToggle}
+                className="text-p-rg border flex gap-1 items-center px-6 h-12 rounded-md text-f-dark shadow-sm font-medium hover:bg-white"
+                onClick={
+                  user.role === "0" ? transferToggle : transferBranchToggle
+                }
               >
-                Transfer Stock
+                Monitor Request
+                <FiArrowRight />
               </button>
             </div>
           )}
@@ -142,6 +150,9 @@ const Inventory = () => {
       )}
       {openPOS && <PointOfSale onClose={posToggle} />}
       {isTransferOpen && <TransferStock onClose={transferToggle} />}
+      {isTransferBranchOpen && (
+        <TransferStockBranch onClose={transferBranchToggle} />
+      )}
     </div>
   );
 };
