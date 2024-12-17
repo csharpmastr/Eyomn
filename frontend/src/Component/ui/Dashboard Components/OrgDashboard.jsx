@@ -37,7 +37,6 @@ const OrgDashboard = () => {
         staff.branches.some((branch) => branch.branchId === selectedBranch)
       )
     : staffs;
-  console.log(staffs);
 
   const filteredProducts = selectedBranch
     ? products
@@ -99,7 +98,6 @@ const OrgDashboard = () => {
 
   const currentMonthTotalSales = getTotalSales(currentMonthSales);
   const previousMonthTotalSales = getTotalSales(previousMonthSales);
-  console.log(currentMonthTotalSales);
 
   const calculatePercentageChange = (currentValue, previousValue) => {
     if (previousValue === 0) {

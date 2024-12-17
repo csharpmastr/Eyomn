@@ -95,9 +95,6 @@ const PointOfSale = ({ onClose, patient }) => {
         if (response) {
           setIsSuccess(true);
           const { purchaseId, createdAt, serviceId } = response;
-          setFormData([]);
-          setSelectedProducts([]);
-
           if (purchaseId) {
             reduxDispatch(
               addPurchase({
@@ -121,6 +118,8 @@ const PointOfSale = ({ onClose, patient }) => {
               })
             );
           }
+          setFormData([]);
+          setSelectedProducts([]);
         }
       } else {
         console.log("here");
@@ -145,9 +144,9 @@ const PointOfSale = ({ onClose, patient }) => {
                 purchaseDetails: payload.purchaseDetails || [],
                 createdAt,
                 purchaseId,
-                doctorId: patient.doctorId,
               })
             );
+            console.log("added");
           }
         }
       }

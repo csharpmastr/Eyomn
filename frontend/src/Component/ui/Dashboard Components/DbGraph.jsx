@@ -54,39 +54,73 @@ const DbGraph = ({ sales }) => {
 
   const groupedDataByBranch = useMemo(() => {
     const grouped = {};
-    branches.forEach((branch) => {
-      grouped[branch.branchId] = {};
-    });
+    if (user.role === "0") {
+      branches.forEach((branch) => {
+        grouped[branch.branchId] = {};
+      });
 
-    filteredData.forEach((item) => {
-      const date = dayjs(item.createdAt).format("YYYY-MM-DD");
-      const branchId = item.branchId;
-      const total = item.purchaseDetails.reduce(
-        (sum, detail) => sum + detail.totalAmount,
-        0
-      );
+      filteredData.forEach((item) => {
+        const date = dayjs(item.createdAt).format("YYYY-MM-DD");
+        const branchId = item.branchId;
+        const total = item.purchaseDetails.reduce(
+          (sum, detail) => sum + detail.totalAmount,
+          0
+        );
 
-      if (grouped[branchId]) {
+        if (grouped[branchId]) {
+          grouped[branchId][date] = (grouped[branchId][date] || 0) + total;
+        }
+      });
+    } else {
+      filteredData.forEach((item) => {
+        const date = dayjs(item.createdAt).format("YYYY-MM-DD");
+        const branchId =
+          user.role === "2" ? user.branches[0].branchId : user.branchId;
+        const total = item.purchaseDetails.reduce(
+          (sum, detail) => sum + detail.totalAmount,
+          0
+        );
+        if (!grouped[branchId]) {
+          grouped[branchId] = {};
+        }
+
         grouped[branchId][date] = (grouped[branchId][date] || 0) + total;
-      }
-    });
+      });
+    }
 
     return grouped;
   }, [filteredData, branches]);
 
   const chartSeries = useMemo(() => {
-    return branches.map((branch) => {
-      const branchData = groupedDataByBranch[branch.branchId] || {};
+    if (user.role === "0" && branches?.length) {
+      return branches.map((branch) => {
+        const branchData = groupedDataByBranch[branch.branchId] || {};
+        const sortedDates = Object.keys(branchData).sort((a, b) =>
+          dayjs(a).isBefore(b) ? -1 : 1
+        );
+
+        return {
+          name: branch.name,
+          data: sortedDates.map((date) => branchData[date] || 0),
+        };
+      });
+    } else {
+      const branchData =
+        user.role === "2"
+          ? groupedDataByBranch[user.branches[0].branchId]
+          : groupedDataByBranch[user.branchId] || {};
       const sortedDates = Object.keys(branchData).sort((a, b) =>
         dayjs(a).isBefore(b) ? -1 : 1
       );
 
-      return {
-        name: branch.name,
-        data: sortedDates.map((date) => branchData[date] || 0),
-      };
-    });
-  }, [groupedDataByBranch, branches]);
+      return [
+        {
+          name: "Your Branch",
+          data: sortedDates.map((date) => branchData[date] || 0),
+        },
+      ];
+    }
+  }, [groupedDataByBranch]);
 
   const xAxisCategories = useMemo(() => {
     const uniqueDates = filteredData.map((item) =>
