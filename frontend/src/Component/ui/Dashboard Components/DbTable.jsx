@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFetchData } from "../../../Hooks/useFetchData";
+import { FiArrowRight } from "react-icons/fi";
 
 // Function to format date
 const formatDate = (dateString) => {
@@ -40,9 +41,9 @@ const DbTable = ({ role }) => {
         </h1>
         <button
           onClick={viewAll}
-          className="px-2 py-1 border border-c-secondary text-c-secondary rounded-md"
+          className="flex items-center gap-1 font-medium text-p-sm hover:font-semibold"
         >
-          View All
+          View all <FiArrowRight />
         </button>
       </header>
       <div className="text-left flex py-4 bg-bg-mc rounded-md mt-6 mb-3 shadow-sm text-f-gray2">
