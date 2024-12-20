@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FiArrowRight } from "react-icons/fi";
 
 const TransferStockBranch = ({ onClose }) => {
   const samplePending = [
@@ -24,10 +25,17 @@ const TransferStockBranch = ({ onClose }) => {
     {
       bName: "Santa Cruz",
       date: "December 16, 2024",
-      reqP: "Energen (Medecine)",
-      qty: "20 pcs",
+      reqP: "Energen (Medicine)",
+      qty: 100,
       remarks:
         "Yao Ming, an 8-time NBA All-Star. The Chinese basketball icon played for the Houston Rockets and was known for his dominant presence in the paint.",
+    },
+    {
+      bName: "Palawan",
+      date: "December 18, 2024",
+      reqP: "Alfonso (Other)",
+      qty: 20,
+      remarks: "Kung ilan lang po ang kaya",
     },
   ];
 
@@ -72,7 +80,7 @@ const TransferStockBranch = ({ onClose }) => {
               <section className="w-1/3 overflow-auto">
                 <header className="w-full border-b border-f-gray pb-3 font-medium text-p-rg flex justify-between">
                   <h6>Pending</h6>
-                  <div className="flex items-center justify-center px-6 h-6 rounded-full bg-yellow-300 text-p-sm">
+                  <div className="flex items-center justify-center px-6 h-6 rounded-full bg-orange-300 text-p-sm">
                     {samplePending.length}
                   </div>
                 </header>
@@ -83,12 +91,12 @@ const TransferStockBranch = ({ onClose }) => {
                       key={index}
                     >
                       <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
-                        <p>
+                        {/* <p>
                           Branch{" "}
                           <span className="font-medium px-3 rounded-full bg-c-primary text-f-light">
                             {deepStrictEqual.bName}
                           </span>
-                        </p>
+                        </p> */}
                         <p>{deepStrictEqual.date}</p>
                       </section>
                       <section className="flex justify-between mb-4">
@@ -107,7 +115,7 @@ const TransferStockBranch = ({ onClose }) => {
                       </section>
                       <section className="text-p-sm text-c-gray3 mb-4">
                         <p>Remarks</p>
-                        <div className="border rounded-md p-2">
+                        <div className="border rounded-md p-2 h-20 overflow-auto">
                           <p className="font-medium text-f-dark">
                             {deepStrictEqual.remarks}
                           </p>
@@ -131,12 +139,12 @@ const TransferStockBranch = ({ onClose }) => {
                       key={index}
                     >
                       <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
-                        <p>
+                        {/* <p>
                           Branch{" "}
                           <span className="font-medium px-3 rounded-full bg-c-primary text-f-light">
                             {dets.bName}
                           </span>
-                        </p>
+                        </p> */}
                         <p>{dets.date}</p>
                       </section>
                       <section className="flex justify-between mb-4">
@@ -155,7 +163,7 @@ const TransferStockBranch = ({ onClose }) => {
                       </section>
                       <section className="text-p-sm text-c-gray3 mb-4">
                         <p>Remarks</p>
-                        <div className="border rounded-md p-2">
+                        <div className="border rounded-md p-2 h-20 overflow-auto">
                           <p className="font-medium text-f-dark">
                             {dets.remarks}
                           </p>
@@ -197,12 +205,12 @@ const TransferStockBranch = ({ onClose }) => {
                 <header className="border-f-gray pb-3 font-medium text-p-rg flex gap-5">
                   <h6>Pending Request</h6>
                   <div className="flex items-center justify-center px-6 h-6 rounded-full bg-orange-300 text-p-sm">
-                    0
+                    {sampleOnprocess.length}
                   </div>
                 </header>
-                <div className="py-5">
+                <div className="py-5 grid grid-cols-3">
                   {sampleOnprocess.map((dets, index) => (
-                    <div className="w-1/4">
+                    <div className="w-[400px]">
                       <div
                         className="w-full rounded-md p-4 bg-white mb-3 shadow-sm cursor-pointer"
                         key={index}
@@ -226,13 +234,13 @@ const TransferStockBranch = ({ onClose }) => {
                           <article className="text-c-gray3 text-p-sm">
                             <p>Quantity</p>
                             <p className="font-medium text-f-dark text-p-rg">
-                              {dets.qty}
+                              {dets.qty} pcs
                             </p>
                           </article>
                         </section>
                         <section className="text-p-sm text-c-gray3 mb-4">
                           <p>Remarks</p>
-                          <div className="border rounded-md p-2">
+                          <div className="border rounded-md p-2 h-20 overflow-auto">
                             <p className="font-medium text-f-dark">
                               {dets.remarks}
                             </p>
@@ -245,18 +253,42 @@ const TransferStockBranch = ({ onClose }) => {
                           </p>
                         </section>
                       </div>
-                      <div className="rounded-md w-full bg-white p-4 text-p-sm text-c-gray3 shadow-sm">
-                        <p>Remark</p>
-                        <textarea
-                          type="text"
-                          name=""
-                          //   value={}
-                          //   onChange={}
-                          className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                          rows={2}
-                          placeholder="Comemement"
-                        />
-                        <footer className="flex gap-4 mt-4 font-medium text-f-light justify-end">
+                      <div className="rounded-md w-full bg-bg-sb border border-c-primary p-4 text-p-sm text-c-gray3 shadow-sm">
+                        <section className="mb-4">
+                          <p>
+                            Transfer Stock{" "}
+                            <span className="text-blue-500">*</span>
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <p className="w-1/3 text-f-dark font-medium">
+                              Available Stock <br />
+                              (579)
+                            </p>
+                            <FiArrowRight className="text-f-dark text-p-lg w-1/3" />
+                            <input
+                              type="number"
+                              name="stock_transfer"
+                              min={0}
+                              value={dets.qty}
+                              // onChange={}
+                              className="mt-1 w-1/3 px-4 py-3 border rounded-md text-f-dark focus:outline-c-primary"
+                              placeholder="0"
+                            />
+                          </div>
+                        </section>
+                        <section className="mb-4">
+                          <p>Remark</p>
+                          <textarea
+                            type="text"
+                            name=""
+                            //   value={}
+                            //   onChange={}
+                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
+                            rows={2}
+                            placeholder="Comemement"
+                          />
+                        </section>
+                        <footer className="flex gap-4 font-medium text-f-light justify-end">
                           <button className="rounded-full border shadow-sm hover:bg-sb-org px-6 py-1 text-f-dark">
                             Reject
                           </button>

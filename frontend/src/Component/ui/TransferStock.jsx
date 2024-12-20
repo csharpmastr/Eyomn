@@ -49,7 +49,7 @@ const TransferStock = ({ onClose }) => {
           <section className="w-1/3 overflow-auto">
             <header className="w-full border-b border-f-gray pb-3 font-medium text-p-rg flex justify-between">
               <h6>Pending</h6>
-              <div className="flex items-center justify-center px-6 h-6 rounded-full bg-yellow-300 text-p-sm">
+              <div className="flex items-center justify-center px-6 h-6 rounded-full bg-orange-300 text-p-sm">
                 {samplePending.length}
               </div>
             </header>
