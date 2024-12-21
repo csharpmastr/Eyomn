@@ -4,6 +4,7 @@ const {
   inventoryCollection,
   db,
   organizationCollection,
+  branchCollection,
 } = require("../Config/FirebaseConfig");
 const {
   encryptDocument,
@@ -13,6 +14,7 @@ const {
   verifyFirebaseUid,
 } = require("../Helper/Helper");
 const { decryptData } = require("../Security/DataHashing");
+const { pushNotification } = require("./notificationService");
 
 const generateSKU = () => {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -591,6 +593,58 @@ const getPatientProductServicesAvail = async (
   }
 };
 
+const requestProductStock = async (
+  requestDetails,
+  firebaseUid,
+  branchId,
+  organizationId
+) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const requestColRef = inventoryCollection
+      .doc(branchId)
+      .collection("requests");
+    const branchRef = branchCollection.doc(branchId);
+
+    const requestId = await generateUniqueId(requestColRef);
+    console.log(requestId);
+
+    const branchSnap = await branchRef.get();
+    if (!branchSnap.exists) {
+      throw new Error(`Branch with ID ${branchId} not found`);
+    }
+    const branchData = branchSnap.data();
+
+    const branchName = decryptData(branchData.name);
+
+    const encryptedRequestDetails = encryptDocument(requestDetails, [
+      "quantity",
+    ]);
+
+    await requestColRef.doc(requestId).set({
+      ...encryptedRequestDetails,
+      status: "pending",
+      createdAt: new Date(),
+    });
+
+    const notificationData = {
+      branchName,
+      branchId,
+      requestId,
+      ...requestDetails,
+    };
+
+    // Send notification
+    await pushNotification(organizationId, "inventory", notificationData);
+
+    console.log("Stock request successfully created!");
+  } catch (error) {
+    console.error("Error creating stock request:", error);
+    throw error;
+  }
+};
+
 module.exports = {
   addProduct,
 
@@ -602,4 +656,5 @@ module.exports = {
   retrieveProduct,
   addServiceFee,
   getPatientProductServicesAvail,
+  requestProductStock,
 };

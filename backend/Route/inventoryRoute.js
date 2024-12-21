@@ -10,6 +10,7 @@ const {
   addServiceFeeHandler,
   getBranchInventoryHandler,
   getPatientProductServicesAvailHandler,
+  requestProductStockHandler,
 } = require("../Controller/inventoryController");
 const { validateToken } = require("../Wrapper/Wrapper");
 
@@ -29,5 +30,10 @@ router.get(
   "/get-patient-avail",
   validateToken,
   getPatientProductServicesAvailHandler
+);
+router.post(
+  "/request-stock/:organizationId/:branchId",
+  validateToken,
+  requestProductStockHandler
 );
 module.exports = router;

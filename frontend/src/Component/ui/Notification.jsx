@@ -16,19 +16,21 @@ const Notification = ({ data, setNotifOpen }) => {
   const medicalScribeNotes = useSelector(
     (state) => state.reducer.note.medicalScribeNotes
   );
-  const handleClickNotification = async (patientId, notificationId) => {
+  const handleClickNotification = async (patientId, notificationId, type) => {
     try {
       setNotifOpen(false);
 
       // Set session storage values
-      sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
-      sessionStorage.setItem("currentPatientId", patientId);
-      sessionStorage.setItem("selectedTab", "scribe");
+      if (type === "inventory") {
+        sessionStorage.setItem("currentPath", `/scribe/${patientId}`);
+        sessionStorage.setItem("currentPatientId", patientId);
+        sessionStorage.setItem("selectedTab", "scribe");
 
-      navigate(`/scribe/${patientId}`);
+        navigate(`/scribe/${patientId}`);
+      }
 
       const responseNotif = await updateNotification(
-        user.staffId,
+        user.userId,
         notificationId,
         user.firebaseUid
       );

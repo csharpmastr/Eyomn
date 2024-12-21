@@ -244,3 +244,27 @@ export const getPatientProductServiceAvail = async (
     throw error;
   }
 };
+
+export const requestProductStock = async (
+  organizationId,
+  branchId,
+  firebaseUid,
+  request
+) => {
+  try {
+    const response = await axios.post(
+      `${INVENTORY_API_BASE_URL}/request-stock/${organizationId}/${branchId}`,
+      request,
+      {
+        withCredentials: true,
+        params: {
+          firebaseUid,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error requesting stock: ", error);
+    throw error;
+  }
+};

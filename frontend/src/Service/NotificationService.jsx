@@ -3,7 +3,7 @@ import axios from "axios";
 const NOTIFICATION_API_BASE_URL = `http://localhost:3000/api/v1/notification`;
 
 export const updateNotification = async (
-  staffId,
+  userId,
   notificationId,
   firebaseUid
 ) => {
@@ -12,7 +12,7 @@ export const updateNotification = async (
       `${NOTIFICATION_API_BASE_URL}/update/${notificationId}`,
       { read: true },
       {
-        params: { staffId, firebaseUid },
+        params: { userId, firebaseUid },
         withCredentials: true,
       }
     );

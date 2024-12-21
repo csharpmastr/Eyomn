@@ -11,6 +11,7 @@ const {
   getBranchGross,
   getBranchInventory,
   getPatientProductServicesAvail,
+  requestProductStock,
 } = require("../Service/inventoryService");
 
 const addProductHandler = async (req, res) => {
@@ -214,9 +215,37 @@ const getPatientProductServicesAvailHandler = async (req, res) => {
     if (patientAvail) {
       return res.status(200).json(patientAvail);
     }
-  } catch (error) {}
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Server error while getting data." + error });
+  }
 };
+const requestProductStockHandler = async (req, res) => {
+  try {
+    const organizationId = req.params.organizationId;
+    const branchId = req.params.branchId;
+    const { firebaseUid } = req.query;
+    const requestDetails = req.body;
 
+    if (!organizationId || !branchId) {
+      return res
+        .status(400)
+        .json({ message: "No Branch/Organization ID provided" });
+    }
+    await requestProductStock(
+      requestDetails,
+      firebaseUid,
+      branchId,
+      organizationId
+    );
+    return res.status(200).json({ message: "Request added!" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Server error while adding data." + error });
+  }
+};
 module.exports = {
   addProductHandler,
 
@@ -228,4 +257,5 @@ module.exports = {
   retrieveProductHandler,
   addServiceFeeHandler,
   getPatientProductServicesAvailHandler,
+  requestProductStockHandler,
 };
