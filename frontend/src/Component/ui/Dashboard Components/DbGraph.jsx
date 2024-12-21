@@ -75,7 +75,7 @@ const DbGraph = ({ sales }) => {
       filteredData.forEach((item) => {
         const date = dayjs(item.createdAt).format("YYYY-MM-DD");
         const branchId =
-          user.role === "2" ? user.branches[0].branchId : user.branchId;
+          user.role === "3" ? user.branches[0].branchId : user.branchId;
         const total = item.purchaseDetails.reduce(
           (sum, detail) => sum + detail.totalAmount,
           0
@@ -95,6 +95,9 @@ const DbGraph = ({ sales }) => {
     if (user.role === "0" && branches?.length) {
       return branches.map((branch) => {
         const branchData = groupedDataByBranch[branch.branchId] || {};
+        if (!branchData || Object.keys(branchData).length === 0) {
+          console.warn("No branch data found for the current user or branch.");
+        }
         const sortedDates = Object.keys(branchData).sort((a, b) =>
           dayjs(a).isBefore(b) ? -1 : 1
         );
@@ -106,9 +109,14 @@ const DbGraph = ({ sales }) => {
       });
     } else {
       const branchData =
-        user.role === "2"
-          ? groupedDataByBranch[user.branches[0].branchId]
+        user.role === "3"
+          ? groupedDataByBranch[user.branches?.[0]?.branchId] || {}
           : groupedDataByBranch[user.branchId] || {};
+
+      if (!branchData || Object.keys(branchData).length === 0) {
+        console.warn("No branch data found for the current user or branch.");
+      }
+
       const sortedDates = Object.keys(branchData).sort((a, b) =>
         dayjs(a).isBefore(b) ? -1 : 1
       );
@@ -139,9 +147,12 @@ const DbGraph = ({ sales }) => {
     xaxis: { categories: xAxisCategories },
     stroke: { curve: "smooth" },
     dataLabels: { enabled: false },
-    colors: branches.map(
-      (_, i) => `hsl(${(i * 360) / branches.length}, 70%, 50%)`
-    ),
+    colors:
+      branches.length >= 1
+        ? branches.map(
+            (_, i) => `hsl(${(i * 360) / branches.length}, 70%, 50%)`
+          )
+        : ["hsl(0, 70%, 50%)"],
     markers: { size: 0 },
   };
 
