@@ -2,13 +2,13 @@ const { query, where, onSnapshot, collection } = require("firebase/firestore");
 const {
   inventoryCol,
   organizationCol,
+  notificationCol,
 } = require("../Config/FirebaseClientSDK");
 const { decryptDocument } = require("../Helper/Helper");
 
 const sseConnections = {};
 const firstConnectionMap = {};
 let unsubscribeListeners = [];
-
 let cachedData = {};
 
 const startOrganizationSSEServer = (app) => {
@@ -106,20 +106,16 @@ const startOrganizationSSEServer = (app) => {
                     };
                   }
 
-                  // send the updated data to connected client
                   if (sseConnections[role] && sseConnections[role][id]) {
                     sseConnections[role][id].forEach((client) => {
                       if (client.writable) {
                         client.write(
                           `data: ${JSON.stringify(responseData)}\n\n`
                         );
-                      } else {
-                        console.log("Client has disconnected");
                       }
                     });
                   }
 
-                  // cache the response data
                   if (!cachedData[id]) cachedData[id] = {};
                   if (!cachedData[id][branchId]) cachedData[id][branchId] = {};
                   cachedData[id][branchId][subcollection] = responseData;
@@ -132,7 +128,49 @@ const startOrganizationSSEServer = (app) => {
         });
       });
 
-      unsubscribeListeners.push(unsubscribeOrgSnapshot);
+      // Add notifications listener
+      const notificationsQuery = query(
+        collection(notificationCol, `${id}/notifs`)
+      );
+
+      const unsubscribeNotifications = onSnapshot(
+        notificationsQuery,
+        (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+            const notificationData = change.doc.data();
+            const decryptedNotification = decryptDocument(notificationData, [
+              "createdAt",
+              "notificationId",
+              "read",
+              "requesting",
+              "type",
+              "requestId",
+            ]);
+            const responseData = {
+              type: "notification",
+              data: decryptedNotification,
+            };
+
+            if (sseConnections[role] && sseConnections[role][id]) {
+              sseConnections[role][id].forEach((client) => {
+                if (client.writable) {
+                  client.write(`data: ${JSON.stringify(responseData)}\n\n`);
+                }
+              });
+            }
+
+            if (!cachedData[id]) cachedData[id] = {};
+            if (!cachedData[id].notifications)
+              cachedData[id].notifications = [];
+            cachedData[id].notifications.push(responseData);
+          });
+        }
+      );
+
+      unsubscribeListeners.push(
+        unsubscribeOrgSnapshot,
+        unsubscribeNotifications
+      );
 
       req.on("close", () => {
         clearInterval(keepAlive);

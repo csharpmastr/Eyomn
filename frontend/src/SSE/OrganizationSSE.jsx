@@ -28,8 +28,9 @@ const OrganizationSSEComponent = () => {
     organiztionSSE.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log(data);
-
+        if (data.type === "notification") {
+          console.log(data);
+        }
         if (data.type === "purchases") {
           const salesData = data.data;
           reduxDispatch(addPurchase(salesData));
@@ -37,6 +38,10 @@ const OrganizationSSEComponent = () => {
         if (data.type === "services") {
           const servicesData = data.data;
           reduxDispatch(addServices(servicesData));
+        }
+        if (data.type === "notification") {
+          const notificationData = data.data;
+          reduxDispatch(addNotification(notificationData));
         }
       } catch (error) {
         console.error("Error processing SSE message:", error);

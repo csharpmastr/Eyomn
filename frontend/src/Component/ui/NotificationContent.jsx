@@ -32,7 +32,11 @@ const NotificationContent = ({ data, onClickNotification }) => {
           ${notifData.read === true ? "text-gray-400" : "text-f-dark"}`}
           key={index}
           onClick={() =>
-            onClickNotification(notifData.patientId, notifData.notificationId)
+            onClickNotification(
+              notifData.patientId,
+              notifData.notificationId,
+              notifData.type
+            )
           }
         >
           <div className="flex flex-row justify-between">

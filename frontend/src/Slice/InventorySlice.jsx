@@ -4,6 +4,7 @@ const initialState = {
   products: [],
   purchases: [],
   services: [],
+  requests: [],
 };
 
 const inventorySlice = createSlice({
@@ -108,6 +109,18 @@ const inventorySlice = createSlice({
     clearServices: (state) => {
       state.services = [];
     },
+    addRequest: (state, action) => {
+      if (!Array.isArray(state.requests)) {
+        state.requests = [];
+      }
+      state.requests.push(action.payload);
+    },
+    setRequests: (state, action) => {
+      state.requests = action.payload;
+    },
+    clearRequests: (state) => {
+      state.requests = [];
+    },
   },
 });
 
@@ -125,6 +138,9 @@ export const {
   setServices,
   addServices,
   clearServices,
+  setRequests,
+  addRequest,
+  clearRequests,
 } = inventorySlice.actions;
 
 export default inventorySlice.reducer;

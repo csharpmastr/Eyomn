@@ -70,7 +70,18 @@ const pushNotification = async (userId, type, data) => {
         patientId: data.patientId,
       };
     }
+    if (type === "inventory") {
+      const message = `${data.branchName} requested for a product stock`;
+      const encryptedMessage = encryptData(message);
 
+      notificationData = {
+        ...notificationData,
+        type: "inventory",
+        message: encryptedMessage,
+        requesting: data.branchId,
+        requestId: data.requestId,
+      };
+    }
     await notificationCol.doc(notificationId).set(notificationData);
     console.log(`Notification of type "${type}" added for user ${userId}`);
   } catch (error) {
@@ -79,7 +90,7 @@ const pushNotification = async (userId, type, data) => {
 };
 
 const updateNotification = async (
-  staffId,
+  userId,
   notificationId,
   firebaseUid,
   read
@@ -87,7 +98,7 @@ const updateNotification = async (
   try {
     await verifyFirebaseUid(firebaseUid);
     const notificationRef = notificationCollection
-      .doc(staffId)
+      .doc(userId)
       .collection("notifs")
       .doc(notificationId);
     console.log(notificationId, read);

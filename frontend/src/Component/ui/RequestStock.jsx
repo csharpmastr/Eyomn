@@ -1,8 +1,16 @@
 import React, { useState } from "react";
+import { requestProductStock } from "../../Service/InventoryService";
+import { useSelector } from "react-redux";
 
 const RequestStock = ({ onClose, productDetails, productId }) => {
+  const user = useSelector((state) => state.reducer.user.user);
+  let branchId =
+    (user.branches && user.branches.length > 0 && user.branches[0].branchId) ||
+    user.userId;
   const [requestForm, setRequestForm] = useState({
-    prod_name: productDetails.product_name,
+    product_name: productDetails.product_name,
+    category: productDetails.category,
+    brand: productDetails.brand,
     quantity: "",
     remark: "",
   });
@@ -12,18 +20,28 @@ const RequestStock = ({ onClose, productDetails, productId }) => {
 
     setRequestForm((prevForm) => ({
       ...prevForm,
-      [name]: value,
+      [name]: name === "quantity" ? Number(value) : value,
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!requestForm.quantity || requestForm.quantity <= 10) {
       alert("Please meet the minimum request Qty");
       return;
     }
-    console.log(productId);
-    console.log("Submitting request:", requestForm);
-    onClose();
+    try {
+      const response = await requestProductStock(
+        user.organizationId,
+        branchId,
+        user.firebaseUid,
+        requestForm
+      );
+      if (response) {
+        console.log("nice");
+      }
+    } catch (error) {
+      console.log("error");
+    }
   };
 
   return (
