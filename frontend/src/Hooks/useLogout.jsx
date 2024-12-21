@@ -13,6 +13,7 @@ import { clearAppointment } from "../Slice/AppointmentSlice";
 import {
   clearProducts,
   clearPurchases,
+  clearRequests,
   clearServices,
 } from "../Slice/InventorySlice";
 import { clearNotifications } from "../Slice/NotificationSlice";
@@ -59,6 +60,7 @@ export const useLogout = () => {
       reduxDispatch(clearRawNotes());
       reduxDispatch(clearServices());
       reduxDispatch(clearMedicalScribeNotes());
+      reduxDispatch(clearRequests());
       localStorage.removeItem("hasClickedModal");
       sessionStorage.removeItem("currentTab");
       sessionStorage.removeItem("medformData");
