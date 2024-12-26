@@ -8,6 +8,7 @@ const TransferStock = ({ onClose }) => {
   const user = useSelector((state) => state.reducer.user.user);
   const [isLoading, setIsLoading] = useState(false);
   const [requests, setRequests] = useState([]);
+  const [selectedRequest, setSelectedRequest] = useState(null);
   const branchId = branches.map((branch) => branch.branchId);
 
   useEffect(() => {
@@ -24,9 +25,11 @@ const TransferStock = ({ onClose }) => {
     fetchRequests(branchId, user.firebaseUid);
   }, [user, user.firebaseUid]);
 
-  const [openDetails, setOpenDetails] = useState(false);
-
-  const handleToggle = () => setOpenDetails(!openDetails);
+  const handleRequestClick = (request) => {
+    const branch = branches.find((b) => b.branchId === request.branchId);
+    const branchName = branch ? branch.name : "Unknown Branch";
+    setSelectedRequest({ ...request, branchName }); // Include branch name
+  };
 
   const groupedRequests = {
     pending: requests.filter((req) => req.status === "pending"),
@@ -76,7 +79,7 @@ const TransferStock = ({ onClose }) => {
                       <div
                         key={index}
                         className="w-full rounded-md p-4 bg-white mb-5 shadow-sm cursor-pointer"
-                        onClick={handleToggle}
+                        onClick={() => handleRequestClick(req)}
                       >
                         <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
                           <p>
@@ -170,7 +173,12 @@ const TransferStock = ({ onClose }) => {
           )}
         </div>
       </div>
-      {openDetails && <RequestDetails onClose={handleToggle} />}
+      {selectedRequest && (
+        <RequestDetails
+          details={selectedRequest}
+          onClose={() => setSelectedRequest(null)}
+        />
+      )}
     </div>
   );
 };
