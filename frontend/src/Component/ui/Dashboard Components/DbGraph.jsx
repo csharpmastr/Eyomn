@@ -173,7 +173,7 @@ const DbGraph = ({ sales }) => {
           <select
             value={selectedFilter}
             onChange={handleFilterChange}
-            className="hover:cursor-pointer focus:outline-none bg-bg-sub p-1 rounded-md border border-f-gray"
+            className="hover:cursor-pointer focus:outline-none bg-bg-sb p-2 rounded-md shadow-md text-p-sm font-medium"
           >
             <option value="last7Days">Last 7 Days</option>
             <option value="last30Days">Last 30 Days</option>
@@ -187,7 +187,7 @@ const DbGraph = ({ sales }) => {
                 onChange={(e) =>
                   handleCustomRangeChange(e.target.value, customRange.end)
                 }
-                className="hover:cursor-pointer focus:outline-none bg-bg-sub p-1 rounded-md border border-f-gray"
+                className="hover:cursor-pointer focus:outline-none bg-bg-sb p-2 rounded-md shadow-md text-p-sm font-medium"
               />
               <input
                 type="date"
@@ -195,7 +195,7 @@ const DbGraph = ({ sales }) => {
                 onChange={(e) =>
                   handleCustomRangeChange(customRange.start, e.target.value)
                 }
-                className="hover:cursor-pointer focus:outline-none bg-bg-sub p-1 rounded-md border border-f-gray"
+                className="hover:cursor-pointer focus:outline-none bg-bg-sb p-2 rounded-md shadow-md text-p-sm font-medium"
               />
             </div>
           )}

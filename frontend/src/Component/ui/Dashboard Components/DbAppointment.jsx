@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFetchData } from "../../../Hooks/useFetchData";
+import { FiArrowRight } from "react-icons/fi";
 
 const DbAppointment = () => {
   const { loading } = useFetchData();
@@ -37,15 +38,13 @@ const DbAppointment = () => {
 
   return (
     <div className="rounded-lg h-[360px] bg-white text-f-dark font-poppins border text-p-sm md:text-p-rg py-4 overflow-clip shadow-sm">
-      <header className="flex justify-between px-4 items-center">
-        <h1 className="font-medium text-nowrap text-c-secondary">
-          | Upcoming Appointment
-        </h1>
+      <header className="flex justify-between px-4 items-center text-c-secondary">
+        <h1 className="font-medium text-nowrap">| Upcoming Appointment</h1>
         <button
           onClick={viewAll}
-          className="px-2 py-1 border border-c-secondary text-c-secondary rounded-md"
+          className="flex items-center gap-1 font-medium text-p-sm hover:font-semibold"
         >
-          View All
+          View all <FiArrowRight />
         </button>
       </header>
       <section className="h-full overflow-y-scroll flex flex-col gap-4 px-4 mt-6 pb-12">

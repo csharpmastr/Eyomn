@@ -46,7 +46,7 @@ const RequestStock = ({ onClose, productDetails, productId }) => {
 
   return (
     <div className="fixed px-5 top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins  text-f-dark">
-      <div className="w-[500px] bg-white rounded-lg">
+      <div className="w-[440px] bg-white rounded-lg">
         <header className="p-4 border-b flex justify-between items-center">
           <h1 className="text-p-rg md:text-p-lg font-medium">Request Stock</h1>
           <button
@@ -103,13 +103,13 @@ const RequestStock = ({ onClose, productDetails, productId }) => {
         </main>
         <footer className="flex justify-end p-4 gap-4">
           <button
-            className="px-4 lg:px-12 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
+            className="px-6 py-1 text-f-dark text-p-sm md:text-p-rg font-medium rounded-full border shadow-sm hover:bg-sb-org"
             onClick={onClose}
           >
             Cancel
           </button>
           <button
-            className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-medium rounded-md  hover:bg-opacity-75 active:bg-pressed-branch"
+            className="px-6 py-1 bg-bg-con text-f-light text-p-sm md:text-p-rg font-medium rounded-full  hover:bg-opacity-75 active:bg-pressed-branch"
             onClick={handleSubmit}
           >
             Request
