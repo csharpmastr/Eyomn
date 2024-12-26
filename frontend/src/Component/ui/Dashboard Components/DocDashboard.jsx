@@ -215,12 +215,12 @@ const DocDashboard = () => {
             {isGraphCollapsed ? ">" : "<"}
           </div>
           <Suspense fallback={<div>Loading graph...</div>}>
-            {/* <DbGraph
+            <DbGraph
               patients={patients}
               sales={user.role === "doctor" ? null : null}
               selectedDataType={user.role === "2" ? "patients" : undefined}
               isCollapsed={isGraphCollapsed}
-            /> */}
+            />
           </Suspense>
         </div>
         <div

@@ -11,6 +11,7 @@ const {
   getBranchInventoryHandler,
   getPatientProductServicesAvailHandler,
   requestProductStockHandler,
+  getProductStockRequestsHandler,
 } = require("../Controller/inventoryController");
 const { validateToken } = require("../Wrapper/Wrapper");
 
@@ -36,4 +37,5 @@ router.post(
   validateToken,
   requestProductStockHandler
 );
+router.get("/get-stock-requests", getProductStockRequestsHandler);
 module.exports = router;

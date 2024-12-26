@@ -95,6 +95,7 @@ const DbGraph = ({ sales }) => {
     if (user.role === "0" && branches?.length) {
       return branches.map((branch) => {
         const branchData = groupedDataByBranch[branch.branchId] || {};
+
         if (!branchData || Object.keys(branchData).length === 0) {
           console.warn("No branch data found for the current user or branch.");
         }
