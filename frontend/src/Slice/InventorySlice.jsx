@@ -88,7 +88,12 @@ const inventorySlice = createSlice({
       if (!Array.isArray(state.purchases)) {
         state.purchases = [];
       }
-      state.purchases.push(action.payload);
+      const isDuplicate = state.purchases.some(
+        (purchase) => purchase.createdAt === action.payload.createdAt
+      );
+      if (!isDuplicate) {
+        state.purchases.push(action.payload);
+      }
     },
 
     setPurchases: (state, action) => {
@@ -104,7 +109,12 @@ const inventorySlice = createSlice({
       if (!Array.isArray(state.services)) {
         state.services = [];
       }
-      state.services.push(action.payload);
+      const isDuplicate = state.services.some(
+        (service) => service.id === action.payload.id
+      );
+      if (!isDuplicate) {
+        state.services.push(action.payload);
+      }
     },
     clearServices: (state) => {
       state.services = [];

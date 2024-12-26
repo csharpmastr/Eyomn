@@ -601,7 +601,7 @@ const requestProductStock = async (
 ) => {
   try {
     await verifyFirebaseUid(firebaseUid);
-
+    const currentDate = new Date();
     const requestColRef = inventoryCollection
       .doc(branchId)
       .collection("requests");
@@ -625,7 +625,7 @@ const requestProductStock = async (
     await requestColRef.doc(requestId).set({
       ...encryptedRequestDetails,
       status: "pending",
-      createdAt: new Date(),
+      createdAt: currentDate.toISOString(),
     });
 
     const notificationData = {
@@ -644,6 +644,44 @@ const requestProductStock = async (
     throw error;
   }
 };
+const getStockRequests = async (id, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const stockRequest = [];
+    for (const branchId of id) {
+      try {
+        const requestSnapshot = await inventoryCollection
+          .doc(branchId)
+          .collection("requests")
+          .get();
+
+        if (requestSnapshot.empty) {
+          console.log(`No requests found for branchId: ${branchId}`);
+          continue;
+        }
+
+        requestSnapshot.forEach((doc) => {
+          console.log(doc.data());
+          stockRequest.push({
+            branchId,
+            ...decryptDocument(doc.data(), ["createdAt", "quantity", "status"]),
+          });
+        });
+      } catch (error) {
+        console.error(
+          `Error fetching requests for branchId: ${branchId}`,
+          error
+        );
+      }
+    }
+
+    return stockRequest;
+  } catch (error) {
+    console.error("Error getting stock requests:", error);
+    throw error;
+  }
+};
 
 module.exports = {
   addProduct,
@@ -657,4 +695,5 @@ module.exports = {
   addServiceFee,
   getPatientProductServicesAvail,
   requestProductStock,
+  getStockRequests,
 };

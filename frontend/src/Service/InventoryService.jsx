@@ -268,3 +268,22 @@ export const requestProductStock = async (
     throw error;
   }
 };
+
+export const getProductStockRequest = async (id, firebaseUid) => {
+  try {
+    const response = await axios.get(
+      `${INVENTORY_API_BASE_URL}/get-stock-requests`,
+      {
+        params: {
+          id,
+          firebaseUid,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error getting stock requests: ", error);
+    throw error;
+  }
+};

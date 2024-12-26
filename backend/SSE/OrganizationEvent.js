@@ -61,6 +61,8 @@ const startOrganizationSSEServer = (app) => {
 
               const unsubscribe = onSnapshot(subcollectionQuery, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
+                  console.log("Document ID:", change.doc.id);
+                  console.log("Document Data:", change.doc.data());
                   const docData = change.doc.data();
                   const docId = change.doc.id;
 
@@ -77,7 +79,8 @@ const startOrganizationSSEServer = (app) => {
                           "doctorId",
                           "patientId",
                         ]),
-                        branchId, // Include branchId inside the data
+                        branchId,
+                        id: docId,
                       },
                     };
                   } else if (subcollection === "products") {
@@ -93,15 +96,16 @@ const startOrganizationSSEServer = (app) => {
                           "isDeleted",
                           "retail_price",
                         ]),
-                        branchId, // Include branchId inside the data
+                        branchId,
                       },
                     };
-                  } else {
+                  } else if (subcollection === "purchases") {
                     responseData = {
                       type: subcollection,
                       data: {
                         ...docData,
-                        branchId, // Include branchId inside the data
+                        branchId,
+                        id: docId,
                       },
                     };
                   }
