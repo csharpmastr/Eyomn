@@ -37,17 +37,17 @@ const DbAppointment = () => {
   };
 
   return (
-    <div className="rounded-lg h-[360px] bg-white text-f-dark font-poppins border text-p-sm md:text-p-rg py-4 overflow-clip shadow-sm">
+    <div className="rounded-lg h-[440px] bg-white text-f-dark font-poppins border text-p-sm md:text-p-rg py-4 overflow-clip shadow-sm">
       <header className="flex justify-between px-4 items-center text-c-secondary">
-        <h1 className="font-medium text-nowrap">| Upcoming Appointment</h1>
+        <h1 className="font-medium text-nowrap">Upcoming Appointment</h1>
         <button
           onClick={viewAll}
-          className="flex items-center gap-1 font-medium text-p-sm hover:font-semibold"
+          className="flex items-center justify-center gap-1 font-medium text-p-sm hover:font-semibold border border-c-secondary w-7 h-7 rounded-full"
         >
-          View all <FiArrowRight />
+          <FiArrowRight />
         </button>
       </header>
-      <section className="h-full overflow-y-scroll flex flex-col gap-4 px-4 mt-6 pb-12">
+      <section className="h-full overflow-y-auto flex flex-col gap-4 px-4 mt-6 pb-12">
         {loading ? (
           <p className="text-center text-gray-500">Loading appointments...</p>
         ) : sortedAppointments.length > 0 ? (

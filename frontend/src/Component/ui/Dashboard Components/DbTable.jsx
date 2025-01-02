@@ -22,7 +22,7 @@ const DbTable = ({ role }) => {
         )
       : [];
 
-  const currentData = sortedPatients.slice(0, 10);
+  const currentData = sortedPatients.slice(0, 5);
   const navigate = useNavigate();
 
   const viewAll = () => {
@@ -31,42 +31,63 @@ const DbTable = ({ role }) => {
 
   return (
     <div
-      className={`text-p-sm md:text-p-rg rounded-lg bg-white p-4 overflow-clip shadow-sm text-f-dark ${
-        role === "2" ? "h-[500px]" : "h-[360px]"
+      className={`text-p-sm md:text-p-rg rounded-lg bg-white p-4 overflow-auto shadow-sm text-f-dark font-Poppins ${
+        role === "2" ? "h-[440px]" : "h-[400px]"
       }`}
     >
       <header className="flex justify-between items-center text-c-secondary">
         <h1 className="font-medium text-nowrap text-c-secondary">
-          | Recent Patients
+          Recent Patients
         </h1>
         <button
           onClick={viewAll}
-          className="flex items-center gap-1 font-medium text-p-sm hover:font-semibold"
+          className="flex items-center gap-1 font-medium text-p-sm hover:font-semibold text-c-gray3"
         >
           View all <FiArrowRight />
         </button>
       </header>
-      <div className="text-left flex py-4 bg-bg-mc rounded-md mt-6 mb-3 shadow-sm text-f-gray2">
-        <div className="pl-8 w-1/3">Patient Name</div>
-        <div className="w-1/3">Contact</div>
-        <div className="w-1/3 pl-2">Last Visit</div>
-      </div>
-      <div className="h-full overflow-auto pb-32 flex flex-col gap-3">
-        {currentData.map((patientData, index) => (
-          <div
-            key={index}
-            className="py-4 cursor-pointer flex bg-f-light rounded-md shadow-sm"
-          >
-            <div className="pl-8 w-1/3">
-              {patientData.first_name + " " + patientData.last_name}
-            </div>
-            <div className="w-1/3">{patientData.contact_number}</div>
-            <div className="w-1/3 pl-2">
-              {formatDate(patientData.createdAt)}
-            </div>
-          </div>
-        ))}
-      </div>
+      <table className="min-w-full mt-6 table-auto border-collapse text-f-dark text-p-sm md:text-p-rg">
+        <thead>
+          <tr className="text-c-gray3 h-16">
+            <th className="pl-4 flex-1 text-start font-medium bg-bg-mc rounded-l-md">
+              Patient Name
+            </th>
+            <th className="pl-4 flex-1 text-start font-medium bg-bg-mc">
+              Birthday
+            </th>
+            <th className="pl-4 flex-1 text-start font-medium bg-bg-mc rounded-r-md">
+              Last Visit
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentData.map((patientData, index) => (
+            <tr className="h-14" key={index}>
+              <td
+                className={`pl-4 flex-1 ${
+                  index % 2 === 0 ? "bg-none" : "bg-bg-mc rounded-l-md"
+                }`}
+              >
+                {patientData.first_name + " " + patientData.last_name}
+              </td>
+              <td
+                className={`pl-4 flex-1 ${
+                  index % 2 === 0 ? "bg-none" : "bg-bg-mc"
+                }`}
+              >
+                {formatDate(patientData.birthdate)}
+              </td>
+              <td
+                className={`pl-4 flex-1 ${
+                  index % 2 === 0 ? "bg-none" : "bg-bg-mc rounded-r-md"
+                }`}
+              >
+                {formatDate(patientData.createdAt)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

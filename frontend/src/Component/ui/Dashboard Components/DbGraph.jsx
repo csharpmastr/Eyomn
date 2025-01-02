@@ -160,20 +160,16 @@ const DbGraph = ({ sales }) => {
   const graphHeight = user.role !== "2" ? "280" : "420";
 
   return (
-    <div
-      className={`text-p-sm md:text-p-rg text-f-dark rounded-lg bg-white p-4 border ${
-        user.role !== "2" ? "h-[360px]" : "h-[500px]"
-      }`}
-    >
+    <div className="text-p-sm md:text-p-rg text-f-dark rounded-lg bg-white p-4 border h-[440px]">
       <header className="flex justify-between h-fit w-full items-center mb-4">
         <h1 className="font-medium text-nowrap text-c-secondary">
-          | Sales Summary
+          Sales Summary
         </h1>
         <div className="flex gap-2">
           <select
             value={selectedFilter}
             onChange={handleFilterChange}
-            className="hover:cursor-pointer focus:outline-none bg-bg-sb p-2 rounded-md shadow-md text-p-sm font-medium"
+            className="hover:cursor-pointer focus:outline-none bg-bg-sb p-2 rounded-md border text-p-sm font-medium"
           >
             <option value="last7Days">Last 7 Days</option>
             <option value="last30Days">Last 30 Days</option>
@@ -205,7 +201,7 @@ const DbGraph = ({ sales }) => {
         options={chartOptions}
         series={chartSeries}
         type="line"
-        height={graphHeight}
+        height={320}
       />
     </div>
   );
