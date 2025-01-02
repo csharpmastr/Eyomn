@@ -39,25 +39,6 @@ const TransferStock = ({ onClose }) => {
     rejected: requests.filter((req) => req.status === "rejected"),
   };
 
-  const normalize = (str) => str?.toLowerCase().trim();
-
-  const branchOptions = products
-    .filter(
-      (product) =>
-        normalize(product.product_name) === normalize(product.product_name) &&
-        normalize(product.brand) === normalize(product.brand) &&
-        normalize(product.category) === normalize(product.category) &&
-        product.branchId !== product.branchId
-    )
-    .map((product) => {
-      const branch = branches.find((b) => b.branchId === product.branchId);
-      return {
-        branchName: branch?.name || "Unknown Branch",
-        branchId: product.branchId,
-        quantity: product.quantity,
-      };
-    });
-
   return (
     <div className="fixed top-0 left-0 flex items-center justify-center p-5 h-screen w-screen bg-zinc-800 bg-opacity-50 z-50 font-Poppins">
       <div className="w-4/5 bg-bg-mc rounded-lg">
@@ -150,20 +131,6 @@ const TransferStock = ({ onClose }) => {
                             <option value="" disabled className="text-c-gray3">
                               Select Branch
                             </option>
-                            {branchOptions.length > 0 ? (
-                              branchOptions.map((branch) => (
-                                <option
-                                  key={branch.branchId}
-                                  value={branch.branchId}
-                                >
-                                  {`${branch.branchName} (${branch.quantity} pcs)`}
-                                </option>
-                              ))
-                            ) : (
-                              <option value="" disabled>
-                                No available stock in all branches
-                              </option>
-                            )}
                           </select>
                         </section>
                         <footer className="flex gap-4 mt-10 font-medium text-f-light justify-end">
@@ -191,7 +158,6 @@ const TransferStock = ({ onClose }) => {
                     <div
                       key={index}
                       className="w-full rounded-md p-4 bg-white mb-5 shadow-sm cursor-pointer"
-                      onClick={handleToggle}
                     >
                       <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
                         <p>
