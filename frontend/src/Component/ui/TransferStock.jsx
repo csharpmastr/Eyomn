@@ -5,6 +5,7 @@ import { getProductStockRequest } from "../../Service/InventoryService";
 
 const TransferStock = ({ onClose }) => {
   const branches = useSelector((state) => state.reducer.branch.branch);
+  const products = useSelector((state) => state.reducer.inventory.products);
   const user = useSelector((state) => state.reducer.user.user);
   const [isLoading, setIsLoading] = useState(false);
   const [requests, setRequests] = useState([]);
@@ -38,6 +39,25 @@ const TransferStock = ({ onClose }) => {
     rejected: requests.filter((req) => req.status === "rejected"),
   };
 
+  const normalize = (str) => str?.toLowerCase().trim();
+
+  const branchOptions = products
+    .filter(
+      (product) =>
+        normalize(product.product_name) === normalize(product.product_name) &&
+        normalize(product.brand) === normalize(product.brand) &&
+        normalize(product.category) === normalize(product.category) &&
+        product.branchId !== product.branchId
+    )
+    .map((product) => {
+      const branch = branches.find((b) => b.branchId === product.branchId);
+      return {
+        branchName: branch?.name || "Unknown Branch",
+        branchId: product.branchId,
+        quantity: product.quantity,
+      };
+    });
+
   return (
     <div className="fixed top-0 left-0 flex items-center justify-center p-5 h-screen w-screen bg-zinc-800 bg-opacity-50 z-50 font-Poppins">
       <div className="w-4/5 bg-bg-mc rounded-lg">
@@ -61,14 +81,14 @@ const TransferStock = ({ onClose }) => {
             </div>
           ) : (
             <>
-              <section className="w-1/3">
+              <section className="w-1/3 overflow-auto">
                 <header className="w-full border-b border-f-gray pb-3 font-medium text-p-rg flex justify-between">
                   <h6>Pending</h6>
-                  <div className="flex items-center justify-center px-6 h-6 rounded-full bg-yellow-300 text-p-sm">
+                  <div className="flex items-center justify-center px-6 h-6 rounded-full bg-orange-300 text-p-sm">
                     {groupedRequests.pending.length}
                   </div>
                 </header>
-                <div className="py-5 overflow-auto">
+                <div className="py-5">
                   {groupedRequests.pending.map((req, index) => {
                     const branch = branches.find(
                       (b) => b.branchId === req.branchId
@@ -84,13 +104,22 @@ const TransferStock = ({ onClose }) => {
                         <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
                           <p>
                             Branch{" "}
-                            <span className="text-f-dark font-medium">
+                            <span className="font-medium px-3 rounded-full bg-c-primary text-f-light">
                               {branchName}
                             </span>
                           </p>
-                          <p>{new Date(req.createdAt).toLocaleDateString()}</p>
+                          <p>
+                            {new Date(req.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              }
+                            )}
+                          </p>
                         </section>
-                        <section className="flex justify-between">
+                        <section className="flex justify-between mb-4">
                           <article className="text-c-gray3 text-p-sm">
                             <p>Requested Product</p>
                             <p className="font-medium text-f-dark text-p-rg">
@@ -100,16 +129,56 @@ const TransferStock = ({ onClose }) => {
                           <article className="text-c-gray3 text-p-sm">
                             <p>Quantity</p>
                             <p className="font-medium text-f-dark text-p-rg">
-                              {req.quantity}
+                              {req.quantity} pcs
                             </p>
                           </article>
                         </section>
+                        <section className="text-p-sm text-c-gray3 mb-4">
+                          <p>Remarks</p>
+                          <div className="border rounded-md p-2 h-20 overflow-auto">
+                            <p className="font-medium text-f-dark">
+                              {req.remark}
+                            </p>
+                          </div>
+                        </section>
+                        <section className="text-p-sm text-c-gray3">
+                          <p>Request To</p>
+                          <select
+                            name="branches"
+                            className="mt-1 w-full p-2 border rounded-md text-f-dark focus:outline-c-primary"
+                          >
+                            <option value="" disabled className="text-c-gray3">
+                              Select Branch
+                            </option>
+                            {branchOptions.length > 0 ? (
+                              branchOptions.map((branch) => (
+                                <option
+                                  key={branch.branchId}
+                                  value={branch.branchId}
+                                >
+                                  {`${branch.branchName} (${branch.quantity} pcs)`}
+                                </option>
+                              ))
+                            ) : (
+                              <option value="" disabled>
+                                No available stock in all branches
+                              </option>
+                            )}
+                          </select>
+                        </section>
+                        <footer className="flex gap-4 mt-10 font-medium text-f-light justify-end">
+                          <button className="rounded-full border shadow-sm hover:bg-sb-org px-6 py-1 text-f-dark">
+                            Reject
+                          </button>
+                          <button className="rounded-full bg-bg-con hover:bg-opacity-75 active:bg-pressed-branch px-6 py-1">
+                            Approve
+                          </button>
+                        </footer>
                       </div>
                     );
                   })}
                 </div>
               </section>
-
               <section className="w-1/3 border-x border-f-gray px-5">
                 <header className="w-full border-b border-f-gray pb-3 font-medium text-p-rg flex justify-between">
                   <h6>On Process</h6>
