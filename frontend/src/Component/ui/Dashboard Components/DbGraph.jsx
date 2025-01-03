@@ -167,11 +167,11 @@ const DbGraph = ({ sales }) => {
 
   return (
     <div className="text-p-sm md:text-p-rg text-f-dark rounded-lg bg-white p-4 border h-[440px]">
-      <header className="flex justify-between h-fit w-full items-center mb-4">
+      <header className="flex flex-col md:flex-row justify-between h-fit w-full items-center mb-4">
         <h1 className="font-medium text-nowrap text-c-secondary">
           Sales Summary
         </h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto w-full md:w-auto">
           <select
             value={selectedFilter}
             onChange={handleFilterChange}

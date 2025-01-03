@@ -7,7 +7,6 @@ import BannerBg from "../../../assets/Image/BannerBg.png";
 
 // Use lazy loading for the components
 const DbCard = lazy(() => import("./DbCard"));
-const DbGraph = lazy(() => import("./DbGraph"));
 const DbAppointment = lazy(() => import("./DbAppointment"));
 const DbTable = lazy(() => import("./DbTable"));
 
@@ -19,7 +18,6 @@ const DocDashboard = () => {
   const patientCount = patients.length;
   const visitCount = visits.length;
   const [greeting, setGreeting] = useState("");
-  const [isGraphCollapsed, setIsGraphCollapsed] = useState(false);
 
   const filterPatientsByMonth = (data, monthOffset = 0) => {
     const now = new Date();
@@ -148,10 +146,6 @@ const DocDashboard = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleCollapseToggle = () => {
-    setIsGraphCollapsed((prevState) => !prevState);
-  };
-
   return (
     <>
       <div className="w-full flex flex-col md:flex-row gap-5 font-Poppins">
@@ -172,7 +166,7 @@ const DocDashboard = () => {
               Here’s an overview of your clinic’s performance today. Wishing you
               a productive day!
             </p>
-            <section className="flex w-full gap-5">
+            <section className="flex w-full gap-5 overflow-x-auto">
               {dummyData.map((data, index) => {
                 if (data.title === "Number of Staffs" && user.role === "3")
                   return null;

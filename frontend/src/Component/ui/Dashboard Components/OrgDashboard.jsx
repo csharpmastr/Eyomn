@@ -167,12 +167,12 @@ const OrgDashboard = () => {
 
   return (
     <>
-      <div className="w-full flex flex-col md:flex-row gap-5 font-Poppins">
+      <div className="w-full flex flex-col lg:flex-row gap-5 font-Poppins">
         <div
-          className="w-full md:w-3/5 h-fit md:h-[400px] p-5 bg-cover bg-no-repeat bg-center bg-c-primary rounded-lg justify-between flex flex-col shadow-sm"
+          className="w-full lg:w-3/5 h-fit md:h-[400px] p-5 bg-cover bg-no-repeat bg-center bg-c-primary rounded-lg justify-between flex flex-col shadow-sm"
           style={{ backgroundImage: `url(${BannerBg})` }}
         >
-          <div className="flex w-full justify-between">
+          <div className="flex flex-col md:flex-row w-full justify-between gap-4 md:gap-0">
             <article className="text-f-light text-p-lg">
               <h6>{greeting}</h6>
               <h1 className="lg:text-h-h6 2xl:text-h-h3 font-semibold">
@@ -224,7 +224,7 @@ const OrgDashboard = () => {
               Here’s an overview of your clinic’s performance today. Wishing you
               a productive day!
             </p>
-            <section className="flex w-full gap-5">
+            <section className="flex w-full gap-5 overflow-x-auto">
               {dummyData.map((data, index) =>
                 data.title === "Number of Staffs" &&
                 user.role === "3" ? null : (
@@ -253,25 +253,25 @@ const OrgDashboard = () => {
             </section>
           </div>
         </div>
-        <div className="w-full md:w-2/5">
+        <div className="w-full lg:w-2/5">
           <Suspense fallback={<div>Loading table...</div>}>
             <DbTable role={user.role} />
           </Suspense>
         </div>
       </div>
-      <div className="flex flex-col md:flex-row w-full h-full gap-5 font-Poppins">
-        <div className="w-full md:w-3/5">
+      <div className="flex flex-col lg:flex-row w-full h-full gap-5 font-Poppins">
+        <div className="w-full lg:w-3/5">
           <Suspense fallback={<div>Loading graph...</div>}>
             <DbGraph sales={filteredSales} />
           </Suspense>
         </div>
-        <div className="w-full md:w-2/5 flex flex-col md:flex-row gap-5">
-          <div className="w-full md:w-1/2">
+        <div className="w-full lg:w-2/5 flex flex-col md:flex-row gap-5">
+          <div className="w-full lg:w-1/2">
             <Suspense fallback={<div>Loading products...</div>}>
               <DbProduct filteredSales={filteredSales} />
             </Suspense>
           </div>
-          <div className="w-full md:w-1/2">
+          <div className="w-full lg:w-1/2">
             <Suspense fallback={<div>Loading appointments...</div>}>
               <DbAppointment />
             </Suspense>
