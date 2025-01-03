@@ -12,6 +12,9 @@ const {
   getPatientProductServicesAvailHandler,
   requestProductStockHandler,
   getProductStockRequestsHandler,
+  processProductRequestHandler,
+  updateStatusHandler,
+  getBranchRequestHandler,
 } = require("../Controller/inventoryController");
 const { validateToken } = require("../Wrapper/Wrapper");
 
@@ -38,4 +41,11 @@ router.post(
   requestProductStockHandler
 );
 router.get("/get-stock-requests", getProductStockRequestsHandler);
+router.post("/process-request", validateToken, processProductRequestHandler);
+router.patch(
+  "/update-request-status/:requestId",
+  validateToken,
+  updateStatusHandler
+);
+router.get("/get-branch-requests", validateToken, getBranchRequestHandler);
 module.exports = router;

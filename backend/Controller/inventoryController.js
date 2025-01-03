@@ -13,6 +13,9 @@ const {
   getPatientProductServicesAvail,
   requestProductStock,
   getStockRequests,
+  processProductRequest,
+  updateRequestStatus,
+  getBranchRequests,
 } = require("../Service/inventoryService");
 
 const addProductHandler = async (req, res) => {
@@ -258,7 +261,6 @@ const getProductStockRequestsHandler = async (req, res) => {
 
     return res.status(200).json(branchStockRequests);
   } catch (error) {
-    // Log the error for debugging
     console.error("Error in getProductStockRequestsHandler:", error);
 
     return res.status(500).json({
@@ -267,7 +269,49 @@ const getProductStockRequestsHandler = async (req, res) => {
     });
   }
 };
+const processProductRequestHandler = async (req, res) => {
+  try {
+    const { targetBranch, firebaseUid } = req.query;
+    const requestDetails = req.body;
 
+    if (!targetBranch) {
+      return res.status(400).json({ message: "No target branch provided." });
+    }
+    await processProductRequest(targetBranch, requestDetails, firebaseUid);
+    return res.status(200).json({ message: "Request processed!" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Server error while processing data." + error });
+  }
+};
+const updateStatusHandler = async (req, res) => {
+  try {
+    const { branchId, firebaseUid } = req.query;
+    const requestId = req.params.requestId;
+    const { status } = req.body;
+    console.log(status);
+
+    await updateRequestStatus(requestId, status, branchId, firebaseUid);
+    return res.status(200).json({ message: "Request updated!" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Server error while processing data." + error });
+  }
+};
+
+const getBranchRequestHandler = async (req, res) => {
+  try {
+    const { branchId, firebaseUid } = req.query;
+    const requests = await getBranchRequests(branchId, firebaseUid);
+    return res.status(200).json(requests);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Server error while processing data." + error });
+  }
+};
 module.exports = {
   addProductHandler,
 
@@ -281,4 +325,7 @@ module.exports = {
   getPatientProductServicesAvailHandler,
   requestProductStockHandler,
   getProductStockRequestsHandler,
+  processProductRequestHandler,
+  updateStatusHandler,
+  getBranchRequestHandler,
 };
