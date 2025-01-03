@@ -29,7 +29,7 @@ const TransferStock = ({ onClose }) => {
   const handleRequestClick = (request) => {
     const branch = branches.find((b) => b.branchId === request.branchId);
     const branchName = branch ? branch.name : "Unknown Branch";
-    setSelectedRequest({ ...request, branchName }); // Include branch name
+    setSelectedRequest({ ...request, branchName });
   };
 
   const groupedRequests = {
@@ -69,7 +69,7 @@ const TransferStock = ({ onClose }) => {
                     {groupedRequests.pending.length}
                   </div>
                 </header>
-                <div className="py-5">
+                <div className="pt-5 overflow-y-auto h-[650px]">
                   {groupedRequests.pending.map((req, index) => {
                     const branch = branches.find(
                       (b) => b.branchId === req.branchId
@@ -153,37 +153,45 @@ const TransferStock = ({ onClose }) => {
                     {groupedRequests.onProcess.length}
                   </div>
                 </header>
-                <div className="py-5 overflow-auto">
-                  {groupedRequests.onProcess.map((req, index) => (
-                    <div
-                      key={index}
-                      className="w-full rounded-md p-4 bg-white mb-5 shadow-sm cursor-pointer"
-                    >
-                      <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
-                        <p>
-                          Branch{" "}
-                          <span className="text-f-dark font-medium">
-                            {req.branchId}
-                          </span>
-                        </p>
-                        <p>{new Date(req.createdAt).toLocaleDateString()}</p>
-                      </section>
-                      <section className="flex justify-between">
-                        <article className="text-c-gray3 text-p-sm">
-                          <p>Requested Product</p>
-                          <p className="font-medium text-f-dark text-p-rg">
-                            {req.product_name}
+                <div className="pt-5 overflow-y-auto h-[650px]">
+                  {groupedRequests.onProcess.map((req, index) => {
+                    const branch = branches.find(
+                      (b) => b.branchId === req.branchId
+                    );
+                    const branchName = branch ? branch.name : "Unknown Branch";
+
+                    return (
+                      <div
+                        key={index}
+                        className="w-full rounded-md p-4 bg-white mb-5 shadow-sm cursor-pointer"
+                        onClick={() => handleRequestClick(req)}
+                      >
+                        <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
+                          <p>
+                            Branch{" "}
+                            <span className="text-f-dark font-medium">
+                              {branchName}
+                            </span>
                           </p>
-                        </article>
-                        <article className="text-c-gray3 text-p-sm">
-                          <p>Quantity</p>
-                          <p className="font-medium text-f-dark text-p-rg">
-                            {req.quantity}
-                          </p>
-                        </article>
-                      </section>
-                    </div>
-                  ))}
+                          <p>{new Date(req.createdAt).toLocaleDateString()}</p>
+                        </section>
+                        <section className="flex justify-between">
+                          <article className="text-c-gray3 text-p-sm">
+                            <p>Requested Product</p>
+                            <p className="font-medium text-f-dark text-p-rg">
+                              {`${req.product_name} (${req.brand})`}
+                            </p>
+                          </article>
+                          <article className="text-c-gray3 text-p-sm">
+                            <p>Quantity</p>
+                            <p className="font-medium text-f-dark text-p-rg">
+                              {req.quantity}
+                            </p>
+                          </article>
+                        </section>
+                      </div>
+                    );
+                  })}
                 </div>
               </section>
               <div className="w-1/3">

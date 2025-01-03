@@ -54,6 +54,10 @@ const DbGraph = ({ sales }) => {
 
   const groupedDataByBranch = useMemo(() => {
     const grouped = {};
+    if (!branches || !filteredData || !user) {
+      return grouped;
+    }
+
     if (user.role === "0") {
       branches.forEach((branch) => {
         grouped[branch.branchId] = {};
@@ -75,11 +79,12 @@ const DbGraph = ({ sales }) => {
       filteredData.forEach((item) => {
         const date = dayjs(item.createdAt).format("YYYY-MM-DD");
         const branchId =
-          user.role === "3" ? user.branches[0].branchId : user.branchId;
+          user.role === "3" ? user.branches?.[0]?.branchId : user.branchId;
         const total = item.purchaseDetails.reduce(
           (sum, detail) => sum + detail.totalAmount,
           0
         );
+
         if (!grouped[branchId]) {
           grouped[branchId] = {};
         }
@@ -89,7 +94,7 @@ const DbGraph = ({ sales }) => {
     }
 
     return grouped;
-  }, [filteredData, branches]);
+  }, [filteredData, branches, user]);
 
   const chartSeries = useMemo(() => {
     if (user.role === "0" && branches?.length) {
@@ -149,11 +154,12 @@ const DbGraph = ({ sales }) => {
     stroke: { curve: "smooth" },
     dataLabels: { enabled: false },
     colors:
-      branches.length >= 1
+      branches && branches.length >= 1
         ? branches.map(
             (_, i) => `hsl(${(i * 360) / branches.length}, 70%, 50%)`
           )
         : ["hsl(0, 70%, 50%)"],
+
     markers: { size: 0 },
   };
 

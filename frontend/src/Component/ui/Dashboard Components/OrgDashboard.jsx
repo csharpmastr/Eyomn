@@ -203,13 +203,17 @@ const OrgDashboard = () => {
                   <select
                     className="hover:cursor-pointer h-fit focus:outline-none bg-bg-sub border px-2 py-2 rounded-md text-p-sm font-medium  text-f-dark text-wrap"
                     onChange={(e) => setSelectedBranch(e.target.value)}
+                    disabled={!branch || branch.length === 0}
                   >
-                    <option value="">All Branches</option>
-                    {branch.map((item, key) => (
-                      <option key={key} value={item.branchId}>
-                        {item.name}
-                      </option>
-                    ))}
+                    <option value="">
+                      {!branch ? "Loading branches..." : "All Branches"}
+                    </option>
+                    {branch &&
+                      branch.map((item, key) => (
+                        <option key={key} value={item.branchId}>
+                          {item.name}
+                        </option>
+                      ))}
                   </select>
                 </div>
               )}

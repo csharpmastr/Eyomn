@@ -15,6 +15,7 @@ const {
 } = require("../Helper/Helper");
 const { decryptData } = require("../Security/DataHashing");
 const { pushNotification } = require("./notificationService");
+const { request } = require("https");
 
 const generateSKU = () => {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -665,6 +666,7 @@ const getStockRequests = async (id, firebaseUid) => {
           console.log(doc.data());
           stockRequest.push({
             branchId,
+            requestId: doc.id,
             ...decryptDocument(doc.data(), ["createdAt", "quantity", "status"]),
           });
         });
@@ -683,6 +685,95 @@ const getStockRequests = async (id, firebaseUid) => {
   }
 };
 
+const processProductRequest = async (
+  targetBranch,
+  requestDetails,
+  firebaseUid
+) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+    console.log(targetBranch, requestDetails);
+
+    const requestBranchColRef = inventoryCollection
+      .doc(targetBranch)
+      .collection("branchRequests");
+
+    const branchRequestId = await generateUniqueId(requestBranchColRef);
+    const encryptedRequestDetails = encryptDocument(requestDetails, [
+      "branchId",
+      "createdAt",
+      "quantity",
+      "status",
+      "requestId",
+    ]);
+    await requestBranchColRef.doc(branchRequestId).set({
+      ...encryptedRequestDetails,
+      approvedAt: new Date().toISOString(),
+      status: "pending",
+    });
+  } catch (error) {
+    console.error("Error processing product request:", error);
+    throw error;
+  }
+};
+const updateRequestStatus = async (
+  requestId,
+  status,
+  branchId,
+  firebaseUid
+) => {
+  try {
+    console.log(status);
+
+    await verifyFirebaseUid(firebaseUid);
+    const requestRef = inventoryCollection
+      .doc(branchId)
+      .collection("requests")
+      .doc(requestId);
+    const requestDoc = await requestRef.get();
+    if (!requestDoc.exists) {
+      throw new Error("Request not found");
+    }
+    await requestRef.update({ status });
+  } catch (error) {
+    console.error("Error updating request status: ", error);
+    throw error;
+  }
+};
+const getBranchRequests = async (branchId, firebaseUid) => {
+  try {
+    console.log(branchId, firebaseUid);
+
+    await verifyFirebaseUid(firebaseUid);
+    const branchRequests = [];
+    const requestColRef = inventoryCollection
+      .doc(branchId)
+      .collection("branchRequests");
+    const requestSnap = await requestColRef.get();
+
+    if (requestSnap.empty) {
+      console.log("No requests found for branchId: ", branchId);
+      return branchRequests;
+    }
+    const decryptedBranchRequests = requestSnap.docs.map((doc) => {
+      return {
+        ...decryptDocument(doc.data(), [
+          "createdAt",
+          "quantity",
+          "status",
+          "approvedAt",
+          "branchId",
+          "requestId",
+        ]),
+      };
+    });
+    return decryptedBranchRequests;
+  } catch (error) {
+    console.error("Error getting branch requests:", error);
+    throw error;
+  }
+};
+
 module.exports = {
   addProduct,
 
@@ -696,4 +787,7 @@ module.exports = {
   getPatientProductServicesAvail,
   requestProductStock,
   getStockRequests,
+  processProductRequest,
+  updateRequestStatus,
+  getBranchRequests,
 };

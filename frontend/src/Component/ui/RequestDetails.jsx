@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import {
+  processProductRequest,
+  updateRequestStatus,
+} from "../../Service/InventoryService";
 
 const RequestDetails = ({ onClose, details }) => {
+  const user = useSelector((state) => state.reducer.user.user);
   const products = useSelector((state) => state.reducer.inventory.products);
   const branches = useSelector((state) => state.reducer.branch.branch);
+  const [selectedBranch, setSelectedBranch] = useState(null);
   const normalize = (str) => str?.toLowerCase().trim();
 
   const branchOptions = products
@@ -22,6 +28,45 @@ const RequestDetails = ({ onClose, details }) => {
         quantity: product.quantity,
       };
     });
+
+  const handleChangeSelectedBranch = (e) => {
+    const selectedBranchId = e.target.value;
+    const branch = branchOptions.find(
+      (option) => option.branchId === selectedBranchId
+    );
+    setSelectedBranch(branch);
+  };
+
+  const handleProcessRequest = async () => {
+    if (!selectedBranch) {
+      alert("Please select a branch to transfer the stock");
+      return;
+    }
+    try {
+      const response = await processProductRequest(
+        selectedBranch.branchId,
+        details,
+        user.firebaseUid
+      );
+      if (response) {
+        const status = "on process";
+        const updateStatus = await updateRequestStatus(
+          details.requestId,
+          status,
+          details.branchId,
+          user.firebaseUid
+        );
+        if (updateStatus) {
+          console.log("Request status updated successfully");
+          console.log("Request processed successfully");
+          onClose();
+        }
+      }
+    } catch (error) {
+      console.log("Error processing request", error);
+    }
+  };
+
   return (
     <div className="fixed px-5 top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-15 z-50 font-Poppins  text-f-dark">
       <div className="w-[400px] bg-white rounded-lg">
@@ -60,36 +105,46 @@ const RequestDetails = ({ onClose, details }) => {
               <p className="font-medium text-f-dark">{details.remark}</p>
             </div>
           </section>
-          <section className="text-p-sm text-c-gray3">
-            <p>Request To</p>
-            <select
-              name="branches"
-              className="mt-1 w-full p-2 border rounded-md text-f-dark focus:outline-c-primary"
-            >
-              <option value="" disabled className="text-c-gray3">
-                Select Branch
-              </option>
-              {branchOptions.length > 0 ? (
-                branchOptions.map((branch) => (
-                  <option key={branch.branchId} value={branch.branchId}>
-                    {`${branch.branchName} (${branch.quantity} pcs)`}
+
+          {details.status === "pending" && (
+            <>
+              <section className="text-p-sm text-c-gray3">
+                <p>Request To</p>
+                <select
+                  name="branches"
+                  className="mt-1 w-full p-2 border rounded-md text-f-dark focus:outline-c-primary"
+                  value={selectedBranch?.branchId || ""}
+                  onChange={handleChangeSelectedBranch}
+                >
+                  <option value="" disabled className="text-c-gray3">
+                    Select Branch
                   </option>
-                ))
-              ) : (
-                <option value="" disabled>
-                  No available stock in all branches
-                </option>
-              )}
-            </select>
-          </section>
-          <footer className="flex gap-4 mt-12 font-medium text-f-light justify-end">
-            <button className="rounded-full border shadow-sm hover:bg-sb-org px-6 py-1 text-f-dark">
-              Reject
-            </button>
-            <button className="rounded-full bg-bg-con hover:bg-opacity-75 active:bg-pressed-branch px-6 py-1">
-              Approve
-            </button>
-          </footer>
+                  {branchOptions.length > 0 ? (
+                    branchOptions.map((branch) => (
+                      <option key={branch.branchId} value={branch.branchId}>
+                        {`${branch.branchName} (${branch.quantity} pcs)`}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="" disabled>
+                      No available stock in all branches
+                    </option>
+                  )}
+                </select>
+              </section>
+              <footer className="flex gap-4 mt-12 font-medium text-f-light justify-end">
+                <button className="rounded-full border shadow-sm hover:bg-sb-org px-6 py-1 text-f-dark">
+                  Reject
+                </button>
+                <button
+                  className="rounded-full bg-bg-con hover:bg-opacity-75 active:bg-pressed-branch px-6 py-1"
+                  onClick={handleProcessRequest}
+                >
+                  Approve
+                </button>
+              </footer>
+            </>
+          )}
         </div>
       </div>
     </div>
