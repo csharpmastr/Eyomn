@@ -1,45 +1,60 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiArrowRight } from "react-icons/fi";
+import { useSelector } from "react-redux";
+import {
+  getBranchRequests,
+  getProductStockRequest,
+} from "../../Service/InventoryService";
 
 const TransferStockBranch = ({ onClose }) => {
-  const samplePending = [
-    {
-      bName: "Santa Cruz",
-      date: "December 12, 2024",
-      reqP: "Apple Cider (Eye Glass)",
-      qty: "20 pcs",
-      remarks:
-        "Yao Ming, an 8-time NBA All-Star. The Chinese basketball icon played for the Houston Rockets and was known for his dominant presence in the paint.",
-    },
-    {
-      bName: "Paete",
-      date: "December 06, 2024",
-      reqP: "Dodo (Other)",
-      qty: "10 pcs",
-      remarks:
-        "Yao Ming, an 8-time NBA All-Star. The Chinese basketball icon played for the Houston Rockets and was known for his dominant presence in the paint.",
-    },
-  ];
-
-  const sampleOnprocess = [
-    {
-      bName: "Santa Cruz",
-      date: "December 16, 2024",
-      reqP: "Energen (Medicine)",
-      qty: 100,
-      remarks:
-        "Yao Ming, an 8-time NBA All-Star. The Chinese basketball icon played for the Houston Rockets and was known for his dominant presence in the paint.",
-    },
-    {
-      bName: "Palawan",
-      date: "December 18, 2024",
-      reqP: "Alfonso (Other)",
-      qty: 20,
-      remarks: "Kung ilan lang po ang kaya",
-    },
-  ];
-
+  const products = useSelector((state) => state.reducer.inventory.products);
+  const user = useSelector((state) => state.reducer.user.user);
+  const [isLoading, setIsLoading] = useState(false);
+  const [requests, setRequests] = useState([]);
+  const [branchRequests, setBranchRequests] = useState([]);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const normalize = (str) => str?.toLowerCase().trim();
   const [selectType, setSelectType] = useState("My Request");
+  console.log(products);
+
+  useEffect(() => {
+    const fetchRequests = async (branchIds, firebaseUid) => {
+      try {
+        const response = await getProductStockRequest(branchIds, firebaseUid);
+        if (response) {
+          console.log(response);
+
+          setRequests(response);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchRequests([user.userId], user.firebaseUid);
+  }, [user, user.firebaseUid]);
+
+  const groupedRequests = {
+    pending: requests.filter((req) => req.status === "pending"),
+    onProcess: requests.filter((req) => req.status === "on process"),
+    completed: requests.filter((req) => req.status === "completed"),
+    rejected: requests.filter((req) => req.status === "rejected"),
+  };
+  useEffect(() => {
+    if (selectType === "Branch Request") {
+      const fetchBranchRequests = async (branchId, firebaseUid) => {
+        try {
+          const response = await getBranchRequests(branchId, firebaseUid);
+          if (response) {
+            console.log(response);
+            setBranchRequests(response);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      fetchBranchRequests(user.userId, user.firebaseUid);
+    }
+  }, [selectType, user.userId, user.firebaseUid]);
 
   return (
     <div className="fixed top-0 left-0 flex items-center justify-center p-5 h-screen w-screen bg-zinc-800 bg-opacity-50 z-50 font-Poppins">
@@ -77,106 +92,117 @@ const TransferStockBranch = ({ onClose }) => {
         <div className="flex p-5 gap-5 h-[750px]">
           {selectType === "My Request" && (
             <>
-              <section className="w-1/3 overflow-auto">
+              <section className="w-1/3 ">
                 <header className="w-full border-b border-f-gray pb-3 font-medium text-p-rg flex justify-between">
                   <h6>Pending</h6>
                   <div className="flex items-center justify-center px-6 h-6 rounded-full bg-orange-300 text-p-sm">
-                    {samplePending.length}
+                    {groupedRequests.pending.length}
                   </div>
                 </header>
-                <div className="py-5">
-                  {samplePending.map((deepStrictEqual, index) => (
-                    <div
-                      className="w-full rounded-md p-4 bg-white mb-5 shadow-sm cursor-pointer"
-                      key={index}
-                    >
-                      <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
-                        {/* <p>
-                          Branch{" "}
-                          <span className="font-medium px-3 rounded-full bg-c-primary text-f-light">
-                            {deepStrictEqual.bName}
-                          </span>
-                        </p> */}
-                        <p>{deepStrictEqual.date}</p>
-                      </section>
-                      <section className="flex justify-between mb-4">
-                        <article className="text-c-gray3 text-p-sm">
-                          <p>Requested Product</p>
-                          <p className="font-medium text-f-dark text-p-rg">
-                            {deepStrictEqual.reqP}
-                          </p>
-                        </article>
-                        <article className="text-c-gray3 text-p-sm">
-                          <p>Quantity</p>
-                          <p className="font-medium text-f-dark text-p-rg">
-                            {deepStrictEqual.qty}
-                          </p>
-                        </article>
-                      </section>
-                      <section className="text-p-sm text-c-gray3 mb-4">
-                        <p>Remarks</p>
-                        <div className="border rounded-md p-2 h-20 overflow-auto">
-                          <p className="font-medium text-f-dark">
-                            {deepStrictEqual.remarks}
-                          </p>
-                        </div>
-                      </section>
-                    </div>
-                  ))}
+                <div className="pt-5 overflow-y-auto h-[650px]">
+                  {groupedRequests.pending.length > 0 ? (
+                    <>
+                      {" "}
+                      {groupedRequests.pending.map((req, index) => {
+                        // const branch = branches.find(
+                        //   (b) => b.branchId === req.branchId
+                        // );
+                        // const branchName = branch ? branch.name : "Unknown Branch";
+
+                        return (
+                          <div
+                            key={index}
+                            className="w-full rounded-md p-4 bg-white mb-5 shadow-sm cursor-pointer"
+                            // onClick={() => handleRequestClick(req)}
+                          >
+                            <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
+                              <p>
+                                {new Date(req.createdAt).toLocaleDateString()}
+                              </p>
+                            </section>
+                            <section className="flex justify-between">
+                              <article className="text-c-gray3 text-p-sm">
+                                <p>Requested Product</p>
+                                <p className="font-medium text-f-dark text-p-rg">
+                                  {`${req.product_name} (${req.brand})`}
+                                </p>
+                              </article>
+                              <article className="text-c-gray3 text-p-sm">
+                                <p>Quantity</p>
+                                <p className="font-medium text-f-dark text-p-rg">
+                                  {req.quantity}
+                                </p>
+                              </article>
+                            </section>
+                          </div>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-center items-center w-full">
+                        <h1 className="text-center text-f-dark text-lg font-medium">
+                          No Pending Requests
+                        </h1>
+                      </div>
+                    </>
+                  )}
                 </div>
               </section>
               <section className="w-1/3 border-x border-f-gray px-5">
                 <header className="w-full border-b border-f-gray pb-3 font-medium text-p-rg flex justify-between">
                   <h6>On Process</h6>
                   <div className="flex items-center justify-center px-6 h-6 rounded-full bg-blue-300 text-p-sm">
-                    {sampleOnprocess.length}
+                    {groupedRequests.onProcess.length}
                   </div>
                 </header>
-                <div className="py-5">
-                  {sampleOnprocess.map((dets, index) => (
-                    <div
-                      className="w-full rounded-md p-4 bg-white mb-5 shadow-sm cursor-pointer"
-                      key={index}
-                    >
-                      <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
-                        {/* <p>
-                          Branch{" "}
-                          <span className="font-medium px-3 rounded-full bg-c-primary text-f-light">
-                            {dets.bName}
-                          </span>
-                        </p> */}
-                        <p>{dets.date}</p>
-                      </section>
-                      <section className="flex justify-between mb-4">
-                        <article className="text-c-gray3 text-p-sm">
-                          <p>Requested Product</p>
-                          <p className="font-medium text-f-dark text-p-rg">
-                            {dets.reqP}
-                          </p>
-                        </article>
-                        <article className="text-c-gray3 text-p-sm">
-                          <p>Quantity</p>
-                          <p className="font-medium text-f-dark text-p-rg">
-                            {dets.qty}
-                          </p>
-                        </article>
-                      </section>
-                      <section className="text-p-sm text-c-gray3 mb-4">
-                        <p>Remarks</p>
-                        <div className="border rounded-md p-2 h-20 overflow-auto">
-                          <p className="font-medium text-f-dark">
-                            {dets.remarks}
-                          </p>
-                        </div>
-                      </section>
-                      <section className="text-p-sm text-c-gray3">
-                        <p>Requested To</p>
-                        <p className="font-medium text-f-dark text-p-rg">
-                          {dets.bName} Branch
-                        </p>
-                      </section>
-                    </div>
-                  ))}
+                <div className="pt-5 overflow-y-auto h-[650px]">
+                  {groupedRequests.onProcess.length > 0 ? (
+                    <>
+                      {groupedRequests.onProcess.map((req, index) => {
+                        // const branch = branches.find(
+                        //   (b) => b.branchId === req.branchId
+                        // );
+                        // const branchName = branch ? branch.name : "Unknown Branch";
+
+                        return (
+                          <div
+                            key={index}
+                            className="w-full rounded-md p-4 bg-white mb-5 shadow-sm cursor-pointer"
+                            // onClick={() => handleRequestClick(req)}
+                          >
+                            <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
+                              <p>
+                                {new Date(req.createdAt).toLocaleDateString()}
+                              </p>
+                            </section>
+                            <section className="flex justify-between">
+                              <article className="text-c-gray3 text-p-sm">
+                                <p>Requested Product</p>
+                                <p className="font-medium text-f-dark text-p-rg">
+                                  {`${req.product_name} (${req.brand})`}
+                                </p>
+                              </article>
+                              <article className="text-c-gray3 text-p-sm">
+                                <p>Quantity</p>
+                                <p className="font-medium text-f-dark text-p-rg">
+                                  {req.quantity}
+                                </p>
+                              </article>
+                            </section>
+                          </div>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-center items-center w-full">
+                        <h1 className="text-center text-f-dark text-lg font-medium">
+                          No On process Requests
+                        </h1>
+                      </div>
+                    </>
+                  )}
                 </div>
               </section>
               <div className="w-1/3">
@@ -205,11 +231,11 @@ const TransferStockBranch = ({ onClose }) => {
                 <header className="border-f-gray pb-3 font-medium text-p-rg flex gap-5">
                   <h6>Pending Request</h6>
                   <div className="flex items-center justify-center px-6 h-6 rounded-full bg-orange-300 text-p-sm">
-                    {sampleOnprocess.length}
+                    {branchRequests.length}
                   </div>
                 </header>
                 <div className="py-5 grid grid-cols-3">
-                  {sampleOnprocess.map((dets, index) => (
+                  {branchRequests.map((dets, index) => (
                     <div className="w-[400px]">
                       <div
                         className="w-full rounded-md p-4 bg-white mb-3 shadow-sm cursor-pointer"
@@ -219,7 +245,7 @@ const TransferStockBranch = ({ onClose }) => {
                           <p>
                             Branch{" "}
                             <span className="font-medium px-3 rounded-full bg-c-primary text-f-light">
-                              {dets.bName}
+                              {dets.branchName}
                             </span>
                           </p>
                           <p>{dets.date}</p>
@@ -228,13 +254,13 @@ const TransferStockBranch = ({ onClose }) => {
                           <article className="text-c-gray3 text-p-sm">
                             <p>Requested Product</p>
                             <p className="font-medium text-f-dark text-p-rg">
-                              {dets.reqP}
+                              {dets.product_name} ({dets.brand})
                             </p>
                           </article>
                           <article className="text-c-gray3 text-p-sm">
                             <p>Quantity</p>
                             <p className="font-medium text-f-dark text-p-rg">
-                              {dets.qty} pcs
+                              {dets.quantity} pcs
                             </p>
                           </article>
                         </section>
@@ -242,14 +268,14 @@ const TransferStockBranch = ({ onClose }) => {
                           <p>Remarks</p>
                           <div className="border rounded-md p-2 h-20 overflow-auto">
                             <p className="font-medium text-f-dark">
-                              {dets.remarks}
+                              {dets.remark}
                             </p>
                           </div>
                         </section>
                         <section className="text-p-sm text-c-gray3">
                           <p>Requested To</p>
                           <p className="font-medium text-f-dark text-p-rg">
-                            {dets.bName} Branch
+                            {user.name}
                           </p>
                         </section>
                       </div>
@@ -259,25 +285,46 @@ const TransferStockBranch = ({ onClose }) => {
                             Transfer Stock{" "}
                             <span className="text-blue-500">*</span>
                           </p>
-                          <div className="flex items-center justify-between">
-                            <p className="w-1/3 text-f-dark font-medium">
-                              Available Stock <br />
-                              (579)
-                            </p>
-                            <FiArrowRight className="text-f-dark text-p-lg w-1/3" />
-                            <input
-                              type="number"
-                              name="stock_transfer"
-                              min={0}
-                              value={dets.qty}
-                              // onChange={}
-                              className="mt-1 w-1/3 px-4 py-3 border rounded-md text-f-dark focus:outline-c-primary"
-                              placeholder="0"
-                            />
-                          </div>
+                          {branchRequests.map((dets, index) => {
+                            const availableStock = products
+                              .filter(
+                                (product) =>
+                                  normalize(product.product_name) ===
+                                    normalize(dets.product_name) &&
+                                  normalize(product.brand) ===
+                                    normalize(dets.brand) &&
+                                  normalize(product.category) ===
+                                    normalize(dets.category)
+                              )
+                              .reduce(
+                                (total, product) => total + product.quantity,
+                                0
+                              );
+
+                            return (
+                              <div
+                                key={index}
+                                className="flex items-center justify-between mb-4"
+                              >
+                                <p className="w-1/3 text-f-dark font-medium">
+                                  Available Stock <br />
+                                  {availableStock}
+                                </p>
+                                <FiArrowRight className="text-f-dark text-p-lg w-1/3" />
+                                <input
+                                  type="number"
+                                  name={`stock_transfer_${index}`}
+                                  min={0}
+                                  value={dets.quantity || 0}
+                                  className="mt-1 w-1/3 px-4 py-3 border rounded-md text-f-dark focus:outline-c-primary"
+                                  placeholder="0"
+                                />
+                              </div>
+                            );
+                          })}
                         </section>
                         <section className="mb-4">
-                          <p>Remark</p>
+                          {/* <p>Remark</p>
                           <textarea
                             type="text"
                             name=""
@@ -286,7 +333,7 @@ const TransferStockBranch = ({ onClose }) => {
                             className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
                             rows={2}
                             placeholder="Comemement"
-                          />
+                          /> */}
                         </section>
                         <footer className="flex gap-4 font-medium text-f-light justify-end">
                           <button className="rounded-full border shadow-sm hover:bg-sb-org px-6 py-1 text-f-dark">

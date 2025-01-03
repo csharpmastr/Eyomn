@@ -287,3 +287,67 @@ export const getProductStockRequest = async (id, firebaseUid) => {
     throw error;
   }
 };
+
+export const updateRequestStatus = async (
+  requestId,
+  status,
+  branchId,
+  firebaseUid
+) => {
+  try {
+    const response = await axios.patch(
+      `${INVENTORY_API_BASE_URL}/update-request-status/${requestId}`,
+      { status },
+      { params: { firebaseUid, branchId }, withCredentials: true }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error updating request status: ", error);
+    throw error;
+  }
+};
+
+export const processProductRequest = (
+  targetBranch,
+  requestDetails,
+  firebaseUid
+) => {
+  try {
+    const response = axios.post(
+      `${INVENTORY_API_BASE_URL}/process-request`,
+      {
+        ...requestDetails,
+      },
+      {
+        params: {
+          targetBranch,
+          firebaseUid,
+        },
+        withCredentials: true,
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error processing request: ", error);
+    throw error;
+  }
+};
+
+export const getBranchRequests = async (branchId, firebaseUid) => {
+  try {
+    const response = await axios.get(
+      `${INVENTORY_API_BASE_URL}/get-branch-requests`,
+      {
+        params: {
+          branchId,
+          firebaseUid,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error getting branch requests: ", error);
+    throw error;
+  }
+};
