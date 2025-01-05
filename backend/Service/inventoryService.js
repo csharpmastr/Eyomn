@@ -711,6 +711,22 @@ const processProductRequest = async (
       approvedAt: new Date().toISOString(),
       status: "pending",
     });
+    const requestorId = requestDetails.branchId;
+    const requestorNameSnap = await branchCollection.doc(requestorId).get();
+
+    if (requestorNameSnap.empty) {
+      throw new Error("Requestor not found");
+    }
+    const requestorName = requestorNameSnap.data();
+    const decryptedRequestorName = decryptData(requestorName.name);
+    console.log(decryptedRequestorName);
+
+    await pushNotification(targetBranch, "inventory", {
+      branchName: decryptedRequestorName,
+      branchId: requestDetails.branchId,
+      requestId: branchRequestId,
+    });
+    console.log("Request successfully processed!");
   } catch (error) {
     console.error("Error processing product request:", error);
     throw error;
