@@ -66,12 +66,17 @@ const ViewSchedule = ({ onClose, appointments }) => {
 
   return ReactDOM.createPortal(
     <div className="fixed top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-      <div className="w-[380px] h-[480px] md:w-[500px] md:h-[600px]">
-        <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-          <h1 className="text-p-rg md:text-p-lg text-c-secondary font-medium">
+      <div className="w-[380px] h-[480px] md:w-[500px] md:h-[600px] bg-white rounded-lg">
+        <header className="px-4 py-5 border-b flex justify-between items-center">
+          <h1 className="text-p-rg md:text-p-lg text-f-dark font-medium">
             Appointment Schedules
           </h1>
-          <button onClick={onClose}> &times; </button>
+          <button
+            onClick={onClose}
+            className="w-10 h-10 rounded-md border hover:bg-zinc-50"
+          >
+            &times;
+          </button>
         </header>
         <div className="bg-bg-mc h-full rounded-b-lg text-f-dark flex flex-col px-2 py-4">
           <div className="overflow-y-auto h-full flex flex-col gap-4">

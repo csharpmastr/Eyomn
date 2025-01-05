@@ -99,8 +99,8 @@ const Inventory = () => {
             <IoMdSearch className="h-6 w-6 text-f-dark" />
             <input
               type="text"
-              className="w-full text-f-dark focus:outline-none placeholder-f-gray2 bg-white"
-              placeholder="Search product... "
+              className="w-fit text-f-dark focus:outline-none placeholder-f-gray2 bg-white"
+              placeholder="Search product"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
