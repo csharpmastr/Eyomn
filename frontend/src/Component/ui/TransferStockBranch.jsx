@@ -235,118 +235,96 @@ const TransferStockBranch = ({ onClose }) => {
                   </div>
                 </header>
                 <div className="py-5 grid grid-cols-3">
-                  {branchRequests.map((dets, index) => (
-                    <div className="w-[400px]">
-                      <div
-                        className="w-full rounded-md p-4 bg-white mb-3 shadow-sm cursor-pointer"
-                        key={index}
-                      >
-                        <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
-                          <p>
-                            Branch{" "}
-                            <span className="font-medium px-3 rounded-full bg-c-primary text-f-light">
-                              {dets.branchName}
-                            </span>
-                          </p>
-                          <p>{dets.date}</p>
-                        </section>
-                        <section className="flex justify-between mb-4">
-                          <article className="text-c-gray3 text-p-sm">
-                            <p>Requested Product</p>
-                            <p className="font-medium text-f-dark text-p-rg">
-                              {dets.product_name} ({dets.brand})
-                            </p>
-                          </article>
-                          <article className="text-c-gray3 text-p-sm">
-                            <p>Quantity</p>
-                            <p className="font-medium text-f-dark text-p-rg">
-                              {dets.quantity} pcs
-                            </p>
-                          </article>
-                        </section>
-                        <section className="text-p-sm text-c-gray3 mb-4">
-                          <p>Remarks</p>
-                          <div className="border rounded-md p-2 h-20 overflow-auto">
-                            <p className="font-medium text-f-dark">
-                              {dets.remark}
-                            </p>
-                          </div>
-                        </section>
-                        <section className="text-p-sm text-c-gray3">
-                          <p>Requested To</p>
-                          <p className="font-medium text-f-dark text-p-rg">
-                            {user.name}
-                          </p>
-                        </section>
-                      </div>
-                      <div className="rounded-md w-full bg-bg-sb border border-c-primary p-4 text-p-sm text-c-gray3 shadow-sm">
-                        <section className="mb-4">
-                          <p>
-                            Transfer Stock{" "}
-                            <span className="text-blue-500">*</span>
-                          </p>
-                          {branchRequests.map((dets, index) => {
-                            const availableStock = products
-                              .filter(
-                                (product) =>
-                                  normalize(product.product_name) ===
-                                    normalize(dets.product_name) &&
-                                  normalize(product.brand) ===
-                                    normalize(dets.brand) &&
-                                  normalize(product.category) ===
-                                    normalize(dets.category)
-                              )
-                              .reduce(
-                                (total, product) => total + product.quantity,
-                                0
-                              );
+                  {branchRequests.map((dets, index) => {
+                    // Calculate available stock only for the current product
+                    const availableStock = products
+                      .filter(
+                        (product) =>
+                          normalize(product.product_name) ===
+                            normalize(dets.product_name) &&
+                          normalize(product.brand) === normalize(dets.brand) &&
+                          normalize(product.category) ===
+                            normalize(dets.category)
+                      )
+                      .reduce((total, product) => total + product.quantity, 0);
 
-                            return (
-                              <div
-                                key={index}
-                                className="flex items-center justify-between mb-4"
-                              >
-                                <p className="w-1/3 text-f-dark font-medium">
-                                  Available Stock <br />
-                                  {availableStock}
-                                </p>
-                                <FiArrowRight className="text-f-dark text-p-lg w-1/3" />
-                                <input
-                                  type="number"
-                                  name={`stock_transfer_${index}`}
-                                  min={0}
-                                  value={dets.quantity || 0}
-                                  className="mt-1 w-1/3 px-4 py-3 border rounded-md text-f-dark focus:outline-c-primary"
-                                  placeholder="0"
-                                />
-                              </div>
-                            );
-                          })}
-                        </section>
-                        <section className="mb-4">
-                          {/* <p>Remark</p>
-                          <textarea
-                            type="text"
-                            name=""
-                            //   value={}
-                            //   onChange={}
-                            className="w-full px-4 py-3 border border-f-gray rounded-md text-f-dark focus:outline-c-primary resize-none"
-                            rows={2}
-                            placeholder="Comemement"
-                          /> */}
-                        </section>
-                        <footer className="flex gap-4 font-medium text-f-light justify-end">
-                          <button className="rounded-full border shadow-sm hover:bg-sb-org px-6 py-1 text-f-dark">
-                            Reject
-                          </button>
-                          <button className="rounded-full bg-bg-con  hover:bg-opacity-75 active:bg-pressed-branch px-6 py-1">
-                            Approve
-                          </button>
-                        </footer>
+                    return (
+                      <div key={index} className="w-[400px]">
+                        <div className="w-full rounded-md p-4 bg-white mb-3 shadow-sm cursor-pointer">
+                          <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
+                            <p>
+                              Branch{" "}
+                              <span className="font-medium px-3 rounded-full bg-c-primary text-f-light">
+                                {dets.branchName}
+                              </span>
+                            </p>
+                            <p>{dets.date}</p>
+                          </section>
+                          <section className="flex justify-between mb-4">
+                            <article className="text-c-gray3 text-p-sm">
+                              <p>Requested Product</p>
+                              <p className="font-medium text-f-dark text-p-rg">
+                                {dets.product_name} ({dets.brand})
+                              </p>
+                            </article>
+                            <article className="text-c-gray3 text-p-sm">
+                              <p>Quantity</p>
+                              <p className="font-medium text-f-dark text-p-rg">
+                                {dets.quantity} pcs
+                              </p>
+                            </article>
+                          </section>
+                          <section className="text-p-sm text-c-gray3 mb-4">
+                            <p>Remarks</p>
+                            <div className="border rounded-md p-2 h-20 overflow-auto">
+                              <p className="font-medium text-f-dark">
+                                {dets.remark}
+                              </p>
+                            </div>
+                          </section>
+                          <section className="text-p-sm text-c-gray3">
+                            <p>Requested To</p>
+                            <p className="font-medium text-f-dark text-p-rg">
+                              {user.name}
+                            </p>
+                          </section>
+                        </div>
+                        <div className="rounded-md w-full bg-bg-sb border border-c-primary p-4 text-p-sm text-c-gray3 shadow-sm">
+                          <section className="mb-4">
+                            <p>
+                              Transfer Stock{" "}
+                              <span className="text-blue-500">*</span>
+                            </p>
+                            <div className="flex items-center justify-between mb-4">
+                              <p className="w-1/3 text-f-dark font-medium">
+                                Available Stock <br />
+                                {availableStock}
+                              </p>
+                              <FiArrowRight className="text-f-dark text-p-lg w-1/3" />
+                              <input
+                                type="number"
+                                name={`stock_transfer_${index}`}
+                                min={0}
+                                value={dets.quantity || 0}
+                                className="mt-1 w-1/3 px-4 py-3 border rounded-md text-f-dark focus:outline-c-primary"
+                                placeholder="0"
+                              />
+                            </div>
+                          </section>
+                          <footer className="flex gap-4 font-medium text-f-light justify-end">
+                            <button className="rounded-full border shadow-sm hover:bg-sb-org px-6 py-1 text-f-dark">
+                              Reject
+                            </button>
+                            <button className="rounded-full bg-bg-con hover:bg-opacity-75 active:bg-pressed-branch px-6 py-1">
+                              Approve
+                            </button>
+                          </footer>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
+                ;
               </div>
             </>
           )}
