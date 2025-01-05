@@ -5,11 +5,13 @@ import {
   getBranchRequests,
   getProductStockRequest,
 } from "../../Service/InventoryService";
+import ConfirmationShareStock from "./ConfirmationShareStock";
 
 const TransferStockBranch = ({ onClose }) => {
   const products = useSelector((state) => state.reducer.inventory.products);
   const user = useSelector((state) => state.reducer.user.user);
   const [isLoading, setIsLoading] = useState(false);
+  const [confirmationModal, setConfirmationModal] = useState(null);
   const [requests, setRequests] = useState([]);
   const [branchRequests, setBranchRequests] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
@@ -55,6 +57,8 @@ const TransferStockBranch = ({ onClose }) => {
       fetchBranchRequests(user.userId, user.firebaseUid);
     }
   }, [selectType, user.userId, user.firebaseUid]);
+
+  const toggleConfirmationModal = () => setConfirmationModal(null);
 
   return (
     <div className="fixed top-0 left-0 flex items-center justify-center p-5 h-screen w-screen bg-zinc-800 bg-opacity-50 z-50 font-Poppins">
@@ -227,7 +231,7 @@ const TransferStockBranch = ({ onClose }) => {
           )}
           {selectType === "Branch Request" && (
             <>
-              <div className="w-full">
+              <div className="w-full  overflow-auto">
                 <header className="border-f-gray pb-3 font-medium text-p-rg flex gap-5">
                   <h6>Pending Request</h6>
                   <div className="flex items-center justify-center px-6 h-6 rounded-full bg-orange-300 text-p-sm">
@@ -249,7 +253,7 @@ const TransferStockBranch = ({ onClose }) => {
                       .reduce((total, product) => total + product.quantity, 0);
 
                     return (
-                      <div key={index} className="w-[400px]">
+                      <div key={index} className="w-[400px] mb-10">
                         <div className="w-full rounded-md p-4 bg-white mb-3 shadow-sm cursor-pointer">
                           <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
                             <p>
@@ -312,10 +316,16 @@ const TransferStockBranch = ({ onClose }) => {
                             </div>
                           </section>
                           <footer className="flex gap-4 font-medium text-f-light justify-end">
-                            <button className="rounded-full border shadow-sm hover:bg-sb-org px-6 py-1 text-f-dark">
+                            <button
+                              className="rounded-full border shadow-sm hover:bg-sb-org px-6 py-1 text-f-dark"
+                              onClick={() => setConfirmationModal("Reject")}
+                            >
                               Reject
                             </button>
-                            <button className="rounded-full bg-bg-con hover:bg-opacity-75 active:bg-pressed-branch px-6 py-1">
+                            <button
+                              className="rounded-full bg-bg-con hover:bg-opacity-75 active:bg-pressed-branch px-6 py-1"
+                              onClick={() => setConfirmationModal("Approve")}
+                            >
                               Approve
                             </button>
                           </footer>
@@ -324,11 +334,25 @@ const TransferStockBranch = ({ onClose }) => {
                     );
                   })}
                 </div>
-                ;
               </div>
             </>
           )}
         </div>
+        {confirmationModal && (
+          <ConfirmationShareStock
+            onClose={toggleConfirmationModal}
+            title={
+              confirmationModal === "Reject"
+                ? "Reject Request"
+                : "Approve Request"
+            }
+            message={
+              confirmationModal === "Reject"
+                ? "This can't be undone."
+                : "This will transfer the stock to requesting branch."
+            }
+          />
+        )}
       </div>
     </div>
   );
