@@ -21,7 +21,7 @@ const DbCard = ({ title, value, percentageChange, color, bg }) => {
   return (
     <>
       <div
-        className={`py-3 px-3 2xl:px-6 w-full rounded-xl text-f-dark font-Poppins border border-white text-p-sm md:text-p-rg shadow-sm ${color} cursor-pointer`}
+        className={`py-3 px-3 2xl:px-6 md:w-full rounded-xl text-f-dark font-Poppins border border-white text-p-sm md:text-p-rg shadow-sm ${color} cursor-pointer`}
         onClick={handleCardClick}
         style={{
           backgroundImage: `url(${bg})`,
@@ -31,13 +31,13 @@ const DbCard = ({ title, value, percentageChange, color, bg }) => {
       >
         <div className="flex items-center w-full justify-between mb-5">
           <section>
-            <p className="text-p-sc md:text-p-sm font-medium mb-1  text-nowrap truncate">
+            <p className="text-p-sc md:text-p-sm font-medium mb-1 text-nowrap truncate">
               {title}
             </p>
-            <p className="font-semibold text-h-h6">{value}</p>
+            <p className="font-semibold text-h-h6 text-nowrap">{value}</p>
           </section>
         </div>
-        <p className="text-p-sc md:text-p-sm mt-2">
+        <p className="text-p-sc md:text-p-sm mt-2 text-nowrap">
           <span className="text-[#3FB59D]">{percentageChange}</span> vs last
           month
         </p>

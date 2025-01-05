@@ -11,7 +11,6 @@ const DbProduct = ({ filteredSales }) => {
   const productSales = useMemo(() => {
     const productTotals = {};
 
-    // Calculate total sales per product from filtered sales
     filteredSales.forEach((sale) => {
       sale.purchaseDetails.forEach((detail) => {
         const { productId, totalAmount } = detail;
@@ -22,7 +21,6 @@ const DbProduct = ({ filteredSales }) => {
       });
     });
 
-    // Get top 3 products sorted by total sales
     const sortedProducts = Object.entries(productTotals)
       .map(([productId, total]) => ({ productId, total }))
       .sort((a, b) => b.total - a.total)
@@ -40,12 +38,7 @@ const DbProduct = ({ filteredSales }) => {
   }, [filteredSales, products]);
 
   const chartData = {
-    series: [
-      {
-        name: "Sales",
-        data: productSales.map((product) => product.total),
-      },
-    ],
+    series: productSales.map((product) => product.total),
     categories: productSales.map((product) => product.name),
   };
 
@@ -54,53 +47,47 @@ const DbProduct = ({ filteredSales }) => {
       toolbar: { show: false },
       width: "100%",
     },
+    labels: chartData.categories,
     plotOptions: {
-      bar: {
-        borderRadius: 4,
-        distributed: true,
+      pie: {
+        donut: {
+          size: "50%",
+        },
       },
     },
     colors: [barColor[0], barColor[1], barColor[2]],
-    xaxis: {
-      categories: chartData.categories,
-      title: {
-        text: "Products",
-        style: {
-          fontSize: "14px",
-          fontWeight: "bold",
-          color: "#26282a",
-        },
-      },
-    },
-    yaxis: {
-      title: {
-        text: "Total Sales",
-        style: {
-          fontSize: "14px",
-          fontWeight: "bold",
-          color: "#26282a",
-        },
-      },
-    },
     dataLabels: {
       enabled: true,
       fontSize: "18px",
-      fontFamily: "Helvetica, Arial, sans-serif",
-      fontWeight: "bold",
+      fontFamily: "Poppins, Arial, sans-serif",
+      fontWeight: "medium",
+      formatter: (val) => {
+        return `${val.toFixed(2)}%`;
+      },
+    },
+    legend: {
+      position: "bottom",
+      formatter: function (seriesName, opts) {
+        const saleValue = productSales[opts.seriesIndex]?.total ?? 0;
+        return `${seriesName}: ${saleValue.toLocaleString()}`;
+      },
+    },
+    tooltip: {
+      enabled: false,
     },
   };
 
   return (
-    <div className="rounded-lg h-[360px] bg-white text-f-dark font-poppins border text-p-sm md:text-p-rg py-4 overflow-clip shadow-sm p-4">
+    <div className="rounded-lg h-[440px] bg-white text-f-dark font-poppins border text-p-sm md:text-p-rg py-4 overflow-clip shadow-sm p-4">
       <header className="flex justify-between px-4 pt-2 mb-4 text-c-secondary">
         <h1 className="font-medium text-nowrap text-c-secondary">
-          | Top Selling Products
+          Top Selling Products
         </h1>
       </header>
       <div className="w-full pl-5">
         <Chart
-          type="bar"
-          height={280}
+          type="donut"
+          height={320}
           width="100%"
           series={chartData.series}
           options={chartOptions}

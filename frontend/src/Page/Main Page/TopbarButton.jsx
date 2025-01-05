@@ -7,7 +7,6 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { IoMdNotifications } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { FiUser } from "react-icons/fi";
-import { FiVolume2 } from "react-icons/fi";
 
 const TopbarButton = () => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -70,13 +69,15 @@ const TopbarButton = () => {
     <div className="relative inline-block text-left w-full">
       <div className="flex items-center gap-4 xl:justify-end">
         <div className="flex w-fit">
-          <section className="hidden xl:flex items-center gap-4 cursor-pointer">
-            {role === "0" && <FiVolume2 className="h-6 w-6 rounded-full" />}
-            <div className="relative" onClick={toggleNotification}>
+          <section className="hidden xl:flex items-center cursor-pointer">
+            <div
+              className="relative bg-gray-100 w-11 h-11 items-center justify-center flex rounded-lg"
+              onClick={toggleNotification}
+            >
               {unreadNotif === 0 ? (
                 ""
               ) : (
-                <div className="absolute -top-2 -right-2 h-5 w-5 text-p-sc md:text-p-sm font-normal rounded-full bg-red-500 text-f-light flex items-center justify-center overflow-hidden">
+                <div className="absolute top-0.5 right-0.5 h-5 w-5 text-p-sc md:text-p-sm font-normal rounded-full bg-red-500 text-f-light flex items-center justify-center overflow-hidden">
                   <span>{unreadNotif}</span>
                 </div>
               )}
@@ -86,7 +87,6 @@ const TopbarButton = () => {
                 <FiBell className="h-6 w-6 rounded-full" />
               )}
             </div>
-            <div className="h-10 border-l border-f-gray"></div>
           </section>
           <div className="flex justify-between w-full gap-4">
             <section className="flex items-center gap-4 xl:ml-4 text-f-dark">

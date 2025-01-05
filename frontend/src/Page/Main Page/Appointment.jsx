@@ -72,7 +72,15 @@ const Appointment = () => {
           className="aspect-square border border-c-gray3 p-4 relative bg-white flex font-Poppins cursor-pointer"
           onClick={() => handleOpenViewApp(i)} // Pass the day number here
         >
-          <span className="absolute top-2 left-2 font-Poppins">{i}</span>
+          <span
+            className={`absolute top-2 left-2 font-Poppins flex items-center justify-center ${
+              i === dayjs().date() && currentDate.isSame(dayjs(), "month")
+                ? "text-f-light bg-c-primary w-8 h-8 rounded-full"
+                : "text-black"
+            }`}
+          >
+            {i}
+          </span>
 
           {getAppointmentsForDay(i).length > 0 && (
             <div className="mt-2 text-sm text-gray-600 text-center w-full overflow-y-auto">

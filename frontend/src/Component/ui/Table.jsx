@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { MdKeyboardArrowDown } from "react-icons/md";
 import { FaEllipsisV } from "react-icons/fa";
 import Nodatafound from "../../assets/Image/nodatafound.png";
 import RoleColor from "../../assets/Util/RoleColor";
@@ -73,94 +72,125 @@ const Table = ({
   return (
     <>
       {currentData.length > 0 ? (
-        <div className="w-fit md:w-full text-f-dark overflow-x-auto font-Poppins rounded-t-lg text-p-sm md:text-p-rg">
-          <header className="flex py-5 rounded-md border-b bg-white text-f-gray2">
-            <div className="flex-1 pl-8">Patient Name</div>
-            <div className="flex-1">Contact</div>
-            <div className="flex-1">Birthdate</div>
-            <div className="flex-1">Last Visit</div>
-            <div className="w-20"></div>
-          </header>
-          <main>
-            {currentData.map((patientData, index) => {
-              const isCollapsed =
-                collapsedRows[patientData.patientId] !== false;
-              return (
-                <section
-                  key={index}
-                  className={`rounded-md ${
-                    index % 2 === 0 ? "bg-none" : "bg-white border-b"
-                  }`}
-                >
-                  <div className="flex items-center py-5 text-p-rg">
-                    <div className="flex-1 pl-8">
+        <>
+          <table className="min-w-full table-auto border-collapse text-f-dark overflow-x-auto font-Poppins text-p-sm md:text-p-rg ">
+            <thead>
+              <tr className="text-c-gray3 h-16">
+                <th className="pl-4 flex-1 text-start font-medium bg-white rounded-l-md border-b">
+                  Patient Name
+                </th>
+                <th className="pl-4 flex-1 text-start font-medium bg-white border-b">
+                  Contact
+                </th>
+                <th className="pl-4 flex-1 text-start font-medium bg-white border-b">
+                  Birthdate
+                </th>
+                <th className="pl-4 flex-1 text-start font-medium bg-white border-b">
+                  Last Visit
+                </th>
+                <th className="pl-4 w-20 bg-white rounded-r-md border-b"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentData.map((patientData, index) => {
+                const isCollapsed =
+                  collapsedRows[patientData.patientId] !== false;
+                return (
+                  <tr key={index} className="h-16">
+                    <td
+                      className={`pl-4 flex-1 ${
+                        index % 2 === 0
+                          ? "bg-none"
+                          : "bg-white border-b rounded-l-md"
+                      }`}
+                    >
                       {patientData.first_name + " " + patientData.last_name}
-                    </div>
-                    <div className="flex-1">{patientData.contact_number}</div>
-                    <div className="flex-1">
+                    </td>
+                    <td
+                      className={`pl-4 flex-1 ${
+                        index % 2 === 0 ? "bg-none" : "bg-white border-b"
+                      }`}
+                    >
+                      {patientData.contact_number}
+                    </td>
+                    <td
+                      className={`pl-4 flex-1 ${
+                        index % 2 === 0 ? "bg-none" : "bg-white border-b"
+                      }`}
+                    >
                       {formatDate(patientData.birthdate)}
-                    </div>
-                    <div className="flex-1">
+                    </td>
+                    <td
+                      className={`pl-4 flex-1 ${
+                        index % 2 === 0 ? "bg-none" : "bg-white border-b"
+                      }`}
+                    >
                       {formatDate(patientData.createdAt)}
-                    </div>
-                    <div className="w-20 flex items-center gap-4">
+                    </td>
+                    <td
+                      className={`pl-4 w-20 ${
+                        index % 2 === 0
+                          ? "bg-none"
+                          : "bg-white border-b rounded-r-md"
+                      }`}
+                    >
                       <FaEllipsisV
                         onClick={() =>
                           toggleMenu(
                             patientData.patientId,
                             patientData.doctorId
                           )
-                        } // Pass doctorId as well
+                        }
                         className="text-f-gray2 cursor-pointer"
                       />
-                    </div>
-                    {isMenuOpen[patientData.patientId] && (
-                      <div className="menu-dropdown absolute right-0 w-40 mt-2 rounded-md shadow-lg bg-white ring-1 ring-f-gray z-50">
-                        <div
-                          className="p-2"
-                          role="menu"
-                          aria-orientation="vertical"
-                          aria-labelledby="options-menu"
-                        >
-                          <a
-                            onClick={() =>
-                              handlePatientClick(patientData.patientId)
-                            }
-                            className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
+                      {isMenuOpen[patientData.patientId] && (
+                        <div className="menu-dropdown absolute right-10 -mt-6 w-40 rounded-md shadow-lg bg-white ring-1 ring-f-gray z-50">
+                          <div
+                            className="p-2"
+                            role="menu"
+                            aria-orientation="vertical"
+                            aria-labelledby="options-menu"
                           >
-                            View Details
-                          </a>
-                          {userRole !== "0" &&
-                            userRole !== "1" &&
-                            userRole !== "3" && (
-                              <a
-                                className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
-                                onClick={() => {
-                                  handleSharePatientClick(
-                                    patientData.patientId,
-                                    patientData.doctorId
-                                  );
-                                }}
-                              >
-                                Share Patient
-                              </a>
-                            )}
+                            <a
+                              onClick={() =>
+                                handlePatientClick(patientData.patientId)
+                              }
+                              className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
+                            >
+                              View Details
+                            </a>
+                            {userRole !== "0" &&
+                              userRole !== "1" &&
+                              userRole !== "3" && (
+                                <a
+                                  className="block px-4 py-2 text-p-sm text-f-gray2 hover:bg-gray-100 rounded-md cursor-pointer"
+                                  onClick={() => {
+                                    handleSharePatientClick(
+                                      patientData.patientId,
+                                      patientData.doctorId
+                                    );
+                                  }}
+                                >
+                                  Share Patient
+                                </a>
+                              )}
+                          </div>
                         </div>
+                      )}
+                    </td>
+                    {!isCollapsed && (
+                      <div className="p-4 bg-gray-50 border-t">
+                        <p>
+                          Additional information or actions for{" "}
+                          {patientData.first_name}.
+                        </p>
                       </div>
                     )}
-                  </div>
-                  {!isCollapsed && (
-                    <div className="p-4 bg-gray-50 border-t">
-                      <p>
-                        Additional information or actions for{" "}
-                        {patientData.first_name}.
-                      </p>
-                    </div>
-                  )}
-                </section>
-              );
-            })}
-          </main>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
           <div className="flex justify-end mt-4">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
@@ -198,7 +228,7 @@ const Table = ({
               &gt;
             </button>
           </div>
-        </div>
+        </>
       ) : (
         <div className="w-full mt-40 flex flex-col items-center justify-center text-center text-[#96B4B4] text-p-rg md:text-p-lg font-medium gap-4">
           <img src={Nodatafound} alt="no data image" className="w-80" />

@@ -7,7 +7,6 @@ import BannerBg from "../../../assets/Image/BannerBg.png";
 
 // Use lazy loading for the components
 const DbCard = lazy(() => import("./DbCard"));
-const DbGraph = lazy(() => import("./DbGraph"));
 const DbAppointment = lazy(() => import("./DbAppointment"));
 const DbTable = lazy(() => import("./DbTable"));
 
@@ -19,7 +18,6 @@ const DocDashboard = () => {
   const patientCount = patients.length;
   const visitCount = visits.length;
   const [greeting, setGreeting] = useState("");
-  const [isGraphCollapsed, setIsGraphCollapsed] = useState(false);
 
   const filterPatientsByMonth = (data, monthOffset = 0) => {
     const now = new Date();
@@ -148,15 +146,11 @@ const DocDashboard = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleCollapseToggle = () => {
-    setIsGraphCollapsed((prevState) => !prevState);
-  };
-
   return (
     <>
       <div className="w-full flex flex-col md:flex-row gap-5 font-Poppins">
         <div
-          className="w-full md:w-2/3 h-fit md:h-[360px] p-5 bg-cover bg-no-repeat bg-center bg-c-primary rounded-lg justify-between flex flex-col shadow-sm"
+          className="w-full md:w-2/3 h-fit md:h-[440px] p-5 bg-cover bg-no-repeat bg-center bg-c-primary rounded-lg justify-between flex flex-col shadow-sm"
           style={{ backgroundImage: `url(${BannerBg})` }}
         >
           <div className="flex w-full justify-between">
@@ -172,7 +166,7 @@ const DocDashboard = () => {
               Here’s an overview of your clinic’s performance today. Wishing you
               a productive day!
             </p>
-            <section className="flex w-full gap-5">
+            <section className="flex w-full gap-5 overflow-x-auto">
               {dummyData.map((data, index) => {
                 if (data.title === "Number of Staffs" && user.role === "3")
                   return null;
@@ -202,36 +196,10 @@ const DocDashboard = () => {
           </Suspense>
         </div>
       </div>
-      <div className="w-full flex flex-col-reverse md:flex-row gap-6">
-        <div
-          className={`w-full transition-all duration-500 ease-in-out ${
-            isGraphCollapsed ? "md:w-8" : "md:w-1/2"
-          } relative`}
-        >
-          <div
-            onClick={handleCollapseToggle}
-            className="w-8 h-8 rounded-full bg-f-light border shadow-sm hidden md:flex items-center justify-center absolute -right-3 top-1/2 cursor-pointer"
-          >
-            {isGraphCollapsed ? ">" : "<"}
-          </div>
-          <Suspense fallback={<div>Loading graph...</div>}>
-            <DbGraph
-              patients={patients}
-              sales={user.role === "doctor" ? null : null}
-              selectedDataType={user.role === "2" ? "patients" : undefined}
-              isCollapsed={isGraphCollapsed}
-            />
-          </Suspense>
-        </div>
-        <div
-          className={`w-full transition-all duration-500 ease-in-out ${
-            isGraphCollapsed ? "md:w-full" : "md:w-1/2"
-          }`}
-        >
-          <Suspense fallback={<div>Loading table...</div>}>
-            <DbTable role={user.role} />
-          </Suspense>
-        </div>
+      <div className="w-full transition-all duration-500 ease-in-out md:w-full">
+        <Suspense fallback={<div>Loading table...</div>}>
+          <DbTable role={user.role} />
+        </Suspense>
       </div>
     </>
   );
