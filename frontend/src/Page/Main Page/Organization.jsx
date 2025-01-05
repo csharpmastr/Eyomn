@@ -53,8 +53,8 @@ const Organization = () => {
               className="h-fit flex justify-center text-p-sm md:text-p-rg items-center rounded-md px-4 py-3 bg-c-secondary text-f-light hover:cursor-pointer hover:bg-opacity-75"
               onClick={handleOpenStaffModal}
             >
-              <FiPlus className="h-5 w-5 mr-2" />
-              <h1>Add branch</h1>
+              <FiPlus className="h-5 w-5 md:mr-2" />
+              <h1 className="hidden md:block">Add branch</h1>
             </div>
           </div>
           {branch && branch.length > 0 ? (

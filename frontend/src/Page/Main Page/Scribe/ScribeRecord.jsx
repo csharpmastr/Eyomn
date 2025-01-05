@@ -225,7 +225,7 @@ const ScribeRecord = () => {
             onClick={handleNewRecord}
           >
             <FiPlus className="h-5 w-5 md:mr-2" />
-            <h1>Create New Note</h1>
+            <h1 className="hidden md:block">Create New Note</h1>
           </div>
         </div>
 
@@ -265,7 +265,7 @@ const ScribeRecord = () => {
           {currentCardIndex === 0 && (
             <div className="w-full cursor-pointer">
               {scribeNotes.length > 0 ? (
-                <div className="w-full cursor-pointer grid grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-5 py-5">
+                <div className="w-full cursor-pointer grid md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-5 py-5">
                   {scribeNotes ? (
                     <>
                       {scribeNotes.map((note, index) => (
@@ -315,7 +315,7 @@ const ScribeRecord = () => {
           {currentCardIndex === 1 && (
             <div>
               {rawNotes.length > 0 ? (
-                <div className="w-full cursor-pointer grid grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-5 py-5">
+                <div className="w-full cursor-pointer grid md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-5 py-5">
                   {rawNotes ? (
                     <>
                       {rawNotes.map((note, index) => (

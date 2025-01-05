@@ -4,7 +4,7 @@ import { FiUser } from "react-icons/fi";
 const StaffCard = ({ staffData, showImage = true, onClick }) => {
   return (
     <div
-      className="min-w-[350px] rounded-lg overflow-hidden shadow-sm hover:cursor-pointer font-Poppins text-f-dark"
+      className="w-[300px] rounded-lg overflow-hidden shadow-sm hover:cursor-pointer font-Poppins text-f-dark"
       onClick={onClick}
     >
       <div

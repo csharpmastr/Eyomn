@@ -21,7 +21,7 @@ const DbCard = ({ title, value, percentageChange, color, bg }) => {
   return (
     <>
       <div
-        className={`py-3 px-3 2xl:px-6 md:w-full rounded-xl text-f-dark font-Poppins border border-white text-p-sm md:text-p-rg shadow-sm ${color} cursor-pointer`}
+        className={`py-3 px-3 2xl:px-6 md:w-full rounded-lg text-f-dark font-Poppins border border-white text-p-sm md:text-p-rg shadow-sm ${color} cursor-pointer`}
         onClick={handleCardClick}
         style={{
           backgroundImage: `url(${bg})`,

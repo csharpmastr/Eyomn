@@ -10,7 +10,7 @@ import ErrorModal from "../../Component/ui/ErrorModal";
 import { useNavigate } from "react-router-dom";
 import { addService } from "../../Service/InventoryService";
 
-const PointOfSale = ({ onClose, patient }) => {
+const PointOfSale = ({ onClose, patient, type }) => {
   const [selectedProducts, setSelectedProducts] = React.useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("");
@@ -282,28 +282,32 @@ const PointOfSale = ({ onClose, patient }) => {
           <div className="flex flex-col w-full md:w-3/4 p-4 md:p-6 2xl:p-8">
             <div className="flex flex-row gap-3 mb-6 items-center">
               <nav className="w-2/5">
-                <div className="flex gap-2 bg-white shadow-md shadow-gray-200 p-2 text-p-sm md:text-p-rg rounded-lg w-fit font-medium border">
-                  <button
-                    className={`px-2 py-1 rounded-md ${
-                      selectType === "Product"
-                        ? "bg-c-primary text-f-light"
-                        : "bg-none text-p-sc md:text-p-sm text-f-gray"
-                    }`}
-                    onClick={() => setSelectType("Product")}
-                  >
-                    Product
-                  </button>
-                  <button
-                    className={`px-2 py-1 rounded-md ${
-                      selectType === "Service"
-                        ? "bg-c-primary text-f-light"
-                        : "bg-none text-p-sc md:text-p-sm text-f-gray"
-                    }`}
-                    onClick={() => setSelectType("Service")}
-                  >
-                    Service
-                  </button>
-                </div>
+                {type === "walkin" ? (
+                  <p className="font-medium">Walk-In Dispense</p>
+                ) : (
+                  <div className="flex gap-2 bg-white shadow-md shadow-gray-200 p-2 text-p-sm md:text-p-rg rounded-lg w-fit font-medium border">
+                    <button
+                      className={`px-2 py-1 rounded-md ${
+                        selectType === "Product"
+                          ? "bg-c-primary text-f-light"
+                          : "bg-none text-p-sc md:text-p-sm text-f-gray"
+                      }`}
+                      onClick={() => setSelectType("Product")}
+                    >
+                      Product
+                    </button>
+                    <button
+                      className={`px-2 py-1 rounded-md ${
+                        selectType === "Service"
+                          ? "bg-c-primary text-f-light"
+                          : "bg-none text-p-sc md:text-p-sm text-f-gray"
+                      }`}
+                      onClick={() => setSelectType("Service")}
+                    >
+                      Service
+                    </button>
+                  </div>
+                )}
               </nav>
               <div className="w-3/5 flex gap-4">
                 <div className="flex justify-center items-center rounded-lg px-4 border font-normal hover:cursor-pointer bg-white h-12">
