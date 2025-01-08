@@ -20,7 +20,7 @@ const Inventory = () => {
   const [isTransferOpen, setIsTransferOpen] = useState(false);
   const [isTransferBranchOpen, setIsTransferBranchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("");
+  const [sortOption, setSortOption] = useState("ascending");
   const toggleModal = () => setIsModalOpen(!isModalOpen);
   const { btnContentColor } = RoleColor();
 
@@ -51,39 +51,34 @@ const Inventory = () => {
 
   return (
     <div className="text-f-dark p-4 md:p-6 2xl:p-8 font-Poppins">
-      <nav className="flex flex-col gap-4 lg:gap-0 lg:flex-row justify-between mb-2">
-        <div className="flex gap-3 items-center">
-          {user.role === "3" ? (
-            <>
-              <p className="text-c-gray3 font-medium text-p-sm">
-                Dispense product:
-              </p>
+      <nav className="flex flex-col gap-3 lg:flex-row justify-between mb-2 text-p-sm md:text-p-rg">
+        <div className="w-full flex justify-between">
+          <div className="flex gap-3 items-center">
+            {user.role === "3" ? (
               <button
-                className="text-p-sm border flex gap-1 items-center px-4 py-1 rounded-full text-blue-500 shadow-sm font-medium hover:bg-white"
+                className="px-2 h-8 md:h-10 rounded-md md:bg-white md:shadow-sm flex items-center gap-1"
                 onClick={posToggle}
               >
-                Walk In
-                <HiExternalLink />
+                <HiExternalLink className="block md:hidden" />
+                Quick Dispense
               </button>
-            </>
-          ) : (
-            <div>
-              <button
-                className="text-p-rg border flex gap-1 items-center px-6 h-12 rounded-md text-f-dark shadow-sm font-medium hover:bg-white"
-                onClick={
-                  user.role === "0" ? transferToggle : transferBranchToggle
-                }
-              >
-                Monitor Request
-                <FiArrowRight />
-              </button>
-            </div>
-          )}
-        </div>
-        <div className="flex gap-3">
-          <div className="flex justify-center items-center rounded-lg px-4 border font-normal hover:cursor-pointer bg-white h-12 text-f-dark">
+            ) : (
+              <div>
+                <button
+                  className="border flex gap-1 items-center px-6 h-12 rounded-md text-f-dark shadow-sm font-medium hover:bg-white"
+                  onClick={
+                    user.role === "0" ? transferToggle : transferBranchToggle
+                  }
+                >
+                  Monitor Request
+                  <FiArrowRight />
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="flex justify-center items-center rounded-lg md:px-4 md:border font-normal hover:cursor-pointer md:bg-white md:h-12 text-f-dark">
             <select
-              className={`hover:cursor-pointer focus:outline-none w-fit bg-white ${
+              className={`hover:cursor-pointer focus:outline-none w-fit bg-bg-mc md:bg-white ${
                 sortOption === "" ? "text-f-gray2" : "text-f-dark"
               }`}
               value={sortOption}
@@ -98,12 +93,14 @@ const Inventory = () => {
               <option value="quantity-h">High (Stock)</option>
             </select>
           </div>
+        </div>
+        <div className="flex gap-3">
           <div className="flex flex-row border px-4 rounded-lg justify-center items-center w-full gap-2 bg-white h-12">
             <IoMdSearch className="h-6 w-6 text-f-dark" />
             <input
               type="text"
-              className="w-full text-f-dark focus:outline-none placeholder-f-gray2 text-p-sm md:text-p-rg bg-white"
-              placeholder="Search product... "
+              className="w-fit text-f-dark focus:outline-none placeholder-f-gray2 bg-white"
+              placeholder="Search product"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -148,7 +145,7 @@ const Inventory = () => {
       {isModalOpen && (
         <AddEditProduct onClose={toggleModal} title={"Add Product"} />
       )}
-      {openPOS && <PointOfSale onClose={posToggle} />}
+      {openPOS && <PointOfSale onClose={posToggle} type={"walkin"} />}
       {isTransferOpen && <TransferStock onClose={transferToggle} />}
       {isTransferBranchOpen && (
         <TransferStockBranch onClose={transferBranchToggle} />

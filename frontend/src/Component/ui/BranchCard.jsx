@@ -4,7 +4,7 @@ import { FiEdit } from "react-icons/fi";
 const BranchCard = ({ name, municipality, onClick, clickEdit }) => {
   return (
     <div
-      className="min-w-[350px] rounded-lg overflow-hidden shadow-sm hover:cursor-pointer font-Poppins border group"
+      className="w-[300px] rounded-lg overflow-hidden shadow-sm hover:cursor-pointer font-Poppins border group"
       onClick={onClick}
     >
       <div className="p-3 bg-c-branch rounded-t-lg flex justify-between">
@@ -23,9 +23,7 @@ const BranchCard = ({ name, municipality, onClick, clickEdit }) => {
         </div>
       </div>
       <div className="text-center py-10 bg-white">
-        <h3 className="text-p-rg md:text-p-lg font-medium text-f-dark">
-          {name}
-        </h3>
+        <h3 className="text-p-r font-medium text-f-dark">{name}</h3>
       </div>
     </div>
   );

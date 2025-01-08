@@ -13,7 +13,7 @@ const Patient = () => {
   const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [hasSelected, setHasSelected] = useState(false);
-  const [sortOption, setSortOption] = useState("");
+  const [sortOption, setSortOption] = useState("ascending");
   const role = useSelector((state) => state.reducer.user.user.role);
   const [isLoading, setIsLoading] = useState(false);
   const [openSharePatient, setIsOpenSharePatient] = useState(false);
@@ -112,15 +112,17 @@ const Patient = () => {
         <>
           {isLoading && <Loader />}
           <div className="p-4 md:p-6 2xl:p-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between text-p-sm md:text-p-rg">
-              <p className="font-semibold text-f-dark">
-                {totalPatient}{" "}
-                <span className="text-f-gray2 font-medium">Total patient</span>
-              </p>
-              <div className="mt-2 md:mt-0 flex flex-row gap-3">
-                <div className="flex justify-center items-center rounded-lg px-4 border font-normal hover:cursor-pointer bg-white h-12 text-f-dark">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-p-sm md:text-p-rg">
+              <div className="w-full flex justify-between">
+                <p className="font-semibold text-f-dark">
+                  {totalPatient}{" "}
+                  <span className="text-f-gray2 font-medium">
+                    Total patient
+                  </span>
+                </p>
+                <div className="flex justify-center items-center rounded-lg md:px-4 md:border font-normal hover:cursor-pointer md:bg-white md:h-12 text-f-dark">
                   <select
-                    className={`hover:cursor-pointer focus:outline-none w-fit bg-white ${
+                    className={`hover:cursor-pointer focus:outline-none w-fit bg-bg-mc md:bg-white ${
                       sortOption === "" ? "text-f-gray2" : "text-f-dark"
                     }`}
                     value={sortOption}
@@ -131,10 +133,12 @@ const Patient = () => {
                     </option>
                     <option value="ascending">Ascending</option>
                     <option value="descending">Descending</option>
-                    <option value="recent">Recent Visit</option>
-                    <option value="oldest">Old Visit</option>
+                    <option value="recent">Recent visit</option>
+                    <option value="oldest">Old visit</option>
                   </select>
                 </div>
+              </div>
+              <div className="mt-2 md:mt-0 flex flex-row gap-3">
                 <div
                   className={`flex flex-row border px-4 rounded-lg justify-center items-center w-full gap-2 bg-white h-12 ${
                     role === "0" ? `` : `md:w-80`
@@ -153,11 +157,13 @@ const Patient = () => {
                   ""
                 ) : (
                   <div
-                    className={`h-fit flex justify-center items-center rounded-md px-4 py-3 text-f-light hover:cursor-pointer hover:bg-opacity-75  ${btnContentColor} `}
+                    className={`h-fit flex justify-center items-center rounded-md px-4 py-3 text-f-light hover:cursor-pointer hover:bg-opacity-75 ${btnContentColor} `}
                     onClick={openAddPatient}
                   >
                     <FiPlus className="h-5 w-5 md:mr-2" />
-                    <h1 className="hidden md:block">Add patient</h1>
+                    <h1 className="hidden md:block md:text-nowrap">
+                      Add patient
+                    </h1>
                   </div>
                 )}
               </div>

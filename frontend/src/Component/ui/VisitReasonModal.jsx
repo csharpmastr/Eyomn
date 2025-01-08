@@ -79,22 +79,30 @@ const VisitReasonModal = ({ onClose }) => {
         <Loader description={"Saving Visit Information, please wait..."} />
       ) : (
         <div className="fixed px-5 top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-30 z-50 font-Poppins">
-          <div className="w-[600px]">
-            <header className="px-4 py-4 bg-bg-sb border border-b-f-gray rounded-t-lg flex justify-between">
-              <h1 className="text-p-rg md:text-p-lg text-c-secondary font-semibold">
+          <div className="w-[380px] md:w-1/2 xl:w-[500px] h-auto bg-white rounded-lg">
+            <header className="px-4 py-5 border-b flex justify-between items-center">
+              <h1 className="text-p-rg text-f-dark font-medium">
                 Visitation Reason
               </h1>
-              <button onClick={onClose}> &times; </button>
+              <button
+                onClick={onClose}
+                className="w-10 h-10 rounded-md border hover:bg-zinc-50"
+              >
+                &times;
+              </button>
             </header>
-            <div className="py-6 px-6 h-fit bg-white">
-              <label htmlFor="reason_visit" className="text-p-sc md:text-p-sm">
+            <div className="py-6 px-6">
+              <label
+                htmlFor="reason_visit"
+                className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+              >
                 Reason for Visit
               </label>
               <select
                 name="reason_visit"
                 value={visitData.reason_visit} // This should be a string
                 onChange={handleReasonChange}
-                className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 focus:outline-c-primary"
               >
                 <option value="" disabled className="text-c-gray3">
                   Select Reason
@@ -103,14 +111,17 @@ const VisitReasonModal = ({ onClose }) => {
                 <option value="consultation">Consultation</option>
               </select>
               <div className="mt-3 text-c-gray3">
-                <label htmlFor="doctorId" className="text-p-sc md:text-p-sm">
+                <label
+                  htmlFor="doctorId"
+                  className="text-p-sc md:text-p-sm text-c-gray3 font-medium"
+                >
                   Attending Doctor
                 </label>
                 <select
                   name="doctorId"
                   value={selectedDoctor}
                   onChange={handleDoctorChange}
-                  className="mt-1 w-full px-4 py-3 border border-c-gray3 rounded-md text-f-dark mb-4 focus:outline-c-primary"
+                  className="mt-1 w-full px-4 py-3 border rounded-md text-f-dark mb-4 focus:outline-c-primary"
                 >
                   <option value="" disabled>
                     Select Doctor
@@ -131,15 +142,15 @@ const VisitReasonModal = ({ onClose }) => {
                 </select>
               </div>
             </div>
-            <footer className="border border-t-f-gray bg-white rounded-b-lg flex gap-4 justify-end p-4">
+            <footer className="flex gap-4 justify-end p-4">
               <button
-                className="px-4 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border border-c-gray3"
+                className="px-4 lg:px-10 py-2 text-f-dark text-p-sm md:text-p-rg font-medium rounded-md border shadow-sm hover:bg-sb-org"
                 onClick={onClose}
               >
                 Cancel
               </button>
               <button
-                className="px-7 py-2 bg-[#3B7CF9] text-f-light text-p-sm md:text-p-rg font-semibold rounded-md"
+                className="px-4 lg:px-12 py-2 bg-bg-con text-f-light text-p-sm md:text-p-rg font-medium rounded-md  hover:bg-opacity-75"
                 onClick={handleAddVisit}
               >
                 Save

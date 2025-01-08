@@ -122,25 +122,6 @@ const TransferStock = ({ onClose }) => {
                             </p>
                           </div>
                         </section>
-                        <section className="text-p-sm text-c-gray3">
-                          <p>Request To</p>
-                          <select
-                            name="branches"
-                            className="mt-1 w-full p-2 border rounded-md text-f-dark focus:outline-c-primary"
-                          >
-                            <option value="" disabled className="text-c-gray3">
-                              Select Branch
-                            </option>
-                          </select>
-                        </section>
-                        <footer className="flex gap-4 mt-10 font-medium text-f-light justify-end">
-                          <button className="rounded-full border shadow-sm hover:bg-sb-org px-6 py-1 text-f-dark">
-                            Reject
-                          </button>
-                          <button className="rounded-full bg-bg-con hover:bg-opacity-75 active:bg-pressed-branch px-6 py-1">
-                            Approve
-                          </button>
-                        </footer>
                       </div>
                     );
                   })}

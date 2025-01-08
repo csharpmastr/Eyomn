@@ -104,17 +104,17 @@ const Scribe = () => {
         <Outlet />
       ) : (
         <div className="p-4 md:p-6 2xl:p-8 font-Poppins h-full overflow-clip">
-          <div className="flex flex-col md:flex-row md:items-center justify-between text-p-sm md:text-p-rg ">
-            <p className="font-semibold text-f-dark">
-              {patients.length || 0}{" "}
-              <span className="text-f-gray2 font-medium">Total patient</span>
-            </p>
-            <div className="mt-2 md:mt-0 flex flex-row gap-3">
-              <div className="flex justify-center items-center rounded-lg px-4 border font-normal hover:cursor-pointer bg-white h-12 text-f-dark">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-p-sm md:text-p-rg ">
+            <div className="w-full flex justify-between">
+              <p className="font-semibold text-f-dark">
+                {patients.length || 0}{" "}
+                <span className="text-f-gray2 font-medium">Total patient</span>
+              </p>
+              <div className="flex justify-center items-center rounded-lg md:px-4 md:border font-normal hover:cursor-pointer md:bg-white md:h-12 text-f-dark">
                 <select
                   value={sortOrder}
                   onChange={handleSortChange}
-                  className="hover:cursor-pointer focus:outline-none bg-f-light w-fit"
+                  className="hover:cursor-pointer focus:outline-none bg-bg-mc md:bg-f-light w-fit"
                 >
                   <option value="" disabled selected>
                     Sort by
@@ -123,16 +123,16 @@ const Scribe = () => {
                   <option value="descending">Descending</option>
                 </select>
               </div>
-              <div className="flex flex-row border px-4 rounded-lg justify-center items-center w-full gap-2 bg-white h-12">
-                <IoMdSearch className="h-6 w-6 text-f-dark" />
-                <input
-                  type="text"
-                  placeholder="Search patient name"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full text-f-dark focus:outline-none placeholder-c-gray3 bg-white"
-                />
-              </div>
+            </div>
+            <div className="flex flex-row border px-4 rounded-lg justify-center items-center w-full md:w-fit gap-2 bg-white h-12">
+              <IoMdSearch className="h-6 w-6 text-f-dark" />
+              <input
+                type="text"
+                placeholder="Search patient name"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full text-f-dark focus:outline-none placeholder-c-gray3 bg-white"
+              />
             </div>
           </div>
           <div className="w-auto h-full mt-8 pb-8 overflow-y-scroll">

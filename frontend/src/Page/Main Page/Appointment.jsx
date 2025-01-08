@@ -112,7 +112,7 @@ const Appointment = () => {
         <div>
           <button
             onClick={handlePrevMonth}
-            className="py-3 px-4 bg-f-light border border-c-gray3 rounded-md"
+            className="w-10 h-10 bg-white font-medium border rounded-md"
           >
             &lt;
           </button>
@@ -121,7 +121,7 @@ const Appointment = () => {
           </span>
           <button
             onClick={handleNextMonth}
-            className="py-3 px-4 bg-f-light border border-c-gray3 rounded-md"
+            className="w-10 h-10 bg-white font-medium border rounded-md"
           >
             &gt;
           </button>
