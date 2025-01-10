@@ -351,3 +351,50 @@ export const getBranchRequests = async (branchId, firebaseUid) => {
     throw error;
   }
 };
+
+export const approveProductRequest = async (
+  branchId,
+  reuqestDetails,
+  firebaseUid
+) => {
+  try {
+    const response = await axios.post(
+      `${INVENTORY_API_BASE_URL}/approve-request`,
+      reuqestDetails,
+      {
+        params: {
+          branchId,
+          firebaseUid,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error approving product request: ", error);
+    throw error;
+  }
+};
+export const rejectProductRequest = async (
+  branchId,
+  requestDetails,
+  firebaseUid
+) => {
+  try {
+    const response = await axios.post(
+      `${INVENTORY_API_BASE_URL}/reject-request`,
+      requestDetails,
+      {
+        params: {
+          branchId,
+          firebaseUid,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error rejecting product request: ", error);
+    throw error;
+  }
+};

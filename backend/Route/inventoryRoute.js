@@ -15,6 +15,8 @@ const {
   processProductRequestHandler,
   updateStatusHandler,
   getBranchRequestHandler,
+  approveProductRequestHandler,
+  rejectProductRequestHandler,
 } = require("../Controller/inventoryController");
 const { validateToken } = require("../Wrapper/Wrapper");
 
@@ -48,4 +50,7 @@ router.patch(
   updateStatusHandler
 );
 router.get("/get-branch-requests", validateToken, getBranchRequestHandler);
+router.post("/approve-request", validateToken, approveProductRequestHandler);
+router.post("/reject-request", validateToken, rejectProductRequestHandler);
+
 module.exports = router;

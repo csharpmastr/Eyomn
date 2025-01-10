@@ -26,6 +26,7 @@ const RequestDetails = ({ onClose, details }) => {
         branchName: branch?.name || "Unknown Branch",
         branchId: product.branchId,
         quantity: product.quantity,
+        productId: product.productId,
       };
     });
 
@@ -42,10 +43,12 @@ const RequestDetails = ({ onClose, details }) => {
       alert("Please select a branch to transfer the stock");
       return;
     }
+    console.log(details);
+
     try {
       const response = await processProductRequest(
         selectedBranch.branchId,
-        details,
+        { ...details, productId: selectedBranch.productId },
         user.firebaseUid
       );
       if (response) {
@@ -66,7 +69,23 @@ const RequestDetails = ({ onClose, details }) => {
       console.log("Error processing request", error);
     }
   };
-
+  const handleRejectRequest = async () => {
+    try {
+      const status = "rejected";
+      const response = await updateRequestStatus(
+        details.requestId,
+        status,
+        details.branchId,
+        user.firebaseUid
+      );
+      if (response) {
+        console.log("Request status updated successfully");
+        onClose();
+      }
+    } catch (error) {
+      console.log("Error rejecting request", error);
+    }
+  };
   return (
     <div className="fixed px-5 top-0 left-0 flex items-center justify-center h-screen w-screen bg-black bg-opacity-15 z-50 font-Poppins  text-f-dark">
       <div className="w-[400px] bg-white rounded-lg">
@@ -133,7 +152,10 @@ const RequestDetails = ({ onClose, details }) => {
                 </select>
               </section>
               <footer className="flex gap-4 mt-12 font-medium text-f-light justify-end">
-                <button className="rounded-full border shadow-sm hover:bg-sb-org px-6 py-1 text-f-dark">
+                <button
+                  className="rounded-full border shadow-sm hover:bg-sb-org px-6 py-1 text-f-dark"
+                  onClick={handleRejectRequest}
+                >
                   Reject
                 </button>
                 <button

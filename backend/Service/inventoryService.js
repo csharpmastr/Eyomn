@@ -621,6 +621,7 @@ const requestProductStock = async (
 
     const encryptedRequestDetails = encryptDocument(requestDetails, [
       "quantity",
+      "productId",
     ]);
 
     await requestColRef.doc(requestId).set({
@@ -667,7 +668,12 @@ const getStockRequests = async (id, firebaseUid) => {
           stockRequest.push({
             branchId,
             requestId: doc.id,
-            ...decryptDocument(doc.data(), ["createdAt", "quantity", "status"]),
+            ...decryptDocument(doc.data(), [
+              "createdAt",
+              "quantity",
+              "status",
+              "productId",
+            ]),
           });
         });
       } catch (error) {
@@ -705,6 +711,8 @@ const processProductRequest = async (
       "quantity",
       "status",
       "requestId",
+      "productId",
+      "requestingProductId",
     ]);
     await requestBranchColRef.doc(branchRequestId).set({
       ...encryptedRequestDetails,
@@ -780,12 +788,145 @@ const getBranchRequests = async (branchId, firebaseUid) => {
           "approvedAt",
           "branchId",
           "requestId",
+          "productId",
+          "requestingProductId",
         ]),
+        branchRequestId: doc.id,
       };
     });
     return decryptedBranchRequests;
   } catch (error) {
     console.error("Error getting branch requests:", error);
+    throw error;
+  }
+};
+const approveProductRequest = async (branchId, requestDetails, firebaseUid) => {
+  try {
+    verifyFirebaseUid(firebaseUid);
+
+    const branchInventoryColRef = inventoryCollection
+      .doc(branchId)
+      .collection("products");
+
+    const matchingProductSnapshot = await branchInventoryColRef
+      .where("productId", "==", requestDetails.productId)
+      .get();
+
+    if (matchingProductSnapshot.empty) {
+      throw new Error(
+        `No matching product found in branch inventory for branch ${branchId}.`
+      );
+    }
+
+    const matchingProduct = decryptDocument(
+      matchingProductSnapshot.docs[0].data(),
+      [
+        "expirationDate",
+        "price",
+        "quantity",
+        "productId",
+        "productSKU",
+        "isDeleted",
+        "retail_price",
+      ]
+    );
+
+    const updatedQuantity = matchingProduct.quantity - requestDetails.quantity;
+    if (updatedQuantity < 0) {
+      throw new Error("Insufficient quantity in branch inventory.");
+    }
+    const branchRequestorColRef = inventoryCollection
+      .doc(requestDetails.branchId)
+      .collection("products");
+
+    const requestorProductSnapshot = await branchRequestorColRef
+      .where("productId", "==", requestDetails.requestingProductId)
+      .get();
+
+    if (requestorProductSnapshot.empty) {
+      throw new Error(
+        `No matching product found in requestor's inventory for branch ${requestDetails.branchId}.`
+      );
+    }
+
+    const requestorMatchingProduct = decryptDocument(
+      requestorProductSnapshot.docs[0].data(),
+      [
+        "expirationDate",
+        "price",
+        "quantity",
+        "productId",
+        "productSKU",
+        "isDeleted",
+        "retail_price",
+      ]
+    );
+
+    const requestorUpdatedQuantity =
+      requestorMatchingProduct.quantity + requestDetails.quantity;
+
+    //batch updates
+    const batch = db.batch();
+
+    // Update branch inventory
+    const branchProductRef = branchInventoryColRef.doc(
+      matchingProduct.productId
+    );
+    batch.update(branchProductRef, { quantity: updatedQuantity });
+
+    // Update requestor inventory
+    const requestorProductRef = branchRequestorColRef.doc(
+      requestorMatchingProduct.productId
+    );
+    batch.update(requestorProductRef, { quantity: requestorUpdatedQuantity });
+
+    // Update request statuses
+    const branchRequestColRef = inventoryCollection
+      .doc(branchId)
+      .collection("branchRequests");
+    const requestDocRef = branchRequestColRef.doc(
+      requestDetails.branchRequestId
+    );
+    batch.update(requestDocRef, { status: "approved" });
+
+    const requestColRef = inventoryCollection
+      .doc(requestDetails.branchId)
+      .collection("requests");
+    const requestorDocRef = requestColRef.doc(requestDetails.requestId);
+    batch.update(requestorDocRef, { status: "completed" });
+
+    await batch.commit();
+    console.log("Product request approved successfully.");
+  } catch (error) {
+    console.error("Error approving product request:", error);
+    throw error;
+  }
+};
+
+const rejectBranchRequest = async (branchId, requestDetails, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+    const branchRequestColRef = inventoryCollection
+      .doc(branchId)
+      .collection("branchRequests")
+      .doc(requestDetails.branchRequestId);
+    const requestColRef = inventoryCollection
+      .doc(requestDetails.branchId)
+      .collection("requests")
+      .doc(requestDetails.requestId);
+
+    const branchRequestDoc = await branchRequestColRef.get();
+    if (!branchRequestDoc.exists) {
+      throw new Error("Request not found");
+    }
+    await branchRequestColRef.update({ status: "rejected" });
+    const requestDoc = await requestColRef.get();
+    if (!requestDoc.exists) {
+      throw new Error("Request not found");
+    }
+    await requestColRef.update({ status: "rejected" });
+  } catch (error) {
+    console.error("Error updating branch request status:", error);
     throw error;
   }
 };
@@ -806,4 +947,6 @@ module.exports = {
   processProductRequest,
   updateRequestStatus,
   getBranchRequests,
+  approveProductRequest,
+  rejectBranchRequest,
 };

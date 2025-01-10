@@ -1,14 +1,11 @@
 const {
   addProduct,
-  getProducts,
   deleteProduct,
   updateProduct,
   addPurchase,
-
   retrieveProduct,
   addServiceFee,
   getOrgProductSalesWithServices,
-  getBranchGross,
   getBranchInventory,
   getPatientProductServicesAvail,
   requestProductStock,
@@ -16,6 +13,8 @@ const {
   processProductRequest,
   updateRequestStatus,
   getBranchRequests,
+  approveProductRequest,
+  rejectBranchRequest,
 } = require("../Service/inventoryService");
 
 const addProductHandler = async (req, res) => {
@@ -312,6 +311,38 @@ const getBranchRequestHandler = async (req, res) => {
       .json({ message: "Server error while processing data." + error });
   }
 };
+const approveProductRequestHandler = async (req, res) => {
+  try {
+    const { branchId, firebaseUid } = req.query;
+    const requestDetails = req.body;
+
+    if (!branchId) {
+      return res.status(400).json({ message: "No Branch ID provided." });
+    }
+    await approveProductRequest(branchId, requestDetails, firebaseUid);
+    return res.status(200).json({ message: "Request approved!" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Server error while processing data." + error });
+  }
+};
+const rejectProductRequestHandler = async (req, res) => {
+  try {
+    const { branchId, firebaseUid } = req.query;
+    const requestDetails = req.body;
+
+    if (!branchId) {
+      return res.status(400).json({ message: "No Branch ID provided." });
+    }
+    await rejectBranchRequest(branchId, requestDetails, firebaseUid);
+    return res.status(200).json({ message: "Request rejected!" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Server error while processing data." + error });
+  }
+};
 module.exports = {
   addProductHandler,
 
@@ -328,4 +359,6 @@ module.exports = {
   processProductRequestHandler,
   updateStatusHandler,
   getBranchRequestHandler,
+  approveProductRequestHandler,
+  rejectProductRequestHandler,
 };

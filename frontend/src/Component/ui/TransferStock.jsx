@@ -180,17 +180,105 @@ const TransferStock = ({ onClose }) => {
                   <header className="w-full border-b border-f-gray pb-3 font-medium text-p-rg flex justify-between">
                     <h6>Completed</h6>
                     <div className="flex items-center justify-center px-6 h-6 rounded-full bg-green-300 text-p-sm">
-                      0
+                      {groupedRequests.completed.length}
                     </div>
                   </header>
+                  <div>
+                    {groupedRequests.completed.map((req, index) => {
+                      const branch = branches.find(
+                        (b) => b.branchId === req.branchId
+                      );
+                      const branchName = branch
+                        ? branch.name
+                        : "Unknown Branch";
+
+                      return (
+                        <div
+                          key={index}
+                          className="w-full rounded-md p-4 bg-white mb-5 shadow-sm cursor-pointer"
+                          onClick={() => handleRequestClick(req)}
+                        >
+                          <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
+                            <p>
+                              Branch{" "}
+                              <span className="text-f-dark font-medium">
+                                {branchName}
+                              </span>
+                            </p>
+                            <p>
+                              {new Date(req.createdAt).toLocaleDateString()}
+                            </p>
+                          </section>
+                          <section className="flex justify-between">
+                            <article className="text-c-gray3 text-p-sm">
+                              <p>Requested Product</p>
+                              <p className="font-medium text-f-dark text-p-rg">
+                                {`${req.product_name} (${req.brand})`}
+                              </p>
+                            </article>
+                            <article className="text-c-gray3 text-p-sm">
+                              <p>Quantity</p>
+                              <p className="font-medium text-f-dark text-p-rg">
+                                {req.quantity}
+                              </p>
+                            </article>
+                          </section>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </section>
                 <section className="h-1/2">
                   <header className="w-full border-b border-f-gray pb-3 font-medium text-p-rg flex justify-between">
                     <h6>Rejected</h6>
                     <div className="flex items-center justify-center px-6 h-6 rounded-full bg-red-300 text-p-sm">
-                      0
+                      {groupedRequests.rejected.length}
                     </div>
-                  </header>
+                  </header>{" "}
+                  <div>
+                    {groupedRequests.rejected.map((req, index) => {
+                      const branch = branches.find(
+                        (b) => b.branchId === req.branchId
+                      );
+                      const branchName = branch
+                        ? branch.name
+                        : "Unknown Branch";
+
+                      return (
+                        <div
+                          key={index}
+                          className="w-full rounded-md p-4 bg-white mb-5 shadow-sm cursor-pointer"
+                          onClick={() => handleRequestClick(req)}
+                        >
+                          <section className="flex justify-between text-c-gray3 text-p-sm pb-2 mb-2 border-b border-f-gray">
+                            <p>
+                              Branch{" "}
+                              <span className="text-f-dark font-medium">
+                                {branchName}
+                              </span>
+                            </p>
+                            <p>
+                              {new Date(req.createdAt).toLocaleDateString()}
+                            </p>
+                          </section>
+                          <section className="flex justify-between">
+                            <article className="text-c-gray3 text-p-sm">
+                              <p>Requested Product</p>
+                              <p className="font-medium text-f-dark text-p-rg">
+                                {`${req.product_name} (${req.brand})`}
+                              </p>
+                            </article>
+                            <article className="text-c-gray3 text-p-sm">
+                              <p>Quantity</p>
+                              <p className="font-medium text-f-dark text-p-rg">
+                                {req.quantity}
+                              </p>
+                            </article>
+                          </section>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </section>
               </div>
             </>
