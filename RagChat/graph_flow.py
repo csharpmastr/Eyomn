@@ -1,6 +1,15 @@
 import sys
 from exception import CustomException
 from logger import logging
+from typing_extensions import TypedDict, Annotated, List
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.types import Command
+from langchain_core.messages import AnyMessage, AIMessage, RemoveMessage, HumanMessage
+from langchain_google_firestore import FirestoreChatMessageHistory
+from langgraph.graph.message import add_messages
+from langgraph.graph import START, END, StateGraph
+from langgraph.graph.state import CompiledStateGraph
+from datetime import datetime
 
 from agents_chains import (
     build_convo_summ_chain, build_rag_generation_chain,
@@ -9,24 +18,24 @@ from agents_chains import (
     build_ans_grader_chain
     
 )
-from helper_utils import retrieve_vector_store, init_firestore_client
+from helper_utils import init_internal_retriever, init_firestore_client, init_external_retriever
 from modal_setup import rag_image
 
 # context manager for global imports
 with rag_image.imports():
     from langgraph.checkpoint.memory import MemorySaver
+    from langgraph.types import Command
     from langchain_core.messages import AnyMessage, AIMessage, RemoveMessage, HumanMessage
     from langchain_google_firestore import FirestoreChatMessageHistory
     from langgraph.graph.message import add_messages
-    from langgraph.graph import END, StateGraph
+    from langgraph.graph import START, END, StateGraph
     from langgraph.graph.state import CompiledStateGraph
-    from typing_extensions import TypedDict
-    from typing import List, Annotated
+    from typing_extensions import TypedDict, Annotated, List
     from datetime import datetime
 
 # define global object variable
 convo_summ_chain = None
-vectorstore = None
+internal_retriever = None
 rag_gen_chain = None
 retrieval_grader_chain = None
 router_chain = None
@@ -35,6 +44,7 @@ hallu_checker_chain = None
 answer_grader_chain = None
 doc_grader = None
 firestore_client = None
+external_retriever = None
 eyomn_memory_saver = None
 eyomn_memory = None
 
@@ -49,13 +59,19 @@ class GraphState(TypedDict):
         web_search: whether to add search
         documents: list of documents 
         userId: the current user's Id
+        branchId: the current user's branch ID/s
         summarized_memory: summarized memory
+        user_role : the role of the current user for specific queries
+        knowledge_type : knowledge base that will be used to answer the user's questions
     """
     messages : Annotated[List[AnyMessage], add_messages]
-    generation : str
-    documents : List[str]
-    userId: str
-    summarized_memory: str
+    generation : Annotated[str, "The final response of EyomnAI to the user"]
+    documents : Annotated[List[str], "List of Documents to be used as the context for EyomnAI"]
+    userId: Annotated[str, "The current user's ID"]
+    branchId: Annotated[List[str], "The current user's branch ID/s"]
+    summarized_memory: Annotated[str, "The summarized memory of the user's past conversation with EyomnAI"]
+    user_role : Annotated[str, "The role of the current user for specific queries (e.g. '0' for Admin, '2' for Doctor)"]
+    knowledge_type : Annotated[str, "The type of knowledge base that will be used to answer the user's question"]
 
 # Define nodes for the Graph
 
@@ -110,9 +126,45 @@ def summarize_convo(state: GraphState):
     except CustomException as e:
         raise CustomException(e, sys)
 
+# FUNCTION TO RETRIEVE RELEVANT DOCUMENTS EXTERNALLY
+def external_retrieve(state: GraphState):
+    print("---EXTERNAL RETRIEVE---")
+    messages = state["messages"]
+    user_role = state["user_role"]
+    branchid = state["branchId"]
+    userid = state["userId"]
+    
+    # RETRIEVE THE LAST MESSAGE 
+    last_message = str(messages[-1])
+    
+    # USE GLOBAL VARIABLES
+    global firestore_client, external_retriever
+    
+    # CHECK IF "firestore_client" IS INITIALIZED
+    if firestore_client is None:
+        print("---INITIALIZING FIRESTORE CLIENT---")
+        firestore_client = init_firestore_client()
+        
+    # CHECK IF 'data_access' IS INITIALIZED
+    if external_retriever is None:
+        print("---INITIALIZING EXTERNAL RETRIEVER---")
+        external_retriever = init_external_retriever(
+            role=user_role,
+            branchid=branchid,
+            userid=userid,
+            fsclient=firestore_client
+        )
+    
+    # RETRIEVE RELEVANT DOCUMENTS USING EXTERNAL RETRIEVER
+    external_documents = external_retriever.max_marginal_relevance_search(last_message, k=3)
+    
+    return {"documents": external_documents, "messages": messages, 
+            "knowledge_type": state["knowledge_type"], "user_role": state["user_role"], 
+            "userId": userid, "branchId": branchid}
 
-# function to retrieve relevant documents
-def retrieve(state: GraphState):
+
+# function to retrieve relevant documents internally
+def internal_retrieve(state: GraphState):
     """
     Retrieve documents from vectorstore
 
@@ -126,15 +178,18 @@ def retrieve(state: GraphState):
     messages = state["messages"]
     last_message = str(messages[-1])
     
-    global vectorstore
-    # check if vectorstore function is already initialized
-    if vectorstore is None:
-        print("---Initializing Vectorstore---")
-        vectorstore = retrieve_vector_store()
+    global internal_retriever
+    # check if init_internal_retriever function is already initialized
+    if internal_retriever is None:
+        print("---INITIALIZING INTERNAL RETRIEVER---")
+        internal_retriever = init_internal_retriever()
     
-    # Retrieve relevant docs
-    documents = vectorstore.max_marginal_relevance_search(last_message, k=3)
-    return {"documents": documents, "messages": messages}
+    # RETRIEVE RELEVANT DOCUMENTS USING INTERNAL RETRIEVER
+    documents = internal_retriever.max_marginal_relevance_search(last_message, k=3)
+    
+    return {"documents": documents, "messages": messages,
+           "knowledge_type": state["knowledge_type"], "user_role": state["user_role"],
+           "userId": state["userId"], "branchId": state["branchId"]}
 
 # function to generate response to the question
 def generate(state: GraphState):
@@ -178,13 +233,20 @@ def generate(state: GraphState):
     messages_summary = eyomn_memory_saver.messages
     
     # CHECK IF A SUMMARY OF CONVERSATION EXISTS
-    if messages_summary and len(messages_summary) > 2:
-        print("---MEMORY EXISTS: SUMMARIZING NOW---")
-        # INITIATE SUMMARIZATION OF MEMORIES FOR EYOMN
-        messages_summary = convo_summ_chain.invoke({"conversation": messages})
+    if messages_summary:
+        print("---MEMORY EXISTS AND LOADED---")
         
-        # ADD SUMMARY TO MESSAGES
-        system_message = f"Summary of conversation earlier: {messages_summary.summarized_convo}"
+        # IF SUMMARY IS MORE THAN 2, PERFORM SUMMARIZATION
+        if len(messages_summary) > 2:
+            print("---MEMORY EXISTS AND MORE THAN 2: SUMMARIZING NOW---")
+            # INITIATE SUMMARIZATION OF MEMORIES FOR EYOMN
+            messages_summary = convo_summ_chain.invoke({"conversation": messages})
+        
+            # ADD SUMMARY TO MESSAGES
+            system_message = f"Summary of conversation earlier: {messages_summary.summarized_convo}"
+        else:
+            # ADD SUMMARY TO MESSAGES
+            system_message = f"Summary of conversation earlier: {messages_summary}"
         
         # APPEND SUMMARY TO MESSAGES
         messages = [HumanMessage(content=system_message)] + messages    
@@ -205,8 +267,11 @@ def generate(state: GraphState):
         documents = ["Respond in a Friendly and Professional Manner."]
         generation = rag_gen_chain.invoke({"context": documents, "question": messages})
     
+    # APPEND THE GENERATED RESPOND TO THE MESSAGES
+    
     return {"documents": documents, "messages": generation, 
-            "generation": AIMessage(content=generation), "summarized_memory": messages_summary}
+            "generation": AIMessage(content=generation), "summarized_memory": messages_summary,
+            "knowledge_type": state["knowledge_type"], "user_role": state["user_role"]}
 
 # function to grade the retrieved documents
 def grade_docs(state):
@@ -253,9 +318,11 @@ def grade_docs(state):
             
             doc_grader += 1
             continue
-    return {"documents": filtered_docs, "messages": messages}
+    return {"documents": filtered_docs, "messages": messages,
+            "knowledge_type": state["knowledge_type"], "user_role": state["user_role"],
+            "userId": state["userId"], "branchId": state["branchId"]}
 
-# optional functio to perform web-search
+# optional function to perform web-search
 #def web_search(state):
 
     # Web search based on the question
@@ -286,7 +353,7 @@ def grade_docs(state):
 # function to route question to the right knowledge base
 def route_question(state: GraphState):
     """
-    Route question to acquired_knowledge or RAG.
+    Route question to base_knowledge, internal_knowledge, or external_knowledge.
 
     Args:
         state (dict): The current graph state
@@ -296,9 +363,10 @@ def route_question(state: GraphState):
     """
 
     print("---ROUTE QUESTION---")
-    # OBTAIN LAST MESSAGE FROM THE LIST
+    # OBTAIN NECESSARY VARIABLES FOR ROUTING
     messages = state["messages"] 
     last_message = messages[-1]
+    user_role = state["user_role"]
     
     global router_chain
     # check if router chain is already initialized
@@ -306,13 +374,22 @@ def route_question(state: GraphState):
         print("---Initializing Router Chain---")
         router_chain = build_router_chain()
     
-    source = router_chain.invoke({"question": last_message})  
-    if source.context == 'acquired_knowledge':
-        print("---ROUTE QUESTION TO USE ACQUIRED KNOWLEDGE---")
-        return "acquired_knowledge"
-    elif source.context == 'vectorstore':
-        print("---ROUTE QUESTION TO RAG---")
-        return "vectorstore"
+    # INVOKE THE ROUTER CHAIN
+    source = router_chain.invoke({"question": last_message, "user_role": user_role})  
+    
+    # RETURN EXACT 'variable' FOR THE NEXT RETRIEVER
+    if source.context == 'base_knowledge':
+        print("---ROUTE QUESTION TO USE BASE KNOWLEDGE---")
+        # UPDATE KNOWLEDGE TYPE AND ROUTE TO GENERATE
+        return Command(update={"knowledge_type": source.context}, goto="generate")
+    elif source.context == 'internal_knowledge':
+        print("---ROUTE QUESTION TO USE INTERNAL KNOWLEDGE---")
+        # UPDATE KNOWLEDGE TYPE AND ROUTE TO INTERNAL RETRIEVER
+        return Command(update={"knowledge_type": source.context}, goto="internal retriever")
+    elif source.context == "external_knowledge":
+        print("---ROUTE QUESTION TO USE EXTERNAL KNOWLEDGE---")
+        # UPDATE KNOWLEDGE TYPE AND ROUTE TO EXTERNAL KNOWLEDGE
+        return Command(update={"knowledge_type": source.context}, goto="external retriever")
 
 
 # function to transform the question if LLM is unable to generate a correct answer
@@ -345,9 +422,24 @@ def transform_query(state):
     # CREATE A NEW MESSAGE W/ THE SAME MSG ID TO REPLACE THE CURRENT MESSAGE
     better_question = HumanMessage(content=better_question_content, id=last_message.id)
     
-    return {"documents": documents, "messages": [better_question], "summarized_memory": state["summarized_memory"]}
+    return {"documents": documents, "messages": [better_question], 
+            "summarized_memory": state["summarized_memory"], "knowledge_type": state["knowledge_type"],
+            "user_role": state["user_role"], "userId": state["userId"], "branchId": state["branchId"]}
 
 # define the edges of the graph
+
+# FUNCTION TO DETERMINE THE NEXT ROUTE BASED ON THE CURRENT KNOWLEDGE TYPE
+def should_retrieve(state: GraphState):
+    knowledge_type = state.get("knowledge_type", "")
+    
+    # CHECK THE CURRENT KNOWLEDGE TYPE BEING USING TO ROUTE TO THE APPROPRIATE NODE
+    if knowledge_type and knowledge_type == "base_knowledge":
+        return "re-generate"
+    elif knowledge_type and knowledge_type == "internal_knowledge":
+        return "internal retriever"
+    elif knowledge_type and knowledge_type == "external_knowledge":
+        return "external retriever" 
+
 def decide_to_generate(state):
     """
     Determines whether to generate an answer, or re-generate a question.
@@ -487,7 +579,9 @@ def construct_rag_graph() -> CompiledStateGraph:
         workflow = StateGraph(GraphState)
         
         # define the nodes of the graph
-        workflow.add_node("retrieve", retrieve) # Retrieve documents
+        workflow.add_node("router", route_question)
+        workflow.add_node("internal retriever", internal_retrieve) # Retrieve INTERNAL Documents
+        workflow.add_node("external retriever", external_retrieve) # Retrieve EXTERNAL Documents
         workflow.add_node("grade_documents", grade_docs) # Check Relevance of Retrieved Documents to the Question
         workflow.add_node("generate", generate) # Generate Response to question
         workflow.add_node("transform_query", transform_query) # Transform question if needed
@@ -496,17 +590,20 @@ def construct_rag_graph() -> CompiledStateGraph:
         # connect the nodes through the edges
         
         # User Question -> Router
-        workflow.set_conditional_entry_point(
-            route_question,
-            {
-                # if Router returned acquired_knowledge -> generate
-                "acquired_knowledge": "generate",
-                # if Router returned vectorstore -> retrieve
-                "vectorstore": "retrieve"
-            },
-        )
+        workflow.add_edge(START, "router")
+        # workflow.set_conditional_entry_point(
+        #     route_question,
+        #     {
+        #         # if Router returned acquired_knowledge -> generate
+        #         "acquired_knowledge": "generate",
+        #         # if Router returned vectorstore -> retrieve
+        #         "vectorstore": "retrieve"
+        #     },
+        # )
+        
         # Retrieved Documents -> grade_documents
-        workflow.add_edge("retrieve", "grade_documents")
+        workflow.add_edge("external retriever", "grade_documents")
+        workflow.add_edge("internal retriever", "grade_documents")
         workflow.add_conditional_edges(
             "grade_documents",
             decide_to_generate,
@@ -518,7 +615,14 @@ def construct_rag_graph() -> CompiledStateGraph:
             },
         )
         # Transform Query -> Retrieved Documents
-        workflow.add_edge("transform_query", "retrieve")
+        workflow.add_conditional_edges(
+            "transform_query", 
+            should_retrieve, {
+                "re-generate": "generate",
+                "internal retriever": "internal retriever",
+                "external retriever": "external retriever"
+            }
+        )
         workflow.add_conditional_edges(
             "generate",
             grade_generation,

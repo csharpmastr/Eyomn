@@ -13,9 +13,11 @@ from modal_setup import rag_image
 # context manager for global imports
 with rag_image.imports():
     from langchain_community.vectorstores import Chroma
+    from langchain_core.documents import Document
     from uuid import uuid4
     import sqlite3
     import _sqlite3
+    import json
     
     import chromadb
     from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -29,6 +31,16 @@ with rag_image.imports():
     from firebase_admin import credentials
     from firebase_admin import firestore
     from google.cloud.firestore_v1.client import Client
+    from google.cloud.firestore_v1.collection import CollectionReference
+    from google.cloud.firestore_v1.query import Query
+    from google.cloud.firestore_v1.base_query import Or
+    from langchain_google_firestore import FirestoreLoader
+    from google.cloud.firestore import FieldFilter
+    
+    from Crypto.Cipher import AES
+    from Crypto.Util.Padding import unpad
+    import binascii
+    from typing import Annotated, List
 
 
 # GLOBAL VARIABLES TO HOLD THE PERSISTENT CLIENT AND COLLECTION OF CHROMADB
@@ -51,6 +63,278 @@ def init_firestore_client() -> Client:
     print("---FIRESTORE CLIENT ALREADY INITIALIZED: RETUNING...---")
     return firestore_client
 
+# FUNCTION TO DECRYPT DATA RETRIEVED FROM FIRESTORE
+def decrypt_data(encrypted_data: Annotated[str, "String of data to be decrypted"],
+                 key: str = os.getenv('ENCRYPTION_KEY')) -> Annotated[str, "Decrypted Data"]:
+    try:
+        # SPLIT ENCRYPTED DATA
+        text_parts = encrypted_data.split(":")
+        iv = binascii.unhexlify(text_parts[0])
+        encrypted_text_buffer = binascii.unhexlify(":".join(text_parts[1:]))
+        
+        decipher = AES.new(key.encode('utf-8'), AES.MODE_CBC, iv)
+        decrypted = decipher.decrypt(encrypted_text_buffer)
+        decrypted_data = unpad(decrypted, AES.block_size).decode('utf-8')
+    except Exception as e:
+        raise CustomException(f"Error in decrypt_data: {str(e)}", sys)
+    
+    return decrypted_data
+
+# FUNCTION TO PARSE RETRIEVED DATA FROM FIRESTORE
+def parse_firestore_data(
+    collection: Annotated[List[Document], "List of documents retrieved from Firestore"],
+    collection_type = Annotated[str, "The type of the collection to be decrypted"]) -> Annotated[List, "List of Decrypted Documents"]:
+
+    # IDENTIFY COLLECTION TYPE
+    if collection_type == "appointment":
+        keys_to_decrypt = ["reason", "doctor", "patient_name"]
+
+    if collection_type == "patient":
+        keys_to_decrypt = ["birthdate", "civil_status", "contact_number", "email", "first_name", "last_name",
+                          "middle_name", "municipality", "occupation", "province", "sex", "age"]
+        
+    if collection_type == "soapNotes":
+        keys_to_decrypt = ["subjective", "objective", "assessment", "plan"]
+    
+    new_document = []
+    try:
+        # LOOP THROUGH THE COLLECTION TO ACCESS EACH DOCUMENT
+        for document in collection:
+            # CHECK IF LIST IS EMPTY FIRST
+            if len(collection) == 0:
+                print("--CURRENT COLLECTION IS EMPTY--")
+                continue
+            
+            page_content = json.loads(document.page_content)
+
+            for key in keys_to_decrypt:
+                if collection_type == "soapNotes":
+                    # LOOP INSIDE EACH KEY TO ACCESS THE ARRAY THEN JOIN THE CONTENTS OF THE ARRAY
+                    page_content[key] = "\n".join(decrypt_data(item) for item in page_content[key])
+                else:
+                    page_content[key] = decrypt_data(page_content[key])
+
+            updated_page_content = json.dumps(page_content)
+            
+            # CUSTOMIZE METADATA FOR EACH DOCUMENT
+            if collection_type == "soapNotes":
+                updated_metadata = {
+                    "note_id": page_content["noteId"],
+                    "document_type": "soap note"
+                }
+            
+            if collection_type == "appointment":
+                updated_metadata = {
+                    "reason": page_content["reason"],
+                    "appointment_date": page_content["scheduledTime"],
+                    "attending_doctor": page_content["doctor"],
+                    "document_type": "appointment data"
+                }
+
+            if collection_type == "patient":
+                updated_metadata = {
+                    "document_type": "patient data",
+                    "patient_id": page_content["patientId"],
+                    "municipality": page_content["municipality"],
+                    "province": page_content["province"],
+                    "sex": page_content["sex"],
+                    "birthdate": page_content["birthdate"],
+                    "civil_status": page_content["civil_status"]
+                }
+            
+            # CREATE A NEW DOCUMENT WITH UPDATED METADATA AND PAGE CONTENT THEN APPEND TO THE 'new_document' LIST
+            decrypted_document = Document(page_content=updated_page_content, metadata=updated_metadata)
+            new_document.append(decrypted_document)
+        
+        # RETURN THE UPDATED DOCUMENTS
+        return new_document
+            
+    except CustomException as e:
+        raise CustomException(f"Error in parse_firestore_data: {str(e)}", sys)
+
+# FUNCTION TO STORE DOCUMENTS TO CHROMADB
+def store_to_vectorstore(
+    documents: Annotated[List[str], "List of Documents to store in VectorStore"],
+    external_collection_name: Annotated[str, "Name of the collection of the stored documents"]
+) -> Annotated[Chroma, "Vector Store instance which contains the Documents of the User"]:
+    
+    # USE THE GLOBAL VARIABLES
+    global persistent_client, collection, embedding_fn
+    
+    # INITIALIZE PERSISTENT CHROMA CLIENT ONCE
+    if persistent_client is None:
+        # INITIALIZE THE PERSISTENT CHROMA CLIENT
+        print("INITIALIZING PERSISTENT CLIENT FOR EXTERNAL KNOWLEDGE")
+        persistent_client = chromadb.PersistentClient()
+        collection = persistent_client.get_or_create_collection(external_collection_name)
+        
+    # INITIALIZE THE EMBEDDING FUNCTION
+    if embedding_fn is None:
+        print("INITIALIZING EMBEDDING FUNCTION")
+        embedding_fn = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    
+    # CHECK IF THE COLLECTION ALREADY CONTAINS DOCUMENTS
+    if collection.count() > 0:
+        print(f"EXTERNAL COLLECTION ALREADY CONTAINS DOCUMENTS... \n RETURNING EXISTING CHROMADB\n")
+        return Chroma(client=persistent_client, collection_name=external_collection_name, embedding_function=embedding_fn)
+    else:
+        # GENERATE SYNTHETIC IDS FOR EACH DOCUMENTS
+        uids = [str(uuid4()) for _ in range(len(documents))]
+        
+        # EXTRACT PAGE CONTENT FROM DOCUMENTS THEN CONVERT TO STRING
+        plain_documents = [doc.page_content if isinstance(doc, Document) else str(doc) for doc in documents]
+        
+        # EXTRACT METADATA FROM DOCUMENTS
+        document_metadata = [doc.metadata for doc in documents]
+            
+        # ADD TO EXISTING PERSISTENT VECTORDB
+        collection.add(documents=plain_documents, 
+                        ids=uids, metadatas=document_metadata)
+    print("---EXTERNAL KNOWLEDGE LOADED TO CHROMA---")
+    return Chroma(client=persistent_client, collection_name=external_collection_name, embedding_function=embedding_fn)
+
+# FUNCTION TO LOAD DATA FROM FIRESTORE
+def load_data_from_firestore(
+    reference: Annotated[CollectionReference | Query, "Reference to the collection or query"],
+    collection_type: Annotated[str, "Collection name being retrieved"],
+    client: Annotated[Client, "Firestore Database Client API"]
+) -> List[Document]:
+    
+    # LOAD REFERENCED DATA FROM FIRESTORE
+    loader = FirestoreLoader(reference, client=client)
+    encrypted_data = loader.load()
+    
+    # DECRYPT THE DATA
+    decrypted_data = parse_firestore_data(encrypted_data, collection_type)
+    
+    return decrypted_data
+
+# FUNCTION TO GIVE THE CURRENT USER ACCESS TO THE DATA RETRIEVED AND DECRYPTED
+def init_external_retriever(
+    role: Annotated[str, "Role of the current user"], 
+    branchid: Annotated[List[str], "Branch/es of the current user"], 
+    userid: Annotated[str, "User ID of the current user"],
+    fsclient: Annotated[Client, "Firestore Database Client API"]
+) -> Chroma:
+    
+    role_map = {
+        "3" : "staff",
+        "2": "doctor",
+        "1": "branch",
+        "0": "admin"
+    }
+    
+    role = role_map.get(role, "")
+    
+    # TYPE CHECK OF THE 'branchid' PARAMETER
+    if not isinstance(branchid, List):
+            raise TypeError("The 'branchid' parameter must be a list of strings.")
+    
+    # PROCESS DATA ASSOCIATED WITH THE ROLE 'STAFF'
+    if role == "staff":
+        print("--CURRENT USER IS A STAFF--")
+        
+        staff_appointments = []
+        for BID in branchid:
+            # RETRIEVE APPOINTMENT DATA FROM FIRESTORE
+            staff_appointment_ref = fsclient.collection("apppointment").document(BID).collection("schedules")
+            
+            print("--LOADING APPOINTMENT DATA--")
+            # LOAD AND DECRYPT NECESSARY PARTS OF THE DATA
+            decrypted_appointment_data = load_data_from_firestore(staff_appointment_ref, collection_type="appointment", client=fsclient)
+            staff_appointments.extend(decrypted_appointment_data)
+            
+        # RETRIEVE INVENTORY DATA FROM FIRESTORE
+        #purchase_ref = db.collection("inventory").document(branchid).collection("purchases")
+        #purchase_loader = FirestoreLoader(purchase_ref, client=db)
+        #products_ref = db.collection("inventory").document(branchid).collection("products")
+        #products_loader = FirestoreLoader(products_ref, client=db)
+        #services_ref = db.collection("inventory").document(branchid).collection("services")
+        #services_loader = FirestoreLoader(services_ref, client=db)
+            
+        # STORE DECRYPTED DATA TO CHROMADB
+        print("--STORING DATA TO CHROMADB--")
+        vectorstore = store_to_vectorstore(documents=staff_appointments, 
+                                           external_collection_name="staff-appointment-data-vector-store")
+            
+        print("--DATA ENCRYPTED AND STORED IN CHROMADB--")
+            
+        return vectorstore
+    
+    # PROCESS DATA ASSOCIATED WITH THE ROLE 'DOCTOR'
+    if role == "doctor":
+        print("--CURRENT USER IS A DOCTOR--")
+        
+        # DEFINE A LIST TO HOLD AND STORE DOCTOR'S DOCUMENTS
+        dr_data_documents = []
+        
+        # DEFINE A LIST TO HOLD AND STORE DOCTOR'S ATTENDING PATIENT IDs
+        dr_patient_ids = set()
+        
+        # LOOP THROUGH THE BRANCHES OF THE CURRENT DOCTOR
+        for BID in branchid:
+            dr_appointment_ref = fsclient.collection("apppointment").document(BID).collection("schedules")
+            
+            # PERFORM A QUERY TO FIRESTORE TO ONLY RETURN APPOINTMENT OF THE CURRENT DOCTOR
+            dr_query_appointment = dr_appointment_ref.where(filter=FieldFilter("doctorId", "==", userid))
+                
+            dr_decrypted_appointment_data = load_data_from_firestore(dr_query_appointment, collection_type="appointment", client=fsclient)
+                
+            # append dr's appointment data
+            # APPEND DOCTOR'S APPOINTMENT DATA TO 'dr_data_documents' LIST
+            dr_data_documents.extend(dr_decrypted_appointment_data)
+        
+        print("--DOCTOR'S APPOINTMENT DATA LOADED--")
+        
+        # RETRIEVE PATIENT INFORMATION HANDLED BY THE CURRENT DOCTOR
+        dr_attending_patient_ref = fsclient.collection("patient")
+        dr_query_patient = dr_attending_patient_ref.where(
+            filter=Or(
+                [
+                    FieldFilter("doctorId", "==", userid),
+                    FieldFilter("authorizedDoctor", "==", userid)
+                ]
+            )
+        )
+        # LOAD AND DECRYPT DATA FROM FIRESTORE
+        dr_decrypted_patient_data = load_data_from_firestore(dr_query_patient, collection_type="patient", client=fsclient)
+        # APPEND THE RETRIEVED AND DECRYPTED PATIENT DATA TO THE EXISTING DOCUMENT LIST OF THE CURRENT DOCTOR
+        dr_data_documents.extend(dr_decrypted_patient_data)
+        
+        # EXTRACT AND APPEND EACH PATIENT IDs TO THE LIST
+        dr_patient_ids.update(
+            doc.metadata["patient_id"] for doc in dr_data_documents if doc.metadata["document_type"] == "patient data"
+        )
+        
+        print("--DOCTOR'S PATIENT DATA LOADED--")
+        
+        # LOOP THROUGH THE PATIENT IDs TO GET THEIR SOAPNOTES
+        for id in dr_patient_ids:
+            # REFERENCE THE SOAPNOTES SUBCOLLECTION
+            dr_attending_patient_notes_ref = fsclient.collection("note").document(id).collection("soapNotes")
+
+            # LOAD AND DECRYPT DATA FROM FIRESTORE
+            dr_decrypted_patient_notes = load_data_from_firestore(dr_attending_patient_notes_ref, 
+                                                                  collection_type="soapNotes",
+                                                                  client=fsclient)
+
+
+            # CHECK IF 'dr_decrypted_patient_notes' IS EMPTY BEFORE ADDING TO THE LIST
+            if len(dr_decrypted_patient_notes) > 0:
+                print(f"--APPENDING PATIENT DATA TO 'dr_data_documents'--")
+                # APPEND THE RETRIEVED AND DECRYPTED PATIENT NOTES TO THE EXISTING LIST OF THE DOCTOR'S DOCUMENTS
+                dr_data_documents.extend(dr_decrypted_patient_notes)
+                
+            continue
+        
+        print("--DOCTOR'S PATIENT NOTES DATA LOADED--")
+        
+        # STORE DECRYPTED DATA TO CHROMADB
+        vectorstore = store_to_vectorstore(documents=dr_data_documents,
+                                           external_collection_name="doctor-appointment-data-vector-store")
+        
+        return vectorstore
+    
 # function to preprocess documents before passing to content
 def preprocess(text: str) -> str:
     """Clean text by removing extra spaces and newlines"""
@@ -59,7 +343,7 @@ def preprocess(text: str) -> str:
     return re.sub(r'\n{2,}', '\n', text.strip())
 
 # function to accept a list of urls or file path then perform splitting
-def retrieve_vector_store() -> Chroma:
+def init_internal_retriever() -> Chroma:
     """
     Loads documents from a list of URLs, processes their content, and stores them in a vector database.
 

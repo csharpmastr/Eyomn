@@ -7,13 +7,15 @@ from exception import CustomException
 from langchain_core.messages import HumanMessage
 
 # function to implement web endpoint
-@app.function(concurrency_limit=15, container_idle_timeout=150)
+@app.function(concurrency_limit=15, container_idle_timeout=150, gpu="T4")
 @modal.web_endpoint(method="POST", docs=True)
 def web_endpoint(state: dict):
     try:
         # OBTAIN USERID OF THE CURRENT USER
         userid = state["userId"]
         messages = [HumanMessage(msg) for msg in state["messages"]]
+        user_role = state["user_role"]
+        branchid = state["branchId"]
         
         # SETUP CONFIG OF THE CURRENT USER'S SESSION
         user_session_config = {"configurable": {"thread_id": userid}}
@@ -22,7 +24,7 @@ def web_endpoint(state: dict):
         
         # INVOKE THE RAG GRAPH TO ASK THE QUESTION
         rag_app = construct_rag_graph()
-        output = rag_app.invoke({"messages": messages, "userId": userid}, config=user_session_config)
+        output = rag_app.invoke({"messages": messages, "userId": userid, "user_role": user_role, "branchId": branchid}, config=user_session_config)
         print(f"RagChat Output:{output}")
         return output["generation"].content
     except Exception as e:

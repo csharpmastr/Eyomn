@@ -14,8 +14,8 @@ class SummarizedMemory(BaseModel):
 # Data Model for the Router Node
 class RouteQuery(BaseModel):
     """Route a user query to the most relevant datasource."""
-    context: Literal["vectorstore", 'acquired_knowledge'] = Field(
-        description="Given a user question choose to route it to web search or a vectorstore.",
+    context: Literal['internal_knowledge', 'base_knowledge', 'external_knowledge'] = Field(
+        description="Given a user question choose to route it to internal_knowledge, base_knowledge, or external_knowledge",
     )
 
 # Data Model for the Hallucination Checker
