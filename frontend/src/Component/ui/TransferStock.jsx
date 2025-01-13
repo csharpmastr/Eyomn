@@ -183,7 +183,7 @@ const TransferStock = ({ onClose }) => {
                       {groupedRequests.completed.length}
                     </div>
                   </header>
-                  <div>
+                  <div className="h-[300px] overflow-y-auto">
                     {groupedRequests.completed.map((req, index) => {
                       const branch = branches.find(
                         (b) => b.branchId === req.branchId
@@ -235,7 +235,7 @@ const TransferStock = ({ onClose }) => {
                       {groupedRequests.rejected.length}
                     </div>
                   </header>{" "}
-                  <div>
+                  <div className="h-[300px] overflow-y-auto">
                     {groupedRequests.rejected.map((req, index) => {
                       const branch = branches.find(
                         (b) => b.branchId === req.branchId
