@@ -16,6 +16,7 @@ const inventoryRoute = require("./Route/inventoryRoute");
 const notificationRoute = require("./Route/notificationRoute");
 const { startDoctorSSEServer } = require("./SSE/DoctorEvent");
 const { startOrganizationSSEServer } = require("./SSE/OrganizationEvent");
+const { startBranchSSEServer } = require("./SSE/BranchEvent");
 //Middleware
 app.use(express.json());
 
@@ -46,4 +47,5 @@ app.listen(port, () => {
 });
 startDoctorSSEServer(app);
 startOrganizationSSEServer(app);
+startBranchSSEServer(app);
 startWebSocketServer();

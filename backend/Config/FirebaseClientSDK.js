@@ -20,6 +20,7 @@ const notificationCol = collection(dbClient, "notification");
 const visitCol = collection(dbClient, "visit");
 const inventoryCol = collection(dbClient, "inventory");
 const organizationCol = collection(dbClient, "organization");
+const branchCol = collection(dbClient, "branch");
 
 module.exports = {
   dbClient,
@@ -28,4 +29,5 @@ module.exports = {
   visitCol,
   inventoryCol,
   organizationCol,
+  branchCol,
 };

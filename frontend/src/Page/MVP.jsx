@@ -11,6 +11,7 @@ import Cookies from "universal-cookie";
 import DoctorSSEComponent from "../SSE/DoctorSSE";
 import OrganizationSSEComponent from "../SSE/OrganizationSSE";
 import InfoPassModal from "../Component/ui/InfoPassModal";
+import BranchSSEComponent from "../SSE/BranchSSE";
 const MVP = () => {
   const user = useSelector((state) => state.reducer.user.user);
   const { fetchData } = useFetchData();
@@ -128,6 +129,7 @@ const MVP = () => {
       {user.isNew === true && isModalOpen && (
         <InfoPassModal onClose={closeModal} />
       )}
+      {user.role === "1" && <BranchSSEComponent />}
       {user.role === "2" && <DoctorSSEComponent />}
       {user.role === "0" && <OrganizationSSEComponent />}
       <div className="flex xl:flex-row flex-col h-screen overflow-hidden">
