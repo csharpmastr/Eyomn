@@ -272,7 +272,7 @@ const ScribeRecord = () => {
                         <div
                           key={note.noteId || index}
                           className="p-5 rounded-lg font-medium hover:bg-white border border-f-gray flex flex-col justify-center items-center gap-3 shadow-lg shadow-[#d4d4d43b]"
-                          onClick={() => handleClickRawNotes(note.noteId)}
+                          onClick={() => handleClickSoap(note.noteId)}
                         >
                           <div className="w-20">
                             <img
