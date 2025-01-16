@@ -1,0 +1,13 @@
+fastapi[standard]
+python-multipart
+pillow
+python-dotenv
+pydantic
+typing-extensions
+slowapi
+mistralai
+pyyaml
+python-jose[cryptography]
+uvicorn[standard]
+sqlalchemy
+passlib[bcrypt]

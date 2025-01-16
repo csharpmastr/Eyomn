@@ -101,7 +101,7 @@ async def validate_image(image: UploadFile) -> bytes:
 
 # DEFINE ROOT ENDPOINT
 @app.get("/")
-def root():
+def root(api_key: str = Depends(get_api_key)):
     return {"Welcome": "You are now inside EYOMN'S ENDPOINT!"}
 
 # DEFINE AND SECURE ENDPOINT FOR THE AGENT DATA EXTRACTOR
@@ -133,16 +133,17 @@ async def validate_and_extract(request: Request, image: UploadFile = File(...), 
         
         # LOG SUCCESSFUL PROCESSING
         logger.info(f"SUCESSFULLY PROCESSED IMAGE FOR API KEY: {api_key[:8]}")
-
         
-        return raw_output
-        #return JSONResponse(content={"message": raw_output}, status_code=200)
+        # return raw_output
+        print("Response Type: ", type(raw_output))
+        print("Response: ", raw_output.model_dump_json())
+        return JSONResponse(content={"info": raw_output.model_dump()}, status_code=200)
     except HTTPException as http_exc:
         logger.error(f"HTTP Exception: {str(http_exc)}")
         raise http_exc
     except Exception as e:
         logger.error(f"General Exception: {str(e)}")
-        return JSONResponse(content={"message": str(e)}, status_code=500)
+        return JSONResponse(content={"status":"error", "message": str(e)}, status_code=500)
 
 # ERROR HANDLER FOR INVALID API KEYS
 @app.exception_handler(HTTPException)

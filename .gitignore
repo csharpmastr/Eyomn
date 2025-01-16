@@ -130,6 +130,18 @@ ENV/
 env.bak/
 venv.bak/
 
+# TESTS
+test/
+
+# DOCKER
+DataExtractor_Graph/.dockerignore
+
+# PRIVATE KEY
+RagChat/eyomn-2d9c7-firebase-adminsdk-zjlyg-4c6fd6c764.json
+
+# STREAMLIT
+.streamlit/config.toml
+
 # Spyder project settings
 .spyderproject
 .spyproject

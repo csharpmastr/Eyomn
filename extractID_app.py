@@ -18,6 +18,7 @@ def process_image(image, api_url, headers):
 
         # Send the image through API
         files = {'image': ('image.jpg', img_byte_arr, 'image/jpeg')}
+        #request = {'image': image}
         response = requests.post(api_url, files=files, headers=headers)
 
         if response.status_code == 200:
@@ -33,7 +34,7 @@ def process_image(image, api_url, headers):
         st.error(f"An error occurred: {e}")
 
 def handle_file_upload(id_type, api_url, headers):
-    """Handle file upload logic."""   
+    """Handle file upload logic."""
     uploaded_file = st.file_uploader("Upload a JPG or PNG file", type=["jpg", "jpeg", "png"])
 
     if uploaded_file:
@@ -54,7 +55,7 @@ def main():
     st.title("Image Capture and Upload App")
     
     # API configuration
-    api_url = "http://127.0.0.1:8000/validate_and_extract"
+    api_url = "https://httpxtractor-production.up.railway.app/validate_and_extract"
     
     # REQUEST HEADERS
     headers = {
