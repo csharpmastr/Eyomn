@@ -1,0 +1,952 @@
+const admin = require("firebase-admin");
+const { v4: uuid } = require("uuid");
+const {
+  inventoryCollection,
+  db,
+  organizationCollection,
+  branchCollection,
+} = require("../Config/FirebaseConfig");
+const {
+  encryptDocument,
+  removeNullValues,
+  decryptDocument,
+  generateUniqueId,
+  verifyFirebaseUid,
+} = require("../Helper/Helper");
+const { decryptData } = require("../Security/DataHashing");
+const { pushNotification } = require("./notificationService");
+const { request } = require("https");
+
+const generateSKU = () => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let sku = "";
+  for (let i = 0; i < 8; i++) {
+    sku += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return sku;
+};
+
+const addProduct = async (branchId, productDetails, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const inventoryRef = inventoryCollection;
+    const productsCollectionRef = inventoryRef
+      .doc(branchId)
+      .collection("products");
+
+    const querySnapshot = await productsCollectionRef.get();
+
+    let productExists = false;
+    for (const doc of querySnapshot.docs) {
+      const productData = doc.data();
+
+      if (productData.product_name) {
+        const decryptedProductName = decryptData(productData.product_name);
+        const decryptedProductBrand = decryptData(productData.brand);
+        if (
+          decryptedProductName === productDetails.product_name &&
+          decryptedProductBrand === productDetails.brand
+        ) {
+          productExists = true;
+          break;
+        }
+      }
+    }
+
+    if (productExists) {
+      throw { status: 400, message: "The product already exists." };
+    }
+
+    const productId = await generateUniqueId(productsCollectionRef);
+    const productSKU = generateSKU();
+    const productRef = productsCollectionRef.doc(productId);
+    productDetails = removeNullValues(productDetails);
+
+    productDetails.isDeleted = false;
+    const encryptedProduct = encryptDocument(productDetails, [
+      "quantity",
+      "price",
+      "expirationDate",
+      "isDeleted",
+      "retail_price",
+    ]);
+
+    await productRef.set({ ...encryptedProduct, productId, productSKU });
+    return { productId, productSKU };
+  } catch (error) {
+    console.error("Error adding product:", error);
+    throw error;
+  }
+};
+
+const deleteProduct = async (branchId, productId, isDeleted) => {
+  try {
+    const productRef = inventoryCollection
+      .doc(branchId)
+      .collection("products")
+      .doc(productId);
+
+    const docSnapshot = await productRef.get();
+    if (!docSnapshot.exists) {
+      throw new Error("Document does not exist");
+    }
+
+    await productRef.update({
+      isDeleted,
+    });
+  } catch (error) {
+    console.error("Error marking product as deleted: ", error);
+    throw error;
+  }
+};
+
+const updateProduct = async (branchId, productId, productDetails) => {
+  try {
+    const productsCollectionRef = inventoryCollection
+      .doc(branchId)
+      .collection("products");
+
+    const querySnapshot = await productsCollectionRef.get();
+    let productExists = false;
+
+    querySnapshot.forEach((doc) => {
+      const productData = doc.data();
+
+      if (doc.id !== productId && productData.product_name) {
+        const decryptedProductName = decryptData(productData.product_name);
+        const decryptedProductBrand = decryptData(productData.brand);
+
+        if (
+          decryptedProductName === productDetails.product_name &&
+          decryptedProductBrand === productDetails.brand
+        ) {
+          productExists = true;
+        }
+      }
+    });
+
+    if (productExists) {
+      throw {
+        status: 400,
+        message: "Another product with the same name and brand already exists.",
+      };
+    }
+
+    const productRef = productsCollectionRef.doc(productId);
+
+    const docSnapshot = await productRef.get();
+    if (!docSnapshot.exists) {
+      throw new Error("Document does not exist");
+    }
+
+    const encryptedProductDetails = encryptDocument(productDetails, [
+      "price",
+      "quantity",
+      "expirationDate",
+      "retail_price",
+      "isDeleted",
+    ]);
+
+    await productRef.update(encryptedProductDetails);
+  } catch (error) {
+    console.error("Error updating product: ", error);
+    throw error;
+  }
+};
+
+const addPurchase = async (
+  purchaseDetails,
+  serviceDetails,
+  branchId,
+  staffId,
+  firebaseUid,
+  doctorId,
+  patientId
+) => {
+  try {
+    console.log(purchaseDetails, serviceDetails);
+
+    // Verify Firebase UID
+    await verifyFirebaseUid(firebaseUid);
+
+    // Ensure at least one of the inputs is provided
+    if (!purchaseDetails?.length && !serviceDetails) {
+      throw {
+        status: 400,
+        message: "No purchase details or service details provided.",
+      };
+    }
+
+    const currentDate = new Date();
+    const createdAt = currentDate.toISOString();
+
+    const purchaseCollectionRef = inventoryCollection
+      .doc(branchId)
+      .collection("purchases");
+    const productsCollectionRef = inventoryCollection
+      .doc(branchId)
+      .collection("products");
+
+    const purchaseId = await generateUniqueId(purchaseCollectionRef);
+    const purchaseRef = purchaseCollectionRef.doc(purchaseId);
+
+    let serviceId;
+    // Perform Firestore transaction
+    await db.runTransaction(async (transaction) => {
+      // Handle products if `purchaseDetails` is provided
+      if (purchaseDetails?.length > 0) {
+        const productDocs = await Promise.all(
+          purchaseDetails.map(async (product) => {
+            const productRef = productsCollectionRef.doc(product.productId);
+            const productDoc = await transaction.get(productRef);
+
+            if (!productDoc.exists) {
+              throw {
+                status: 404,
+                message: `Product not found: ${product.productId}`,
+              };
+            }
+
+            const productData = productDoc.data();
+            const decryptedProductData = decryptDocument(productData, [
+              "quantity",
+              "expirationDate",
+              "price",
+              "productSKU",
+              "productId",
+              "isDeleted",
+              "retail_price",
+            ]);
+
+            if (decryptedProductData.quantity < product.quantity) {
+              throw {
+                status: 400,
+                message: `Insufficient stock for product: ${product.productId}`,
+              };
+            }
+
+            return {
+              productRef,
+              decryptedProductData,
+              requestedQuantity: product.quantity,
+            };
+          })
+        );
+
+        // Update stock for each product
+        productDocs.forEach(
+          ({ productRef, decryptedProductData, requestedQuantity }) => {
+            const updatedQuantity =
+              decryptedProductData.quantity - requestedQuantity;
+
+            const updatedProductData = encryptDocument(
+              { ...decryptedProductData, quantity: updatedQuantity },
+              [
+                "quantity",
+                "expirationDate",
+                "price",
+                "productSKU",
+                "productId",
+                "isDeleted",
+                "retail_price",
+              ]
+            );
+
+            transaction.update(productRef, updatedProductData);
+          }
+        );
+
+        // Create purchase record
+        const purchaseData = {
+          staffId,
+          purchaseDetails,
+          createdAt,
+        };
+
+        if (patientId) purchaseData.patientId = patientId;
+
+        transaction.set(purchaseRef, purchaseData);
+      }
+
+      // Handle service if `serviceDetails` is provided
+      if (serviceDetails && Object.keys(serviceDetails).length > 0) {
+        const servicesColRef = inventoryCollection
+          .doc(branchId)
+          .collection("services");
+
+        serviceId = await generateUniqueId(servicesColRef);
+
+        const serviceDataWithTimestamp = {
+          ...serviceDetails,
+          createdAt,
+        };
+
+        if (doctorId) serviceDataWithTimestamp.doctorId = doctorId;
+        if (patientId) serviceDataWithTimestamp.patientId = patientId;
+
+        const encryptedServiceData = encryptDocument(serviceDataWithTimestamp, [
+          "service_price",
+          "date",
+          "createdAt",
+          "doctorId",
+          "patientId",
+        ]);
+
+        transaction.set(servicesColRef.doc(serviceId), encryptedServiceData);
+      }
+    });
+
+    console.log(purchaseId, serviceId);
+
+    return { purchaseId, serviceId, createdAt };
+  } catch (error) {
+    console.error("Error during purchase:", error);
+    throw error;
+  }
+};
+
+const getBranchInventory = async (branchId, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const servicesRef = inventoryCollection
+      .doc(branchId)
+      .collection("services");
+    const purchasesRef = inventoryCollection
+      .doc(branchId)
+      .collection("purchases");
+    const productsRef = inventoryCollection
+      .doc(branchId)
+      .collection("products");
+
+    const [servicesSnap, purchasesSnap, productsSnap] = await Promise.all([
+      servicesRef.get(),
+      purchasesRef.get(),
+      productsRef.get(),
+    ]);
+
+    const services = servicesSnap.empty
+      ? []
+      : servicesSnap.docs.map((doc) => {
+          const serviceData = doc.data();
+
+          const decryptedServiceData = decryptDocument(serviceData, [
+            "service_price",
+            "date",
+            "createdAt",
+            "doctorId",
+            "patientId",
+          ]);
+
+          return {
+            id: doc.id,
+            ...decryptedServiceData,
+          };
+        });
+
+    const purchases = purchasesSnap.empty
+      ? []
+      : purchasesSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+    const products = productsSnap.empty
+      ? []
+      : productsSnap.docs.map((doc) => {
+          const productData = doc.data();
+
+          const decryptedProductData = decryptDocument(productData, [
+            "product",
+            "productId",
+            "expirationDate",
+            "productSKU",
+            "price",
+            "quantity",
+            "isDeleted",
+            "retail_price",
+          ]);
+
+          return {
+            id: doc.id,
+            ...decryptedProductData,
+          };
+        });
+
+    return { services, purchases, products };
+  } catch (error) {
+    console.error("Error retrieving branch inventory:", error);
+    throw {
+      status: error.status || 500,
+      message:
+        error.message || "An error occurred while fetching branch inventory.",
+    };
+  }
+};
+
+const getOrgProductSalesWithServices = async (organizationId, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const orgDoc = await organizationCollection.doc(organizationId).get();
+    if (!orgDoc.exists) {
+      throw { status: 404, message: "Organization not found." };
+    }
+
+    const orgData = orgDoc.data();
+    const inventoryData = {};
+
+    const branchPromises = orgData.branch.map(async (branchId) => {
+      try {
+        const [salesSnapshot, productsSnapshot, services] = await Promise.all([
+          inventoryCollection.doc(branchId).collection("purchases").get(),
+          inventoryCollection.doc(branchId).collection("products").get(),
+          getServiceFees(branchId, firebaseUid),
+        ]);
+
+        const sales = salesSnapshot.docs.map((doc) => doc.data());
+        const products = productsSnapshot.docs.map((doc) => {
+          const productData = doc.data();
+          return decryptDocument(productData, [
+            "expirationDate",
+            "price",
+            "quantity",
+            "productId",
+            "productSKU",
+            "isDeleted",
+            "retail_price",
+          ]);
+        });
+
+        inventoryData[branchId] = {
+          purchases: sales,
+          products: products,
+          services: services,
+        };
+      } catch (branchError) {
+        console.error(
+          `Error fetching data for branch ${branchId}:`,
+          branchError
+        );
+      }
+    });
+
+    await Promise.all(branchPromises);
+
+    return inventoryData;
+  } catch (error) {
+    console.error(
+      "Error fetching organization product sales with services:",
+      error
+    );
+    throw new Error(
+      "Error fetching product sales and services data: " + error.message
+    );
+  }
+};
+
+const retrieveProduct = async (branchId, products, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const productRef = inventoryCollection.doc(branchId).collection("products");
+
+    await Promise.all(
+      products.map(async (productId) => {
+        const productDocRef = productRef.doc(productId);
+
+        await productDocRef.update({ isDeleted: false });
+      })
+    );
+  } catch (error) {
+    console.error("Error retrieving product:", error);
+    throw new Error("Error retrieving product: " + error.message);
+  }
+};
+
+const addServiceFee = async (
+  branchId,
+  doctorId,
+  patientId,
+  serviceDetails,
+  firebaseUid
+) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const currentDate = new Date();
+    const servicesColRef = inventoryCollection
+      .doc(branchId)
+      .collection("services");
+
+    const serviceId = await generateUniqueId(servicesColRef);
+
+    const serviceDataWithTimestamp = {
+      ...serviceDetails,
+      createdAt: currentDate.toISOString(),
+      doctorId: doctorId,
+      patientId: patientId,
+    };
+
+    const encryptedServiceData = encryptDocument(serviceDataWithTimestamp, [
+      "service_price",
+      "date",
+      "createdAt",
+      "doctorId",
+      "patientId",
+    ]);
+
+    await servicesColRef.doc(serviceId).set(encryptedServiceData);
+
+    return serviceId;
+  } catch (error) {
+    console.error("Error adding service fee:", error);
+  }
+};
+const getServiceFees = async (branchId, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const servicesRef = inventoryCollection
+      .doc(branchId)
+      .collection("services");
+
+    const servicesSnap = await servicesRef.get();
+
+    if (servicesSnap.empty) {
+      console.log("No service fees found.");
+      return [];
+    }
+
+    const services = servicesSnap.docs.map((doc) => {
+      const serviceData = doc.data();
+
+      const decryptedServiceData = decryptDocument(serviceData, [
+        "service_price",
+        "date",
+        "createdAt",
+        "doctorId",
+        "patientId",
+      ]);
+
+      return {
+        id: doc.id,
+        ...decryptedServiceData,
+      };
+    });
+
+    return services;
+  } catch (error) {
+    console.error("Error retrieving service fees:", error);
+    throw error;
+  }
+};
+const getPatientProductServicesAvail = async (
+  branchId,
+  patientId,
+  firebaseUid
+) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const purchasesRef = inventoryCollection
+      .doc(branchId)
+      .collection("purchases");
+    const servicesRef = inventoryCollection
+      .doc(branchId)
+      .collection("services");
+
+    const [purchasesSnapshot, servicesSnapshot] = await Promise.all([
+      purchasesRef.where("patientId", "==", patientId).get(),
+      servicesRef.where("patientId", "==", patientId).get(),
+    ]);
+
+    const purchasesData = purchasesSnapshot.empty
+      ? []
+      : purchasesSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+    const servicesData = servicesSnapshot.empty
+      ? []
+      : servicesSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...decryptDocument(doc.data(), [
+            "createdAt",
+            "date",
+            "doctorId",
+            "patientId",
+            "service_price",
+          ]),
+        }));
+
+    return {
+      purchases: purchasesData,
+      services: servicesData,
+    };
+  } catch (error) {
+    console.error("Error fetching patient data:", error);
+    throw new Error(
+      "Unable to fetch patient product and service availability."
+    );
+  }
+};
+
+const requestProductStock = async (
+  requestDetails,
+  firebaseUid,
+  branchId,
+  organizationId
+) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+    const currentDate = new Date();
+    const requestColRef = inventoryCollection
+      .doc(branchId)
+      .collection("requests");
+    const branchRef = branchCollection.doc(branchId);
+
+    const requestId = await generateUniqueId(requestColRef);
+    console.log(requestId);
+
+    const branchSnap = await branchRef.get();
+    if (!branchSnap.exists) {
+      throw new Error(`Branch with ID ${branchId} not found`);
+    }
+    const branchData = branchSnap.data();
+
+    const branchName = decryptData(branchData.name);
+
+    const encryptedRequestDetails = encryptDocument(requestDetails, [
+      "quantity",
+      "productId",
+    ]);
+
+    await requestColRef.doc(requestId).set({
+      ...encryptedRequestDetails,
+      status: "pending",
+      createdAt: currentDate.toISOString(),
+    });
+
+    const notificationData = {
+      branchName,
+      branchId,
+      requestId,
+      ...requestDetails,
+    };
+
+    // Send notification
+    await pushNotification(organizationId, "inventory", notificationData);
+
+    console.log("Stock request successfully created!");
+  } catch (error) {
+    console.error("Error creating stock request:", error);
+    throw error;
+  }
+};
+const getStockRequests = async (id, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+
+    const stockRequest = [];
+    for (const branchId of id) {
+      try {
+        const requestSnapshot = await inventoryCollection
+          .doc(branchId)
+          .collection("requests")
+          .get();
+
+        if (requestSnapshot.empty) {
+          console.log(`No requests found for branchId: ${branchId}`);
+          continue;
+        }
+
+        requestSnapshot.forEach((doc) => {
+          console.log(doc.data());
+          stockRequest.push({
+            branchId,
+            requestId: doc.id,
+            ...decryptDocument(doc.data(), [
+              "createdAt",
+              "quantity",
+              "status",
+              "productId",
+            ]),
+          });
+        });
+      } catch (error) {
+        console.error(
+          `Error fetching requests for branchId: ${branchId}`,
+          error
+        );
+      }
+    }
+
+    return stockRequest;
+  } catch (error) {
+    console.error("Error getting stock requests:", error);
+    throw error;
+  }
+};
+
+const processProductRequest = async (
+  targetBranch,
+  requestDetails,
+  firebaseUid
+) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+    console.log(targetBranch, requestDetails);
+
+    const requestBranchColRef = inventoryCollection
+      .doc(targetBranch)
+      .collection("branchRequests");
+
+    const branchRequestId = await generateUniqueId(requestBranchColRef);
+    const encryptedRequestDetails = encryptDocument(requestDetails, [
+      "branchId",
+      "createdAt",
+      "quantity",
+      "status",
+      "requestId",
+      "productId",
+      "requestingProductId",
+    ]);
+    await requestBranchColRef.doc(branchRequestId).set({
+      ...encryptedRequestDetails,
+      approvedAt: new Date().toISOString(),
+      status: "pending",
+    });
+    const requestorId = requestDetails.branchId;
+    const requestorNameSnap = await branchCollection.doc(requestorId).get();
+
+    if (requestorNameSnap.empty) {
+      throw new Error("Requestor not found");
+    }
+    const requestorName = requestorNameSnap.data();
+    const decryptedRequestorName = decryptData(requestorName.name);
+    console.log(decryptedRequestorName);
+
+    await pushNotification(targetBranch, "inventory", {
+      branchName: decryptedRequestorName,
+      branchId: requestDetails.branchId,
+      requestId: branchRequestId,
+    });
+    console.log("Request successfully processed!");
+  } catch (error) {
+    console.error("Error processing product request:", error);
+    throw error;
+  }
+};
+const updateRequestStatus = async (
+  requestId,
+  status,
+  branchId,
+  firebaseUid
+) => {
+  try {
+    console.log(status);
+
+    await verifyFirebaseUid(firebaseUid);
+    const requestRef = inventoryCollection
+      .doc(branchId)
+      .collection("requests")
+      .doc(requestId);
+    const requestDoc = await requestRef.get();
+    if (!requestDoc.exists) {
+      throw new Error("Request not found");
+    }
+    await requestRef.update({ status });
+  } catch (error) {
+    console.error("Error updating request status: ", error);
+    throw error;
+  }
+};
+const getBranchRequests = async (branchId, firebaseUid) => {
+  try {
+    console.log(branchId, firebaseUid);
+
+    await verifyFirebaseUid(firebaseUid);
+    const branchRequests = [];
+    const requestColRef = inventoryCollection
+      .doc(branchId)
+      .collection("branchRequests");
+    const requestSnap = await requestColRef.get();
+
+    if (requestSnap.empty) {
+      console.log("No requests found for branchId: ", branchId);
+      return branchRequests;
+    }
+    const decryptedBranchRequests = requestSnap.docs.map((doc) => {
+      return {
+        ...decryptDocument(doc.data(), [
+          "createdAt",
+          "quantity",
+          "status",
+          "approvedAt",
+          "branchId",
+          "requestId",
+          "productId",
+          "requestingProductId",
+        ]),
+        branchRequestId: doc.id,
+      };
+    });
+    return decryptedBranchRequests;
+  } catch (error) {
+    console.error("Error getting branch requests:", error);
+    throw error;
+  }
+};
+const approveProductRequest = async (branchId, requestDetails, firebaseUid) => {
+  try {
+    verifyFirebaseUid(firebaseUid);
+
+    const branchInventoryColRef = inventoryCollection
+      .doc(branchId)
+      .collection("products");
+
+    const matchingProductSnapshot = await branchInventoryColRef
+      .where("productId", "==", requestDetails.productId)
+      .get();
+
+    if (matchingProductSnapshot.empty) {
+      throw new Error(
+        `No matching product found in branch inventory for branch ${branchId}.`
+      );
+    }
+
+    const matchingProduct = decryptDocument(
+      matchingProductSnapshot.docs[0].data(),
+      [
+        "expirationDate",
+        "price",
+        "quantity",
+        "productId",
+        "productSKU",
+        "isDeleted",
+        "retail_price",
+      ]
+    );
+
+    const updatedQuantity = matchingProduct.quantity - requestDetails.quantity;
+    if (updatedQuantity < 0) {
+      throw new Error("Insufficient quantity in branch inventory.");
+    }
+    const branchRequestorColRef = inventoryCollection
+      .doc(requestDetails.branchId)
+      .collection("products");
+
+    const requestorProductSnapshot = await branchRequestorColRef
+      .where("productId", "==", requestDetails.requestingProductId)
+      .get();
+
+    if (requestorProductSnapshot.empty) {
+      throw new Error(
+        `No matching product found in requestor's inventory for branch ${requestDetails.branchId}.`
+      );
+    }
+
+    const requestorMatchingProduct = decryptDocument(
+      requestorProductSnapshot.docs[0].data(),
+      [
+        "expirationDate",
+        "price",
+        "quantity",
+        "productId",
+        "productSKU",
+        "isDeleted",
+        "retail_price",
+      ]
+    );
+
+    const requestorUpdatedQuantity =
+      requestorMatchingProduct.quantity + requestDetails.quantity;
+
+    //batch updates
+    const batch = db.batch();
+
+    // Update branch inventory
+    const branchProductRef = branchInventoryColRef.doc(
+      matchingProduct.productId
+    );
+    batch.update(branchProductRef, { quantity: updatedQuantity });
+
+    // Update requestor inventory
+    const requestorProductRef = branchRequestorColRef.doc(
+      requestorMatchingProduct.productId
+    );
+    batch.update(requestorProductRef, { quantity: requestorUpdatedQuantity });
+
+    // Update request statuses
+    const branchRequestColRef = inventoryCollection
+      .doc(branchId)
+      .collection("branchRequests");
+    const requestDocRef = branchRequestColRef.doc(
+      requestDetails.branchRequestId
+    );
+    batch.update(requestDocRef, { status: "approved" });
+
+    const requestColRef = inventoryCollection
+      .doc(requestDetails.branchId)
+      .collection("requests");
+    const requestorDocRef = requestColRef.doc(requestDetails.requestId);
+    batch.update(requestorDocRef, { status: "completed" });
+
+    await batch.commit();
+    console.log("Product request approved successfully.");
+  } catch (error) {
+    console.error("Error approving product request:", error);
+    throw error;
+  }
+};
+
+const rejectBranchRequest = async (branchId, requestDetails, firebaseUid) => {
+  try {
+    await verifyFirebaseUid(firebaseUid);
+    const branchRequestColRef = inventoryCollection
+      .doc(branchId)
+      .collection("branchRequests")
+      .doc(requestDetails.branchRequestId);
+    const requestColRef = inventoryCollection
+      .doc(requestDetails.branchId)
+      .collection("requests")
+      .doc(requestDetails.requestId);
+
+    const branchRequestDoc = await branchRequestColRef.get();
+    if (!branchRequestDoc.exists) {
+      throw new Error("Request not found");
+    }
+    await branchRequestColRef.update({ status: "rejected" });
+    const requestDoc = await requestColRef.get();
+    if (!requestDoc.exists) {
+      throw new Error("Request not found");
+    }
+    await requestColRef.update({ status: "rejected" });
+  } catch (error) {
+    console.error("Error updating branch request status:", error);
+    throw error;
+  }
+};
+
+module.exports = {
+  addProduct,
+
+  deleteProduct,
+  updateProduct,
+  addPurchase,
+  getBranchInventory,
+  getOrgProductSalesWithServices,
+  retrieveProduct,
+  addServiceFee,
+  getPatientProductServicesAvail,
+  requestProductStock,
+  getStockRequests,
+  processProductRequest,
+  updateRequestStatus,
+  getBranchRequests,
+  approveProductRequest,
+  rejectBranchRequest,
+};
