@@ -146,6 +146,10 @@ RagChat/eyomn-2d9c7-firebase-adminsdk-zjlyg-4c6fd6c764.json
 .spyderproject
 .spyproject
 
+# EYOMN-FRONT-BACK
+backend/
+frontend/
+
 # Rope project settings
 .ropeproject
 
