@@ -134,7 +134,7 @@ venv.bak/
 test/
 
 # DOCKER
-DataExtractor_Graph/.dockerignore
+.dockerignore
 
 # PRIVATE KEY
 RagChat/eyomn-2d9c7-firebase-adminsdk-zjlyg-4c6fd6c764.json

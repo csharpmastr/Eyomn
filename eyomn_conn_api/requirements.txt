@@ -1,0 +1,7 @@
+fastapi[standard]
+python-dotenv
+slowapi
+typing-extensions
+uvicorn
+python-multipart
+pydantic
