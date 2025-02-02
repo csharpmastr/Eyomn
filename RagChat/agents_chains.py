@@ -15,7 +15,7 @@ from helper_utils import load_sys_prompts
 # context manager for global imports
 with rag_image.imports():
     from langchain_groq import ChatGroq
-    from langchain import hub
+    from langchain_mistralai import ChatMistralAI
     from langchain_core.prompts import ChatPromptTemplate
     from langchain_core.output_parsers import StrOutputParser
 
@@ -104,7 +104,7 @@ def build_rag_generation_chain():
         #prompts = hub.pull("rlm/rag-prompt", api_key=os.environ['LANGCHAIN_API_KEY'])
     
         llm_generator = ChatGroq(model_name="llama-3.3-70b-versatile", 
-                                max_retries=2, temperature=0.4, max_tokens=256,
+                                temperature=0.4,
                                 api_key=os.environ['GROQ_API_KEY'])
         
         # check if sys prompts is already initialized
@@ -119,7 +119,7 @@ def build_rag_generation_chain():
         )
         
         # chain the llm and prompt
-        rag_generation_chain = rag_gen_prompt | llm_generator | StrOutputParser()
+        rag_generation_chain = rag_gen_prompt | llm_generator
         
         # log the agent creation
         logging.info("RAG Generation Chain Created")
@@ -155,9 +155,8 @@ def build_convo_summ_chain():
     """
     global sys_prompts
     try:
-        llm_summarizer = ChatGroq(model_name="llama-3.2-3b-preview", 
-                             max_retries=2, temperature=0.2, max_tokens=256,
-                             api_key=os.environ['GROQ_API_KEY'])
+        llm_summarizer = ChatMistralAI(model_name="mistral-large-latest", temperature=0.2,
+                             api_key=os.environ['MISTRAL_API_KEY'])
         
         # bind with a structured output
         structured_llm_summarizer = llm_summarizer.with_structured_output(SummarizedMemory)
@@ -169,8 +168,7 @@ def build_convo_summ_chain():
         # Prompt for the Retrieval Grader Agent
         convo_summ_prompt = ChatPromptTemplate.from_messages(
                 [
-                    ("system", sys_prompts["convo_summ_sys_prompt"]),
-                    ("human", "Conversation to be summarized: \n{conversation}")
+                    ("system", sys_prompts["convo_summ_sys_prompt"])
                 ]
             )
         
@@ -268,8 +266,8 @@ def build_hallu_checker_chain():
     """
     global sys_prompts
     try:
-        llm_hallu_checker = ChatGroq(model_name="llama-3.1-8b-instant", 
-                             max_retries=2, temperature=0.0, max_tokens=50,
+        llm_hallu_checker = ChatGroq(model_name="llama-3.3-70b-versatile", 
+                             temperature=0.1, max_tokens=50,
                              api_key=os.environ['GROQ_API_KEY'])
         
         # bind with a structured output
@@ -381,7 +379,7 @@ def build_ques_rewriter_chain():
     """
     global sys_prompts
     try:
-        llm_ques_rewriter = ChatGroq(model_name="llama-3.2-3b-preview", 
+        llm_ques_rewriter = ChatGroq(model_name="llama-3.1-8b-instant", 
                              max_retries=2, temperature=0.0, max_tokens=150,
                              api_key=os.environ['GROQ_API_KEY'])
         

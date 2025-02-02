@@ -7,7 +7,7 @@ from exception import CustomException
 from langchain_core.messages import HumanMessage
 
 # function to implement web endpoint
-@app.function(concurrency_limit=15, container_idle_timeout=150, gpu="T4")
+@app.function(concurrency_limit=15, container_idle_timeout=100)
 @modal.web_endpoint(method="POST", docs=True)
 def web_endpoint(state: dict):
     try:

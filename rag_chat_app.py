@@ -3,6 +3,7 @@ import requests
 
 # URL of EyomnAi API
 API_URL = "https://csharpmastr--eyomnai-rag-chat-web-endpoint-dev.modal.run"
+# API_URL = "https://csharpmastr--eyomnai-rag-chat-web-endpoint.modal.run"
 
 # Set up Streamlit UI
 st.set_page_config(page_title="EyomnAI Chat", layout="centered")
@@ -19,9 +20,7 @@ if "memory" not in st.session_state:
 # Function to send a question to the LangGraph API and get a response
 def send_question_to_langgraph(question, userId, user_role, branchId):
     try:
-        # Define payload
-        print("Questions: ", question)
-                     
+        # Define payload                    
         payload = {"messages": [question], 
                    "generation": "",
                    "documents": [],
@@ -71,4 +70,4 @@ for chat in st.session_state["chat_history"]:
     if chat["sender"] == "User":
         st.write(f"**You:** {chat['message']}")
     else:
-        st.write(f"**EyomnAi:** {chat['message']}")
+        st.write(f"**EyomnAi:** \n{chat['message']}")

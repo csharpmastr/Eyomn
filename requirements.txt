@@ -1,6 +1,7 @@
 langgraph 
 langchain 
 langchain_groq
+langchain-mistralai
 langchain-openai
 langchain_google_firestore
 firebase-admin

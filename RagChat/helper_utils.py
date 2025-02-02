@@ -45,23 +45,34 @@ with rag_image.imports():
 
 # GLOBAL VARIABLES TO HOLD THE PERSISTENT CLIENT AND COLLECTION OF CHROMADB
 persistent_client = None
-collection_name = "rag-chroma"
-collection = None
+internal_collection_name = "internal-rag-chroma"
+internal_collection = None
+external_collection = None
 embedding_fn = None
 
 # FUNCTION TO INITIALIZE FIRESTORE CLIENT
 def init_firestore_client() -> Client:
     """Initialize a Firestore client."""
-    # LOAD THE SERVICE ACCOUNT KEY JSON FILE
-    service_account_key_path = str(Path("/eyomn-2d9c7-firebase-adminsdk-zjlyg-4c6fd6c764.json"))
-    service_account_credentials = credentials.Certificate(service_account_key_path)
+    try:
+        # LOAD THE SERVICE ACCOUNT INFO FROM ENVIRONMENT VARIABLE
+        service_account_info = json.loads(os.environ["SERVICE_ACCOUNT_JSON"])
+        service_account_credentials = credentials.Certificate(service_account_info)
+        
+        # INITIALIZE THE FIRESTORE CLIENT
+        firebase_admin.initialize_app(service_account_credentials)
+        firestore_client = firestore.client()
     
-    # INITIALIZE THE FIRESTORE CLIENT
-    firebase_admin.initialize_app(service_account_credentials)
-    firestore_client = firestore.client()
-    
-    print("---FIRESTORE CLIENT ALREADY INITIALIZED: RETUNING...---")
-    return firestore_client
+        print("---FIRESTORE CLIENT INITIALIZED: RETURNING...---")
+        return firestore_client
+
+    except ValueError as ve:
+        raise CustomException(f"ValueError in initializing Firestore client: {str(ve)}", sys)
+    except FileNotFoundError as fnf:
+        raise CustomException(f"Service account key file not found: {str(fnf)}", sys)
+    except firebase_admin.exceptions.FirebaseError as fe:
+        raise CustomException(f"FirebaseError in initializing Firestore client: {str(fe)}", sys)
+    except Exception as e:
+        raise CustomException(f"An unexpected error occurred: {str(e)}", sys)
 
 # FUNCTION TO DECRYPT DATA RETRIEVED FROM FIRESTORE
 def decrypt_data(encrypted_data: Annotated[str, "String of data to be decrypted"],
@@ -159,14 +170,15 @@ def store_to_vectorstore(
 ) -> Annotated[Chroma, "Vector Store instance which contains the Documents of the User"]:
     
     # USE THE GLOBAL VARIABLES
-    global persistent_client, collection, embedding_fn
+    global persistent_client, external_collection, embedding_fn
     
     # INITIALIZE PERSISTENT CHROMA CLIENT ONCE
     if persistent_client is None:
         # INITIALIZE THE PERSISTENT CHROMA CLIENT
         print("INITIALIZING PERSISTENT CLIENT FOR EXTERNAL KNOWLEDGE")
         persistent_client = chromadb.PersistentClient()
-        collection = persistent_client.get_or_create_collection(external_collection_name)
+    
+    external_collection = persistent_client.get_or_create_collection(external_collection_name)
         
     # INITIALIZE THE EMBEDDING FUNCTION
     if embedding_fn is None:
@@ -174,7 +186,7 @@ def store_to_vectorstore(
         embedding_fn = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     
     # CHECK IF THE COLLECTION ALREADY CONTAINS DOCUMENTS
-    if collection.count() > 0:
+    if external_collection.count() > 0:
         print(f"EXTERNAL COLLECTION ALREADY CONTAINS DOCUMENTS... \n RETURNING EXISTING CHROMADB\n")
         return Chroma(client=persistent_client, collection_name=external_collection_name, embedding_function=embedding_fn)
     else:
@@ -188,7 +200,7 @@ def store_to_vectorstore(
         document_metadata = [doc.metadata for doc in documents]
             
         # ADD TO EXISTING PERSISTENT VECTORDB
-        collection.add(documents=plain_documents, 
+        external_collection.add(documents=plain_documents, 
                         ids=uids, metadatas=document_metadata)
     print("---EXTERNAL KNOWLEDGE LOADED TO CHROMA---")
     return Chroma(client=persistent_client, collection_name=external_collection_name, embedding_function=embedding_fn)
@@ -203,10 +215,10 @@ def load_data_from_firestore(
     # LOAD REFERENCED DATA FROM FIRESTORE
     loader = FirestoreLoader(reference, client=client)
     encrypted_data = loader.load()
-    
+        
     # DECRYPT THE DATA
     decrypted_data = parse_firestore_data(encrypted_data, collection_type)
-    
+        
     return decrypted_data
 
 # FUNCTION TO GIVE THE CURRENT USER ACCESS TO THE DATA RETRIEVED AND DECRYPTED
@@ -216,9 +228,8 @@ def init_external_retriever(
     userid: Annotated[str, "User ID of the current user"],
     fsclient: Annotated[Client, "Firestore Database Client API"]
 ) -> Chroma:
-    
     role_map = {
-        "3" : "staff",
+        "3": "staff",
         "2": "doctor",
         "1": "branch",
         "0": "admin"
@@ -236,104 +247,115 @@ def init_external_retriever(
         
         staff_appointments = []
         for BID in branchid:
-            # RETRIEVE APPOINTMENT DATA FROM FIRESTORE
-            staff_appointment_ref = fsclient.collection("apppointment").document(BID).collection("schedules")
-            
-            print("--LOADING APPOINTMENT DATA--")
-            # LOAD AND DECRYPT NECESSARY PARTS OF THE DATA
-            decrypted_appointment_data = load_data_from_firestore(staff_appointment_ref, collection_type="appointment", client=fsclient)
-            staff_appointments.extend(decrypted_appointment_data)
-            
-        # RETRIEVE INVENTORY DATA FROM FIRESTORE
-        #purchase_ref = db.collection("inventory").document(branchid).collection("purchases")
-        #purchase_loader = FirestoreLoader(purchase_ref, client=db)
-        #products_ref = db.collection("inventory").document(branchid).collection("products")
-        #products_loader = FirestoreLoader(products_ref, client=db)
-        #services_ref = db.collection("inventory").document(branchid).collection("services")
-        #services_loader = FirestoreLoader(services_ref, client=db)
-            
-        # STORE DECRYPTED DATA TO CHROMADB
-        print("--STORING DATA TO CHROMADB--")
-        vectorstore = store_to_vectorstore(documents=staff_appointments, 
-                                           external_collection_name="staff-appointment-data-vector-store")
-            
-        print("--DATA ENCRYPTED AND STORED IN CHROMADB--")
-            
-        return vectorstore
-    
-    # PROCESS DATA ASSOCIATED WITH THE ROLE 'DOCTOR'
-    if role == "doctor":
-        print("--CURRENT USER IS A DOCTOR--")
-        
-        # DEFINE A LIST TO HOLD AND STORE DOCTOR'S DOCUMENTS
-        dr_data_documents = []
-        
-        # DEFINE A LIST TO HOLD AND STORE DOCTOR'S ATTENDING PATIENT IDs
-        dr_patient_ids = set()
-        
-        # LOOP THROUGH THE BRANCHES OF THE CURRENT DOCTOR
-        for BID in branchid:
-            dr_appointment_ref = fsclient.collection("apppointment").document(BID).collection("schedules")
-            
-            # PERFORM A QUERY TO FIRESTORE TO ONLY RETURN APPOINTMENT OF THE CURRENT DOCTOR
-            dr_query_appointment = dr_appointment_ref.where(filter=FieldFilter("doctorId", "==", userid))
+            try:
+                # RETRIEVE APPOINTMENT DATA FROM FIRESTORE
+                staff_appointment_ref = fsclient.collection("apppointment").document(BID).collection("schedules")
                 
-            dr_decrypted_appointment_data = load_data_from_firestore(dr_query_appointment, collection_type="appointment", client=fsclient)
-                
-            # append dr's appointment data
-            # APPEND DOCTOR'S APPOINTMENT DATA TO 'dr_data_documents' LIST
-            dr_data_documents.extend(dr_decrypted_appointment_data)
-        
-        print("--DOCTOR'S APPOINTMENT DATA LOADED--")
-        
-        # RETRIEVE PATIENT INFORMATION HANDLED BY THE CURRENT DOCTOR
-        dr_attending_patient_ref = fsclient.collection("patient")
-        dr_query_patient = dr_attending_patient_ref.where(
-            filter=Or(
-                [
-                    FieldFilter("doctorId", "==", userid),
-                    FieldFilter("authorizedDoctor", "==", userid)
-                ]
-            )
-        )
-        # LOAD AND DECRYPT DATA FROM FIRESTORE
-        dr_decrypted_patient_data = load_data_from_firestore(dr_query_patient, collection_type="patient", client=fsclient)
-        # APPEND THE RETRIEVED AND DECRYPTED PATIENT DATA TO THE EXISTING DOCUMENT LIST OF THE CURRENT DOCTOR
-        dr_data_documents.extend(dr_decrypted_patient_data)
-        
-        # EXTRACT AND APPEND EACH PATIENT IDs TO THE LIST
-        dr_patient_ids.update(
-            doc.metadata["patient_id"] for doc in dr_data_documents if doc.metadata["document_type"] == "patient data"
-        )
-        
-        print("--DOCTOR'S PATIENT DATA LOADED--")
-        
-        # LOOP THROUGH THE PATIENT IDs TO GET THEIR SOAPNOTES
-        for id in dr_patient_ids:
-            # REFERENCE THE SOAPNOTES SUBCOLLECTION
-            dr_attending_patient_notes_ref = fsclient.collection("note").document(id).collection("soapNotes")
-
-            # LOAD AND DECRYPT DATA FROM FIRESTORE
-            dr_decrypted_patient_notes = load_data_from_firestore(dr_attending_patient_notes_ref, 
-                                                                  collection_type="soapNotes",
-                                                                  client=fsclient)
-
-
-            # CHECK IF 'dr_decrypted_patient_notes' IS EMPTY BEFORE ADDING TO THE LIST
-            if len(dr_decrypted_patient_notes) > 0:
-                print(f"--APPENDING PATIENT DATA TO 'dr_data_documents'--")
-                # APPEND THE RETRIEVED AND DECRYPTED PATIENT NOTES TO THE EXISTING LIST OF THE DOCTOR'S DOCUMENTS
-                dr_data_documents.extend(dr_decrypted_patient_notes)
-                
+                print("--LOADING APPOINTMENT DATA--")
+                # LOAD AND DECRYPT NECESSARY PARTS OF THE DATA
+                decrypted_appointment_data = load_data_from_firestore(staff_appointment_ref, collection_type="appointment", client=fsclient)
+                staff_appointments.extend(decrypted_appointment_data)
+            except Exception as e:
+                logging.error(f"Error loading appointment data for branch {BID}: {e}")
             continue
         
-        print("--DOCTOR'S PATIENT NOTES DATA LOADED--")
-        
         # STORE DECRYPTED DATA TO CHROMADB
-        vectorstore = store_to_vectorstore(documents=dr_data_documents,
-                                           external_collection_name="doctor-appointment-data-vector-store")
-        
-        return vectorstore
+        print("--STORING DATA TO CHROMADB--")
+        try:
+            vectorstore = store_to_vectorstore(documents=staff_appointments,
+                                               external_collection_name="staff-appointment-data-vector-store")
+            print("--DATA ENCRYPTED AND STORED IN CHROMADB--")
+            return vectorstore
+        except Exception as e:
+            logging.error(f"Error storing data to ChromaDB: {e}")
+            raise CustomException(f"Error storing data to ChromaDB: {e}", sys)
+
+    # PROCESS DATA ASSOCIATED WITH THE ROLE 'DOCTOR'
+    if role == "doctor":
+        print("---CURRENT USER IS A DOCTOR---")
+
+        # DEFINE A LIST TO HOLD AND STORE DOCTOR'S DOCUMENTS
+        dr_data_documents = []
+
+        # DEFINE A LIST TO HOLD AND STORE DOCTOR'S ATTENDING PATIENT IDs
+        dr_patient_ids = set()
+
+        # LOOP THROUGH THE BRANCHES OF THE CURRENT DOCTOR
+        for BID in branchid:
+            try:
+                dr_appointment_ref = fsclient.collection("apppointment").document(BID).collection("schedules")
+
+                # PERFORM A QUERY TO FIRESTORE TO ONLY RETURN APPOINTMENT OF THE CURRENT DOCTOR
+                dr_query_appointment = dr_appointment_ref.where(filter=FieldFilter("doctorId", "==", userid))
+                
+                print("---FILTERED DOCTOR'S ID---")
+
+                dr_decrypted_appointment_data = load_data_from_firestore(dr_query_appointment, collection_type="appointment", client=fsclient)
+
+                # APPEND DOCTOR'S APPOINTMENT DATA TO 'dr_data_documents' LIST
+                dr_data_documents.extend(dr_decrypted_appointment_data)
+            except Exception as e:
+                logging.error(f"Error loading appointment data for doctor in branch {BID}: {e}")
+                continue
+
+        print("--DOCTOR'S APPOINTMENT DATA LOADED--")
+
+        try:
+            # RETRIEVE PATIENT INFORMATION HANDLED BY THE CURRENT DOCTOR
+            dr_attending_patient_ref = fsclient.collection("patient")
+            dr_query_patient = dr_attending_patient_ref.where(
+                filter=Or(
+                    [
+                        FieldFilter("doctorId", "==", userid),
+                        FieldFilter("authorizedDoctor", "==", userid)
+                    ]
+                )
+            )
+            # LOAD AND DECRYPT DATA FROM FIRESTORE
+            dr_decrypted_patient_data = load_data_from_firestore(dr_query_patient, collection_type="patient", client=fsclient)
+            # APPEND THE RETRIEVED AND DECRYPTED PATIENT DATA TO THE EXISTING DOCUMENT LIST OF THE CURRENT DOCTOR
+            dr_data_documents.extend(dr_decrypted_patient_data)
+
+            # EXTRACT AND APPEND EACH PATIENT IDs TO THE LIST
+            dr_patient_ids.update(
+                doc.metadata["patient_id"] for doc in dr_data_documents if doc.metadata["document_type"] == "patient data"
+            )
+
+            print("--DOCTOR'S PATIENT DATA LOADED--")
+        except Exception as e:
+            logging.error(f"Error loading patient data for doctor: {e}")
+            raise CustomException(f"Error loading patient data for doctor: {e}", sys)
+
+        # LOOP THROUGH THE PATIENT IDs TO GET THEIR SOAPNOTES
+        for id in dr_patient_ids:
+            try:
+                # REFERENCE THE SOAPNOTES SUBCOLLECTION
+                dr_attending_patient_notes_ref = fsclient.collection("note").document(id).collection("soapNotes")
+
+                # LOAD AND DECRYPT DATA FROM FIRESTORE
+                dr_decrypted_patient_notes = load_data_from_firestore(dr_attending_patient_notes_ref,
+                                                                      collection_type="soapNotes",
+                                                                      client=fsclient)
+
+                # CHECK IF 'dr_decrypted_patient_notes' IS EMPTY BEFORE ADDING TO THE LIST
+                if len(dr_decrypted_patient_notes) > 0:
+                    print(f"--APPENDING PATIENT DATA TO 'dr_data_documents'--")
+                    # APPEND THE RETRIEVED AND DECRYPTED PATIENT NOTES TO THE EXISTING LIST OF THE DOCTOR'S DOCUMENTS
+                    dr_data_documents.extend(dr_decrypted_patient_notes)
+            except Exception as e:
+                logging.error(f"Error loading SOAP notes for patient {id}: {e}")
+                continue
+
+        print("--DOCTOR'S PATIENT NOTES DATA LOADED--")
+
+        # STORE DECRYPTED DATA TO CHROMADB
+        try:
+            vectorstore = store_to_vectorstore(documents=dr_data_documents,
+                                               external_collection_name="doctor-appointment-data-vector-store")
+            return vectorstore
+        except Exception as e:
+            logging.error(f"Error storing data to ChromaDB: {e}")
+            raise CustomException(f"Error storing data to ChromaDB: {e}", sys)
     
 # function to preprocess documents before passing to content
 def preprocess(text: str) -> str:
@@ -368,14 +390,15 @@ def init_internal_retriever() -> Chroma:
         is raised with the original exception details.
     """    
     # USE THE GLOBAL VARIABLES
-    global persistent_client, collection, embedding_fn
+    global persistent_client, internal_collection, embedding_fn
     
     # INITIALIZE PERSISTENT CHROMA CLIENT ONCE
     if persistent_client is None:
         # INITIALIZE THE PERSISTENT CHROMA CLIENT
         print("INITIALIZING PERSISTENT CLIENT")
         persistent_client = chromadb.PersistentClient()
-        collection = persistent_client.get_or_create_collection(collection_name)
+    
+    internal_collection = persistent_client.get_or_create_collection(internal_collection_name)
         
     # INITIALIZE THE EMBEDDING FUNCTION
     if embedding_fn is None:
@@ -383,9 +406,9 @@ def init_internal_retriever() -> Chroma:
         embedding_fn = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     
     # CHECK IF THE COLLECTION ALREADY CONTAINS DOCUMENTS
-    if collection.count() > 0:
+    if internal_collection.count() > 0:
         print(f"Collection already exists with documents. Returning existing vector store.")
-        return Chroma(client=persistent_client, collection_name=collection_name, embedding_function=embedding_fn)
+        return Chroma(client=persistent_client, collection_name=internal_collection_name, embedding_function=embedding_fn)
     
     # list of urls to store as knowledge base
     urls = ["https://eyomn.com/", str(Path("/Thesis_Documentation.pdf")), "https://www.ncbi.nlm.nih.gov/books/NBK482263/", str(Path("/ophthal_opto_guide.pdf"))]
@@ -437,13 +460,13 @@ def init_internal_retriever() -> Chroma:
             uids = [str(uuid4()) for _ in range(len(documents_to_add))]
             
             # ADD TO A PERSISTENT VECTORDB
-            collection.add(documents=documents_to_add, 
+            internal_collection.add(documents=documents_to_add, 
                            ids=uids)
             
             logging.info("Added the Document Splits from {url} to ChromaDB")
         print(f"Length of Documents: {len(docs)}")
     
-        return Chroma(client=persistent_client, collection_name=collection_name, embedding_function=embedding_fn)
+        return Chroma(client=persistent_client, collection_name=internal_collection_name, embedding_function=embedding_fn)
     except Exception as e:
         raise CustomException(e, sys)   
 
@@ -457,3 +480,25 @@ def load_sys_prompts(file_path: Path):
     logging.info("System Prompts Loaded")
     
     return prompts
+
+# CLASS FOR COUNTERS
+class CounterTracker:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._counters = {}  # Initialize an empty dictionary
+        return cls._instance
+
+    def set_counter(self, counter_name, value):
+        self._counters[counter_name] = value
+
+    def get_counter(self, counter_name):
+        return self._counters.get(counter_name, 0)  # Default to 0 if not set
+
+    def increment_counter(self, counter_name):
+        self._counters[counter_name] = self.get_counter(counter_name) + 1
+
+    def __str__(self):
+        return f"CounterTracker instance with counters: {self._counters}"

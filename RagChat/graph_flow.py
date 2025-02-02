@@ -18,7 +18,7 @@ from agents_chains import (
     build_ans_grader_chain
     
 )
-from helper_utils import init_internal_retriever, init_firestore_client, init_external_retriever
+from helper_utils import init_internal_retriever, init_firestore_client, init_external_retriever, CounterTracker
 from modal_setup import rag_image
 
 # context manager for global imports
@@ -43,10 +43,12 @@ ques_rewriter_chain = None
 hallu_checker_chain = None
 answer_grader_chain = None
 doc_grader = None
+transformation_counter = None
 firestore_client = None
 external_retriever = None
 eyomn_memory_saver = None
 eyomn_memory = None
+counter_tracker = CounterTracker()
 
 # define Graph State to track
 class GraphState(TypedDict):
@@ -81,6 +83,7 @@ def summarize_convo(state: GraphState):
         # OBTAIN THE MESSAGES FROM THE STATE AND THE USER ID
         messages = state["messages"]
         userId = state["userId"]
+        print("---SUMMARIZE CONVO---")
         
         # LOGIC TO SUMMARIZE THE MESSAGES IF LIST OF MESSAGES IS ">" 6
         if len(messages) > 6:
@@ -88,7 +91,7 @@ def summarize_convo(state: GraphState):
             global convo_summ_chain, firestore_client, eyomn_memory_saver
             # CHECK IF "convo_summ_chain" IS ALREADY INITIALIZED
             if convo_summ_chain is None:
-                print("---Initializing Conversation Summarization Chain---")
+                print("---INITIALIZING CONVO SUMM CHAIN---")
                 convo_summ_chain = build_convo_summ_chain()
             
             # CHECK IF "firestore_client" IS INITIALIZED
@@ -101,7 +104,7 @@ def summarize_convo(state: GraphState):
             
             # CHECK IF "eyomn_memory_saver" IS INITIALIZED
             if eyomn_memory_saver is None:
-                print("---Initializing EYOMN MEMORY SAVER---")
+                print("---INITIALIZING EYOMN MEMORY SAVER---")
                 # INITIALIZE "chat_history_saver"
                 eyomn_memory_saver = FirestoreChatMessageHistory(
                     session_id= str(datetime.now().strftime('%Y-%m-%d')), 
@@ -112,12 +115,13 @@ def summarize_convo(state: GraphState):
             # SAVE THE SUMMARIZED CONVERSATION TO FIRESTORE
             eyomn_memory_saver.add_ai_message(messages_summary.summarized_convo)
             
+            print("---MESSAGES IS GREATER THAN 6---")
+            
             # DELETE CONVERSATION HISTORY BUT RETAIN THE LAST 2 MESSAGES
             delete_messages = [RemoveMessage(id=m.id) for m in state["messages"][:-2]]
             
             # UPDATE THE STATE WITH THE UPDATED MESSAGES AND DELETE HISTORY
-            return {"summarized_memory": messages_summary.summarized_convo, 
-                    "messages": delete_messages, 
+            return {"messages": delete_messages, 
                     "generation": state["generation"]}
         
         # ELSE RETURN JUST THE MESSAGE AND GENERATION
@@ -157,6 +161,8 @@ def external_retrieve(state: GraphState):
     
     # RETRIEVE RELEVANT DOCUMENTS USING EXTERNAL RETRIEVER
     external_documents = external_retriever.max_marginal_relevance_search(last_message, k=3)
+    
+    print(f"---EXTERNAL DOCUMENTS: {external_documents}---")
     
     return {"documents": external_documents, "messages": messages, 
             "knowledge_type": state["knowledge_type"], "user_role": state["user_role"], 
@@ -215,7 +221,7 @@ def generate(state: GraphState):
             
     # CHECK IF "eyomn_memory_saver" IS INITIALIZED
     if eyomn_memory_saver is None:
-        print("---Initializing EYOMN MEMORY SAVER---")
+        print("---INITIALIZING EYOMN MEMORY SAVER---")
         # INITIALIZE "chat_history_saver"
         eyomn_memory_saver = FirestoreChatMessageHistory(
             session_id=userId, 
@@ -224,53 +230,57 @@ def generate(state: GraphState):
             encode_message=True
         )
     
-    # CHECK IF "convo_summ_chain" IS ALREADY INITIALIZED
-    if convo_summ_chain is None:
-        print("---Initializing Conversation Summarization Chain---")
-        convo_summ_chain = build_convo_summ_chain()
-    
-    messages = state["messages"]
-    messages_summary = eyomn_memory_saver.messages
+    documents = state.get("documents", [])
+    messages = state.get("messages", [])
+    messages_summary = eyomn_memory_saver.messages # OBTAIN EXISTING MEMORY
+    last_message = messages[-1] # OBTAIN THE LAST MESSAGE TO BE ANSWERED
+    existing_info = "\n".join([msg.content for msg in messages])  # INITIALIZE EXISTING USER INFORMATION FOR EYOMN'S CONTEXT
     
     # CHECK IF A SUMMARY OF CONVERSATION EXISTS
     if messages_summary:
         print("---MEMORY EXISTS AND LOADED---")
+        flat_messages_summary = "\n".join([msg.content for msg in messages_summary])
         
         # IF SUMMARY IS MORE THAN 2, PERFORM SUMMARIZATION
         if len(messages_summary) > 2:
             print("---MEMORY EXISTS AND MORE THAN 2: SUMMARIZING NOW---")
+            
+            # CHECK IF "convo_summ_chain" IS ALREADY INITIALIZED
+            if convo_summ_chain is None:
+                print("---Initializing Conversation Summarization Chain---")
+                convo_summ_chain = build_convo_summ_chain()
+            
             # INITIATE SUMMARIZATION OF MEMORIES FOR EYOMN
-            messages_summary = convo_summ_chain.invoke({"conversation": messages})
+            messages_summary = convo_summ_chain.invoke({"$memory": flat_messages_summary, "$chat_history": messages})
         
-            # ADD SUMMARY TO MESSAGES
-            system_message = f"Summary of conversation earlier: {messages_summary.summarized_convo}"
+            # EXISTING USER INFORMATION FOR EYOMN'S CONTEXT
+            existing_info = messages_summary.summarized_convo
         else:
-            # ADD SUMMARY TO MESSAGES
-            system_message = f"Summary of conversation earlier: {messages_summary}"
+            # EXISTING USER INFORMATION FOR EYOMN'S CONTEXT
+            existing_info = flat_messages_summary
         
         # APPEND SUMMARY TO MESSAGES
-        messages = [HumanMessage(content=system_message)] + messages    
+        # messages = [HumanMessage(content=system_message)] + messages    
     
     global rag_gen_chain
     # check if RAG Chain is already initialized
     if rag_gen_chain is None:
-        print("---Initializing RAG Chain---")
+        print("---INITIALIZING RAG GENERATION CHAIN---")
         rag_gen_chain = build_rag_generation_chain()
     
-    if "documents" in state and state["documents"]:
-        documents = state["documents"]
+    # if "documents" in state and state["documents"]:
+    #     documents = state["documents"]
     
-        # RAG Generation
-        generation = rag_gen_chain.invoke({"context": documents, "question": messages})
-        
-    else:
-        documents = ["Respond in a Friendly and Professional Manner."]
-        generation = rag_gen_chain.invoke({"context": documents, "question": messages})
+    # RAG Generation
+    generation = rag_gen_chain.invoke({"context": documents, "question": last_message, "memory": existing_info})
+    # else:
+    #     documents = ["Respond in a Friendly and Professional Manner."]
+    #     generation = rag_gen_chain.invoke({"context": documents, "question": last_message})
     
     # APPEND THE GENERATED RESPOND TO THE MESSAGES
     
-    return {"documents": documents, "messages": generation, 
-            "generation": AIMessage(content=generation), "summarized_memory": messages_summary,
+    return {"documents": documents, "messages": messages, 
+            "generation": generation, "summarized_memory": existing_info,
             "knowledge_type": state["knowledge_type"], "user_role": state["user_role"]}
 
 # function to grade the retrieved documents
@@ -289,11 +299,13 @@ def grade_docs(state):
     messages = state["messages"]
     last_message = messages[-1]
     documents = state["documents"]
+    knowledge_type = state.get("knowledge_type", "base_knowledge")
+    grade = "yes"
     
     global retrieval_grader_chain, doc_grader
     # check if retrieval grader chain is already initialized
     if retrieval_grader_chain is None and doc_grader is None:
-        print("---Initializing Retrieval Grader Chain---")
+        print("---INITIALIZING RETRIEVAL GRADER CHAIN---")
         retrieval_grader_chain = build_retrieval_grader_chain()
         doc_grader = 0
     
@@ -301,8 +313,10 @@ def grade_docs(state):
     filtered_docs = []
     #web_search = "No"
     for d in documents:
-        score = retrieval_grader_chain.invoke({"question": last_message.content, "document": d.page_content})
-        grade = score.score
+        
+        if knowledge_type != "external_knowledge":
+            grade = retrieval_grader_chain.invoke({"question": last_message.content, "document": d.page_content}).score
+        
         # Check Document Relevance
         if grade.lower() == "yes":
             print("---GRADE: DOCUMENT RELEVANT---")
@@ -347,8 +361,7 @@ def grade_docs(state):
     #     documents = [web_results]
     # return {"documents": documents, "question": question}
 
-
-# Define the conditional edges
+# DEFINE CONDITIONAL EDGES
 
 # function to route question to the right knowledge base
 def route_question(state: GraphState):
@@ -371,7 +384,7 @@ def route_question(state: GraphState):
     global router_chain
     # check if router chain is already initialized
     if router_chain is None:
-        print("---Initializing Router Chain---")
+        print("---INITIALIZING ROUTER CHAIN---")
         router_chain = build_router_chain()
     
     # INVOKE THE ROUTER CHAIN
@@ -413,17 +426,19 @@ def transform_query(state):
     global ques_rewriter_chain
     # check if question rewriter chain is already initialized
     if ques_rewriter_chain is None:
-        print("---Initializing Question Rewriter Chain---")
+        print("---INITIALIZING QUESTION REWRITER CHAIN---")
         ques_rewriter_chain = build_ques_rewriter_chain()
-    
+       
     # Re-write question
     better_question_content = ques_rewriter_chain.invoke({"question": last_message})
     
     # CREATE A NEW MESSAGE W/ THE SAME MSG ID TO REPLACE THE CURRENT MESSAGE
     better_question = HumanMessage(content=better_question_content, id=last_message.id)
     
-    return {"documents": documents, "messages": [better_question], 
-            "summarized_memory": state["summarized_memory"], "knowledge_type": state["knowledge_type"],
+    print("---QUESTION TRANSFORMED---")
+    print(f'---CURRENT MESSAGES:\n {messages}---')
+    
+    return {"documents": documents, "messages": [better_question], "knowledge_type": state["knowledge_type"],
             "user_role": state["user_role"], "userId": state["userId"], "branchId": state["branchId"]}
 
 # define the edges of the graph
@@ -454,12 +469,27 @@ def decide_to_generate(state):
     print("---ASSESS GRADED DOCUMENTS---")
     filtered_documents = state["documents"]
     
+    # global transformation_counter
+    # # CHECK IF TRANSFORMATION COUNTER IS INITIALIZED
+    # if transformation_counter is None:
+    #     print("---INITIALIZING TRANSFORMATION COUNTER---")
+    #     transformation_counter = 0
+    
     if not filtered_documents:
         # All documents have been filtered check_relevance
         # We will re-generate a new query
         print(
             "---DECISION: ALL DOCUMENTS ARE NOT RELEVANT TO QUESTION, TRANSFORM QUERY---"
         )
+        
+        # IF TRANSFORMATION COUNTER IS 3 RETURN GENERATE
+        if counter_tracker.get_counter("transformation_attempts") >= 3:
+            print("---MAX TRANSFORMATION REACHED, DECISION: GENERATE---")
+            counter_tracker.set_counter("transformation_attempts", 0)
+            return "generate"
+        
+        # INCREMENT TRANSFORMATION COUNTER
+        counter_tracker.increment_counter("transformation_attempts")
         return "transform_query"
     else:
         # We have relevant documents, so generate answer
@@ -492,86 +522,64 @@ def grade_generation(state: GraphState):
     generation = state["generation"]
     
     # DECLARE GLOBAL VARIABLE TO USE DEFINE VARIABLE OUT OF FUNCTION
-    global answer_grader_counter, hallucination_checker_counter, answer_grader_chain
+    global answer_grader_counter, hallucination_checker_counter, answer_grader_chain, hallu_checker_chain
     
-    if documents[0] != "Respond in a Friendly and Professional Manner.":
-        
-        global hallu_checker_chain
-        # check if hallucination checker chain is already initialized
-        if hallu_checker_chain is None:
-            print("---Initializing Hallucination Checker Chain---")
-            hallu_checker_chain = build_hallu_checker_chain()
-        
-        if hallucination_checker_counter is None or answer_grader_counter is None:
-            hallucination_checker_counter, answer_grader_counter = (0, 0)
-        
-        # Check Hallucination
-        score = hallu_checker_chain.invoke({"documents": documents, "generation": generation})
-        grade = score.score
-        
-        # Check Hallucination
-        if grade.lower() == "yes":
-            print("---DECISION: GENERATION IS GROUNDED IN DOCUMENTS---")
-            # Check if Question Relevant to Answer
-            print("---GRADE GENERATION vs QUESTION---")
+    # CHECK IF HALLUCINATION CHECKER CHAIN IS ALREADY INITIALIZED
+    if hallu_checker_chain is None:
+        print("---INITIALIZING HALLU CHECKER CHAIN---")
+        hallu_checker_chain = build_hallu_checker_chain()
+    
+    # if hallucination_checker_counter is None or answer_grader_counter is None:
+    #         hallucination_checker_counter, answer_grader_counter = (0, 0)
             
-            # check if answer grader chain is already initialized
-            if answer_grader_chain is None:
-                print("---Initializing Answer Grader Chain---")
-                answer_grader_chain = build_ans_grader_chain()
-            
-            score = answer_grader_chain.invoke({"question": last_message, "generation": generation})
-            grade = score.score
-
-            if grade.lower() == "yes":
-                print("---DECISION: GENERATION ADDRESSES QUESTION---")
-                return "useful"
-            else:
-                print("---DECISION: GENERATION DOES NOT ADDRESS QUESTION---")
-                if answer_grader_counter >= 3:
-                    print("---BE CAUTIOUS WITH EYOMNAI's RESPONSE---")
-                    return "useful"
-                
-                # INCREMENT ANSWER GRADER COUNTER
-                answer_grader_counter += 1
-                return "not useful"
-        else:
-            print("---DECISION: GENERATION IS NOT GROUNDED IN DOCUMENTS, RE-TRY---")
-            
-            if hallucination_checker_counter >= 3:
-                print("EyomnAI's Response is not Fact-Checked: USE WITH CAUTION")
-                return "useful"
-            
-            # INCREMENT HALLUCINATION CHECKER COUNTER
-            hallucination_checker_counter += 1    
-            return "not supported"
-    else:
-        print("---DECISION: RESPONDING IN A FRIENDLY MANNER---")
-        print("---GRADE GENERATION vs QUESTION---")
-        if answer_grader_counter is None:
-            answer_grader_counter = 0
+    # CHECK FOR HALLUCINATION
+    halu_score = hallu_checker_chain.invoke({"documents": documents, "generation": generation}).score
+    
+    if not documents:
+        halu_score = "yes"
+    
+    if halu_score.lower() == 'yes':
+        print("---DECISION: GENERATION IS GROUNDED IN DOCUMENTS---")
         
-        # check if answer grader chain is already initialized
+        # CHECK IF ANSWER IS RELEVANT TO THE QUESTION
         if answer_grader_chain is None:
             print("---Initializing Answer Grader Chain---")
             answer_grader_chain = build_ans_grader_chain()
         
-        # GET THE SCORE OF THE ANSWER GRADER AGENT
-        score = answer_grader_chain.invoke({"question": last_message, "generation": generation})
+        print("---GRADING GENERATION vs QUESTION---")
+        generation_score = answer_grader_chain.invoke({"question": last_message, "generation": generation}).score
         
-        if score.score.lower() == "yes":
+        if not documents:
+            print('---NO DOCUMENTS, SO NO GRADING---')
+            print(f"---CURRENT GENERATION: {generation}---")
+            generation_score = "yes"
+        
+        if generation_score.lower() == 'yes':
             print("---DECISION: GENERATION ADDRESSES QUESTION---")
             return "useful"
         else:
             print("---DECISION: GENERATION DOES NOT ADDRESS QUESTION---")
-
-            if answer_grader_counter >= 3:
-                print("---BE CAUTIOUS WITH EYOMN AI's RESPONSE---")
+            
+            if counter_tracker.get_counter("grader_attempts") >= 3:
+                print("---BE CAUTIOUS WITH EYOMNAI's RESPONSE---")
+                counter_tracker.set_counter("grader_attempts", 0)
                 return "useful"
-                
-            answer_grader_counter += 1
+            
+            counter_tracker.increment_counter("grader_attempts")
+            print(f"---GRADER COUNT: {counter_tracker.get_counter("grader_attempts")}")
+            return "not useful"
+    else:
+        print("---DECISION: GENERATION IS NOT GROUNDED IN DOCUMENTS, RE-TRY---")
+        
+        if counter_tracker.get_counter("checker_attempts") >= 3:
+            print("---BE CAUTIOUS WITH EYOMNAI's RESPONSE---")
+            counter_tracker.set_counter("checker_attempts", 0)
             return "useful"
-
+        
+        counter_tracker.increment_counter("checker_attempts")
+        print(f"---CHECKER COUNT: {counter_tracker.get_counter("checker_attempts")}")
+        return "not supported"    
+    
 
 # function connect all nodes with each edges
 def construct_rag_graph() -> CompiledStateGraph:
@@ -591,15 +599,6 @@ def construct_rag_graph() -> CompiledStateGraph:
         
         # User Question -> Router
         workflow.add_edge(START, "router")
-        # workflow.set_conditional_entry_point(
-        #     route_question,
-        #     {
-        #         # if Router returned acquired_knowledge -> generate
-        #         "acquired_knowledge": "generate",
-        #         # if Router returned vectorstore -> retrieve
-        #         "vectorstore": "retrieve"
-        #     },
-        # )
         
         # Retrieved Documents -> grade_documents
         workflow.add_edge("external retriever", "grade_documents")
@@ -638,11 +637,16 @@ def construct_rag_graph() -> CompiledStateGraph:
         
         workflow.add_edge("summarize_convo", END)
         
+        # SET A COUNTER FOR CHECKER AND GRADER ATTEMPTS
+        counter_tracker.set_counter("checker_attempts", 0)
+        counter_tracker.set_counter("grader_attempts", 0)
+        counter_tracker.set_counter("transformation_attempts", 0)
+        
         global eyomn_memory
         
         # CHECK IF EYOMN'S MEMORY IS ALREADY INITIALIZED
         if eyomn_memory is None:
-            print("---Initializing Eyomn's Memory---")
+            print("---INITIALIZING EYOMN'S MEMORY---")
             # INITIALIZE THE MEMORY
             eyomn_memory = MemorySaver()
         

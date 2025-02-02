@@ -3,7 +3,7 @@ from pathlib import Path
 
 packages = [
     "langgraph>=0.2.56", "langchain>=0.3.9",
-    "langchain_groq>=0.2.0", "langchain-huggingface>=0.1.1",
+    "langchain_groq>=0.2.0", "langchain-huggingface>=0.1.1", "langchain-mistralai>=0.2.6",
     "langchain_chroma>=0.1.2", "langchain_community>=0.3.10",
     "langchain-core>=0.3.22", "langchain-text-splitters>=0.3.2"
     "langsmith>=0.1.142", "pandas>=2.2.1", 
@@ -25,11 +25,10 @@ rag_image = (
     .copy_local_file(local_path=Path("RagChat/Thesis_Documentation.pdf"))
     .copy_local_file(local_path=Path("RagChat/sys_prompts.yaml"))
     .copy_local_file(local_path=Path("RagChat/ophthal_opto_guide.pdf"))
-    .copy_local_file(local_path=Path("RagChat/eyomn-2d9c7-firebase-adminsdk-zjlyg-4c6fd6c764.json"))
 )
 
 app = modal.App(
     "EyomnAI-RAG-CHAT",
     image=rag_image,
-    secrets=[modal.Secret.from_name("RAG_APP_SECRETS")]
+    secrets=[modal.Secret.from_name("RAG_APP_SECRETS"), modal.Secret.from_name("FIREBASE-ADMIN")]
 )
