@@ -209,9 +209,9 @@ def build_router_chain():
     """
     global sys_prompts
     try:
-        llm_router = ChatGroq(model_name="llama-3.1-8b-instant", 
-                             max_retries=2, temperature=0.2, max_tokens=50,
-                             api_key=os.environ['GROQ_API_KEY'])
+        llm_router = ChatMistralAI(model_name="mistral-large-latest", 
+                             temperature=0.1, max_tokens=50,
+                             api_key=os.environ['MISTRAL_API_KEY'])
         
         # bind with a structured output
         structured_llm_router = llm_router.with_structured_output(RouteQuery)
@@ -324,7 +324,7 @@ def build_ans_grader_chain():
     global sys_prompts
     try:
         llm_ans_grader = ChatGroq(model_name="llama-3.1-8b-instant", 
-                             max_retries=2, temperature=0.0, max_tokens=50,
+                             temperature=0.0, max_tokens=50,
                              api_key=os.environ['GROQ_API_KEY'])
         
         # bind with a structured output
